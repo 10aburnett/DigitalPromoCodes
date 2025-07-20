@@ -5,8 +5,8 @@ import { verifyAdminToken } from '@/lib/auth-utils';
 export async function POST(request: NextRequest) {
   try {
     // Verify admin authentication
-    const authResult = await verifyAdminToken(request);
-    if (!authResult.success) {
+    const adminUser = await verifyAdminToken();
+    if (!adminUser) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 

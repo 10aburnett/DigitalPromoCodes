@@ -24,7 +24,10 @@
     "categorize-whops-holistic:apply": "ts-node scripts/categorize-all-whops-holistic.ts --apply",
     "check-affiliate-links": "node scripts/check-current-affiliate-links.js",
     "update-affiliate-links": "node scripts/update-whop-affiliate-links.js",
-    "import-csv": "node scripts/import-and-fix-csv.js"
+    "import-csv": "node scripts/import-and-fix-csv.js",
+    "publish-whops": "ts-node scripts/manual-publish-whops.ts",
+    "check-whop-status": "ts-node scripts/check-whop-status.ts",
+    "publish-custom": "ts-node scripts/publish-custom-whops.ts"
   },
   "prisma": {
     "schema": "prisma/schema.prisma",
@@ -38,6 +41,7 @@
     "@types/nodemailer": "^6.4.17",
     "@types/uuid": "^10.0.0",
     "csv-parse": "^5.6.0",
+    "dotenv": "^17.2.0",
     "googleapis": "^153.0.0",
     "jsonwebtoken": "^9.0.2",
     "next": "^14.2.3",
