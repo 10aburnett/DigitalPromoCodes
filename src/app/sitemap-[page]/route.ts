@@ -2,9 +2,12 @@ import { prisma } from '@/lib/prisma';
 
 const WHOPS_PER_SITEMAP = 1000; // Reasonable chunk size
 
+// Force dynamic rendering since we can't know all pages at build time
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: Request, { params }: { params: { page: string } }) {
   const baseUrl = 'https://whpcodes.com';
-  const page = parseInt(params.page) || 1;
+  const page = parseInt(params?.page || '1') || 1;
   
   try {
     // Calculate offset for pagination
