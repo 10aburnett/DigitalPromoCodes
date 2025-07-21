@@ -220,7 +220,7 @@ export default async function WhopPage({ params }: { params: { slug: string } })
   const faqData = [
     {
       question: `How do I use the ${whop.name} promo code?`,
-      answer: `To use the ${promoTitle} for ${whop.name}, simply click "Reveal Code" above to visit their website.${promoCode ? ' Copy the promo code and enter it during checkout.' : ' The discount will be automatically applied when you purchase through our link.'}`
+      answer: `To use the ${promoTitle} for ${whop.name}, simply click "Reveal Code" above to visit their website.${promoCode || whop.name === 'Josh Exclusive VIP Access' ? ' Copy the promo code and enter it during checkout.' : ' The discount will be automatically applied when you purchase through our link.'}`
     },
     {
       question: `What type of product is ${whop.name}?`,
@@ -288,7 +288,7 @@ export default async function WhopPage({ params }: { params: { slug: string } })
                 <span className="mr-2 font-semibold">1.</span>
                 <span>Click "Reveal Code" above to visit {whop.name} and get your exclusive offer</span>
               </li>
-              {promoCode ? (
+              {promoCode || whop.name === 'Josh Exclusive VIP Access' ? (
                 <li className="flex items-start">
                   <span className="mr-2 font-semibold">2.</span>
                   <span>Copy the revealed promo code and enter it during checkout</span>
@@ -330,12 +330,14 @@ export default async function WhopPage({ params }: { params: { slug: string } })
                       </td>
                     </tr>
                   )}
-                  {firstPromo?.value && firstPromo.value !== '' && firstPromo.value !== '0' && firstPromo.code && (
+                  {(firstPromo?.value && firstPromo.value !== '' && firstPromo.value !== '0' && firstPromo.code) || whop.name === 'Josh Exclusive VIP Access' ? (
                     <tr className="border-b" style={{ borderColor: 'var(--border-color)' }}>
                       <td className="py-3 pl-4 pr-2 font-medium w-1/3" style={{ backgroundColor: 'var(--background-color)' }}>Discount Value</td>
-                      <td className="py-3 px-4" style={{ backgroundColor: 'var(--background-secondary)' }}>{firstPromo.value}%</td>
+                      <td className="py-3 px-4" style={{ backgroundColor: 'var(--background-secondary)' }}>
+                        {whop.name === 'Josh Exclusive VIP Access' ? '20' : firstPromo.value}%
+                      </td>
                     </tr>
-                  )}
+                  ) : null}
                   {whop.price && (
                     <tr className="border-b" style={{ borderColor: 'var(--border-color)' }}>
                       <td className="py-3 pl-4 pr-2 font-medium w-1/3" style={{ backgroundColor: 'var(--background-color)' }}>Price</td>
@@ -402,7 +404,7 @@ export default async function WhopPage({ params }: { params: { slug: string } })
             <h2 className="text-xl sm:text-2xl font-bold mb-4">Terms & Conditions</h2>
             <p className="text-base sm:text-lg leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
               This exclusive offer for {whop.name} is available through our partnership.
-              {promoCode ? ' The discount will be automatically applied when you click through our link.' : ' The discount will be automatically applied when you click through our link.'}
+              {promoCode || whop.name === 'Josh Exclusive VIP Access' ? ' Use the promo code during checkout to get your discount.' : ' The discount will be automatically applied when you click through our link.'}
               {' '}Terms and conditions apply as set by {whop.name}. Offer subject to availability and may be modified or discontinued at any time.
             </p>
           </section>

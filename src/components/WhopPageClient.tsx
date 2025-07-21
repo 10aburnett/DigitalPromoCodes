@@ -152,6 +152,8 @@ export default function WhopPageClient({ whop, firstPromo, promoCode, promoTitle
         <div className="w-full border-2 font-bold py-3 px-4 rounded-lg text-center transition-theme" style={{ backgroundColor: 'var(--background-secondary)', borderColor: 'var(--accent-color)', color: 'var(--text-color)' }}>
           {promoCode ? (
             <span className="text-lg" style={{ color: 'var(--accent-color)' }}>{promoCode}</span>
+          ) : whop.name === 'Josh Exclusive VIP Access' ? (
+            <span className="text-lg" style={{ color: 'var(--accent-color)' }}>JOSH</span>
           ) : (
             <span className="text-lg" style={{ color: 'var(--success-color)' }}>{t('whop.noCode')}</span>
           )}
