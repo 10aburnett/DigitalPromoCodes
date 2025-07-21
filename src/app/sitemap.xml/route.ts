@@ -53,7 +53,7 @@ export async function GET() {
   </sitemap>
   ${Array.from({ length: totalPages }, (_, i) => i + 1).map(page => `
   <sitemap>
-    <loc>${baseUrl}/sitemap/${page}</loc>
+    <loc>${baseUrl}/sitemap-whops-${page}.xml</loc>
     <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
   </sitemap>`).join('')}
 </sitemapindex>`;
