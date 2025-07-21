@@ -1,19 +1,22 @@
 import { prisma } from '@/lib/prisma';
 
+const WHOPS_PER_SITEMAP = 1000; // Reasonable chunk size
+
 export async function GET() {
   const baseUrl = 'https://whpcodes.com';
   
   try {
-    // Get all published whops
-    const whops = await prisma.whop.findMany({
+    // Count total published whops
+    const totalWhops = await prisma.whop.count({
       where: {
         publishedAt: { not: null }
-      },
-      select: {
-        slug: true,
-        updatedAt: true
       }
     });
+
+    console.log(`Sitemap Index: Found ${totalWhops} published whops`);
+
+    // Calculate number of sitemap pages needed
+    const totalPages = Math.ceil(totalWhops / WHOPS_PER_SITEMAP);
 
     // Get all legal pages (if they exist)
     let legalPages = [];
@@ -37,8 +40,43 @@ export async function GET() {
       { url: 'terms', priority: '0.5', changefreq: 'yearly' }
     ];
 
-    // Generate sitemap XML
-    const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
+    // If we have more than 1000 URLs total, use sitemap index
+    if (totalWhops > 1000) {
+      console.log(`Using sitemap index with ${totalPages} pages`);
+      
+      // Generate sitemap index XML
+      const sitemapIndex = `<?xml version="1.0" encoding="UTF-8"?>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <sitemap>
+    <loc>${baseUrl}/sitemap-static.xml</loc>
+    <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
+  </sitemap>
+  ${Array.from({ length: totalPages }, (_, i) => i + 1).map(page => `
+  <sitemap>
+    <loc>${baseUrl}/sitemap-${page}</loc>
+    <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
+  </sitemap>`).join('')}
+</sitemapindex>`;
+
+      return new Response(sitemapIndex, {
+        headers: {
+          'Content-Type': 'application/xml',
+          'Cache-Control': 'public, max-age=3600, s-maxage=3600'
+        }
+      });
+    } else {
+      // Small site - use single sitemap
+      const whops = await prisma.whop.findMany({
+        where: {
+          publishedAt: { not: null }
+        },
+        select: {
+          slug: true,
+          updatedAt: true
+        }
+      });
+
+      const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   ${staticPages.map(page => `
   <url>
@@ -63,12 +101,13 @@ export async function GET() {
   </url>`).join('')}
 </urlset>`;
 
-    return new Response(sitemap, {
-      headers: {
-        'Content-Type': 'application/xml',
-        'Cache-Control': 'public, max-age=3600, s-maxage=3600'
-      }
-    });
+      return new Response(sitemap, {
+        headers: {
+          'Content-Type': 'application/xml',
+          'Cache-Control': 'public, max-age=3600, s-maxage=3600'
+        }
+      });
+    }
   } catch (error) {
     console.error('Error generating sitemap:', error);
     return new Response('Error generating sitemap', { status: 500 });
