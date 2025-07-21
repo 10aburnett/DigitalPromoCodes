@@ -31,7 +31,7 @@ CRON_SECRET="your-secure-random-string"
 ### 5. Manual Management
 Visit `/admin/publishing` to:
 - View publication status
-- Manually publish/unpublish whops
+- Manually publish whops (unpublish functionality disabled for security)
 - Monitor progress
 
 ## How It Works
@@ -70,11 +70,12 @@ curl -X POST https://yoursite.com/api/admin/publish-whops \
   -d '{"action": "status"}'
 ```
 
-### Unpublish (Rollback)
+### Unpublish (DISABLED)
 ```bash
-curl -X POST https://yoursite.com/api/admin/publish-whops \
-  -H "Content-Type: application/json" \
-  -d '{"action": "unpublish", "count": 250}'
+# SECURITY: Unpublish functionality has been disabled to prevent accidental mass unpublishing
+# curl -X POST https://yoursite.com/api/admin/publish-whops \
+#   -H "Content-Type: application/json" \
+#   -d '{"action": "unpublish", "count": 250}'
 ```
 
 ## Security
@@ -85,6 +86,6 @@ curl -X POST https://yoursite.com/api/admin/publish-whops \
 ## Benefits
 ✅ **SEO Safe** - Gradual indexing prevents spam detection  
 ✅ **Controllable** - Can pause, resume, or adjust schedule  
-✅ **Reversible** - Can unpublish if needed  
+⚠️  **One-way only** - Unpublish functionality disabled to prevent accidental mass unpublishing  
 ✅ **Automatic** - No manual intervention required  
 ✅ **Secure** - Protected endpoints and admin-only access

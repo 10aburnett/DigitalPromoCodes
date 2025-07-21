@@ -56,45 +56,18 @@ export async function POST(request: NextRequest) {
       });
 
     } else if (action === 'unpublish') {
-      const batchSize = count || 250;
+      // SECURITY: Unpublish functionality has been permanently disabled
+      // to prevent accidental mass unpublishing incidents
+      console.log(`🚨 BLOCKED: Admin ${adminUser.email} attempted to use disabled unpublish function`);
       
-      // Get published whops count
-      const publishedCount = await prisma.whop.count({
-        where: { publishedAt: { not: null } }
-      });
-
-      if (publishedCount === 0) {
-        return NextResponse.json({ 
-          message: 'No published whops to unpublish',
-          unpublished: 0,
-          remaining: 0
-        });
-      }
-
-      // Get the newest published whops
-      const whopsToUnpublish = await prisma.whop.findMany({
-        where: { publishedAt: { not: null } },
-        orderBy: { publishedAt: 'desc' },
-        take: Math.min(batchSize, publishedCount),
-        select: { id: true }
-      });
-
-      // Unpublish them
-      await prisma.whop.updateMany({
-        where: {
-          id: { in: whopsToUnpublish.map(w => w.id) }
-        },
-        data: { publishedAt: null }
-      });
-
-      const unpublished = whopsToUnpublish.length;
-      const remaining = publishedCount - unpublished;
-
-      return NextResponse.json({
-        message: `Successfully unpublished ${unpublished} whops`,
-        unpublished,
-        remaining
-      });
+      return NextResponse.json({ 
+        error: 'DISABLED: Unpublish functionality has been permanently disabled for security reasons.',
+        reason: 'This prevents accidental mass unpublishing of whops.',
+        alternatives: 'Use individual whop management in the admin panel if needed.',
+        contact: 'Contact developer if unpublishing is absolutely necessary.',
+        attemptedBy: adminUser.email,
+        timestamp: new Date().toISOString()
+      }, { status: 403 });
 
     } else if (action === 'status') {
       // Get publication status
