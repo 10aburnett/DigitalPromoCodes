@@ -133,7 +133,8 @@ export default function HomePage({ initialWhops, initialTotal, whopNames, totalU
       if (filtersToUse.searchTerm) params.append('search', filtersToUse.searchTerm);
       if (filtersToUse.whopCategory) params.append('whopCategory', filtersToUse.whopCategory);
       if (filtersToUse.whop) params.append('whop', filtersToUse.whop);
-      if (filtersToUse.sortBy) params.append('sortBy', filtersToUse.sortBy);
+      // Always add sortBy parameter - use 'default' if empty to ensure promo code prioritization
+      params.append('sortBy', filtersToUse.sortBy || 'default');
       
       const response = await fetch(`/api/whops?${params.toString()}`);
       if (!response.ok) throw new Error('Failed to fetch whops');
