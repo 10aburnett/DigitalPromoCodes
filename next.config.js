@@ -21,6 +21,7 @@ const nextConfig = {
   experimental: {
     serverComponentsExternalPackages: ['@prisma/client', 'bcryptjs'],
     largePageDataBytes: 5 * 1024 * 1024, // 5MB
+    optimizePackageImports: ['recharts', 'react-beautiful-dnd', '@heroicons/react'],
   },
   typescript: {
     // !! WARN !!
@@ -34,8 +35,11 @@ const nextConfig = {
   // Bundle optimization for better performance
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
+    styledComponents: false,
+    // Optimize for modern browsers
+    emotion: false,
   },
-  // Modern JavaScript output
+  // Modern JavaScript output with optimized transpilation
   swcMinify: true,
   // Remove unused code in production
   modularizeImports: {
@@ -44,6 +48,12 @@ const nextConfig = {
     },
     '@heroicons/react/24/solid': {
       transform: '@heroicons/react/24/solid/{{member}}',
+    },
+    'recharts': {
+      transform: 'recharts/lib/{{member}}',
+    },
+    'react-beautiful-dnd': {
+      transform: 'react-beautiful-dnd/{{member}}',
     },
   },
   // Optimize bundle size with advanced splitting
@@ -71,6 +81,13 @@ const nextConfig = {
             test: /[\\/]src[\\/]app[\\/]admin[\\/]/,
             name: 'admin',
             priority: 30,
+            chunks: 'all',
+          },
+          // Chart libraries (heavy, separate chunk)
+          charts: {
+            test: /[\\/]node_modules[\\/](recharts|react-beautiful-dnd)[\\/]/,
+            name: 'charts',
+            priority: 35,
             chunks: 'all',
           },
           // UI libraries

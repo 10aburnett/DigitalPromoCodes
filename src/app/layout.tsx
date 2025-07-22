@@ -11,7 +11,12 @@ import { unstable_cache } from 'next/cache';
 import Script from 'next/script';
 import { GA_TRACKING_ID } from '@/lib/analytics';
 
-const inter = Inter({ subsets: ['latin'] });
+const inter = Inter({ 
+  subsets: ['latin'],
+  display: 'swap', // Prevent FOIT (Flash of Invisible Text)
+  preload: true,
+  fallback: ['system-ui', 'arial']
+});
 const currentYear = new Date().getFullYear();
 
 // Use a static version for cache busting to prevent hydration mismatches
@@ -142,12 +147,106 @@ export default async function RootLayout({
         <meta name="geo.placename" content="United States" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://www.googletagmanager.com" />
+        <link rel="preconnect" href="https://cdn.prod.website-files.com" />
         <link rel="dns-prefetch" href="//whpcodes.com" />
         <link rel="dns-prefetch" href="//www.googletagmanager.com" />
         <link rel="dns-prefetch" href="//vercel.app" />
+        <link rel="dns-prefetch" href="//cdn.prod.website-files.com" />
         <link rel="preconnect" href="https://vercel.app" />
         <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" as="style" />
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" media="all" />
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" media="print" onLoad="this.media='all'" />
+        <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" /></noscript>
+        <style dangerouslySetInnerHTML={{__html: `
+          :root {
+            --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            --theme-transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+            --border-radius-large: 12px;
+            --btn-border-radius: 6px;
+            --card-spacing: 30px;
+            --background-color: #1a1b23;
+            --background-secondary: #2a2d3a;
+            --background-tertiary: #3f4451;
+            --container-color: #2a2d3a;
+            --text-color: #f1f1f1;
+            --text-secondary: #a4a5b0;
+            --text-muted: #6b7280;
+            --accent-color: #6366f1;
+            --accent-hover: #5855eb;
+            --success-color: #68D08B;
+            --warning-color: #f59e0b;
+            --error-color: #dc2626;
+            --border-color: #3f4451;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --menu-item-color: #a7a9b4;
+            --header-shadow: 2px 0 3px 0 #00000085;
+            --promo-bg: #2a2d3a;
+            --promo-bg-gradient: linear-gradient(45deg, #2a2d3a, #1f2937);
+            --promo-border: 1px solid #3f4451;
+            --promo-shadow: 0 0 4px 0 #0f0f14ad;
+            --card-bg: #2a2d3a;
+            --card-border: #3f4451;
+            --input-bg: #3e4050;
+            --input-border: #404055;
+            --input-focus: #68D08B;
+          }
+          [data-theme="light"] {
+            --background-color: #ffffff;
+            --background-secondary: #f8fafc;
+            --background-tertiary: #e2e8f0;
+            --container-color: #f8fafc;
+            --text-color: #1e293b;
+            --text-secondary: #64748b;
+            --text-muted: #94a3b8;
+            --accent-color: #3b82f6;
+            --accent-hover: #2563eb;
+            --success-color: #059669;
+            --warning-color: #d97706;
+            --error-color: #dc2626;
+            --border-color: #e2e8f0;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --menu-item-color: #64748b;
+            --header-shadow: 2px 0 3px 0 #00000015;
+            --promo-bg: #ffffff;
+            --promo-bg-gradient: linear-gradient(45deg, #ffffff, #f8fafc);
+            --promo-border: 1px solid #e2e8f0;
+            --promo-shadow: 0 0 4px 0 #0000000d;
+            --card-bg: #ffffff;
+            --card-border: #e2e8f0;
+            --input-bg: #ffffff;
+            --input-border: #d1d5db;
+            --input-focus: #3b82f6;
+          }
+          * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+          }
+          html {
+            transition: var(--theme-transition);
+          }
+          body {
+            font-family: var(--font-family);
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            transition: var(--theme-transition);
+          }
+          .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+          }
+          @media (max-width: 640px) {
+            .container {
+              padding: 0 0.5rem;
+            }
+          }
+        `}} />
         <link rel="preload" href="/logo.png" as="image" />
         <link rel="preload" href="/api/whops?page=1&limit=15" as="fetch" crossOrigin="anonymous" />
         <link rel="preload" href="/api/statistics" as="fetch" crossOrigin="anonymous" />

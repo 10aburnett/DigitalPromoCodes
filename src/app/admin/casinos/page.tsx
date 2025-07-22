@@ -3,7 +3,12 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import dynamic from "next/dynamic";
+
+// Dynamic import for react-beautiful-dnd to reduce initial bundle size
+const DragDropContext = dynamic(() => import("react-beautiful-dnd").then(mod => ({ default: mod.DragDropContext })), { ssr: false });
+const Droppable = dynamic(() => import("react-beautiful-dnd").then(mod => ({ default: mod.Droppable })), { ssr: false });
+const Draggable = dynamic(() => import("react-beautiful-dnd").then(mod => ({ default: mod.Draggable })), { ssr: false });
 import { toast } from "react-hot-toast";
 import Image from "next/image";
 import { normalizeImagePath } from "@/lib/image-utils";

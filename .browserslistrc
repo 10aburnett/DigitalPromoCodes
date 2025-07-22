@@ -1,0 +1,8 @@
+# Modern browsers only (reduces bundle size)
+last 2 Chrome versions
+last 2 Firefox versions
+last 2 Safari versions
+last 2 Edge versions
+not IE 11
+not dead
+> 1%
