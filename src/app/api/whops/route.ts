@@ -89,7 +89,7 @@ const getWhopBySlug = async (slug: string, isAdmin: boolean) => {
       publishedAt: isAdmin ? undefined : { not: null }
     },
     include: { 
-      promoCodes: true,
+      PromoCode: true,
       reviews: {
         where: { verified: true },
         orderBy: { createdAt: 'desc' }
@@ -273,8 +273,8 @@ function transformWhopDataForUI(whop: any) {
     console.error('Failed whop data:', {
       id: whop?.id,
       name: whop?.name,
-      promoCodesCount: whop?.promoCodes?.length,
-      firstPromoTitle: whop?.promoCodes?.[0]?.title
+      promoCodesCount: whop?.PromoCode?.length,
+      firstPromoTitle: whop?.PromoCode?.[0]?.title
     });
     // Return a safe fallback object
     return {
@@ -622,8 +622,8 @@ export async function GET(request: Request) {
       whereClause.OR = [
         { name: { contains: search, mode: 'insensitive' } },
         { description: { contains: search, mode: 'insensitive' } },
-        { promoCodes: { some: { title: { contains: search, mode: 'insensitive' } } } },
-        { promoCodes: { some: { code: { contains: search, mode: 'insensitive' } } } }
+        { PromoCode: { some: { title: { contains: search, mode: 'insensitive' } } } },
+        { PromoCode: { some: { code: { contains: search, mode: 'insensitive' } } } }
       ];
     }
     
@@ -645,7 +645,7 @@ export async function GET(request: Request) {
       // Fetch ALL whops that match the filter criteria
       const allWhops = await prisma.whop.findMany({
         where: whereClause,
-        include: { promoCodes: true }
+        include: { PromoCode: true }
       });
       
       console.log(`Found ${allWhops.length} whops for custom sorting`);
