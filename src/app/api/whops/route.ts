@@ -15,9 +15,17 @@ export const revalidate = 0; // Disable caching completely for debugging
 // Direct function for fetching published whops (cache disabled)
 const getWhops = async (isAdmin: boolean, whereClause: any, sortBy: string = '', page: number = 1, limit: number = 20) => {
   console.log('Fetching whops from database (cache disabled)');
+  console.log('Environment check:', {
+    nodeEnv: process.env.NODE_ENV,
+    databaseUrl: process.env.DATABASE_URL ? 'Set' : 'Missing',
+    isAdmin,
+    whereClause,
+    sortBy
+  });
   
   if (sortBy === 'highest' || sortBy === 'lowest' || sortBy === 'alpha-asc' || sortBy === 'alpha-desc' || sortBy === 'default' || sortBy === 'newest' || sortBy === 'highest-rated') {
     // For custom sorting, fetch all whops first
+    console.log('Attempting Prisma query for custom sorting...');
     const allWhops = await prisma.whop.findMany({
       where: whereClause,
       include: { 
@@ -28,6 +36,7 @@ const getWhops = async (isAdmin: boolean, whereClause: any, sortBy: string = '',
         }
       }
     });
+    console.log('Prisma query successful, found', allWhops.length, 'whops');
     
     return allWhops;
   } else {
