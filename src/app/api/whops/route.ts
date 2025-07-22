@@ -214,15 +214,17 @@ function transformWhopDataForUI(whop: any) {
   if (!isGenericTitle && firstPromoCode?.title) {
     // Use specific promo code title if it's not generic, with truncation
     const maxLength = 25;
-    promoText = firstPromoCode.title.length > maxLength 
-      ? firstPromoCode.title.substring(0, maxLength) + '...'
-      : firstPromoCode.title;
+    const title = firstPromoCode.title || '';
+    promoText = title.length > maxLength 
+      ? title.substring(0, maxLength) + '...'
+      : title;
   } else if (whop.description) {
     // Use whop description, truncate to ensure exactly one line only (25 characters max)
     const maxLength = 25;
-    promoText = whop.description.length > maxLength 
-      ? whop.description.substring(0, maxLength) + '...'
-      : whop.description;
+    const description = whop.description || '';
+    promoText = description.length > maxLength 
+      ? description.substring(0, maxLength) + '...'
+      : description;
   } else {
     promoText = 'N/A';
   }
