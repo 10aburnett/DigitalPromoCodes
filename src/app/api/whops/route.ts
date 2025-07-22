@@ -212,8 +212,11 @@ function transformWhopDataForUI(whop: any) {
     firstPromoCode.title.trim() === '';
   
   if (!isGenericTitle && firstPromoCode?.title) {
-    // Use specific promo code title if it's not generic
-    promoText = firstPromoCode.title;
+    // Use specific promo code title if it's not generic, with truncation
+    const maxLength = 25;
+    promoText = firstPromoCode.title.length > maxLength 
+      ? firstPromoCode.title.substring(0, maxLength) + '...'
+      : firstPromoCode.title;
   } else if (whop.description) {
     // Use whop description, truncate to ensure exactly one line only (25 characters max)
     const maxLength = 25;

@@ -7,96 +7,108 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  password  String
-  name      String?
-  role      Role     @default(USER)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model OfferTracking {
-  id          String     @id @default(cuid())
-  actionType  String
-  createdAt   DateTime   @default(now())
-  path        String?
-  promoCodeId String?
-  whopId      String?
-  promoCode   PromoCode? @relation(fields: [promoCodeId], references: [id])
-  whop        Whop?      @relation(fields: [whopId], references: [id])
-
-  @@index([whopId])
-  @@index([promoCodeId])
-  @@index([createdAt])
-  @@index([actionType])
-}
-
-model Review {
-  id        String   @id @default(cuid())
-  author    String
-  content   String
-  rating    Float    @default(0)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  verified  Boolean  @default(false)
-  whopId    String
-  whop      Whop     @relation(fields: [whopId], references: [id])
-
-  @@index([whopId])
-  @@index([verified])
-  @@index([createdAt])
-  @@index([rating])
-}
-
-model Settings {
-  id         String   @id @default(cuid())
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  faviconUrl String?
-}
-
-model LegalPage {
-  id        String   @id @default(cuid())
-  slug      String   @unique
-  title     String
-  content   String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+model BulkImport {
+  id          String       @id
+  filename    String
+  totalRows   Int
+  successRows Int
+  failedRows  Int
+  status      ImportStatus @default(PROCESSING)
+  errors      String[]     @default([])
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime
 }
 
 model ContactSubmission {
-  id        String        @id @default(cuid())
+  id        String        @id
   name      String
   email     String
   subject   String
   message   String
   status    ContactStatus @default(UNREAD)
   createdAt DateTime      @default(now())
-  updatedAt DateTime      @updatedAt
+  updatedAt DateTime
+}
+
+model LegalPage {
+  id        String   @id
+  slug      String   @unique
+  title     String
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+}
+
+model OfferTracking {
+  id          String     @id
+  actionType  String
+  createdAt   DateTime   @default(now())
+  path        String?
+  promoCodeId String?
+  whopId      String?
+  PromoCode   PromoCode? @relation(fields: [promoCodeId], references: [id])
+  Whop        Whop?      @relation(fields: [whopId], references: [id])
+
+  @@index([actionType])
+  @@index([createdAt])
+  @@index([promoCodeId])
+  @@index([whopId])
 }
 
 model PromoCode {
-  id             String          @id @default(cuid())
-  title          String
-  description    String
-  code           String?
-  type           PromoType
-  value          String
-  whopId         String
-  createdAt      DateTime        @default(now())
-  updatedAt      DateTime        @updatedAt
-  offerTrackings OfferTracking[]
-  whop           Whop            @relation(fields: [whopId], references: [id])
+  id            String          @id
+  title         String
+  description   String
+  code          String?
+  type          PromoType
+  value         String
+  whopId        String
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime
+  OfferTracking OfferTracking[]
+  Whop          Whop            @relation(fields: [whopId], references: [id])
 
-  @@index([whopId])
-  @@index([type])
   @@index([createdAt])
+  @@index([type])
+  @@index([whopId])
+}
+
+model Review {
+  id        String   @id
+  author    String
+  content   String
+  rating    Float    @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+  verified  Boolean  @default(false)
+  whopId    String
+  Whop      Whop     @relation(fields: [whopId], references: [id])
+
+  @@index([createdAt])
+  @@index([rating])
+  @@index([verified])
+  @@index([whopId])
+}
+
+model Settings {
+  id         String   @id
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime
+  faviconUrl String?
+}
+
+model User {
+  id        String   @id
+  email     String   @unique
+  password  String
+  name      String?
+  role      Role     @default(USER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime
 }
 
 model Whop {
-  id                  String          @id @default(cuid())
+  id                  String          @id
   name                String
   slug                String          @unique
   logo                String?
@@ -104,7 +116,7 @@ model Whop {
   rating              Float           @default(0)
   displayOrder        Int             @default(0)
   createdAt           DateTime        @default(now())
-  updatedAt           DateTime        @updatedAt
+  updatedAt           DateTime
   publishedAt         DateTime?
   affiliateLink       String
   screenshots         String[]        @default([])
@@ -118,29 +130,48 @@ model Whop {
   termsContent        String?
   faqContent          String?
   whopCategory        WhopCategory    @default(OTHER)
-  offerTrackings      OfferTracking[]
-  promoCodes          PromoCode[]
-  reviews             Review[]
+  OfferTracking       OfferTracking[]
+  PromoCode           PromoCode[]
+  Review              Review[]
 
-  @@index([publishedAt])
-  @@index([displayOrder])
-  @@index([rating])
-  @@index([whopCategory])
-  @@index([name])
   @@index([createdAt])
+  @@index([displayOrder])
+  @@index([name])
+  @@index([publishedAt])
+  @@index([rating])
   @@index([updatedAt])
+  @@index([whopCategory])
 }
 
-model BulkImport {
-  id          String       @id @default(cuid())
-  filename    String
-  totalRows   Int
-  successRows Int
-  failedRows  Int
-  status      ImportStatus @default(PROCESSING)
-  errors      String[]     @default([])
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+model playing_with_neon {
+  id    Int    @id @default(autoincrement())
+  name  String
+  value Float? @db.Real
+}
+
+enum ContactStatus {
+  UNREAD
+  READ
+  REPLIED
+}
+
+enum ImportStatus {
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+enum PromoType {
+  DISCOUNT
+  FREE_TRIAL
+  EXCLUSIVE_ACCESS
+  BUNDLE_DEAL
+  LIMITED_TIME
+}
+
+enum Role {
+  USER
+  ADMIN
 }
 
 enum WhopCategory {
@@ -163,29 +194,4 @@ enum WhopCategory {
   COMPUTER_SCIENCE
   PERSONAL_FINANCE
   OTHER
-}
-
-enum Role {
-  USER
-  ADMIN
-}
-
-enum ContactStatus {
-  UNREAD
-  READ
-  REPLIED
-}
-
-enum PromoType {
-  DISCOUNT
-  FREE_TRIAL
-  EXCLUSIVE_ACCESS
-  BUNDLE_DEAL
-  LIMITED_TIME
-}
-
-enum ImportStatus {
-  PROCESSING
-  COMPLETED
-  FAILED
 }
