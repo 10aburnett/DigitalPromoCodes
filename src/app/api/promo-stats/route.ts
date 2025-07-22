@@ -103,7 +103,7 @@ export async function GET(request: NextRequest) {
       const whop = await prisma.whop.findUnique({
         where: { id: whopId },
         include: {
-          promoCodes: true
+          PromoCode: true
         }
       });
 
@@ -112,7 +112,7 @@ export async function GET(request: NextRequest) {
       }
 
       const promoStats = await Promise.all(
-        whop.promoCodes.map(async (promo) => {
+        whop.PromoCode.map(async (promo) => {
           // Get usage count for today
           const todayUsageCount = await prisma.offerTracking.count({
             where: {
