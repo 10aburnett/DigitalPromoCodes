@@ -416,7 +416,7 @@ export default async function WhopPage({ params }: { params: { slug: string } })
             <div className="p-4 rounded-lg mb-4" style={{ backgroundColor: 'var(--background-color)' }}>
               <h3 className="text-lg font-semibold mb-2" style={{ color: 'var(--accent-color)' }}>{promoTitle}</h3>
               <p className="text-base sm:text-lg leading-relaxed mb-3" style={{ color: 'var(--text-secondary)' }}>
-                {firstPromo?.description || promoTitle}
+                Get exclusive access and special discounts with our promo code.
               </p>
               
               {/* Compact usage stats */}
