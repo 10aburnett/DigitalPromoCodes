@@ -59,10 +59,10 @@ export default function AboutPage() {
               </p>
 
               <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 p-6 rounded-lg border border-blue-200 dark:border-blue-800">
-                <h2 className="text-2xl font-bold mb-4 text-center" style={{ color: 'var(--accent-color)' }}>
+                <h2 className="text-2xl font-bold mb-4 text-center text-gray-900" style={{ color: 'var(--accent-color)' }}>
                   Our Mission
                 </h2>
-                <p className="text-xl text-center font-medium" style={{ color: 'var(--text-color)' }}>
+                <p className="text-xl text-center font-medium text-gray-900">
                   Make Whop more affordable and transparent.
                 </p>
               </div>
@@ -120,13 +120,13 @@ export default function AboutPage() {
               </div>
 
               <div className="bg-gray-50 dark:bg-gray-900/50 p-6 rounded-lg border border-gray-200 dark:border-gray-800">
-                <p className="text-lg leading-relaxed mb-4">
+                <p className="text-lg leading-relaxed mb-4 text-gray-900">
                   We're not affiliated with Whop Inc. directly — we're independent curators and affiliates who use our experience to help others navigate the fast-growing world of online learning and mentorship.
                 </p>
               </div>
 
               <div className="text-center p-6 bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 rounded-lg border border-purple-200 dark:border-purple-800">
-                <p className="text-xl font-semibold" style={{ color: 'var(--text-color)' }}>
+                <p className="text-xl font-semibold text-gray-900">
                   If you're tired of wasting time hunting for working promo codes, welcome home.
                 </p>
               </div>
