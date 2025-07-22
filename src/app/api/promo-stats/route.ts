@@ -193,8 +193,16 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(stats);
   } catch (error) {
     console.error("Error fetching promo stats:", error);
+    console.error("Error details:", {
+      message: error instanceof Error ? error.message : "Unknown error",
+      stack: error instanceof Error ? error.stack : undefined,
+      name: error instanceof Error ? error.name : undefined
+    });
     return NextResponse.json(
-      { error: "Failed to fetch promo statistics" },
+      { 
+        error: "Failed to fetch promo statistics",
+        details: error instanceof Error ? error.message : "Unknown error"
+      },
       { status: 500 }
     );
   }
