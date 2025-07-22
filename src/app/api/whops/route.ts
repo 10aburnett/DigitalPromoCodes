@@ -10,7 +10,7 @@ import { normalizeImagePath } from "@/lib/image-utils";
 import { unstable_cache } from "next/cache";
 
 export const dynamic = 'force-dynamic'; // Explicitly mark this route as dynamic
-export const revalidate = 60; // Cache for 1 minute
+export const revalidate = 0; // Disable caching completely for debugging
 
 // Direct function for fetching published whops (cache disabled)
 const getWhops = async (isAdmin: boolean, whereClause: any, sortBy: string = '', page: number = 1, limit: number = 20) => {
