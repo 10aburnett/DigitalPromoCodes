@@ -213,6 +213,59 @@ export default async function WhopPage({ params }: { params: { slug: string } })
   const promoCode = firstPromo?.code || null;
   const promoTitle = "Exclusive Access"; // Always show "Exclusive Access" on detail pages
 
+  // Helper function to check if whop has a promo code
+  const hasPromoCode = (whopName: string): boolean => {
+    return promoCode !== null || [
+      'Josh Exclusive VIP Access',
+      'Momentum Monthly',
+      'Larry\'s Lounge Premium',
+      'Dodgy\'s Dungeon',
+      'Trade With Insight - Pro',
+      'ParlayScience Discord Access',
+      'Scarface Trades Premium',
+      'The Haven',
+      'PropFellas VIP',
+      'Owls Full Access',
+      'Stellar AIO',
+      'Goat Ecom Growth',
+      'Indicators & VIP | LIFETIME',
+      'Supercar Income',
+      'GOAT Sports Bets Membership',
+      'Best Of Both Worlds',
+      'Moementum University',
+      'ZWM Lifetime Access',
+      'Lifetime Membership',
+      'The BFI Traders University'
+    ].includes(whopName);
+  };
+
+  // Helper function to get discount percentage
+  const getDiscountPercentage = (whopName: string): string => {
+    const discountMap: { [key: string]: string } = {
+      'Josh Exclusive VIP Access': '20',
+      'Momentum Monthly': '20',
+      'Larry\'s Lounge Premium': '25',
+      'Dodgy\'s Dungeon': '15',
+      'Trade With Insight - Pro': '15',
+      'ParlayScience Discord Access': '20',
+      'Scarface Trades Premium': '25',
+      'The Haven': '10',
+      'PropFellas VIP': '10',
+      'Owls Full Access': '20',
+      'Stellar AIO': '20',
+      'Goat Ecom Growth': '10',
+      'Indicators & VIP | LIFETIME': '10',
+      'Supercar Income': '5',
+      'GOAT Sports Bets Membership': '20',
+      'Best Of Both Worlds': '5',
+      'Moementum University': '10',
+      'ZWM Lifetime Access': '40',
+      'Lifetime Membership': '10',
+      'The BFI Traders University': '15'
+    };
+    return discountMap[whopName] || firstPromo?.value || '0';
+  };
+
   // Create unique key for remounting when slug changes
   const pageKey = `whop-${params.slug}`;
 
@@ -220,7 +273,7 @@ export default async function WhopPage({ params }: { params: { slug: string } })
   const faqData = [
     {
       question: `How do I use the ${whop.name} promo code?`,
-      answer: `To use the ${promoTitle} for ${whop.name}, simply click "Reveal Code" above to visit their website.${promoCode || whop.name === 'Josh Exclusive VIP Access' ? ' Copy the promo code and enter it during checkout.' : ' The discount will be automatically applied when you purchase through our link.'}`
+      answer: `To use the ${promoTitle} for ${whop.name}, simply click "Reveal Code" above to visit their website.${hasPromoCode(whop.name) ? ' Copy the promo code and enter it during checkout.' : ' The discount will be automatically applied when you purchase through our link.'}`
     },
     {
       question: `What type of product is ${whop.name}?`,
@@ -288,7 +341,7 @@ export default async function WhopPage({ params }: { params: { slug: string } })
                 <span className="mr-2 font-semibold">1.</span>
                 <span>Click "Reveal Code" above to visit {whop.name} and get your exclusive offer</span>
               </li>
-              {promoCode || whop.name === 'Josh Exclusive VIP Access' ? (
+              {hasPromoCode(whop.name) ? (
                 <li className="flex items-start">
                   <span className="mr-2 font-semibold">2.</span>
                   <span>Copy the revealed promo code and enter it during checkout</span>
@@ -330,11 +383,11 @@ export default async function WhopPage({ params }: { params: { slug: string } })
                       </td>
                     </tr>
                   )}
-                  {(firstPromo?.value && firstPromo.value !== '' && firstPromo.value !== '0' && firstPromo.code) || whop.name === 'Josh Exclusive VIP Access' ? (
+                  {hasPromoCode(whop.name) ? (
                     <tr className="border-b" style={{ borderColor: 'var(--border-color)' }}>
                       <td className="py-3 pl-4 pr-2 font-medium w-1/3" style={{ backgroundColor: 'var(--background-color)' }}>Discount Value</td>
                       <td className="py-3 px-4" style={{ backgroundColor: 'var(--background-secondary)' }}>
-                        {whop.name === 'Josh Exclusive VIP Access' ? '20' : firstPromo.value}%
+                        {getDiscountPercentage(whop.name)}%
                       </td>
                     </tr>
                   ) : null}
@@ -404,7 +457,7 @@ export default async function WhopPage({ params }: { params: { slug: string } })
             <h2 className="text-xl sm:text-2xl font-bold mb-4">Terms & Conditions</h2>
             <p className="text-base sm:text-lg leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
               This exclusive offer for {whop.name} is available through our partnership.
-              {promoCode || whop.name === 'Josh Exclusive VIP Access' ? ' Use the promo code during checkout to get your discount.' : ' The discount will be automatically applied when you click through our link.'}
+              {hasPromoCode(whop.name) ? ' Use the promo code during checkout to get your discount.' : ' The discount will be automatically applied when you click through our link.'}
               {' '}Terms and conditions apply as set by {whop.name}. Offer subject to availability and may be modified or discontinued at any time.
             </p>
           </section>

@@ -154,6 +154,44 @@ export default function WhopPageClient({ whop, firstPromo, promoCode, promoTitle
             <span className="text-lg" style={{ color: 'var(--accent-color)' }}>{promoCode}</span>
           ) : whop.name === 'Josh Exclusive VIP Access' ? (
             <span className="text-lg" style={{ color: 'var(--accent-color)' }}>JOSH</span>
+          ) : whop.name === 'Momentum Monthly' ? (
+            <span className="text-lg" style={{ color: 'var(--accent-color)' }}>PROMO-1A92969C</span>
+          ) : whop.name === 'Larry\'s Lounge Premium' ? (
+            <span className="text-lg" style={{ color: 'var(--accent-color)' }}>PROMO-BF9EF1CC</span>
+          ) : whop.name === 'Dodgy\'s Dungeon' ? (
+            <span className="text-lg" style={{ color: 'var(--accent-color)' }}>PROMO-565022F7</span>
+          ) : whop.name === 'Trade With Insight - Pro' ? (
+            <span className="text-lg" style={{ color: 'var(--accent-color)' }}>PROMO-624C9EA4</span>
+          ) : whop.name === 'ParlayScience Discord Access' ? (
+            <span className="text-lg" style={{ color: 'var(--accent-color)' }}>PROMO-C0047AFA</span>
+          ) : whop.name === 'Scarface Trades Premium' ? (
+            <span className="text-lg" style={{ color: 'var(--accent-color)' }}>PROMO-01FE6235</span>
+          ) : whop.name === 'The Haven' ? (
+            <span className="text-lg" style={{ color: 'var(--accent-color)' }}>PROMO-45EF5D24</span>
+          ) : whop.name === 'PropFellas VIP' ? (
+            <span className="text-lg" style={{ color: 'var(--accent-color)' }}>PROMO-B83DC955</span>
+          ) : whop.name === 'Owls Full Access' ? (
+            <span className="text-lg" style={{ color: 'var(--accent-color)' }}>PROMO-7136BFC8</span>
+          ) : whop.name === 'Stellar AIO' ? (
+            <span className="text-lg" style={{ color: 'var(--accent-color)' }}>PROMO-1A6008FA</span>
+          ) : whop.name === 'Goat Ecom Growth' ? (
+            <span className="text-lg" style={{ color: 'var(--accent-color)' }}>PROMO-1B868367</span>
+          ) : whop.name === 'Indicators & VIP | LIFETIME' ? (
+            <span className="text-lg" style={{ color: 'var(--accent-color)' }}>PROMO-7DBFEB18</span>
+          ) : whop.name === 'Supercar Income' ? (
+            <span className="text-lg" style={{ color: 'var(--accent-color)' }}>PROMO-5E906FAB</span>
+          ) : whop.name === 'GOAT Sports Bets Membership' ? (
+            <span className="text-lg" style={{ color: 'var(--accent-color)' }}>PROMO-3352BB19</span>
+          ) : whop.name === 'Best Of Both Worlds' ? (
+            <span className="text-lg" style={{ color: 'var(--accent-color)' }}>PROMO-336B4ACD</span>
+          ) : whop.name === 'Moementum University' ? (
+            <span className="text-lg" style={{ color: 'var(--accent-color)' }}>PROMO-23AB3618</span>
+          ) : whop.name === 'ZWM Lifetime Access' ? (
+            <span className="text-lg" style={{ color: 'var(--accent-color)' }}>PROMO-4E6D572F</span>
+          ) : whop.name === 'Lifetime Membership' ? (
+            <span className="text-lg" style={{ color: 'var(--accent-color)' }}>PROMO-022D1F18</span>
+          ) : whop.name === 'The BFI Traders University' ? (
+            <span className="text-lg" style={{ color: 'var(--accent-color)' }}>PROMO-58B279FF</span>
           ) : (
             <span className="text-lg" style={{ color: 'var(--success-color)' }}>{t('whop.noCode')}</span>
           )}
