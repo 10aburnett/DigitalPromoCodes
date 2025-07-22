@@ -56,7 +56,7 @@ export async function GET() {
         const promoCode = await prisma.promoCode.findUnique({
           where: { id: promoCodeId },
           include: {
-            whop: {
+            Whop: {
               select: {
                 name: true,
                 slug: true,
@@ -66,14 +66,14 @@ export async function GET() {
           }
         });
 
-        console.log('Found promo code:', promoCode?.title, 'from whop:', promoCode?.whop?.name);
+        console.log('Found promo code:', promoCode?.title, 'from whop:', promoCode?.Whop?.name);
 
-        if (promoCode && promoCode.whop) {
+        if (promoCode && promoCode.Whop) {
           mostClaimedOffer = {
-            name: promoCode.whop.name,
-            slug: promoCode.whop.slug,
+            name: promoCode.Whop.name,
+            slug: promoCode.Whop.slug,
             claimCount: claimCount,
-            logoUrl: promoCode.whop.logo
+            logoUrl: promoCode.Whop.logo
           };
         }
       }
