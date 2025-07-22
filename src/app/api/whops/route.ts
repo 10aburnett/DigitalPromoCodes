@@ -530,7 +530,7 @@ function hasSpecialPromoCode(whopName: string): boolean {
     'Best Of Both Worlds',
     'Moementum University',
     'ZWM Lifetime Access',
-    'Lifetime Membership',
+    'Ayecon Academy',
     'The BFI Traders University'
   ];
   return whopsWithPromoCodes.includes(whopName);

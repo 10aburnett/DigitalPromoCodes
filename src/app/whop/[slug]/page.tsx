@@ -234,7 +234,7 @@ export default async function WhopPage({ params }: { params: { slug: string } })
       'Best Of Both Worlds',
       'Moementum University',
       'ZWM Lifetime Access',
-      'Lifetime Membership',
+      'Ayecon Academy',
       'The BFI Traders University'
     ].includes(whopName);
   };
@@ -260,7 +260,7 @@ export default async function WhopPage({ params }: { params: { slug: string } })
       'Best Of Both Worlds': '5',
       'Moementum University': '10',
       'ZWM Lifetime Access': '40',
-      'Lifetime Membership': '10',
+      'Ayecon Academy': '10',
       'The BFI Traders University': '15'
     };
     return discountMap[whopName] || firstPromo?.value || '0';
