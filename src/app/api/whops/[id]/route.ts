@@ -9,7 +9,7 @@ export async function GET(
     const whop = await prisma.whop.findUnique({
       where: { id: params.id },
       include: {
-        promoCodes: true,
+        PromoCode: true,
         reviews: {
           where: { verified: true }
         }
@@ -56,7 +56,7 @@ export async function PUT(
       where: { id: params.id },
       data: whopData,
       include: {
-        promoCodes: true,
+        PromoCode: true,
         reviews: {
           where: { verified: true }
         }
