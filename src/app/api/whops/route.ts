@@ -261,6 +261,12 @@ function transformWhopDataForUI(whop: any) {
   
   } catch (error) {
     console.error('Error transforming whop data:', error);
+    console.error('Failed whop data:', {
+      id: whop?.id,
+      name: whop?.name,
+      promoCodesCount: whop?.promoCodes?.length,
+      firstPromoTitle: whop?.promoCodes?.[0]?.title
+    });
     // Return a safe fallback object
     return {
       id: whop?.id || 'unknown',
@@ -952,7 +958,15 @@ export async function GET(request: Request) {
     return NextResponse.json(response, { headers });
   } catch (error) {
     console.error("Error in GET /api/whops:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    console.error("Error details:", {
+      message: error instanceof Error ? error.message : "Unknown error",
+      stack: error instanceof Error ? error.stack : undefined,
+      name: error instanceof Error ? error.name : undefined
+    });
+    return NextResponse.json({ 
+      error: "Internal server error", 
+      details: error instanceof Error ? error.message : "Unknown error" 
+    }, { status: 500 });
   }
 }
 
