@@ -90,7 +90,7 @@ const getWhopBySlug = async (slug: string, isAdmin: boolean) => {
     },
     include: { 
       PromoCode: true,
-      reviews: {
+      Review: {
         where: { verified: true },
         orderBy: { createdAt: 'desc' }
       }
