@@ -103,8 +103,8 @@ export function SocialProofProvider({ children }: { children: React.ReactNode })
       name: data.name || getRandomName(),
       amount: data.amount || generateSavingsAmount(),
       whopName: formatWhopName(data.whopName),
-      // Only include code if it's valid, otherwise set to empty string
-      code: isValidPromoCode(data.code) ? data.code : '',
+      // NEVER show actual promo codes for revenue protection
+      code: '',
     };
 
     setNotifications(prev => {
