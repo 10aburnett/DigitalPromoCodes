@@ -188,7 +188,7 @@ export default function WhopPageClient({ whop, firstPromo, promoCode, promoTitle
             <span className="text-lg" style={{ color: 'var(--accent-color)' }}>PROMO-23AB3618</span>
           ) : whop.name === 'ZWM Lifetime Access' ? (
             <span className="text-lg" style={{ color: 'var(--accent-color)' }}>PROMO-4E6D572F</span>
-          ) : whop.name === 'Ayecon Academy' ? (
+          ) : whop.name === 'Ayecon Academy Lifetime Membership' ? (
             <span className="text-lg" style={{ color: 'var(--accent-color)' }}>PROMO-022D1F18</span>
           ) : whop.name === 'The BFI Traders University' ? (
             <span className="text-lg" style={{ color: 'var(--accent-color)' }}>PROMO-58B279FF</span>
