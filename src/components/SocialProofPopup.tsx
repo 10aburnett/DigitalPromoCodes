@@ -96,20 +96,6 @@ function SocialProofPopupItem({ data, onComplete }: SocialProofPopupProps) {
             <span className="font-bold" style={{ color: 'var(--success-color)' }}>
               {data.amount}
             </span>
-            {data.code && data.code.trim() !== '' && (
-              <>
-                {' '}with{' '}
-                <span 
-                  className="font-mono text-xs px-1.5 py-0.5 sm:px-2 sm:py-1 rounded" 
-                  style={{ 
-                    backgroundColor: 'var(--accent-color)', 
-                    color: 'white' 
-                  }}
-                >
-                  {data.code}
-                </span>
-              </>
-            )}
             {' '}on {data.whopName}
           </p>
         </div>
