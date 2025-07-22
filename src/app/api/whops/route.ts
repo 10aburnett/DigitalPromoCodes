@@ -29,8 +29,8 @@ const getWhops = async (isAdmin: boolean, whereClause: any, sortBy: string = '',
     const allWhops = await prisma.whop.findMany({
       where: whereClause,
       include: { 
-        promoCodes: true,
-        reviews: {
+        PromoCode: true,
+        Review: {
           where: { verified: true },
           orderBy: { createdAt: 'desc' }
         }
@@ -59,8 +59,8 @@ const getWhops = async (isAdmin: boolean, whereClause: any, sortBy: string = '',
     const whops = await prisma.whop.findMany({
       where: whereClause,
       include: { 
-        promoCodes: true,
-        reviews: {
+        PromoCode: true,
+        Review: {
           where: { verified: true },
           orderBy: { createdAt: 'desc' }
         }
@@ -202,8 +202,8 @@ function transformWhopDataForUI(whop: any) {
   const logoPath = whop.logo || '/images/Simplified Logo.png';
   
   // Get the first promo code (if any) - don't create placeholders
-  const firstPromoCode = whop.promoCodes && Array.isArray(whop.promoCodes) && whop.promoCodes.length > 0 
-    ? whop.promoCodes[0] 
+  const firstPromoCode = whop.PromoCode && Array.isArray(whop.PromoCode) && whop.PromoCode.length > 0 
+    ? whop.PromoCode[0] 
     : null;
   
   // Format price properly with validation (simplified to avoid crashes)
@@ -260,9 +260,9 @@ function transformWhopDataForUI(whop: any) {
     whopId: whop.id,
     promoCodeId: firstPromoCode?.id || null,
     // Include original promoCodes array if available
-    promoCodes: Array.isArray(whop.promoCodes) ? whop.promoCodes : [],
+    promoCodes: Array.isArray(whop.PromoCode) ? whop.PromoCode : [],
     // Include reviews if available
-    reviews: Array.isArray(whop.reviews) ? whop.reviews : [],
+    reviews: Array.isArray(whop.Review) ? whop.Review : [],
     // Include additional fields that might be useful
     website: whop.website,
     category: whop.category
