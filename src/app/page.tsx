@@ -100,8 +100,9 @@ export default function Home() {
     async function fetchInitialData() {
       try {
         // Fetch critical data in parallel for faster loading
+        // Use default sorting to ensure promo code whops appear first
         const [whopsResponse, statsResponse] = await Promise.all([
-          fetch('/api/whops?page=1&limit=15'),
+          fetch('/api/whops?page=1&limit=15&sortBy=default'),
           fetch('/api/statistics')
         ]);
 

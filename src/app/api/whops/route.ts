@@ -16,7 +16,7 @@ export const revalidate = 60; // Cache for 1 minute
 const getWhops = async (isAdmin: boolean, whereClause: any, sortBy: string = '', page: number = 1, limit: number = 20) => {
   console.log('Fetching whops from database (cache disabled)');
   
-  if (sortBy === 'highest' || sortBy === 'lowest' || sortBy === 'alpha-asc' || sortBy === 'alpha-desc') {
+  if (sortBy === 'highest' || sortBy === 'lowest' || sortBy === 'alpha-asc' || sortBy === 'alpha-desc' || sortBy === 'default' || sortBy === 'newest' || sortBy === 'highest-rated') {
     // For custom sorting, fetch all whops first
     const allWhops = await prisma.whop.findMany({
       where: whereClause,
@@ -509,9 +509,38 @@ function extractAlphabeticString(text: string): string {
   return text.replace(/[^a-zA-Z]/g, '').toLowerCase();
 }
 
+// Helper function to check if whop has a special promo code (frontend hardcoded ones)
+function hasSpecialPromoCode(whopName: string): boolean {
+  const whopsWithPromoCodes = [
+    'Josh Exclusive VIP Access',
+    'Momentum Monthly',
+    'Larry\'s Lounge Premium',
+    'Dodgy\'s Dungeon',
+    'Trade With Insight - Pro',
+    'ParlayScience Discord Access',
+    'Scarface Trades Premium',
+    'The Haven',
+    'PropFellas VIP',
+    'Owls Full Access',
+    'Stellar AIO',
+    'Goat Ecom Growth',
+    'Indicators & VIP | LIFETIME',
+    'Supercar Income',
+    'GOAT Sports Bets Membership',
+    'Best Of Both Worlds',
+    'Moementum University',
+    'ZWM Lifetime Access',
+    'Lifetime Membership',
+    'The BFI Traders University'
+  ];
+  return whopsWithPromoCodes.includes(whopName);
+}
+
 export async function GET(request: Request) {
   try {
-    console.log("GET /api/whops");
+    console.log("🔥 GET /api/whops - Starting API call");
+    console.log("🔥 hasSpecialPromoCode function loaded:", typeof hasSpecialPromoCode);
+    console.log("🔥 Testing Josh whop:", hasSpecialPromoCode('Josh Exclusive VIP Access'));
     
     // Check if user is admin
     let isAdmin = false;
@@ -590,7 +619,7 @@ export async function GET(request: Request) {
     const totalCount = await prisma.whop.count({ where: whereClause });
     
     // For price-based sorting and alphabetical sorting, we need to fetch ALL whops first, then sort and paginate
-    if (sortBy === 'highest' || sortBy === 'lowest' || sortBy === 'alpha-asc' || sortBy === 'alpha-desc') {
+    if (sortBy === 'highest' || sortBy === 'lowest' || sortBy === 'alpha-asc' || sortBy === 'alpha-desc' || sortBy === 'default' || sortBy === 'newest' || sortBy === 'highest-rated') {
       console.log(`Fetching ALL whops for custom sorting - sortBy: ${sortBy}`);
       
       // Fetch ALL whops that match the filter criteria
@@ -611,9 +640,18 @@ export async function GET(request: Request) {
         );
       }
       
-      // Sort ALL whops by the specified criteria
+      // Sort ALL whops by the specified criteria with two-tier system
       if (sortBy === 'highest') {
         transformedWhops.sort((a, b) => {
+          const aHasPromo = hasSpecialPromoCode(a.name);
+          const bHasPromo = hasSpecialPromoCode(b.name);
+          
+          // First tier: promo codes vs non-promo codes
+          if (aHasPromo !== bHasPromo) {
+            return bHasPromo ? 1 : -1; // Prioritize whops with promo codes
+          }
+          
+          // Second tier: within same promo status, sort by price (highest first)
           const priceA = extractPriceValue(a.price);
           const priceB = extractPriceValue(b.price);
           
@@ -629,6 +667,15 @@ export async function GET(request: Request) {
         });
       } else if (sortBy === 'lowest') {
         transformedWhops.sort((a, b) => {
+          const aHasPromo = hasSpecialPromoCode(a.name);
+          const bHasPromo = hasSpecialPromoCode(b.name);
+          
+          // First tier: promo codes vs non-promo codes
+          if (aHasPromo !== bHasPromo) {
+            return bHasPromo ? 1 : -1; // Prioritize whops with promo codes
+          }
+          
+          // Second tier: within same promo status, sort by price (lowest first)
           const priceA = extractPriceValue(a.price);
           const priceB = extractPriceValue(b.price);
           
@@ -643,18 +690,105 @@ export async function GET(request: Request) {
           return priceA - priceB; // Normal lowest price first sorting
         });
       } else if (sortBy === 'alpha-asc') {
-        // Alphabetical sorting with proper alphabetic extraction
+        // Alphabetical sorting with two-tier system (A-Z)
         transformedWhops.sort((a, b) => {
+          const aHasPromo = hasSpecialPromoCode(a.name);
+          const bHasPromo = hasSpecialPromoCode(b.name);
+          
+          // First tier: promo codes vs non-promo codes
+          if (aHasPromo !== bHasPromo) {
+            return bHasPromo ? 1 : -1; // Prioritize whops with promo codes
+          }
+          
+          // Second tier: within same promo status, sort alphabetically A-Z
           const alphaA = extractAlphabeticString(a.name);
           const alphaB = extractAlphabeticString(b.name);
           return alphaA.localeCompare(alphaB);
         });
       } else if (sortBy === 'alpha-desc') {
-        // Reverse alphabetical sorting with proper alphabetic extraction
+        // Alphabetical sorting with two-tier system (Z-A)
         transformedWhops.sort((a, b) => {
+          const aHasPromo = hasSpecialPromoCode(a.name);
+          const bHasPromo = hasSpecialPromoCode(b.name);
+          
+          // First tier: promo codes vs non-promo codes
+          if (aHasPromo !== bHasPromo) {
+            return bHasPromo ? 1 : -1; // Prioritize whops with promo codes
+          }
+          
+          // Second tier: within same promo status, sort alphabetically Z-A
           const alphaA = extractAlphabeticString(a.name);
           const alphaB = extractAlphabeticString(b.name);
           return alphaB.localeCompare(alphaA);
+        });
+      } else if (sortBy === 'default') {
+        // Default sorting: promo codes first, then by display order
+        
+        transformedWhops.sort((a, b) => {
+          const aHasPromo = hasSpecialPromoCode(a.name);
+          const bHasPromo = hasSpecialPromoCode(b.name);
+          
+          // First tier: promo codes vs non-promo codes
+          if (aHasPromo !== bHasPromo) {
+            return bHasPromo ? 1 : -1; // Prioritize whops with promo codes
+          }
+          
+          // Second tier: within same promo status, maintain original order (displayOrder)
+          const orderA = a.displayOrder || 0;
+          const orderB = b.displayOrder || 0;
+          if (orderA !== orderB) {
+            return orderA - orderB;
+          }
+          
+          // Tertiary: if display orders are equal, sort by rating then creation date
+          const ratingA = a.rating || 0;
+          const ratingB = b.rating || 0;
+          if (ratingA !== ratingB) {
+            return ratingB - ratingA;
+          }
+          
+          const dateA = new Date(a.createdAt || 0).getTime();
+          const dateB = new Date(b.createdAt || 0).getTime();
+          return dateB - dateA;
+        });
+      } else if (sortBy === 'newest') {
+        // Newest sorting with two-tier system
+        transformedWhops.sort((a, b) => {
+          const aHasPromo = hasSpecialPromoCode(a.name);
+          const bHasPromo = hasSpecialPromoCode(b.name);
+          
+          // First tier: promo codes vs non-promo codes
+          if (aHasPromo !== bHasPromo) {
+            return bHasPromo ? 1 : -1; // Prioritize whops with promo codes
+          }
+          
+          // Second tier: within same promo status, sort by creation date (newest first)
+          const dateA = new Date(a.createdAt || 0).getTime();
+          const dateB = new Date(b.createdAt || 0).getTime();
+          return dateB - dateA;
+        });
+      } else if (sortBy === 'highest-rated') {
+        // Highest-rated sorting with two-tier system
+        transformedWhops.sort((a, b) => {
+          const aHasPromo = hasSpecialPromoCode(a.name);
+          const bHasPromo = hasSpecialPromoCode(b.name);
+          
+          // First tier: promo codes vs non-promo codes
+          if (aHasPromo !== bHasPromo) {
+            return bHasPromo ? 1 : -1; // Prioritize whops with promo codes
+          }
+          
+          // Second tier: within same promo status, sort by rating (highest first)
+          const ratingA = a.rating || 0;
+          const ratingB = b.rating || 0;
+          if (ratingA !== ratingB) {
+            return ratingB - ratingA;
+          }
+          
+          // Tertiary: if ratings are equal, sort by creation date
+          const dateA = new Date(a.createdAt || 0).getTime();
+          const dateB = new Date(b.createdAt || 0).getTime();
+          return dateB - dateA;
         });
       }
       
@@ -684,19 +818,13 @@ export async function GET(request: Request) {
       return NextResponse.json(response, { headers });
     }
     
-    // For non-price and non-alphabetical sorting, use the original pagination approach
-    // Build orderBy clause
+    // For any remaining sorting methods, use the original pagination approach
+    // Build orderBy clause (fallback, should rarely be used now)
     let orderBy: any = [
       { displayOrder: 'asc' },
       { rating: 'desc' },
       { createdAt: 'desc' }
     ];
-    
-    if (sortBy === 'newest') {
-      orderBy = [{ createdAt: 'desc' }];
-    } else if (sortBy === 'highest-rated') {
-      orderBy = [{ rating: 'desc' }, { createdAt: 'desc' }];
-    }
     
     // Calculate offset for pagination
     const offset = (page - 1) * limit;
@@ -722,6 +850,77 @@ export async function GET(request: Request) {
       transformedWhops = transformedWhops.filter(whop => 
         whop.promoType === promoType.toLowerCase()
       );
+    }
+    
+    // Apply two-tier sorting for all sorting methods
+    if (sortBy === 'newest') {
+      transformedWhops.sort((a, b) => {
+        const aHasPromo = hasSpecialPromoCode(a.name);
+        const bHasPromo = hasSpecialPromoCode(b.name);
+        
+        // First tier: promo codes vs non-promo codes
+        if (aHasPromo !== bHasPromo) {
+          return bHasPromo ? 1 : -1; // Prioritize whops with promo codes
+        }
+        
+        // Second tier: within same promo status, sort by creation date (newest first)
+        const dateA = new Date(a.createdAt || 0).getTime();
+        const dateB = new Date(b.createdAt || 0).getTime();
+        return dateB - dateA;
+      });
+    } else if (sortBy === 'highest-rated') {
+      transformedWhops.sort((a, b) => {
+        const aHasPromo = hasSpecialPromoCode(a.name);
+        const bHasPromo = hasSpecialPromoCode(b.name);
+        
+        // First tier: promo codes vs non-promo codes
+        if (aHasPromo !== bHasPromo) {
+          return bHasPromo ? 1 : -1; // Prioritize whops with promo codes
+        }
+        
+        // Second tier: within same promo status, sort by rating (highest first)
+        const ratingA = a.rating || 0;
+        const ratingB = b.rating || 0;
+        if (ratingA !== ratingB) {
+          return ratingB - ratingA;
+        }
+        
+        // Tertiary: if ratings are equal, sort by creation date
+        const dateA = new Date(a.createdAt || 0).getTime();
+        const dateB = new Date(b.createdAt || 0).getTime();
+        return dateB - dateA;
+      });
+    } else if (!sortBy || sortBy === '' || sortBy === 'default') {
+      // Default sorting: promo codes first, then by display order (fallback - should not be reached now)
+      console.log('🚀 Applying default sorting with promo code priority (fallback)');
+      
+      transformedWhops.sort((a, b) => {
+        const aHasPromo = hasSpecialPromoCode(a.name);
+        const bHasPromo = hasSpecialPromoCode(b.name);
+        
+        // First tier: promo codes vs non-promo codes
+        if (aHasPromo !== bHasPromo) {
+          return bHasPromo ? 1 : -1; // Prioritize whops with promo codes
+        }
+        
+        // Second tier: within same promo status, maintain original order (displayOrder)
+        const orderA = a.displayOrder || 0;
+        const orderB = b.displayOrder || 0;
+        if (orderA !== orderB) {
+          return orderA - orderB;
+        }
+        
+        // Tertiary: if display orders are equal, sort by rating then creation date
+        const ratingA = a.rating || 0;
+        const ratingB = b.rating || 0;
+        if (ratingA !== ratingB) {
+          return ratingB - ratingA;
+        }
+        
+        const dateA = new Date(a.createdAt || 0).getTime();
+        const dateB = new Date(b.createdAt || 0).getTime();
+        return dateB - dateA;
+      });
     }
     
     // Note: 'newest' and 'highest-rated' are handled by database orderBy clause above
