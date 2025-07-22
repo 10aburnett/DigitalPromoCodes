@@ -857,7 +857,7 @@ export async function GET(request: Request) {
       orderBy: orderBy,
       skip: offset,
       take: limit,
-      include: { promoCodes: true }
+      include: { PromoCode: true }
     });
     
     console.log(`Found ${whops.length} whops out of ${totalCount} total`);
