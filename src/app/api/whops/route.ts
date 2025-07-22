@@ -215,8 +215,8 @@ function transformWhopDataForUI(whop: any) {
     // Use specific promo code title if it's not generic
     promoText = firstPromoCode.title;
   } else if (whop.description) {
-    // Use whop description, truncate to ensure exactly one line only (25 characters max)
-    const maxLength = 25;
+    // Use whop description, truncate to ensure reasonable length (100 characters max)
+    const maxLength = 100;
     promoText = whop.description.length > maxLength 
       ? whop.description.substring(0, maxLength) + '...'
       : whop.description;
@@ -985,6 +985,8 @@ export async function POST(request: Request) {
 
   try {
     const data = await request.json();
+    console.log("POST /api/whops - Starting whop creation");
+    console.log("POST /api/whops - Received data:", JSON.stringify(data, null, 2));
     
     // Validate required fields
     if (!data.name || !data.affiliateLink) {
@@ -992,6 +994,16 @@ export async function POST(request: Request) {
         { error: "Missing required fields: name and affiliateLink" },
         { status: 400 }
       );
+    }
+    
+    // Validate promo code fields if provided
+    if (data.promoTitle || data.promoDescription || data.promoType || data.promoValue) {
+      if (!data.promoTitle || !data.promoDescription || !data.promoType || !data.promoValue) {
+        return NextResponse.json(
+          { error: "When creating promo codes, promoTitle, promoDescription, promoType, and promoValue are all required" },
+          { status: 400 }
+        );
+      }
     }
     
     // Find the highest display order value and add 1
@@ -1027,12 +1039,42 @@ export async function POST(request: Request) {
         displayOrder: displayOrder
       }
     });
+
+    console.log("Created whop:", whop.id, whop.name);
     
-    return NextResponse.json(whop);
+    // Create promo code if promo data is provided
+    let promoCode = null;
+    if (data.promoTitle && data.promoDescription && data.promoType && data.promoValue) {
+      try {
+        promoCode = await prisma.promoCode.create({
+          data: {
+            whopId: whop.id,
+            code: data.promoCode || null, // Allow null for "NO CODE REQUIRED" cases
+            title: data.promoTitle,
+            description: data.promoDescription,
+            type: data.promoType,
+            value: data.promoValue
+          }
+        });
+        console.log("Created promo code:", promoCode.id, promoCode.title);
+      } catch (promoError) {
+        console.error("Error creating promo code:", promoError);
+        // Don't fail the whole operation if promo creation fails
+        // The whop was created successfully
+      }
+    }
+    
+    // Return the whop with promo code if created
+    const response = {
+      ...whop,
+      promoCode: promoCode
+    };
+    
+    return NextResponse.json(response);
   } catch (error) {
     console.error("Error creating whop:", error);
     return NextResponse.json(
-      { error: "Failed to create whop" },
+      { error: "Failed to create whop", details: error instanceof Error ? error.message : "Unknown error" },
       { status: 500 }
     );
   }

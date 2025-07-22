@@ -369,20 +369,6 @@ export default async function WhopPage({ params }: { params: { slug: string } })
             <div className="overflow-hidden rounded-lg">
               <table className="min-w-full">
                 <tbody>
-                  {whop.website && (
-                    <tr className="border-b" style={{ borderColor: 'var(--border-color)' }}>
-                      <td className="py-3 pl-4 pr-2 font-medium w-1/3" style={{ backgroundColor: 'var(--background-color)' }}>Website</td>
-                      <td className="py-3 px-4" style={{ backgroundColor: 'var(--background-secondary)' }}>
-                        <a href={whop.website.startsWith('http') ? whop.website : `https://${whop.website}`} 
-                          target="_blank" 
-                          rel="nofollow noopener" 
-                          className="hover:underline"
-                          style={{ color: 'var(--accent-color)' }}>
-                          {whop.website.replace(/(https?:\/\/)?(www\.)?/i, '')}
-                        </a>
-                      </td>
-                    </tr>
-                  )}
                   {hasPromoCode(whop.name) ? (
                     <tr className="border-b" style={{ borderColor: 'var(--border-color)' }}>
                       <td className="py-3 pl-4 pr-2 font-medium w-1/3" style={{ backgroundColor: 'var(--background-color)' }}>Discount Value</td>
