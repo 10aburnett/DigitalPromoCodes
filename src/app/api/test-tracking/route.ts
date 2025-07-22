@@ -8,11 +8,11 @@ export async function GET() {
   try {
     // Find the first whop and promo code
     const whops = await prisma.whop.findMany({
-      include: { promoCodes: true },
+      include: { PromoCode: true },
       take: 1
     });
 
-    if (whops.length === 0 || whops[0].promoCodes.length === 0) {
+    if (whops.length === 0 || whops[0].PromoCode.length === 0) {
       return NextResponse.json(
         { error: "No whops or promo codes found" },
         { status: 404 }
@@ -20,7 +20,7 @@ export async function GET() {
     }
 
     const whop = whops[0];
-    const promoCode = whop.promoCodes[0];
+    const promoCode = whop.PromoCode[0];
     const now = new Date();
 
     // Create a test tracking entry using raw SQL

@@ -226,7 +226,7 @@ export async function GET(
         id: { not: whopId }
       },
       include: {
-        promoCodes: {
+        PromoCode: {
           select: {
             id: true,
             title: true,
