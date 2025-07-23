@@ -10,6 +10,7 @@ import { lazy } from 'react';
 const StatisticsSection = lazy(() => import('@/components/StatisticsSection'));
 const CallToAction = lazy(() => import('@/components/CallToAction'));
 
+
 // Define the types for our data
 interface PromoCode {
   id: string;

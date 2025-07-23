@@ -148,15 +148,25 @@ export default async function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://www.googletagmanager.com" />
-        <link rel="preconnect" href="https://cdn.prod.website-files.com" />
         <link rel="dns-prefetch" href="//whpcodes.com" />
         <link rel="dns-prefetch" href="//www.googletagmanager.com" />
-        <link rel="dns-prefetch" href="//vercel.app" />
-        <link rel="dns-prefetch" href="//cdn.prod.website-files.com" />
-        <link rel="preconnect" href="https://vercel.app" />
         <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" as="style" />
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" media="print" onLoad="this.media='all'" />
         <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" /></noscript>
+        <script dangerouslySetInnerHTML={{__html: `
+          (function() {
+            const savedTheme = localStorage.getItem('theme');
+            const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            let initialTheme = 'light'; // Default to light for faster rendering
+            
+            if (savedTheme === 'dark' || (savedTheme === 'system' && systemPrefersDark)) {
+              initialTheme = 'dark';
+            }
+            
+            document.documentElement.setAttribute('data-theme', initialTheme);
+            document.documentElement.classList.add(initialTheme);
+          })();
+        `}} />
         <style dangerouslySetInnerHTML={{__html: `
           :root {
             --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -164,33 +174,6 @@ export default async function RootLayout({
             --border-radius-large: 12px;
             --btn-border-radius: 6px;
             --card-spacing: 30px;
-            --background-color: #1a1b23;
-            --background-secondary: #2a2d3a;
-            --background-tertiary: #3f4451;
-            --container-color: #2a2d3a;
-            --text-color: #f1f1f1;
-            --text-secondary: #a4a5b0;
-            --text-muted: #6b7280;
-            --accent-color: #6366f1;
-            --accent-hover: #5855eb;
-            --success-color: #68D08B;
-            --warning-color: #f59e0b;
-            --error-color: #dc2626;
-            --border-color: #3f4451;
-            --shadow-color: rgba(0, 0, 0, 0.1);
-            --menu-item-color: #a7a9b4;
-            --header-shadow: 2px 0 3px 0 #00000085;
-            --promo-bg: #2a2d3a;
-            --promo-bg-gradient: linear-gradient(45deg, #2a2d3a, #1f2937);
-            --promo-border: 1px solid #3f4451;
-            --promo-shadow: 0 0 4px 0 #0f0f14ad;
-            --card-bg: #2a2d3a;
-            --card-border: #3f4451;
-            --input-bg: #3e4050;
-            --input-border: #404055;
-            --input-focus: #68D08B;
-          }
-          [data-theme="light"] {
             --background-color: #ffffff;
             --background-secondary: #f8fafc;
             --background-tertiary: #e2e8f0;
@@ -216,6 +199,33 @@ export default async function RootLayout({
             --input-bg: #ffffff;
             --input-border: #d1d5db;
             --input-focus: #3b82f6;
+          }
+          [data-theme="dark"] {
+            --background-color: #1a1b23;
+            --background-secondary: #2a2d3a;
+            --background-tertiary: #3f4451;
+            --container-color: #2a2d3a;
+            --text-color: #f1f1f1;
+            --text-secondary: #a4a5b0;
+            --text-muted: #6b7280;
+            --accent-color: #6366f1;
+            --accent-hover: #5855eb;
+            --success-color: #68D08B;
+            --warning-color: #f59e0b;
+            --error-color: #dc2626;
+            --border-color: #3f4451;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --menu-item-color: #a7a9b4;
+            --header-shadow: 2px 0 3px 0 #00000085;
+            --promo-bg: #2a2d3a;
+            --promo-bg-gradient: linear-gradient(45deg, #2a2d3a, #1f2937);
+            --promo-border: 1px solid #3f4451;
+            --promo-shadow: 0 0 4px 0 #0f0f14ad;
+            --card-bg: #2a2d3a;
+            --card-border: #3f4451;
+            --input-bg: #3e4050;
+            --input-border: #404055;
+            --input-focus: #68D08B;
           }
           * {
             box-sizing: border-box;
@@ -249,7 +259,12 @@ export default async function RootLayout({
         `}} />
         <link rel="preload" href="/logo.png" as="image" />
         <link rel="preload" href="/api/whops?page=1&limit=15" as="fetch" crossOrigin="anonymous" />
-        <link rel="preload" href="/api/statistics" as="fetch" crossOrigin="anonymous" />
+        <link rel="prefetch" href="/api/statistics" as="fetch" crossOrigin="anonymous" />
+        
+        {/* Resource hints for better performance */}
+        <link rel="modulepreload" href="/_next/static/chunks/main.js" />
+        <link rel="modulepreload" href="/_next/static/chunks/webpack.js" />
+        <link rel="modulepreload" href="/_next/static/chunks/framework.js" />
         {/* Comprehensive favicon setup for all browsers */}
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
         <link rel="icon" type="image/x-icon" href="/favicon.ico" />
@@ -274,12 +289,12 @@ export default async function RootLayout({
         </AuthProvider>
         <Toaster position="top-right" />
         
-        {/* Google Analytics */}
+        {/* Google Analytics - Deferred */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-HK4S4718K1"
-          strategy="afterInteractive"
+          strategy="lazyOnload"
         />
-        <Script id="google-analytics" strategy="afterInteractive">
+        <Script id="google-analytics" strategy="lazyOnload">
           {`
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
