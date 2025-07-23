@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useLanguage } from '@/contexts/LanguageContext';
 
@@ -19,10 +19,17 @@ interface StatisticsData {
 export default function StatisticsSection() {
   const { t } = useLanguage();
   const [stats, setStats] = useState<StatisticsData | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [hasLoaded, setHasLoaded] = useState(false);
+  const sectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const fetchStatistics = async () => {
+      if (hasLoaded) return;
+      
+      setLoading(true);
+      setHasLoaded(true);
+      
       try {
         const response = await fetch('/api/statistics');
         if (response.ok) {
@@ -36,8 +43,24 @@ export default function StatisticsSection() {
       }
     };
 
-    fetchStatistics();
-  }, []);
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !hasLoaded) {
+          fetchStatistics();
+        }
+      },
+      { 
+        threshold: 0.1,
+        rootMargin: '100px'
+      }
+    );
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, [hasLoaded]);
 
   // Animated counter hook
   const useCounter = (end: number, duration: number = 2000) => {
@@ -72,23 +95,37 @@ export default function StatisticsSection() {
     return num.toString();
   };
 
-  if (loading) {
+  // Show placeholder when not yet loaded or while loading
+  if (!hasLoaded || loading) {
     return (
-      <section className="py-16 mt-16" style={{ backgroundColor: 'var(--background-secondary)' }}>
+      <section ref={sectionRef} className="py-16" style={{ backgroundColor: 'var(--background-secondary)' }}>
         <div className="mx-auto w-[90%] md:w-[95%] max-w-[1280px]">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-            {[...Array(4)].map((_, i) => (
-              <div key={i} className="text-center">
-                <div className="rounded-xl p-6 animate-pulse border" style={{ 
-                  backgroundColor: 'var(--background-color)', 
-                  borderColor: 'var(--border-color)' 
-                }}>
-                  <div className="h-8 rounded mb-2" style={{ backgroundColor: 'var(--background-tertiary)' }}></div>
-                  <div className="h-4 rounded" style={{ backgroundColor: 'var(--background-tertiary)' }}></div>
-                </div>
-              </div>
-            ))}
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4" style={{ color: 'var(--text-color)' }}>{t('home.statistics')}</h2>
+            <p className="max-w-2xl mx-auto" style={{ color: 'var(--text-secondary)' }}>
+              {t('footer.description')}
+            </p>
           </div>
+          {loading ? (
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+              {[...Array(4)].map((_, i) => (
+                <div key={i} className="text-center">
+                  <div className="rounded-xl p-6 animate-pulse border" style={{ 
+                    backgroundColor: 'var(--background-color)', 
+                    borderColor: 'var(--border-color)' 
+                  }}>
+                    <div className="h-8 rounded mb-2" style={{ backgroundColor: 'var(--background-tertiary)' }}></div>
+                    <div className="h-4 rounded" style={{ backgroundColor: 'var(--background-tertiary)' }}></div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-8">
+              <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-r-transparent" style={{ borderColor: 'var(--accent-color)', borderRightColor: 'transparent' }}></div>
+              <p className="mt-4" style={{ color: 'var(--text-secondary)' }}>Loading statistics...</p>
+            </div>
+          )}
         </div>
       </section>
     );
@@ -160,7 +197,7 @@ export default function StatisticsSection() {
   };
 
   return (
-    <section className="py-16" style={{ backgroundColor: 'var(--background-secondary)' }}>
+    <section ref={sectionRef} className="py-16" style={{ backgroundColor: 'var(--background-secondary)' }}>
       <div className="mx-auto w-[90%] md:w-[95%] max-w-[1280px]">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold mb-4" style={{ color: 'var(--text-color)' }}>{t('home.statistics')}</h2>
@@ -169,38 +206,31 @@ export default function StatisticsSection() {
           </p>
         </div>
 
-        {loading ? (
-          <div className="text-center">
-            <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-r-transparent" style={{ borderColor: 'var(--accent-color)', borderRightColor: 'transparent' }}></div>
-            <p className="mt-4" style={{ color: 'var(--text-secondary)' }}>{t('common.loading')}</p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-            <StatCard
-              title={t('stats.users')}
-              value={stats?.totalUsers || 0}
-              icon="👥"
-            />
-            <StatCard
-              title={t('stats.whops')}
-              value={stats?.totalOffersAvailable || 0}
-              icon="🎯"
-            />
-            <StatCard
-              title={t('stats.claimed')}
-              value={stats?.promoCodesClaimed || 0}
-              icon="🎉"
-            />
-            <StatCard
-              title={t('stats.popular')}
-              value={stats?.mostClaimedOffer?.name || 'N/A'}
-              icon="⭐"
-              link={stats?.mostClaimedOffer?.slug ? `/whop/${stats.mostClaimedOffer.slug}` : undefined}
-              logoUrl={stats?.mostClaimedOffer?.logoUrl}
-              showLogo={true}
-            />
-          </div>
-        )}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+          <StatCard
+            title={t('stats.users')}
+            value={stats?.totalUsers || 0}
+            icon="👥"
+          />
+          <StatCard
+            title={t('stats.whops')}
+            value={stats?.totalOffersAvailable || 0}
+            icon="🎯"
+          />
+          <StatCard
+            title={t('stats.claimed')}
+            value={stats?.promoCodesClaimed || 0}
+            icon="🎉"
+          />
+          <StatCard
+            title={t('stats.popular')}
+            value={stats?.mostClaimedOffer?.name || 'N/A'}
+            icon="⭐"
+            link={stats?.mostClaimedOffer?.slug ? `/whop/${stats.mostClaimedOffer.slug}` : undefined}
+            logoUrl={stats?.mostClaimedOffer?.logoUrl}
+            showLogo={true}
+          />
+        </div>
       </div>
     </section>
   );
