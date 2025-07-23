@@ -29,6 +29,7 @@ const getWhopsOptimized = async (isAdmin: boolean, whereClause: any, sortBy: str
       description: true,
       affiliateLink: true,
       createdAt: true,
+      price: true, // Add price field for display
       // Only get promo count and first promo for display
       PromoCode: {
         select: {
@@ -52,28 +53,39 @@ const getWhopsOptimized = async (isAdmin: boolean, whereClause: any, sortBy: str
     }
   };
 
-  if (sortBy === 'highest' || sortBy === 'lowest' || sortBy === 'alpha-asc' || sortBy === 'alpha-desc' || sortBy === 'default' || sortBy === 'newest' || sortBy === 'highest-rated') {
-    // For custom sorting, fetch all whops first (but with lightweight fields)
-    console.log('Optimized query for custom sorting...');
+  if (sortBy === 'highest' || sortBy === 'lowest' || sortBy === 'alpha-asc' || sortBy === 'alpha-desc') {
+    // For price/alphabetical sorting, fetch all whops first (but with lightweight fields)
+    console.log(`Optimized query for custom sorting (${sortBy})...`);
     const allWhops = await prisma.whop.findMany(baseQuery);
     console.log('Optimized query successful, found', allWhops.length, 'whops');
     
     return allWhops;
   } else {
-    // For database-level sorting
-    const orderBy: any = {};
+    // For database-level sorting with proper pagination
+    let orderBy: any = [];
+    
     switch (sortBy) {
       case 'rating':
-        orderBy.rating = 'desc';
+        orderBy = [{ rating: 'desc' }, { createdAt: 'desc' }];
         break;
       case 'newest':
-        orderBy.createdAt = 'desc';
+        orderBy = [{ createdAt: 'desc' }];
         break;
       case 'oldest':
-        orderBy.createdAt = 'asc';
+        orderBy = [{ createdAt: 'asc' }];
         break;
+      case 'highest-rated':
+        orderBy = [{ rating: 'desc' }, { createdAt: 'desc' }];
+        break;
+      case 'default':
       default:
-        orderBy.displayOrder = 'asc';
+        // Default sorting: displayOrder, then rating, then createdAt
+        orderBy = [
+          { displayOrder: 'asc' },
+          { rating: 'desc' },
+          { createdAt: 'desc' }
+        ];
+        break;
     }
     
     const whops = await prisma.whop.findMany({
@@ -702,8 +714,8 @@ export async function GET(request: Request) {
     // Get total count for pagination using direct database query
     const totalCount = await prisma.whop.count({ where: whereClause });
     
-    // For price-based sorting and alphabetical sorting, we need to fetch ALL whops first, then sort and paginate
-    if (sortBy === 'highest' || sortBy === 'lowest' || sortBy === 'alpha-asc' || sortBy === 'alpha-desc' || sortBy === 'default' || sortBy === 'newest' || sortBy === 'highest-rated') {
+    // For price-based sorting and alphabetical sorting only
+    if (sortBy === 'highest' || sortBy === 'lowest' || sortBy === 'alpha-asc' || sortBy === 'alpha-desc') {
       console.log(`Fetching ALL whops for custom sorting - sortBy: ${sortBy}`);
       
       // Fetch ALL whops that match the filter criteria
@@ -804,36 +816,6 @@ export async function GET(request: Request) {
           const alphaA = extractAlphabeticString(a.name);
           const alphaB = extractAlphabeticString(b.name);
           return alphaB.localeCompare(alphaA);
-        });
-      } else if (sortBy === 'default') {
-        // Default sorting: promo codes first, then by display order
-        
-        transformedWhops.sort((a, b) => {
-          const aHasPromo = hasSpecialPromoCode(a.name);
-          const bHasPromo = hasSpecialPromoCode(b.name);
-          
-          // First tier: promo codes vs non-promo codes
-          if (aHasPromo !== bHasPromo) {
-            return bHasPromo ? 1 : -1; // Prioritize whops with promo codes
-          }
-          
-          // Second tier: within same promo status, maintain original order (displayOrder)
-          const orderA = a.displayOrder || 0;
-          const orderB = b.displayOrder || 0;
-          if (orderA !== orderB) {
-            return orderA - orderB;
-          }
-          
-          // Tertiary: if display orders are equal, sort by rating then creation date
-          const ratingA = a.rating || 0;
-          const ratingB = b.rating || 0;
-          if (ratingA !== ratingB) {
-            return ratingB - ratingA;
-          }
-          
-          const dateA = new Date(a.createdAt || 0).getTime();
-          const dateB = new Date(b.createdAt || 0).getTime();
-          return dateB - dateA;
         });
       } else if (sortBy === 'newest') {
         // Newest sorting with two-tier system
@@ -964,37 +946,6 @@ export async function GET(request: Request) {
         }
         
         // Tertiary: if ratings are equal, sort by creation date
-        const dateA = new Date(a.createdAt || 0).getTime();
-        const dateB = new Date(b.createdAt || 0).getTime();
-        return dateB - dateA;
-      });
-    } else if (!sortBy || sortBy === '' || sortBy === 'default') {
-      // Default sorting: promo codes first, then by display order (fallback - should not be reached now)
-      console.log('🚀 Applying default sorting with promo code priority (fallback)');
-      
-      transformedWhops.sort((a, b) => {
-        const aHasPromo = hasSpecialPromoCode(a.name);
-        const bHasPromo = hasSpecialPromoCode(b.name);
-        
-        // First tier: promo codes vs non-promo codes
-        if (aHasPromo !== bHasPromo) {
-          return bHasPromo ? 1 : -1; // Prioritize whops with promo codes
-        }
-        
-        // Second tier: within same promo status, maintain original order (displayOrder)
-        const orderA = a.displayOrder || 0;
-        const orderB = b.displayOrder || 0;
-        if (orderA !== orderB) {
-          return orderA - orderB;
-        }
-        
-        // Tertiary: if display orders are equal, sort by rating then creation date
-        const ratingA = a.rating || 0;
-        const ratingB = b.rating || 0;
-        if (ratingA !== ratingB) {
-          return ratingB - ratingA;
-        }
-        
         const dateA = new Date(a.createdAt || 0).getTime();
         const dateB = new Date(b.createdAt || 0).getTime();
         return dateB - dateA;

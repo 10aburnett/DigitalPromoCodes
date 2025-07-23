@@ -4,11 +4,8 @@ import Script from 'next/script';
 import { useState, useEffect, Suspense } from 'react';
 import { useRouter } from 'next/navigation';
 import HomePage from '@/components/HomePage';
-import { lazy } from 'react';
-
-// Lazy load non-critical components (SEO-safe only)
-const StatisticsSection = lazy(() => import('@/components/StatisticsSection'));
-const CallToAction = lazy(() => import('@/components/CallToAction'));
+import StatisticsSection from '@/components/StatisticsSection';
+import CallToAction from '@/components/CallToAction';
 
 
 // Define the types for our data
@@ -238,9 +235,7 @@ export default function Home() {
       </Suspense>
 
       {/* Statistics Section */}
-      <Suspense fallback={<div className="py-16 text-center" style={{ color: 'var(--text-secondary)' }}>Loading statistics...</div>}>
-        <StatisticsSection />
-      </Suspense>
+      <StatisticsSection />
 
       <div className="mx-auto w-[90%] md:w-[95%] max-w-[1280px]">
         <div className="mt-24 mb-16">
@@ -309,9 +304,7 @@ export default function Home() {
           </div>
 
           {/* Call to Action */}
-          <Suspense fallback={<div className="py-8 text-center" style={{ color: 'var(--text-secondary)' }}>Loading...</div>}>
-            <CallToAction />
-          </Suspense>
+          <CallToAction />
         </div>
       </div>
     </main>
