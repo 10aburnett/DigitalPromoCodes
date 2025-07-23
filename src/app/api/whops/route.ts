@@ -12,20 +12,86 @@ import { unstable_cache } from "next/cache";
 export const dynamic = 'force-dynamic'; // Explicitly mark this route as dynamic
 export const revalidate = 0; // Disable caching completely for debugging
 
-// Direct function for fetching published whops (cache disabled)
-const getWhops = async (isAdmin: boolean, whereClause: any, sortBy: string = '', page: number = 1, limit: number = 20) => {
-  console.log('Fetching whops from database (cache disabled)');
-  console.log('Environment check:', {
-    nodeEnv: process.env.NODE_ENV,
-    databaseUrl: process.env.DATABASE_URL ? 'Set' : 'Missing',
-    isAdmin,
-    whereClause,
-    sortBy
-  });
+// Lightweight function for homepage list (only essential fields)
+const getWhopsOptimized = async (isAdmin: boolean, whereClause: any, sortBy: string = '', page: number = 1, limit: number = 20) => {
+  console.log('Fetching whops with optimized query for homepage');
+  
+  // For homepage list, we only need basic fields + promo count
+  const baseQuery = {
+    where: whereClause,
+    select: {
+      id: true,
+      name: true,
+      slug: true,
+      logo: true,
+      rating: true,
+      displayOrder: true,
+      description: true,
+      affiliateLink: true,
+      createdAt: true,
+      // Only get promo count and first promo for display
+      PromoCode: {
+        select: {
+          id: true,
+          title: true,
+          description: true,
+          code: true,
+          type: true,
+          value: true
+        },
+        take: 1 // Only get first promo code for card display
+      },
+      _count: {
+        select: {
+          PromoCode: true, // Count of total promo codes
+          Review: {
+            where: { verified: true }
+          }
+        }
+      }
+    }
+  };
+
+  if (sortBy === 'highest' || sortBy === 'lowest' || sortBy === 'alpha-asc' || sortBy === 'alpha-desc' || sortBy === 'default' || sortBy === 'newest' || sortBy === 'highest-rated') {
+    // For custom sorting, fetch all whops first (but with lightweight fields)
+    console.log('Optimized query for custom sorting...');
+    const allWhops = await prisma.whop.findMany(baseQuery);
+    console.log('Optimized query successful, found', allWhops.length, 'whops');
+    
+    return allWhops;
+  } else {
+    // For database-level sorting
+    const orderBy: any = {};
+    switch (sortBy) {
+      case 'rating':
+        orderBy.rating = 'desc';
+        break;
+      case 'newest':
+        orderBy.createdAt = 'desc';
+        break;
+      case 'oldest':
+        orderBy.createdAt = 'asc';
+        break;
+      default:
+        orderBy.displayOrder = 'asc';
+    }
+    
+    const whops = await prisma.whop.findMany({
+      ...baseQuery,
+      orderBy,
+      skip: (page - 1) * limit,
+      take: limit
+    });
+    
+    return whops;
+  }
+};
+
+// Original heavy function for detailed views (when full data is needed)
+const getWhopsFull = async (isAdmin: boolean, whereClause: any, sortBy: string = '', page: number = 1, limit: number = 20) => {
+  console.log('Fetching whops with full data (admin/detailed views)');
   
   if (sortBy === 'highest' || sortBy === 'lowest' || sortBy === 'alpha-asc' || sortBy === 'alpha-desc' || sortBy === 'default' || sortBy === 'newest' || sortBy === 'highest-rated') {
-    // For custom sorting, fetch all whops first
-    console.log('Attempting Prisma query for custom sorting...');
     const allWhops = await prisma.whop.findMany({
       where: whereClause,
       include: { 
@@ -36,11 +102,9 @@ const getWhops = async (isAdmin: boolean, whereClause: any, sortBy: string = '',
         }
       }
     });
-    console.log('Prisma query successful, found', allWhops.length, 'whops');
     
     return allWhops;
   } else {
-    // For database-level sorting
     const orderBy: any = {};
     switch (sortBy) {
       case 'rating':
@@ -851,14 +915,8 @@ export async function GET(request: Request) {
     
     console.log(`Fetching whops - page: ${page}, limit: ${limit}, offset: ${offset}, search: "${search}", whopCategory: "${whopCategory}"`);
     
-    // Get whops with pagination
-    const whops = await prisma.whop.findMany({
-      where: whereClause,
-      orderBy: orderBy,
-      skip: offset,
-      take: limit,
-      include: { PromoCode: true }
-    });
+    // Get whops with pagination - use optimized query for better performance
+    const whops = await getWhopsOptimized(isAdmin, whereClause, sortBy, page, limit);
     
     console.log(`Found ${whops.length} whops out of ${totalCount} total`);
     
