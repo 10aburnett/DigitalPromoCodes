@@ -47,7 +47,6 @@ interface PaginationResponse {
 interface InitialData {
   whops: Whop[];
   totalUsers: number;
-  whopNames: string[];
   totalCount: number;
 }
 
@@ -68,7 +67,6 @@ export default function Home() {
   const [data, setData] = useState<InitialData>({
     whops: [],
     totalUsers: 0,
-    whopNames: [],
     totalCount: 0
   });
   const [loading, setLoading] = useState(true);
@@ -115,28 +113,11 @@ export default function Home() {
           statsResult = await statsResponse.json();
         }
 
-        // Fetch whop names separately and non-blocking
-        setTimeout(async () => {
-          try {
-            const allWhopsResponse = await fetch('/api/whops?limit=1000');
-            if (allWhopsResponse.ok) {
-              const allWhopsResult = await allWhopsResponse.json();
-              const whopNames = [...new Set(allWhopsResult.data.map((whop: any) => whop.whopName || whop.name))].filter(Boolean);
-              
-              setData(prev => ({
-                ...prev,
-                whopNames: whopNames
-              }));
-            }
-          } catch (error) {
-            console.error('Error fetching whop names:', error);
-          }
-        }, 0);
+        // Removed unnecessary whop names query - was fetching 1000 records for unused filter
 
         setData({
           whops: whopsResult.data,
           totalUsers: statsResult.totalUsers || 0,
-          whopNames: [],
           totalCount: whopsResult.pagination.total
         });
       } catch (error) {
@@ -145,7 +126,6 @@ export default function Home() {
         setData({
           whops: [],
           totalUsers: 0,
-          whopNames: [],
           totalCount: 0
         });
       } finally {
@@ -251,7 +231,6 @@ export default function Home() {
           <HomePage 
             initialWhops={data.whops}
             initialTotal={data.totalCount}
-            whopNames={data.whopNames}
             totalUsers={data.totalUsers}
             key={mountKey}
           />

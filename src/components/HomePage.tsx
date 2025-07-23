@@ -45,12 +45,11 @@ interface PaginationResponse {
 interface HomePageProps {
   initialWhops: any[];
   initialTotal: number;
-  whopNames: string[];
   totalUsers: number;
   key?: number;
 }
 
-export default function HomePage({ initialWhops, initialTotal, whopNames, totalUsers, key }: HomePageProps) {
+export default function HomePage({ initialWhops, initialTotal, totalUsers, key }: HomePageProps) {
   const { t } = useLanguage();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -258,7 +257,7 @@ export default function HomePage({ initialWhops, initialTotal, whopNames, totalU
         <FilterControls
           filters={filters}
           onFilterChange={handleFilterChange}
-          casinos={whopNames}
+          casinos={[]}
         />
       </div>
 
