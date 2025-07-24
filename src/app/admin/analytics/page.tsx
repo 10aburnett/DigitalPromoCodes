@@ -87,6 +87,7 @@ export default function AnalyticsPage() {
   const [whopActivityPageSize, setWhopActivityPageSize] = useState<number>(5);
   const [customStartDate, setCustomStartDate] = useState<Date>(new Date(new Date().setDate(new Date().getDate() - 7)));
   const [customEndDate, setCustomEndDate] = useState<Date>(new Date());
+  const [imageStates, setImageStates] = useState<{[key: string]: { imagePath: string; imageError: boolean }}>({});
   const router = useRouter();
   const REFRESH_INTERVAL = 30000; // 30 seconds
   const DEFAULT_ACTIVITY_ITEMS = 5;
@@ -108,6 +109,82 @@ export default function AnalyticsPage() {
       const analyticsData = await response.json();
       setData(analyticsData);
       setLastRefreshed(new Date());
+      
+      // Initialize image states for whops
+      if (analyticsData.whopAnalytics) {
+        const newImageStates: {[key: string]: { imagePath: string; imageError: boolean }} = {};
+        analyticsData.whopAnalytics.forEach((whop: Whop) => {
+          // Check if logo is empty/null/undefined first
+          if (!whop.logo || 
+              whop.logo.trim() === '' || 
+              whop.logo === 'null' || 
+              whop.logo === 'undefined' ||
+              whop.logo === 'NULL' ||
+              whop.logo === 'UNDEFINED') {
+            newImageStates[whop.id] = { imagePath: '', imageError: true };
+            return;
+          }
+
+          let normalizedPath = normalizeImagePath(whop.logo);
+          
+          // If the path is empty or clearly invalid, go straight to InitialsAvatar
+          if (!normalizedPath || 
+              normalizedPath.trim() === '' ||
+              normalizedPath === '/images/.png' || 
+              normalizedPath === '/images/undefined.png' ||
+              normalizedPath === '/images/Simplified Logo.png' ||
+              normalizedPath === '/images/null.png' ||
+              normalizedPath === '/images/NULL.png' ||
+              normalizedPath === '/images/UNDEFINED.png' ||
+              normalizedPath.endsWith('/.png') ||
+              normalizedPath.includes('/images/undefined') ||
+              normalizedPath.includes('/images/null') ||
+              normalizedPath.includes('Simplified Logo')) {
+            newImageStates[whop.id] = { imagePath: '', imageError: true };
+            return;
+          }
+          
+          newImageStates[whop.id] = { imagePath: normalizedPath, imageError: false };
+        });
+        
+        // Also initialize for recent activity
+        if (analyticsData.recentActivity) {
+          analyticsData.recentActivity.forEach((activity: RecentActivity) => {
+            const activityKey = `activity_${activity.id}`;
+            if (!activity.whopLogo || 
+                activity.whopLogo.trim() === '' || 
+                activity.whopLogo === 'null' || 
+                activity.whopLogo === 'undefined' ||
+                activity.whopLogo === 'NULL' ||
+                activity.whopLogo === 'UNDEFINED') {
+              newImageStates[activityKey] = { imagePath: '', imageError: true };
+              return;
+            }
+
+            let normalizedPath = normalizeImagePath(activity.whopLogo);
+            
+            if (!normalizedPath || 
+                normalizedPath.trim() === '' ||
+                normalizedPath === '/images/.png' || 
+                normalizedPath === '/images/undefined.png' ||
+                normalizedPath === '/images/Simplified Logo.png' ||
+                normalizedPath === '/images/null.png' ||
+                normalizedPath === '/images/NULL.png' ||
+                normalizedPath === '/images/UNDEFINED.png' ||
+                normalizedPath.endsWith('/.png') ||
+                normalizedPath.includes('/images/undefined') ||
+                normalizedPath.includes('/images/null') ||
+                normalizedPath.includes('Simplified Logo')) {
+              newImageStates[activityKey] = { imagePath: '', imageError: true };
+              return;
+            }
+            
+            newImageStates[activityKey] = { imagePath: normalizedPath, imageError: false };
+          });
+        }
+        
+        setImageStates(newImageStates);
+      }
       
       // Reset pagination when new data is loaded
       setActivityPage(1);
@@ -161,6 +238,47 @@ export default function AnalyticsPage() {
       setSelectedWhopId(whopId);
       setLastRefreshed(new Date());
       
+      // Initialize image state for whop detail
+      if (whopData.whopDetails) {
+        const whopKey = `whop_detail_${whopData.whopDetails.id || 'current'}`;
+        if (!whopData.whopDetails.logo || 
+            whopData.whopDetails.logo.trim() === '' || 
+            whopData.whopDetails.logo === 'null' || 
+            whopData.whopDetails.logo === 'undefined' ||
+            whopData.whopDetails.logo === 'NULL' ||
+            whopData.whopDetails.logo === 'UNDEFINED') {
+          setImageStates(prev => ({
+            ...prev,
+            [whopKey]: { imagePath: '', imageError: true }
+          }));
+        } else {
+          let normalizedPath = normalizeImagePath(whopData.whopDetails.logo);
+          
+          if (!normalizedPath || 
+              normalizedPath.trim() === '' ||
+              normalizedPath === '/images/.png' || 
+              normalizedPath === '/images/undefined.png' ||
+              normalizedPath === '/images/Simplified Logo.png' ||
+              normalizedPath === '/images/null.png' ||
+              normalizedPath === '/images/NULL.png' ||
+              normalizedPath === '/images/UNDEFINED.png' ||
+              normalizedPath.endsWith('/.png') ||
+              normalizedPath.includes('/images/undefined') ||
+              normalizedPath.includes('/images/null') ||
+              normalizedPath.includes('Simplified Logo')) {
+            setImageStates(prev => ({
+              ...prev,
+              [whopKey]: { imagePath: '', imageError: true }
+            }));
+          } else {
+            setImageStates(prev => ({
+              ...prev,
+              [whopKey]: { imagePath: normalizedPath, imageError: false }
+            }));
+          }
+        }
+      }
+      
       // Reset pagination when new data is loaded
       setWhopActivityPage(1);
       setVisibleWhopActivityItems(DEFAULT_ACTIVITY_ITEMS);
@@ -201,6 +319,73 @@ export default function AnalyticsPage() {
   const resetCustomDates = () => {
     setCustomStartDate(new Date(new Date().setDate(new Date().getDate() - 7)));
     setCustomEndDate(new Date());
+  };
+
+  // Load alternative logo paths to try
+  const getAlternativeLogoPaths = (whopName: string, originalPath: string) => {
+    const cleanName = whopName.replace(/[^a-zA-Z0-9]/g, '');
+    return [
+      `/images/${whopName} Logo.png`,
+      `/images/${whopName.replace(/\s+/g, '')} Logo.png`,
+      `/images/${cleanName} Logo.png`,
+      `/images/${cleanName}Logo.png`,
+      '/images/Simplified Logo.png'
+    ];
+  };
+
+  // Try next image in case of error
+  const handleImageError = (whopId: string, whopName: string) => {
+    const currentState = imageStates[whopId];
+    if (!currentState) return;
+    
+    const { imagePath } = currentState;
+    console.error(`Image failed to load: ${imagePath} for ${whopName}`);
+    
+    // If the current path has @avif, try without it first
+    if (imagePath.includes('@avif')) {
+      const pathWithoutAvif = imagePath.replace('@avif', '');
+      console.log(`Trying without @avif: ${pathWithoutAvif}`);
+      setImageStates(prev => ({
+        ...prev,
+        [whopId]: { ...prev[whopId], imagePath: pathWithoutAvif }
+      }));
+      return;
+    }
+    
+    // If the path looks like a placeholder or default image, go straight to InitialsAvatar
+    if (imagePath.includes('Simplified Logo') || 
+        imagePath.includes('default') || 
+        imagePath.includes('placeholder') ||
+        imagePath.includes('no-image') ||
+        imagePath.includes('missing')) {
+      console.log(`Placeholder detected, showing initials for ${whopName}`);
+      setImageStates(prev => ({
+        ...prev,
+        [whopId]: { ...prev[whopId], imageError: true }
+      }));
+      return;
+    }
+    
+    // Get alternative paths
+    const alternativePaths = getAlternativeLogoPaths(whopName, imagePath);
+    const currentIndex = alternativePaths.indexOf(imagePath);
+    
+    if (currentIndex < alternativePaths.length - 1) {
+      // Try next alternative
+      const nextPath = alternativePaths[currentIndex + 1];
+      console.log(`Trying alternative path: ${nextPath}`);
+      setImageStates(prev => ({
+        ...prev,
+        [whopId]: { ...prev[whopId], imagePath: nextPath }
+      }));
+    } else {
+      // All alternatives failed, show initials
+      console.log(`All image paths failed for ${whopName}, showing initials`);
+      setImageStates(prev => ({
+        ...prev,
+        [whopId]: { ...prev[whopId], imageError: true }
+      }));
+    }
   };
 
   const handleRefresh = () => {
@@ -317,27 +502,31 @@ export default function AnalyticsPage() {
                 <td className="p-3">
                   <div className="flex items-center space-x-3">
                     <div className="w-8 h-8 relative rounded-md overflow-hidden flex-shrink-0 bg-gray-800">
-                      {whop.logo ? (
-                        <Image
-                          src={normalizeImagePath(whop.logo)}
-                          alt={whop.name}
-                          width={32}
-                          height={32}
-                          className="w-full h-full object-contain"
-                          style={{ maxWidth: '100%', maxHeight: '100%' }}
-                          onError={(e) => {
-                            // Simple @avif fallback - try without @avif suffix
-                            const currentSrc = (e.target as HTMLImageElement).src;
-                            if (currentSrc.includes('@avif')) {
-                              (e.target as HTMLImageElement).src = currentSrc.replace('@avif', '');
-                            }
-                          }}
-                        />
-                      ) : (
-                        <div className="w-full h-full bg-gray-700 rounded-md flex items-center justify-center">
-                          <span className="text-xs">{whop.name.charAt(0)}</span>
-                        </div>
-                      )}
+                      {(() => {
+                        const imageState = imageStates[whop.id];
+                        if (!imageState || imageState.imageError || !imageState.imagePath || imageState.imagePath.trim() === '') {
+                          return (
+                            <div className="w-full h-full bg-gray-700 rounded-md flex items-center justify-center">
+                              <span className="text-xs">{whop.name.charAt(0)}</span>
+                            </div>
+                          );
+                        }
+                        return (
+                          <Image
+                            src={imageState.imagePath}
+                            alt={whop.name}
+                            width={32}
+                            height={32}
+                            className="w-full h-full object-contain"
+                            style={{ maxWidth: '100%', maxHeight: '100%' }}
+                            onError={() => handleImageError(whop.id, whop.name)}
+                            unoptimized={imageState.imagePath.includes('@avif')}
+                            sizes="32px"
+                            placeholder="blur"
+                            blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAEAAQDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyytN5cFrKDsRXSJfAhvT7WinYGCvchOjJAMfNIXGiULZQ8qEzJQdEKKRjFiYqKJKEJxZJXiEH0RRN6mJzN5hJ8tP/Z"
+                          />
+                        );
+                      })()}
                     </div>
                     <span className="text-white">{whop.name}</span>
                   </div>
@@ -511,27 +700,32 @@ export default function AnalyticsPage() {
           >
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 relative rounded-md overflow-hidden flex-shrink-0 bg-gray-800">
-                {activity.whopLogo ? (
-                  <Image
-                    src={normalizeImagePath(activity.whopLogo)}
-                    alt={activity.whopName}
-                    width={40}
-                    height={40}
-                    className="w-full h-full object-contain"
-                    style={{ maxWidth: '100%', maxHeight: '100%' }}
-                    onError={(e) => {
-                      // Simple @avif fallback - try without @avif suffix
-                      const currentSrc = (e.target as HTMLImageElement).src;
-                      if (currentSrc.includes('@avif')) {
-                        (e.target as HTMLImageElement).src = currentSrc.replace('@avif', '');
-                      }
-                    }}
-                  />
-                ) : (
-                  <div className="w-full h-full bg-gray-700 flex items-center justify-center rounded-md">
-                    <span className="text-xs">{activity.whopName.charAt(0)}</span>
-                  </div>
-                )}
+                {(() => {
+                  const activityKey = `activity_${activity.id}`;
+                  const imageState = imageStates[activityKey];
+                  if (!imageState || imageState.imageError || !imageState.imagePath || imageState.imagePath.trim() === '') {
+                    return (
+                      <div className="w-full h-full bg-gray-700 flex items-center justify-center rounded-md">
+                        <span className="text-xs">{activity.whopName.charAt(0)}</span>
+                      </div>
+                    );
+                  }
+                  return (
+                    <Image
+                      src={imageState.imagePath}
+                      alt={activity.whopName}
+                      width={40}
+                      height={40}
+                      className="w-full h-full object-contain"
+                      style={{ maxWidth: '100%', maxHeight: '100%' }}
+                      onError={() => handleImageError(activityKey, activity.whopName)}
+                      unoptimized={imageState.imagePath.includes('@avif')}
+                      sizes="40px"
+                      placeholder="blur"
+                      blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAEAAQDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyytN5cFrKDsRXSJfAhvT7WinYGCvchOjJAMfNIXGiULZQ8qEzJQdEKKRjFiYqKJKEJxZJXiEH0RRN6mJzN5hJ8tP/Z"
+                    />
+                  );
+                })()}
               </div>
               <div>
                 <div className="text-white font-medium">{activity.whopName}</div>
@@ -681,20 +875,32 @@ export default function AnalyticsPage() {
                 >
                   <div className="flex items-center space-x-3">
                     <div className="w-10 h-10 relative rounded-md overflow-hidden flex-shrink-0 bg-gray-800">
-                      {whopDetails.logo ? (
-                        <Image
-                          src={normalizeImagePath(whopDetails.logo)}
-                          alt={whopDetails.name}
-                          width={40}
-                          height={40}
-                          className="w-full h-full object-contain"
-                          style={{ maxWidth: '100%', maxHeight: '100%' }}
-                        />
-                      ) : (
-                        <div className="w-full h-full bg-gray-700 flex items-center justify-center rounded-md">
-                          <span className="text-xs">{whopDetails.name.charAt(0)}</span>
-                        </div>
-                      )}
+                      {(() => {
+                        const whopKey = `whop_detail_${whopDetails.id || 'current'}`;
+                        const imageState = imageStates[whopKey];
+                        if (!imageState || imageState.imageError || !imageState.imagePath || imageState.imagePath.trim() === '') {
+                          return (
+                            <div className="w-full h-full bg-gray-700 flex items-center justify-center rounded-md">
+                              <span className="text-xs">{whopDetails.name.charAt(0)}</span>
+                            </div>
+                          );
+                        }
+                        return (
+                          <Image
+                            src={imageState.imagePath}
+                            alt={whopDetails.name}
+                            width={40}
+                            height={40}
+                            className="w-full h-full object-contain"
+                            style={{ maxWidth: '100%', maxHeight: '100%' }}
+                            onError={() => handleImageError(whopKey, whopDetails.name)}
+                            unoptimized={imageState.imagePath.includes('@avif')}
+                            sizes="40px"
+                            placeholder="blur"
+                            blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAEAAQDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyytN5cFrKDsRXSJfAhvT7WinYGCvchOjJAMfNIXGiULZQ8qEzJQdEKKRjFiYqKJKEJxZJXiEH0RRN6mJzN5hJ8tP/Z"
+                          />
+                        );
+                      })()}
                     </div>
                     <div>
                       <div className="text-white font-medium">{whopDetails.name}</div>

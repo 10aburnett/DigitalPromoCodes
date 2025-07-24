@@ -35,6 +35,7 @@ export default function RecommendedWhops({ currentWhopId }: RecommendedWhopsProp
   const [recommendations, setRecommendations] = useState<RecommendedWhop[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [imageStates, setImageStates] = useState<{[key: string]: { imagePath: string; imageError: boolean }}>({});
 
   useEffect(() => {
     const fetchRecommendations = async () => {
@@ -56,6 +57,44 @@ export default function RecommendedWhops({ currentWhopId }: RecommendedWhopsProp
         });
         
         setRecommendations(cleanedRecommendations);
+        
+        // Initialize image states for all recommendations
+        const newImageStates: {[key: string]: { imagePath: string; imageError: boolean }} = {};
+        cleanedRecommendations.forEach((whop: RecommendedWhop) => {
+          // Check if logoUrl is empty/null/undefined first
+          if (!whop.logo || 
+              whop.logo.trim() === '' || 
+              whop.logo === 'null' || 
+              whop.logo === 'undefined' ||
+              whop.logo === 'NULL' ||
+              whop.logo === 'UNDEFINED') {
+            newImageStates[whop.id] = { imagePath: '', imageError: true };
+            return;
+          }
+
+          let normalizedPath = normalizeImagePath(whop.logo);
+          
+          // If the path is empty or clearly invalid, go straight to InitialsAvatar
+          if (!normalizedPath || 
+              normalizedPath.trim() === '' ||
+              normalizedPath === '/images/.png' || 
+              normalizedPath === '/images/undefined.png' ||
+              normalizedPath === '/images/Simplified Logo.png' ||
+              normalizedPath === '/images/null.png' ||
+              normalizedPath === '/images/NULL.png' ||
+              normalizedPath === '/images/UNDEFINED.png' ||
+              normalizedPath.endsWith('/.png') ||
+              normalizedPath.includes('/images/undefined') ||
+              normalizedPath.includes('/images/null') ||
+              normalizedPath.includes('Simplified Logo')) {
+            newImageStates[whop.id] = { imagePath: '', imageError: true };
+            return;
+          }
+          
+          newImageStates[whop.id] = { imagePath: normalizedPath, imageError: false };
+        });
+        
+        setImageStates(newImageStates);
         
         // Log debug info in development
         if (process.env.NODE_ENV === 'development' && data.debug) {
@@ -104,6 +143,73 @@ export default function RecommendedWhops({ currentWhopId }: RecommendedWhopsProp
   if (error || recommendations.length === 0) {
     return null; // Don't show anything if there's an error or no recommendations
   }
+
+  // Load alternative logo paths to try
+  const getAlternativeLogoPaths = (whopName: string, originalPath: string) => {
+    const cleanName = whopName.replace(/[^a-zA-Z0-9]/g, '');
+    return [
+      `/images/${whopName} Logo.png`,
+      `/images/${whopName.replace(/\s+/g, '')} Logo.png`,
+      `/images/${cleanName} Logo.png`,
+      `/images/${cleanName}Logo.png`,
+      '/images/Simplified Logo.png'
+    ];
+  };
+
+  // Try next image in case of error
+  const handleImageError = (whopId: string, whopName: string) => {
+    const currentState = imageStates[whopId];
+    if (!currentState) return;
+    
+    const { imagePath } = currentState;
+    console.error(`Image failed to load: ${imagePath} for ${whopName}`);
+    
+    // If the current path has @avif, try without it first
+    if (imagePath.includes('@avif')) {
+      const pathWithoutAvif = imagePath.replace('@avif', '');
+      console.log(`Trying without @avif: ${pathWithoutAvif}`);
+      setImageStates(prev => ({
+        ...prev,
+        [whopId]: { ...prev[whopId], imagePath: pathWithoutAvif }
+      }));
+      return;
+    }
+    
+    // If the path looks like a placeholder or default image, go straight to InitialsAvatar
+    if (imagePath.includes('Simplified Logo') || 
+        imagePath.includes('default') || 
+        imagePath.includes('placeholder') ||
+        imagePath.includes('no-image') ||
+        imagePath.includes('missing')) {
+      console.log(`Placeholder detected, showing initials for ${whopName}`);
+      setImageStates(prev => ({
+        ...prev,
+        [whopId]: { ...prev[whopId], imageError: true }
+      }));
+      return;
+    }
+    
+    // Get alternative paths
+    const alternativePaths = getAlternativeLogoPaths(whopName, imagePath);
+    const currentIndex = alternativePaths.indexOf(imagePath);
+    
+    if (currentIndex < alternativePaths.length - 1) {
+      // Try next alternative
+      const nextPath = alternativePaths[currentIndex + 1];
+      console.log(`Trying alternative path: ${nextPath}`);
+      setImageStates(prev => ({
+        ...prev,
+        [whopId]: { ...prev[whopId], imagePath: nextPath }
+      }));
+    } else {
+      // All alternatives failed, show initials
+      console.log(`All image paths failed for ${whopName}, showing initials`);
+      setImageStates(prev => ({
+        ...prev,
+        [whopId]: { ...prev[whopId], imageError: true }
+      }));
+    }
+  };
 
   const truncateDescription = (text: string | null, maxLength: number = 100) => {
     if (!text || text.length <= maxLength) return text || '';
@@ -167,30 +273,34 @@ export default function RecommendedWhops({ currentWhopId }: RecommendedWhopsProp
               <div className="flex items-center gap-4">
                 {/* Logo Section */}
                 <div className="w-12 h-12 rounded-md overflow-hidden flex-shrink-0 bg-gray-800 flex items-center justify-center">
-                  {whop.logo ? (
-                    <Image
-                      src={normalizeImagePath(whop.logo)}
-                      alt={`${whop.name} logo`}
-                      width={48}
-                      height={48}
-                      className="w-full h-full object-contain"
-                      style={{ maxWidth: '100%', maxHeight: '100%' }}
-                      onError={(e) => {
-                        // Simple @avif fallback - try without @avif suffix
-                        const currentSrc = (e.target as HTMLImageElement).src;
-                        if (currentSrc.includes('@avif')) {
-                          (e.target as HTMLImageElement).src = currentSrc.replace('@avif', '');
-                        }
-                      }}
-                    />
-                  ) : (
-                    <InitialsAvatar 
-                      name={whop.name}
-                      size="md"
-                      shape="square"
-                      className="w-full h-full"
-                    />
-                  )}
+                  {(() => {
+                    const imageState = imageStates[whop.id];
+                    if (!imageState || imageState.imageError || !imageState.imagePath || imageState.imagePath.trim() === '') {
+                      return (
+                        <InitialsAvatar 
+                          name={whop.name}
+                          size="md"
+                          shape="square"
+                          className="w-full h-full"
+                        />
+                      );
+                    }
+                    return (
+                      <Image
+                        src={imageState.imagePath}
+                        alt={`${whop.name} logo`}
+                        width={48}
+                        height={48}
+                        className="w-full h-full object-contain"
+                        style={{ maxWidth: '100%', maxHeight: '100%' }}
+                        onError={() => handleImageError(whop.id, whop.name)}
+                        unoptimized={imageState.imagePath.includes('@avif')}
+                        sizes="48px"
+                        placeholder="blur"
+                        blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAEAAQDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyytN5cFrKDsRXSJfAhvT7WinYGCvchOjJAMfNIXGiULZQ8qEzJQdEKKRjFiYqKJKEJxZJXiEH0RRN6mJzN5hJ8tP/Z"
+                      />
+                    );
+                  })()}
                 </div>
 
                 {/* Content Section */}
