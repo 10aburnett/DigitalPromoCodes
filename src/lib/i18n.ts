@@ -24,7 +24,7 @@ export const translations = {
     'nav.admin': 'Admin',
     
     // Homepage
-    'home.title': 'WHPCodes - Premium Digital Product Promotions',
+    'home.title': 'WHPCodes - Whop Promo Codes, Coupons & Discounts',
     'home.subtitle': 'Discover exclusive promo codes and deals for the best digital products',
     'home.cta': 'Browse Deals',
     'home.filterCodes': 'Filter Courses',
@@ -94,7 +94,7 @@ export const translations = {
     'whop.termsOfferNoCode': 'offer',
     
     // Footer
-    'footer.description': 'Your trusted source for premium digital product promotions and exclusive deals.',
+    'footer.description': 'Your trusted source for Whop promo codes, coupons, discounts and exclusive deals.',
     'footer.quickLinks': 'Quick Links',
     'footer.legal': 'Legal',
     'footer.privacy': 'Privacy Policy',
@@ -181,7 +181,7 @@ export const translations = {
     'nav.admin': 'Admin',
     
     // Homepage
-    'home.title': 'WHPCodes - Promociones Premium de Productos Digitales',
+    'home.title': 'WHPCodes - Códigos Promocionales de Whop, Cupones y Descuentos',
     'home.subtitle': 'Descubre códigos promocionales exclusivos y ofertas para los mejores productos digitales',
     'home.cta': 'Ver Ofertas',
     'home.filterCodes': 'Filtrar Códigos',
@@ -338,7 +338,7 @@ export const translations = {
     'nav.admin': 'Admin',
     
     // Homepage
-    'home.title': 'WHPCodes - Premium Digitale Product Promoties',
+    'home.title': 'WHPCodes - Whop Promocodes, Coupons & Kortingen',
     'home.subtitle': 'Ontdek exclusieve promocodes en deals voor de beste digitale producten',
     'home.cta': 'Bekijk Deals',
     'home.filterCodes': 'Filter Codes',
@@ -652,7 +652,7 @@ export const translations = {
     'nav.admin': 'Admin',
     
     // Homepage
-    'home.title': 'WHPCodes - Premium Digital Produkt Promotionen',
+    'home.title': 'WHPCodes - Whop Promo-Codes, Gutscheine & Rabatte',
     'home.subtitle': 'Entdecken Sie exklusive Promocodes und Angebote für die besten digitalen Produkte',
     'home.cta': 'Angebote Durchsuchen',
     'home.filterCodes': 'Filter Codes',
@@ -722,7 +722,7 @@ export const translations = {
     'whop.termsOfferNoCode': 'Angebot',
     
     // Footer
-    'footer.description': 'Ihre vertrauenswürdige Quelle für Premium-Digital-Produkt-Promotionen und exklusive Angebote.',
+    'footer.description': 'Ihre vertrauenswürdige Quelle für Whop-Promo-Codes, Gutscheine, Rabatte und exklusive Angebote.',
     'footer.quickLinks': 'Schnelle Links',
     'footer.legal': 'Rechtliches',
     'footer.privacy': 'Datenschutzrichtlinie',
@@ -809,7 +809,7 @@ export const translations = {
     'nav.admin': 'Admin',
     
     // Homepage
-    'home.title': 'WHPCodes - Promozioni Premium di Prodotti Digitali',
+    'home.title': 'WHPCodes - Codici Promo Whop, Coupon e Sconti',
     'home.subtitle': 'Scopri codici promo esclusivi e offerte per i migliori prodotti digitali',
     'home.cta': 'Sfoglia Offerte',
     'home.filterCodes': 'Filtra Corsi',
