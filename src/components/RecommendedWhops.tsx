@@ -175,6 +175,13 @@ export default function RecommendedWhops({ currentWhopId }: RecommendedWhopsProp
                       height={48}
                       className="w-full h-full object-contain"
                       style={{ maxWidth: '100%', maxHeight: '100%' }}
+                      onError={(e) => {
+                        // Simple @avif fallback - try without @avif suffix
+                        const currentSrc = (e.target as HTMLImageElement).src;
+                        if (currentSrc.includes('@avif')) {
+                          (e.target as HTMLImageElement).src = currentSrc.replace('@avif', '');
+                        }
+                      }}
                     />
                   ) : (
                     <InitialsAvatar 

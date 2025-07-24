@@ -325,6 +325,13 @@ export default function AnalyticsPage() {
                           height={32}
                           className="w-full h-full object-contain"
                           style={{ maxWidth: '100%', maxHeight: '100%' }}
+                          onError={(e) => {
+                            // Simple @avif fallback - try without @avif suffix
+                            const currentSrc = (e.target as HTMLImageElement).src;
+                            if (currentSrc.includes('@avif')) {
+                              (e.target as HTMLImageElement).src = currentSrc.replace('@avif', '');
+                            }
+                          }}
                         />
                       ) : (
                         <div className="w-full h-full bg-gray-700 rounded-md flex items-center justify-center">
@@ -512,6 +519,13 @@ export default function AnalyticsPage() {
                     height={40}
                     className="w-full h-full object-contain"
                     style={{ maxWidth: '100%', maxHeight: '100%' }}
+                    onError={(e) => {
+                      // Simple @avif fallback - try without @avif suffix
+                      const currentSrc = (e.target as HTMLImageElement).src;
+                      if (currentSrc.includes('@avif')) {
+                        (e.target as HTMLImageElement).src = currentSrc.replace('@avif', '');
+                      }
+                    }}
                   />
                 ) : (
                   <div className="w-full h-full bg-gray-700 flex items-center justify-center rounded-md">
