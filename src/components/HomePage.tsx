@@ -152,9 +152,12 @@ export default function HomePage({ initialWhops, initialTotal, totalUsers, key }
       // Update URL with current state
       updateURL(filtersToUse, page);
       
-      // Scroll to top when page changes
+      // Scroll to top when page changes - delay until after DOM updates
       if (page !== pagination.page) {
-        window.scrollTo({ top: 0, behavior: 'instant' });
+        // Use requestAnimationFrame to ensure DOM has updated before scrolling
+        requestAnimationFrame(() => {
+          window.scrollTo({ top: 0, behavior: 'instant' });
+        });
       }
       
     } catch (error) {
