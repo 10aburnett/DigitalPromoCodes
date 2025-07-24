@@ -323,6 +323,61 @@ export default function HomePage({ initialWhops, initialTotal, totalUsers, key }
         </div>
       )}
 
+      {/* Desktop-only Pagination Controls (Top) */}
+      {pagination.totalPages > 1 && !loading && (
+        <div className="hidden md:flex justify-center items-center gap-1 sm:gap-2 mt-4 mb-6 px-2 overflow-x-auto">
+          {/* Previous Button */}
+          <button
+            onClick={() => handlePageChange(pagination.page - 1)}
+            disabled={pagination.page === 1}
+            className="px-3 sm:px-5 py-2.5 rounded-lg border transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-80 text-sm sm:text-base whitespace-nowrap flex-shrink-0"
+            style={{ 
+              backgroundColor: 'var(--background-secondary)', 
+              borderColor: 'var(--border-color)',
+              color: 'var(--text-color)'
+            }}
+          >
+            <span className="hidden sm:inline">Previous</span>
+            <span className="sm:hidden">Prev</span>
+          </button>
+
+          {/* Page Numbers */}
+          <div className="flex items-center gap-1 sm:gap-2 min-w-0">
+            {getPageNumbers().map((pageNum) => (
+              <button
+                key={pageNum}
+                onClick={() => handlePageChange(pageNum)}
+                className={`px-3 sm:px-5 py-2.5 rounded-lg border transition-all duration-200 hover:opacity-80 text-sm sm:text-base flex-shrink-0 min-w-[36px] sm:min-w-[44px] ${
+                  pageNum === pagination.page ? 'font-bold' : ''
+                }`}
+                style={{ 
+                  backgroundColor: pageNum === pagination.page ? 'var(--accent-color)' : 'var(--background-secondary)',
+                  borderColor: pageNum === pagination.page ? 'var(--accent-color)' : 'var(--border-color)',
+                  color: pageNum === pagination.page ? 'white' : 'var(--text-color)'
+                }}
+              >
+                {pageNum}
+              </button>
+            ))}
+          </div>
+
+          {/* Next Button */}
+          <button
+            onClick={() => handlePageChange(pagination.page + 1)}
+            disabled={pagination.page === pagination.totalPages}
+            className="px-3 sm:px-5 py-2.5 rounded-lg border transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-80 text-sm sm:text-base whitespace-nowrap flex-shrink-0"
+            style={{ 
+              backgroundColor: 'var(--background-secondary)', 
+              borderColor: 'var(--border-color)',
+              color: 'var(--text-color)'
+            }}
+          >
+            <span className="hidden sm:inline">Next</span>
+            <span className="sm:hidden">Next</span>
+          </button>
+        </div>
+      )}
+
       <VirtualizedWhopList whops={whops} loading={loading} />
       
       {/* Loading indicator */}
