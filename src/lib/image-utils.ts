@@ -26,6 +26,14 @@ export function normalizeImagePath(imagePath: string | null): string {
     return imagePath.replace('/images/public/images/', '/images/').replace('public/images/', '/images/');
   }
   
+  // Handle AVIF optimized files - prefer original if @avif suffix exists
+  if (imagePath.includes('@avif')) {
+    // For production compatibility, try the original file first (without @avif)
+    const originalPath = imagePath.replace('@avif', '');
+    console.log(`🖼️ Image has @avif suffix: ${imagePath} → trying original: ${originalPath}`);
+    return originalPath;
+  }
+  
   // If path already starts with /images/ or /uploads/, preserve it exactly as is
   if (imagePath.startsWith('/images/') || imagePath.startsWith('/uploads/')) {
     return imagePath;
@@ -71,4 +79,60 @@ export function normalizeImagePath(imagePath: string | null): string {
   
   // If all else fails, assume it's in the uploads folder
   return `/uploads/${imagePath}`;
+}
+
+/**
+ * Get alternative image paths to try when the primary image fails to load
+ * @param imagePath The original image path
+ * @returns Array of alternative paths to try
+ */
+export function getImageFallbackPaths(imagePath: string): string[] {
+  if (!imagePath) {
+    return ['/images/Simplified Logo.png'];
+  }
+
+  const fallbackPaths: string[] = [];
+  
+  // FIRST: If the path has @avif suffix, try without it first (most common production issue)
+  if (imagePath.includes('@avif')) {
+    const pathWithoutAvif = imagePath.replace('@avif', '');
+    fallbackPaths.push(pathWithoutAvif);
+    console.log(`🔄 Adding fallback without @avif: ${pathWithoutAvif}`);
+  }
+  
+  // SECOND: Try the original normalized path
+  const normalizedOriginal = normalizeImagePath(imagePath);
+  if (!fallbackPaths.includes(normalizedOriginal)) {
+    fallbackPaths.push(normalizedOriginal);
+  }
+  
+  // THIRD: Always include the exact original path as stored in database
+  if (!fallbackPaths.includes(imagePath)) {
+    fallbackPaths.push(imagePath);
+  }
+  
+  // FOURTH: For uploads paths, try additional variations
+  if (imagePath.startsWith('/uploads/')) {
+    // Try different extension variations
+    const basePathWithoutExt = imagePath.replace(/\.[^/.]+$/, '').replace('@avif', '');
+    const extensions = ['.webp', '.png', '.jpg', '.jpeg', '.avif'];
+    
+    extensions.forEach(ext => {
+      const pathWithExt = `${basePathWithoutExt}${ext}`;
+      if (!fallbackPaths.includes(pathWithExt)) {
+        fallbackPaths.push(pathWithExt);
+      }
+    });
+    
+    // Try with @avif suffix if it doesn't have it
+    if (!imagePath.includes('@avif')) {
+      fallbackPaths.push(`${imagePath}@avif`);
+    }
+  }
+  
+  // FINAL: Default logo fallback
+  fallbackPaths.push('/images/Simplified Logo.png');
+  
+  console.log(`🖼️ Generated ${fallbackPaths.length} fallback paths for: ${imagePath}`);
+  return fallbackPaths;
 }
