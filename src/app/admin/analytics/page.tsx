@@ -166,7 +166,7 @@ export default function AnalyticsPage() {
       setVisibleWhopActivityItems(DEFAULT_ACTIVITY_ITEMS);
       
       // Auto-scroll to the top of the page when showing whop details
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      window.scrollTo({ top: 0, behavior: 'instant' });
     } catch (error) {
       console.error("Error fetching whop analytics data:", error);
     } finally {

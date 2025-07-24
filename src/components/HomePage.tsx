@@ -154,7 +154,7 @@ export default function HomePage({ initialWhops, initialTotal, totalUsers, key }
       
       // Scroll to top when page changes
       if (page !== pagination.page) {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        window.scrollTo({ top: 0, behavior: 'instant' });
       }
       
     } catch (error) {
