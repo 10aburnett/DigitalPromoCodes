@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { normalizeImagePath, getImageFallbackPaths } from '@/lib/image-utils';
+import { normalizeImagePath } from '@/lib/image-utils';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useSocialProof, createSocialProofFromWhop } from '@/contexts/SocialProofContext';
 import InitialsAvatar from './InitialsAvatar';
@@ -38,8 +38,6 @@ export default function WhopCard({ promo, priority = false }: WhopCardProps) {
   const { addNotification } = useSocialProof();
   const [imageError, setImageError] = useState(false);
   const [imagePath, setImagePath] = useState('');
-  const [fallbackPaths, setFallbackPaths] = useState<string[]>([]);
-  const [currentFallbackIndex, setCurrentFallbackIndex] = useState(0);
   const pathname = usePathname();
 
   // Helper function to get the correct detail page URL based on language
@@ -165,13 +163,33 @@ export default function WhopCard({ promo, priority = false }: WhopCardProps) {
   const handleImageError = () => {
     console.error(`Image failed to load: ${imagePath} for ${promo.whopName}`);
     
-    // Try the next fallback path
-    const nextIndex = currentFallbackIndex + 1;
+    // If the current path has @avif, try without it first
+    if (imagePath.includes('@avif')) {
+      const pathWithoutAvif = imagePath.replace('@avif', '');
+      console.log(`Trying without @avif: ${pathWithoutAvif}`);
+      setImagePath(pathWithoutAvif);
+      return;
+    }
     
-    if (nextIndex < fallbackPaths.length) {
-      const nextPath = fallbackPaths[nextIndex];
-      console.log(`Trying fallback path ${nextIndex}: ${nextPath}`);
-      setCurrentFallbackIndex(nextIndex);
+    // If the path looks like a placeholder or default image, go straight to InitialsAvatar
+    if (imagePath.includes('Simplified Logo') || 
+        imagePath.includes('default') || 
+        imagePath.includes('placeholder') ||
+        imagePath.includes('no-image') ||
+        imagePath.includes('missing')) {
+      console.log(`Placeholder detected, showing initials for ${promo.whopName}`);
+      setImageError(true);
+      return;
+    }
+    
+    // Get alternative paths
+    const alternativePaths = getAlternativeLogoPaths(promo.whopName, imagePath);
+    const currentIndex = alternativePaths.indexOf(imagePath);
+    
+    if (currentIndex < alternativePaths.length - 1) {
+      // Try next alternative
+      const nextPath = alternativePaths[currentIndex + 1];
+      console.log(`Trying alternative path: ${nextPath}`);
       setImagePath(nextPath);
     } else {
       // All alternatives failed, show initials
@@ -191,8 +209,7 @@ export default function WhopCard({ promo, priority = false }: WhopCardProps) {
           promo.logoUrl === 'NULL' ||
           promo.logoUrl === 'UNDEFINED') {
         setImageError(true);
-        setImagePath(''); 
-        setFallbackPaths([]);
+        setImagePath(''); // Clear the path
         return;
       }
 
@@ -212,23 +229,17 @@ export default function WhopCard({ promo, priority = false }: WhopCardProps) {
           normalizedPath.includes('/images/null') ||
           normalizedPath.includes('Simplified Logo')) {
         setImageError(true);
-        setImagePath(''); 
-        setFallbackPaths([]);
+        setImagePath(''); // Clear the path
         return;
       }
       
-      // Initialize fallback system
-      const fallbacks = getImageFallbackPaths(promo.logoUrl);
-      setFallbackPaths(fallbacks);
-      setCurrentFallbackIndex(0);
-      setImagePath(fallbacks[0] || normalizedPath);
+      setImagePath(normalizedPath);
       setImageError(false); // Reset error state when path changes
       
     } catch (error) {
       console.error(`Error setting image path for ${promo.whopName}:`, error);
       setImageError(true);
-      setImagePath(''); 
-      setFallbackPaths([]);
+      setImagePath(''); // Clear the path
     }
   }, [promo.logoUrl, promo.whopName]);
 
