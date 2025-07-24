@@ -215,7 +215,9 @@ export default function Home() {
               'validFrom': new Date().toISOString(),
               'priceSpecification': {
                 '@type': 'PriceSpecification',
-                'price': promo.value && promo.value !== '0' ? `${promo.value}% off` : 'Exclusive Access'
+                'price': promo.value && promo.value !== '0' ? 
+                  (promo.value.includes('$') || promo.value.includes('%') || promo.value.includes('off') ? promo.value : `${promo.value}% off`) 
+                  : 'Exclusive Access'
               }
             }))
           }

@@ -116,6 +116,10 @@ export default function RecommendedWhops({ currentWhopId }: RecommendedWhopsProp
     
     // If there's a promo code and a value > 0, show the discount
     if (firstPromo.code && firstPromo.value && firstPromo.value !== '0') {
+      // Check if value already contains currency or percentage symbol
+      if (firstPromo.value.includes('$') || firstPromo.value.includes('%') || firstPromo.value.includes('off')) {
+        return firstPromo.value;
+      }
       return `${firstPromo.value}% Off`;
     }
     

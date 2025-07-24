@@ -91,7 +91,10 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     // Has a promo code
     if (firstPromo.value && firstPromo.value !== '0' && firstPromo.value !== '') {
       // Has specific discount value
-      description = `Get ${firstPromo.value}% off ${whopName} with our exclusive promo code.`;
+      const promoValueText = firstPromo.value.includes('$') || firstPromo.value.includes('%') || firstPromo.value.includes('off') 
+        ? firstPromo.value 
+        : `${firstPromo.value}% off`;
+      description = `Get ${promoValueText} ${whopName} with our exclusive promo code.`;
     } else {
       // Has promo code but no specific discount value
       description = `Claim your exclusive discount on ${whopName} with our special promo code.`;
@@ -160,7 +163,11 @@ export async function generateMetadata({ params }: { params: { slug: string } })
       `${whopData.whopName} promo code`,
       `${whopData.whopName} discount`,
       `${whopData.whopName} coupon`,
-      firstPromo?.value ? `${firstPromo.value}% off` : 'exclusive access',
+      firstPromo?.value ? 
+        (firstPromo.value.includes('$') || firstPromo.value.includes('%') || firstPromo.value.includes('off') 
+          ? firstPromo.value 
+          : `${firstPromo.value}% off`)
+        : 'exclusive access',
       whopData.category,
       price === 'Free' ? 'free' : 'premium',
       currentMonth,
@@ -373,7 +380,15 @@ export default async function WhopPage({ params }: { params: { slug: string } })
                     <tr className="border-b" style={{ borderColor: 'var(--border-color)' }}>
                       <td className="py-3 pl-4 pr-2 font-medium w-1/3" style={{ backgroundColor: 'var(--background-color)' }}>Discount Value</td>
                       <td className="py-3 px-4" style={{ backgroundColor: 'var(--background-secondary)' }}>
-                        {getDiscountPercentage(whop.name)}%
+                        {(() => {
+                          const discount = getDiscountPercentage(whop.name);
+                          // If discount already contains $, %, or 'off', return as-is
+                          if (discount.includes('$') || discount.includes('%') || discount.includes('off')) {
+                            return discount;
+                          }
+                          // Otherwise add % symbol for percentage discounts
+                          return `${discount}%`;
+                        })()}
                       </td>
                     </tr>
                   ) : null}
