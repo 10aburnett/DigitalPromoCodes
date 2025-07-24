@@ -28,7 +28,7 @@ export default function OfferButton({
       const trackingData = JSON.stringify({
         casinoId: whopId, // Using whopId as casinoId for API compatibility
         bonusId: promoCodeId || null, // Using promoCodeId as bonusId for API compatibility (can be null)
-        actionType: 'code_copy',
+        actionType: 'offer_click',
       });
       
       // Use sendBeacon API if available for better reliability when page unloads

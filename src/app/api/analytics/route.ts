@@ -95,7 +95,7 @@ export async function GET(request: Request) {
       const whop = await prisma.whop.findUnique({
         where: { id: whopId },
         include: {
-          promoCodes: true
+          PromoCode: true
         }
       });
       
@@ -128,8 +128,8 @@ export async function GET(request: Request) {
         whopName: whop.name,
         whopSlug: whop.slug,
         whopLogo: whop.logo,
-        promoTitle: whop.promoCodes.find(p => p.id === tracking.promoCodeId)?.title || "Unknown Promo",
-        promoCode: whop.promoCodes.find(p => p.id === tracking.promoCodeId)?.code || null
+        promoTitle: whop.PromoCode.find(p => p.id === tracking.promoCodeId)?.title || "Unknown Promo",
+        promoCode: whop.PromoCode.find(p => p.id === tracking.promoCodeId)?.code || null
       }));
       
       // Organize data by date for the chart
@@ -195,7 +195,7 @@ export async function GET(request: Request) {
           description: whop.description,
           rating: whop.rating
         },
-        promoDetails: whop.promoCodes.map(promo => ({
+        promoDetails: whop.PromoCode.map(promo => ({
           id: promo.id,
           title: promo.title,
           code: promo.code,
@@ -218,7 +218,7 @@ export async function GET(request: Request) {
       // Get all whops
       const whops = await prisma.whop.findMany({
         include: {
-          promoCodes: true
+          PromoCode: true
         }
       });
       
@@ -257,7 +257,7 @@ export async function GET(request: Request) {
       // Process trackings data to get statistics for overall analytics dashboard
       const transformedTrackings = trackings.map(tracking => {
         const whop = whops.find(w => w.id === tracking.whopId);
-        const promo = whop?.promoCodes.find(p => p.id === tracking.promoCodeId);
+        const promo = whop?.PromoCode.find(p => p.id === tracking.promoCodeId);
         
         return {
           id: tracking.id,
@@ -288,7 +288,7 @@ export async function GET(request: Request) {
           totalActions,
           copies,
           clicks,
-          promoCodes: whop.promoCodes.map(promo => ({
+          promoCodes: whop.PromoCode.map(promo => ({
             id: promo.id,
             title: promo.title,
             code: promo.code,

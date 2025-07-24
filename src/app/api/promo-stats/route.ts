@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
       // Get stats for specific promo code
       const promoCode = await prisma.promoCode.findUnique({
         where: { id: promoCodeId },
-        include: { Whop: true }
+        include: { whop: true }
       });
 
       if (!promoCode) {
@@ -88,7 +88,7 @@ export async function GET(request: NextRequest) {
           type: promoCode.type,
           value: promoCode.value,
           createdAt: promoCode.createdAt,
-          whopName: promoCode.Whop.name
+          whopName: promoCode.whop.name
         },
         usage: {
           todayCount: todayUsageCount,
