@@ -222,55 +222,14 @@ export default async function WhopPage({ params }: { params: { slug: string } })
 
   // Helper function to check if whop has a promo code
   const hasPromoCode = (whopName: string): boolean => {
-    return promoCode !== null || [
-      'Josh Exclusive VIP Access',
-      'Momentum Monthly',
-      'Larry\'s Lounge Premium',
-      'Dodgy\'s Dungeon',
-      'Trade With Insight - Pro',
-      'ParlayScience Discord Access',
-      'Scarface Trades Premium',
-      'The Haven',
-      'PropFellas VIP',
-      'Owls Full Access',
-      'Stellar AIO',
-      'Goat Ecom Growth',
-      'Indicators & VIP | LIFETIME',
-      'Supercar Income',
-      'GOAT Sports Bets Membership',
-      'Best Of Both Worlds',
-      'Moementum University',
-      'ZWM Lifetime Access',
-      'Ayecon Academy Lifetime Membership',
-      'The BFI Traders University'
-    ].includes(whopName);
+    // Now all promo codes are in database - if promoCode exists, we have a promo
+    return promoCode !== null;
   };
 
   // Helper function to get discount percentage
   const getDiscountPercentage = (whopName: string): string => {
-    const discountMap: { [key: string]: string } = {
-      'Josh Exclusive VIP Access': '20',
-      'Momentum Monthly': '20',
-      'Larry\'s Lounge Premium': '25',
-      'Dodgy\'s Dungeon': '15',
-      'Trade With Insight - Pro': '15',
-      'ParlayScience Discord Access': '20',
-      'Scarface Trades Premium': '25',
-      'The Haven': '10',
-      'PropFellas VIP': '10',
-      'Owls Full Access': '20',
-      'Stellar AIO': '20',
-      'Goat Ecom Growth': '10',
-      'Indicators & VIP | LIFETIME': '10',
-      'Supercar Income': '5',
-      'GOAT Sports Bets Membership': '20',
-      'Best Of Both Worlds': '5',
-      'Moementum University': '10',
-      'ZWM Lifetime Access': '40',
-      'Ayecon Academy Lifetime Membership': '10',
-      'The BFI Traders University': '15'
-    };
-    return discountMap[whopName] || firstPromo?.value || '0';
+    // Now all promo codes are in database - use firstPromo.value directly
+    return firstPromo?.value || '0';
   };
 
   // Create unique key for remounting when slug changes
