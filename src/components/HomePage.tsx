@@ -152,14 +152,6 @@ export default function HomePage({ initialWhops, initialTotal, totalUsers, key }
       // Update URL with current state
       updateURL(filtersToUse, page);
       
-      // Scroll to top when page changes - delay until after DOM updates
-      if (page !== pagination.page) {
-        // Use requestAnimationFrame to ensure DOM has updated before scrolling
-        requestAnimationFrame(() => {
-          window.scrollTo({ top: 0, behavior: 'instant' });
-        });
-      }
-      
     } catch (error) {
       console.error('Error fetching whops:', error);
     } finally {
@@ -194,6 +186,8 @@ export default function HomePage({ initialWhops, initialTotal, totalUsers, key }
   // Handle page changes
   const handlePageChange = (newPage: number) => {
     if (newPage >= 1 && newPage <= pagination.totalPages && !loading) {
+      // Scroll to top IMMEDIATELY before any DOM updates
+      window.scrollTo({ top: 0, behavior: 'instant' });
       fetchWhops(newPage);
     }
   };
