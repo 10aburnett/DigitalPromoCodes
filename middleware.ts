@@ -7,6 +7,11 @@ const languageKeys = ['en', 'es', 'nl', 'fr', 'de', 'it', 'pt', 'zh'];
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   
+  // Handle specific redirects
+  if (pathname === '/whop/monthly-mentorship') {
+    return NextResponse.redirect(new URL('/whop/ayecon-academy-monthly-mentorship', request.url));
+  }
+  
   // Skip API routes, static files, and Next.js internals
   if (
     pathname.startsWith('/api/') ||
