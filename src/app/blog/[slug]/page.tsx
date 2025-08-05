@@ -97,14 +97,15 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                    boxShadow: 'var(--promo-shadow)'
                  }}>
               <div 
-                className="prose prose-lg max-w-none"
+                className="prose prose-lg max-w-none whitespace-pre-wrap"
                 style={{ 
                   color: 'var(--text-color)',
                   '--tw-prose-headings': 'var(--text-color)',
                   '--tw-prose-links': 'var(--accent-color)',
                 }}
-                dangerouslySetInnerHTML={{ __html: post.content }}
-              />
+              >
+                {post.content}
+              </div>
             </div>
           </article>
 
