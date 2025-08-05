@@ -32,17 +32,13 @@ export async function GET() {
 // POST /api/admin/blog - Create new blog post
 export async function POST(request: NextRequest) {
   try {
-    console.log('Blog POST API called')
     const adminUser = await verifyAdminToken()
-    console.log('Admin user from token:', adminUser)
     
     if (!adminUser || adminUser.role !== 'ADMIN') {
-      console.log('Authorization failed:', { adminUser })
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     const body = await request.json()
-    console.log('Request body:', body)
     const { title, slug, content, excerpt, published } = body
 
     // Check if slug already exists
@@ -73,11 +69,9 @@ export async function POST(request: NextRequest) {
       }
     })
 
-    console.log('Blog post created successfully:', post.id)
     return NextResponse.json(post)
   } catch (error) {
     console.error('Error creating blog post:', error)
-    console.error('Error details:', error instanceof Error ? error.message : 'Unknown error')
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
