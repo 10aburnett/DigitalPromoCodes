@@ -127,20 +127,21 @@ export default function AdminLayout({
                   </div>
                 </button>
               </div>
-              <div className="ml-6 flex space-x-4 items-center">
-                <Link href="/admin" className="text-[#a7a9b4] hover:text-[#68D08B]">Dashboard</Link>
-                <Link href="/admin/whops" className="text-[#a7a9b4] hover:text-[#68D08B]">Whops</Link>
-                <Link href="/admin/blog" className="text-[#a7a9b4] hover:text-[#68D08B]">Blog</Link>
-                <Link href="/admin/reviews" className="text-[#a7a9b4] hover:text-[#68D08B]">Reviews</Link>
-                <Link href="/admin/analytics" className="text-[#a7a9b4] hover:text-[#68D08B]">Analytics</Link>
-                <Link href="/admin/users" className="text-[#a7a9b4] hover:text-[#68D08B]">Users</Link>
-                <Link href="/admin/pages" className="text-[#a7a9b4] hover:text-[#68D08B]">Pages</Link>
-                <Link href="/admin/enquiries" className="text-[#a7a9b4] hover:text-[#68D08B]">Enquiries</Link>
-                <Link href="/admin/settings" className="text-[#a7a9b4] hover:text-[#68D08B]">Settings</Link>
+              <div className="ml-4 flex space-x-4 items-center">
+                <Link href="/admin" className="text-[#a7a9b4] hover:text-[#68D08B] whitespace-nowrap">Dashboard</Link>
+                <Link href="/admin/whops" className="text-[#a7a9b4] hover:text-[#68D08B] whitespace-nowrap">Whops</Link>
+                <Link href="/admin/blog" className="text-[#a7a9b4] hover:text-[#68D08B] whitespace-nowrap">Blog</Link>
+                <Link href="/admin/comments" className="text-[#a7a9b4] hover:text-[#68D08B] whitespace-nowrap">Comments</Link>
+                <Link href="/admin/mailing-list" className="text-[#a7a9b4] hover:text-[#68D08B] whitespace-nowrap">Mailing List</Link>
+                <Link href="/admin/reviews" className="text-[#a7a9b4] hover:text-[#68D08B] whitespace-nowrap">Reviews</Link>
+                <Link href="/admin/analytics" className="text-[#a7a9b4] hover:text-[#68D08B] whitespace-nowrap">Analytics</Link>
+                <Link href="/admin/users" className="text-[#a7a9b4] hover:text-[#68D08B] whitespace-nowrap">Users</Link>
+                <Link href="/admin/pages" className="text-[#a7a9b4] hover:text-[#68D08B] whitespace-nowrap">Pages</Link>
+                <Link href="/admin/enquiries" className="text-[#a7a9b4] hover:text-[#68D08B] whitespace-nowrap">Enquiries</Link>
+                <Link href="/admin/settings" className="text-[#a7a9b4] hover:text-[#68D08B] whitespace-nowrap">Settings</Link>
               </div>
             </div>
-            <div className="flex items-center space-x-4">
-              <span className="text-[#a7a9b4]">{adminUser?.email || session?.user?.email}</span>
+            <div className="flex items-center">
               <button
                 onClick={handleLogout}
                 className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 flex items-center"

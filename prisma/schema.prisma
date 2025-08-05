@@ -156,6 +156,7 @@ model BlogPost {
   updatedAt   DateTime  @updatedAt
   authorId    String?
   author      User?     @relation(fields: [authorId], references: [id])
+  comments    Comment[]
 
   @@index([published])
   @@index([publishedAt])
@@ -163,10 +164,56 @@ model BlogPost {
   @@index([slug])
 }
 
+model Comment {
+  id          String        @id @default(cuid())
+  content     String        @db.Text
+  authorName  String
+  authorEmail String
+  status      CommentStatus @default(PENDING)
+  flaggedReason String?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  blogPostId  String
+  blogPost    BlogPost      @relation(fields: [blogPostId], references: [id], onDelete: Cascade)
+
+  @@index([status])
+  @@index([createdAt])
+  @@index([blogPostId])
+}
+
+model MailingList {
+  id           String            @id @default(cuid())
+  email        String            @unique
+  name         String?
+  status       MailingListStatus @default(ACTIVE)
+  source       String?           // e.g., "blog_comment", "direct_signup"
+  subscribedAt DateTime          @default(now())
+  unsubscribedAt DateTime?
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+
+  @@index([status])
+  @@index([email])
+  @@index([subscribedAt])
+}
+
 model playing_with_neon {
   id    Int    @id @default(autoincrement())
   name  String
   value Float? @db.Real
+}
+
+enum CommentStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  FLAGGED
+}
+
+enum MailingListStatus {
+  ACTIVE
+  UNSUBSCRIBED
+  BOUNCED
 }
 
 enum ContactStatus {

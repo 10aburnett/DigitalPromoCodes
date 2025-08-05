@@ -1,7 +1,9 @@
-import { Metadata } from 'next'
+'use client'
+import { useState, useEffect } from 'react'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { prisma } from '@/lib/prisma'
+import CommentForm from '@/components/CommentForm'
+import CommentsList from '@/components/CommentsList'
 
 interface BlogPostPageProps {
   params: {
@@ -9,38 +11,59 @@ interface BlogPostPageProps {
   }
 }
 
-export async function generateMetadata({ params }: BlogPostPageProps): Promise<Metadata> {
-  const post = await prisma.blogPost.findUnique({
-    where: { slug: params.slug, published: true },
-    select: {
-      title: true,
-      excerpt: true,
-    }
-  })
-
-  if (!post) {
-    return {
-      title: 'Post Not Found',
-    }
-  }
-
-  return {
-    title: post.title,
-    description: post.excerpt || `Read ${post.title} on our blog`,
+interface BlogPost {
+  id: string
+  title: string
+  content: string
+  publishedAt: string | null
+  author?: {
+    name: string
   }
 }
 
-export default async function BlogPostPage({ params }: BlogPostPageProps) {
-  const post = await prisma.blogPost.findUnique({
-    where: { slug: params.slug, published: true },
-    include: {
-      author: {
-        select: {
-          name: true,
+export default function BlogPostPage({ params }: BlogPostPageProps) {
+  const [post, setPost] = useState<BlogPost | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [refreshComments, setRefreshComments] = useState(0)
+
+  useEffect(() => {
+    const fetchPost = async () => {
+      try {
+        const response = await fetch(`/api/blog/${params.slug}`)
+        if (response.ok) {
+          const data = await response.json()
+          setPost(data)
+        } else {
+          setPost(null)
         }
+      } catch (error) {
+        console.error('Error fetching post:', error)
+        setPost(null)
+      } finally {
+        setLoading(false)
       }
     }
-  })
+
+    fetchPost()
+  }, [params.slug])
+
+  const handleCommentSubmitted = () => {
+    setRefreshComments(prev => prev + 1)
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen py-12 transition-theme" style={{ backgroundColor: 'var(--background-color)', color: 'var(--text-color)' }}>
+        <div className="mx-auto w-[90%] md:w-[95%] max-w-[800px]">
+          <div className="animate-pulse space-y-8">
+            <div className="h-8 w-32 rounded" style={{ backgroundColor: 'var(--text-muted)' }}></div>
+            <div className="h-12 w-3/4 rounded" style={{ backgroundColor: 'var(--text-muted)' }}></div>
+            <div className="h-64 w-full rounded" style={{ backgroundColor: 'var(--text-muted)' }}></div>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   if (!post) {
     notFound()
@@ -109,6 +132,12 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             </div>
           </article>
 
+          {/* Comments Section */}
+          <div className="mt-12 space-y-8">
+            <CommentsList blogPostId={post.id} refreshTrigger={refreshComments} />
+            <CommentForm blogPostId={post.id} onCommentSubmitted={handleCommentSubmitted} />
+          </div>
+
           {/* Navigation */}
           <div className="mt-12 pt-8 border-t" style={{ borderColor: 'var(--border-color)' }}>
             <div className="text-center">
@@ -128,15 +157,4 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       </div>
     </div>
   )
-}
-
-export async function generateStaticParams() {
-  const posts = await prisma.blogPost.findMany({
-    where: { published: true },
-    select: { slug: true }
-  })
-
-  return posts.map((post) => ({
-    slug: post.slug,
-  }))
 }
