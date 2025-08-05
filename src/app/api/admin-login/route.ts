@@ -1,9 +1,11 @@
 import { NextResponse } from "next/server";
 import { sign } from "jsonwebtoken";
 import { cookies } from "next/headers";
-import { prisma } from "@/lib/prisma";
-import bcrypt from "bcryptjs";
 import { JWT_SECRET } from "@/lib/auth-utils";
+
+// Hardcoded admin credentials - only these will work
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "alexburnett21@icloud.com";
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "Grizedale12£";
 
 export async function POST(request: Request) {
   try {
@@ -18,36 +20,22 @@ export async function POST(request: Request) {
       );
     }
 
-    // Find user by email
-    const user = await prisma.user.findUnique({
-      where: { email },
-    });
-
-    // Check if user exists and has admin role
-    if (!user || user.role !== "ADMIN") {
+    // Check credentials against hardcoded values
+    if (email !== ADMIN_EMAIL || password !== ADMIN_PASSWORD) {
       return NextResponse.json(
         { error: "Invalid credentials" },
         { status: 401 }
       );
     }
 
-    // Verify password
-    const passwordValid = await bcrypt.compare(password, user.password);
-    if (!passwordValid) {
-      return NextResponse.json(
-        { error: "Invalid credentials" },
-        { status: 401 }
-      );
-    }
-
-    console.log("Admin login successful, creating token with secret:", JWT_SECRET.substring(0, 5) + "...");
+    console.log("Admin login successful for:", email);
 
     // Create JWT token
     const token = sign(
       {
-        id: user.id,
-        email: user.email,
-        role: user.role,
+        id: "admin-user",
+        email: ADMIN_EMAIL,
+        role: "ADMIN",
       },
       JWT_SECRET,
       { expiresIn: "24h" }
@@ -64,13 +52,13 @@ export async function POST(request: Request) {
       maxAge: 60 * 60 * 24, // 24 hours
     });
 
-    // Return success with user info (without sensitive data)
+    // Return success with user info
     return NextResponse.json({
       success: true,
       user: {
-        id: user.id,
-        email: user.email,
-        role: user.role,
+        id: "admin-user",
+        email: ADMIN_EMAIL,
+        role: "ADMIN",
       },
     });
   } catch (error) {

@@ -101,6 +101,9 @@ function LayoutContent({ children, faviconUrl }: ConditionalLayoutProps) {
                 <Link href={getLocalizedPath('/contact')} className="transition-all duration-200 hover:translate-y-[-1px] hover:opacity-80" style={{ color: 'var(--text-secondary)' }}>
                   {t('nav.contact')}
                 </Link>
+                <Link href="/unsubscribe" className="transition-all duration-200 hover:translate-y-[-1px] hover:opacity-80" style={{ color: 'var(--text-secondary)' }}>
+                  Unsubscribe
+                </Link>
               </div>
             </div>
             <div className="text-xs text-center sm:text-right opacity-70" style={{ color: 'var(--text-muted)' }}>
