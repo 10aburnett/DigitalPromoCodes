@@ -31,9 +31,24 @@ export async function GET() {
       console.log('No legal pages table found');
     }
 
+    // Get blog posts for sitemap
+    let blogPosts = [];
+    try {
+      blogPosts = await prisma.blogPost.findMany({
+        where: { published: true },
+        select: {
+          slug: true,
+          updatedAt: true
+        }
+      });
+    } catch (error) {
+      console.log('No blog posts table found');
+    }
+
     // Static pages
     const staticPages = [
       { url: '', priority: '1.0', changefreq: 'daily' },
+      { url: 'blog', priority: '0.8', changefreq: 'weekly' },
       { url: 'about', priority: '0.8', changefreq: 'monthly' },
       { url: 'contact', priority: '0.6', changefreq: 'monthly' },
       { url: 'privacy', priority: '0.5', changefreq: 'yearly' },
@@ -91,6 +106,13 @@ export async function GET() {
     <lastmod>${whop.updatedAt.toISOString().split('T')[0]}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
+  </url>`).join('')}
+  ${blogPosts.map(post => `
+  <url>
+    <loc>${baseUrl}/blog/${post.slug}</loc>
+    <lastmod>${post.updatedAt.toISOString().split('T')[0]}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
   </url>`).join('')}
   ${legalPages.map(page => `
   <url>

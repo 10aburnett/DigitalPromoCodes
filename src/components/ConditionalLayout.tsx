@@ -56,6 +56,9 @@ function LayoutContent({ children, faviconUrl }: ConditionalLayoutProps) {
               <Link href={getLocalizedPath('/')} className="transition-colors duration-200 hover:opacity-80" style={{ color: 'var(--text-secondary)' }}>
                 {t('nav.home')}
               </Link>
+              <Link href={getLocalizedPath('/blog')} className="transition-colors duration-200 hover:opacity-80" style={{ color: 'var(--text-secondary)' }}>
+                Blog
+              </Link>
               <Link href={getLocalizedPath('/about')} className="transition-colors duration-200 hover:opacity-80" style={{ color: 'var(--text-secondary)' }}>
                 {t('nav.about')}
               </Link>
@@ -83,6 +86,9 @@ function LayoutContent({ children, faviconUrl }: ConditionalLayoutProps) {
                 WHPCodes.com
               </Link>
               <div className="flex items-center justify-center sm:justify-start gap-6 text-sm mt-4 sm:mt-0">
+                <Link href={getLocalizedPath('/blog')} className="transition-all duration-200 hover:translate-y-[-1px] hover:opacity-80" style={{ color: 'var(--text-secondary)' }}>
+                  Blog
+                </Link>
                 <Link href={getLocalizedPath('/about')} className="transition-all duration-200 hover:translate-y-[-1px] hover:opacity-80" style={{ color: 'var(--text-secondary)' }}>
                   {t('nav.about')}
                 </Link>
