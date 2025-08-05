@@ -67,8 +67,8 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           {/* Article */}
           <article>
             <header className="text-center mb-12">
-              <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r bg-clip-text text-transparent leading-tight" 
-                  style={{ backgroundImage: `linear-gradient(to right, var(--text-color), var(--text-secondary))` }}>
+              <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r bg-clip-text text-transparent py-2" 
+                  style={{ backgroundImage: `linear-gradient(to right, var(--text-color), var(--text-secondary))`, lineHeight: '1.3' }}>
                 {post.title}
               </h1>
               <div className="w-20 h-1 mx-auto rounded-full mb-6" style={{ backgroundColor: 'var(--accent-color)' }}></div>
