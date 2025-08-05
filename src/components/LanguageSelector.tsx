@@ -34,7 +34,19 @@ export default function LanguageSelector() {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center space-x-2 px-3 py-2 text-sm font-medium text-[#a4a5b0] hover:text-[#68D08B] transition-colors duration-200 rounded-lg hover:bg-[#2a2d3a]"
+        className="flex items-center space-x-2 px-3 py-2 text-sm font-medium transition-colors duration-200 rounded-lg"
+        style={{ 
+          color: 'var(--text-secondary)',
+          backgroundColor: 'transparent'
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.color = 'var(--accent-color)';
+          e.currentTarget.style.backgroundColor = 'var(--background-secondary)';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.color = 'var(--text-secondary)';
+          e.currentTarget.style.backgroundColor = 'transparent';
+        }}
         aria-label="Select language"
       >
         <span className="text-lg">{currentLanguage.flag}</span>
@@ -50,19 +62,35 @@ export default function LanguageSelector() {
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-48 bg-[#2a2d3a] border border-[#3f4451] rounded-lg shadow-lg z-50 py-1">
+        <div className="absolute right-0 mt-2 w-48 rounded-lg shadow-lg z-50 py-1" style={{ 
+          backgroundColor: 'var(--card-bg)',
+          border: '1px solid var(--card-border)',
+          boxShadow: 'var(--promo-shadow)'
+        }}>
           {Object.entries(languages).map(([code, lang]) => (
             <button
               key={code}
               onClick={() => handleLanguageChange(code as Language)}
-              className={`w-full flex items-center space-x-3 px-4 py-2 text-sm text-left hover:bg-[#3f4451] transition-colors duration-200 ${
-                language === code ? 'bg-[#3f4451] text-[#68D08B]' : 'text-[#a4a5b0]'
-              }`}
+              className="w-full flex items-center space-x-3 px-4 py-2 text-sm text-left transition-colors duration-200"
+              style={{
+                color: language === code ? 'var(--accent-color)' : 'var(--text-secondary)',
+                backgroundColor: language === code ? 'var(--background-secondary)' : 'transparent'
+              }}
+              onMouseEnter={(e) => {
+                if (language !== code) {
+                  e.currentTarget.style.backgroundColor = 'var(--background-secondary)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (language !== code) {
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                }
+              }}
             >
               <span className="text-lg">{lang.flag}</span>
               <span>{lang.name}</span>
               {language === code && (
-                <svg className="w-4 h-4 ml-auto" fill="currentColor" viewBox="0 0 20 20">
+                <svg className="w-4 h-4 ml-auto" fill="currentColor" viewBox="0 0 20 20" style={{ color: 'var(--accent-color)' }}>
                   <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                 </svg>
               )}
