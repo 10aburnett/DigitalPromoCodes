@@ -50,7 +50,7 @@ export default async function BlogPage() {
           {posts.length === 0 ? (
             <div className="text-center py-16">
               <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 p-8 rounded-lg border border-blue-200 dark:border-blue-800">
-                <p className="text-lg" style={{ color: 'var(--text-secondary)' }}>No blog posts published yet.</p>
+                <p className="text-lg text-gray-900 dark:text-white">No blog posts published yet.</p>
               </div>
             </div>
           ) : (

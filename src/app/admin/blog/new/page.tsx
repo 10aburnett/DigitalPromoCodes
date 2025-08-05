@@ -55,10 +55,10 @@ export default function NewBlogPostPage() {
   return (
     <div className="p-8 max-w-4xl mx-auto">
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">New Blog Post</h1>
+        <h1 className="text-3xl font-bold text-white">New Blog Post</h1>
         <button
           onClick={() => router.back()}
-          className="text-gray-600 hover:text-gray-800"
+          className="text-gray-200 hover:text-white border border-gray-300 px-4 py-2 rounded"
         >
           Cancel
         </button>
@@ -145,7 +145,7 @@ export default function NewBlogPostPage() {
           <button
             type="button"
             onClick={() => router.back()}
-            className="px-6 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+            className="px-6 py-2 border border-gray-300 rounded-md text-gray-200 hover:text-white hover:border-gray-200"
           >
             Cancel
           </button>

@@ -4,20 +4,25 @@ const bcrypt = require('bcryptjs');
 const prisma = new PrismaClient();
 
 async function main() {
-  const email = 'admin@example.com';
-  const password = 'admin123';
-  const name = 'Admin User';
+  const email = 'alexburnett21@icloud.com';
+  const password = 'Grizedale12£';
+  const name = 'Alex Burnett';
 
   const hashedPassword = await bcrypt.hash(password, 10);
 
   const user = await prisma.user.upsert({
     where: { email },
-    update: {},
+    update: {
+      password: hashedPassword,
+      name,
+    },
     create: {
+      id: `admin-${Date.now()}`,
       email,
       name,
       password: hashedPassword,
       role: 'ADMIN',
+      updatedAt: new Date(),
     },
   });
 
