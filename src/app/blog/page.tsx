@@ -7,6 +7,9 @@ export const metadata: Metadata = {
   description: 'Stay updated with the latest news, insights, and tips from our blog.',
 }
 
+// Force dynamic rendering to avoid build-time database connection issues
+export const dynamic = 'force-dynamic'
+
 export default async function BlogPage() {
   const posts = await prisma.blogPost.findMany({
     where: { published: true },
