@@ -124,8 +124,8 @@ export default function CommentsList({ blogPostId, refreshTrigger, onReply }: Co
                 disabled={isVoting}
                 className={`p-1 rounded transition-colors ${
                   comment.userVote === 'UPVOTE' 
-                    ? 'text-orange-500' 
-                    : 'text-gray-400 hover:text-orange-500'
+                    ? 'text-green-500' 
+                    : 'text-gray-400 hover:text-green-500'
                 } ${isVoting ? 'opacity-50' : ''}`}
               >
                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
@@ -135,8 +135,8 @@ export default function CommentsList({ blogPostId, refreshTrigger, onReply }: Co
               
               <span 
                 className={`text-sm font-medium ${
-                  netScore > 0 ? 'text-orange-500' : 
-                  netScore < 0 ? 'text-blue-500' : 
+                  netScore > 0 ? 'text-green-500' : 
+                  netScore < 0 ? 'text-red-500' : 
                   'text-gray-500'
                 }`}
               >
@@ -148,8 +148,8 @@ export default function CommentsList({ blogPostId, refreshTrigger, onReply }: Co
                 disabled={isVoting}
                 className={`p-1 rounded transition-colors ${
                   comment.userVote === 'DOWNVOTE' 
-                    ? 'text-blue-500' 
-                    : 'text-gray-400 hover:text-blue-500'
+                    ? 'text-red-500' 
+                    : 'text-gray-400 hover:text-red-500'
                 } ${isVoting ? 'opacity-50' : ''}`}
               >
                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
