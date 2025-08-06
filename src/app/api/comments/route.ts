@@ -81,9 +81,9 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Content moderation
+    // Content moderation - auto-approve unless severely offensive
     const moderation = containsHateSpeech(content)
-    const status = moderation.isBlocked ? 'FLAGGED' : 'PENDING'
+    const status = moderation.isBlocked ? 'FLAGGED' : 'APPROVED'
     const flaggedReason = moderation.reason || null
 
     // Create comment
@@ -103,7 +103,16 @@ export async function POST(request: NextRequest) {
       success: true, 
       message: moderation.isBlocked 
         ? 'Comment flagged for review due to content policy violation'
-        : 'Comment submitted for review'
+        : 'Comment posted successfully',
+      comment: {
+        id: comment.id,
+        content: comment.content,
+        authorName: comment.authorName,
+        createdAt: comment.createdAt,
+        upvotes: 0,
+        downvotes: 0,
+        userVote: null
+      }
     })
   } catch (error) {
     console.error('Error creating comment:', error)
