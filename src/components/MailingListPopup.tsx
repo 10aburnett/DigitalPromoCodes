@@ -110,8 +110,11 @@ export default function MailingListPopup({
               </svg>
             </button>
             
-            <div className="w-20 h-20 mx-auto mb-6 rounded-full flex items-center justify-center bg-green-100 dark:bg-green-900/20">
-              <svg className="w-10 h-10 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div 
+              className="w-20 h-20 mx-auto mb-6 rounded-full flex items-center justify-center"
+              style={{ backgroundColor: 'var(--accent-color)' }}
+            >
+              <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
             </div>
@@ -125,8 +128,15 @@ export default function MailingListPopup({
                 <strong style={{ color: 'var(--accent-color)' }}>You're all set!</strong> We've added <strong>{userEmail}</strong> to our exclusive mailing list.
               </p>
               
-              <div className="bg-green-50 dark:bg-green-900/10 p-4 rounded-lg border border-green-200 dark:border-green-800">
-                <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+              <div 
+                className="p-4 rounded-lg border"
+                style={{
+                  backgroundColor: 'var(--card-bg)',
+                  borderColor: 'var(--accent-color)',
+                  color: 'var(--text-secondary)'
+                }}
+              >
+                <p className="text-sm">
                   🎯 <strong>What's next?</strong> Watch your inbox for the latest Whop promo codes, insider tips, and exclusive deals. 
                   Your first VIP email is coming soon!
                 </p>
