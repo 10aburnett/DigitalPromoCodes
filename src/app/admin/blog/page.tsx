@@ -9,6 +9,8 @@ interface BlogPost {
   published: boolean
   publishedAt: string | null
   createdAt: string
+  pinned: boolean
+  pinnedAt: string | null
   author?: {
     name: string
   }
@@ -53,6 +55,26 @@ export default function AdminBlogPage() {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ published: !published }),
+        credentials: 'include'
+      })
+      
+      if (response.ok) {
+        fetchPosts()
+      }
+    } catch (error) {
+      console.error('Error updating post:', error)
+    }
+  }
+
+  const handleTogglePin = async (id: string, pinned: boolean) => {
+    try {
+      const response = await fetch(`/api/admin/blog/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          pinned: !pinned,
+          pinnedAt: !pinned ? new Date().toISOString() : null
+        }),
         credentials: 'include'
       })
       
@@ -134,6 +156,9 @@ export default function AdminBlogPage() {
                   Status
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Pinned
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Author
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -166,6 +191,13 @@ export default function AdminBlogPage() {
                       {post.published ? 'Published' : 'Draft'}
                     </span>
                   </td>
+                  <td className="px-6 py-4">
+                    {post.pinned && (
+                      <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                        📌 Pinned
+                      </span>
+                    )}
+                  </td>
                   <td className="px-6 py-4 text-sm text-gray-900">
                     {post.author?.name || 'Unknown'}
                   </td>
@@ -187,6 +219,12 @@ export default function AdminBlogPage() {
                       className="text-indigo-600 hover:text-indigo-800"
                     >
                       {post.published ? 'Unpublish' : 'Publish'}
+                    </button>
+                    <button
+                      onClick={() => handleTogglePin(post.id, post.pinned)}
+                      className="text-yellow-600 hover:text-yellow-800"
+                    >
+                      {post.pinned ? 'Unpin' : 'Pin'}
                     </button>
                     {post.published && (
                       <Link

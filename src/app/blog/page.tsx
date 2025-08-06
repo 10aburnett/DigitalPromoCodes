@@ -13,13 +13,17 @@ export const dynamic = 'force-dynamic'
 export default async function BlogPage() {
   const posts = await prisma.blogPost.findMany({
     where: { published: true },
-    orderBy: { publishedAt: 'desc' },
+    orderBy: [
+      { pinned: 'desc' },
+      { publishedAt: 'desc' }
+    ],
     select: {
       id: true,
       title: true,
       slug: true,
       excerpt: true,
       publishedAt: true,
+      pinned: true,
       author: {
         select: {
           name: true,
@@ -61,12 +65,17 @@ export default async function BlogPage() {
               {posts.map((post) => (
                 <Link key={post.id} href={`/blog/${post.slug}`}>
                   <article
-                    className="blog-card rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden group border cursor-pointer"
+                    className="blog-card rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden group border cursor-pointer relative"
                     style={{ 
                       borderColor: 'var(--card-border)',
                       boxShadow: 'var(--promo-shadow)'
                     }}
                   >
+                    {post.pinned && (
+                      <div className="absolute top-4 right-4 text-yellow-500 text-xl">
+                        📌
+                      </div>
+                    )}
                     <div className="p-8">
                       <div className="mb-4">
                         <time className="text-sm" style={{ color: 'var(--text-muted)' }}>

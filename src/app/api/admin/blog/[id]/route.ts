@@ -49,7 +49,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     }
 
     const body = await request.json()
-    const { title, slug, content, excerpt, published } = body
+    const { title, slug, content, excerpt, published, pinned, pinnedAt } = body
 
     // Check if slug already exists (excluding current post)
     if (slug) {
@@ -87,6 +87,13 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
         }
       } else {
         updateData.publishedAt = null
+      }
+    }
+    
+    if (pinned !== undefined) {
+      updateData.pinned = pinned
+      if (pinnedAt !== undefined) {
+        updateData.pinnedAt = pinnedAt ? new Date(pinnedAt) : null
       }
     }
 
