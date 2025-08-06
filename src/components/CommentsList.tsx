@@ -28,10 +28,13 @@ export default function CommentsList({ blogPostId, refreshTrigger, onReply }: Co
       const response = await fetch(`/api/comments?blogPostId=${blogPostId}`)
       if (response.ok) {
         const data = await response.json()
-        setComments(data)
+        setComments(Array.isArray(data) ? data : [])
+      } else {
+        setComments([])
       }
     } catch (error) {
       console.error('Error fetching comments:', error)
+      setComments([])
     } finally {
       setLoading(false)
     }
@@ -106,30 +109,100 @@ export default function CommentsList({ blogPostId, refreshTrigger, onReply }: Co
   const renderComment = (comment: Comment, depth = 0) => {
     const netScore = comment.upvotes - comment.downvotes
     const isVoting = votingStates[comment.id]
+    const maxNestingDepth = 5
     
-    // Limit visual nesting depth to prevent UI from becoming too narrow
-    const maxVisualDepth = 6
-    const visualDepth = Math.min(depth, maxVisualDepth)
-    
-    return (
-      <div key={comment.id} className={`${visualDepth > 0 ? 'ml-8 mt-4' : ''} relative`}>
-        {/* Threading line for nested comments */}
-        {visualDepth > 0 && (
+    // For comments deeper than max nesting, render them flattened with straight lines
+    if (depth > maxNestingDepth) {
+      return (
+        <div key={comment.id} className="mt-4 relative">
+          {/* Straight vertical line for flattened deep comments - solid light blue */}
           <div 
-            className="absolute left-0 top-0 w-0.5 h-full opacity-30"
-            style={{ backgroundColor: 'var(--accent-color)' }}
+            className="absolute left-0 top-0 w-0.5 h-full"
+            style={{ 
+              backgroundColor: '#b3cdfc',
+              marginLeft: '12px'
+            }}
           ></div>
+          
+          <div 
+            className="ml-6 border rounded-lg p-4" 
+            style={{ 
+              borderColor: 'var(--card-border)',
+              backgroundColor: 'var(--background-color)',
+              borderLeftWidth: '2px',
+              borderLeftColor: '#b3cdfc'
+            }}
+          >
+            {renderCommentContent(comment)}
+          </div>
+          
+          {/* Render deeply nested replies also flattened */}
+          {comment.replies && comment.replies.length > 0 && (
+            <div className="mt-2">
+              {comment.replies.map(reply => renderComment(reply, depth + 1))}
+            </div>
+          )}
+        </div>
+      )
+    }
+    
+    // Normal nested rendering for levels 1-5
+    return (
+      <div key={comment.id} className={`${depth > 0 ? 'ml-8 mt-4' : ''} relative`}>
+        {/* Reddit-style curved threading line for nested comments */}
+        {depth > 0 && (
+          <div className="absolute left-0 top-0 opacity-40">
+            {/* Curved connector from parent */}
+            <div 
+              className="w-4 h-6"
+              style={{
+                borderLeft: `2px solid var(--accent-color)`,
+                borderBottom: `2px solid var(--accent-color)`,
+                borderBottomLeftRadius: '8px',
+                marginLeft: '-32px'
+              }}
+            ></div>
+            {/* Vertical line for child replies */}
+            {comment.replies && comment.replies.length > 0 && (
+              <div 
+                className="w-0.5 opacity-30"
+                style={{ 
+                  backgroundColor: 'var(--accent-color)',
+                  height: 'calc(100% - 24px)',
+                  marginLeft: '-32px',
+                  marginTop: '0px'
+                }}
+              ></div>
+            )}
+          </div>
         )}
         
         <div 
           className="border rounded-lg p-4 relative" 
           style={{ 
             borderColor: 'var(--card-border)',
-            backgroundColor: visualDepth > 0 ? 'var(--background-color)' : 'transparent',
-            borderLeftWidth: depth > maxVisualDepth ? '3px' : '1px',
-            borderLeftColor: depth > maxVisualDepth ? 'var(--accent-color)' : 'var(--card-border)'
+            backgroundColor: depth > 0 ? 'var(--background-color)' : 'transparent'
           }}
         >
+          {renderCommentContent(comment)}
+        </div>
+        
+        {/* Nested replies */}
+        {comment.replies && comment.replies.length > 0 && (
+          <div className="mt-2">
+            {comment.replies.map(reply => renderComment(reply, depth + 1))}
+          </div>
+        )}
+      </div>
+    )
+  }
+
+  // Extract comment content rendering to avoid duplication
+  const renderCommentContent = (comment: Comment) => {
+    const netScore = comment.upvotes - comment.downvotes
+    const isVoting = votingStates[comment.id]
+    
+    return (
           <div className="flex items-start space-x-3">
             {/* Vote buttons */}
             <div className="flex flex-col items-center space-y-1 pt-1">
@@ -211,15 +284,6 @@ export default function CommentsList({ blogPostId, refreshTrigger, onReply }: Co
               )}
             </div>
           </div>
-        </div>
-        
-        {/* Nested replies */}
-        {comment.replies && comment.replies.length > 0 && (
-          <div className="mt-2">
-            {comment.replies.map(reply => renderComment(reply, depth + 1))}
-          </div>
-        )}
-      </div>
     )
   }
 
@@ -254,10 +318,10 @@ export default function CommentsList({ blogPostId, refreshTrigger, onReply }: Co
            boxShadow: 'var(--promo-shadow)'
          }}>
       <h3 className="text-2xl font-bold mb-6" style={{ color: 'var(--text-color)' }}>
-        Comments ({comments.length})
+        Comments ({comments?.length || 0})
       </h3>
 
-      {comments.length === 0 ? (
+      {!comments || comments.length === 0 ? (
         <div className="text-center py-8">
           <p className="text-lg" style={{ color: 'var(--text-secondary)' }}>
             No comments yet. Be the first to share your thoughts!
@@ -265,7 +329,7 @@ export default function CommentsList({ blogPostId, refreshTrigger, onReply }: Co
         </div>
       ) : (
         <div className="space-y-4">
-          {comments.map(comment => renderComment(comment))}
+          {comments.map(comment => comment ? renderComment(comment) : null).filter(Boolean)}
         </div>
       )}
     </div>

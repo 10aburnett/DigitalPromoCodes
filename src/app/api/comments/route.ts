@@ -134,14 +134,12 @@ export async function GET(request: NextRequest) {
     const forwarded = request.headers.get('x-forwarded-for')
     const voterIP = forwarded ? forwarded.split(',')[0] : request.headers.get('x-real-ip') || 'unknown'
 
-    // Get top-level comments (no parent) with nested replies
-    const comments = await prisma.comment.findMany({
+    // Get ALL approved comments for this blog post (flattened)
+    const allComments = await prisma.comment.findMany({
       where: {
         blogPostId,
-        status: 'APPROVED',
-        parentId: null // Only top-level comments
+        status: 'APPROVED'
       },
-      orderBy: { createdAt: 'desc' },
       select: {
         id: true,
         content: true,
@@ -149,105 +147,56 @@ export async function GET(request: NextRequest) {
         createdAt: true,
         upvotes: true,
         downvotes: true,
+        parentId: true,
         votes: {
           where: { voterIP },
           select: { voteType: true }
-        },
-        replies: {
-          where: { status: 'APPROVED' },
-          orderBy: { createdAt: 'asc' },
-          select: {
-            id: true,
-            content: true,
-            authorName: true,
-            createdAt: true,
-            upvotes: true,
-            downvotes: true,
-            votes: {
-              where: { voterIP },
-              select: { voteType: true }
-            },
-            replies: {
-              where: { status: 'APPROVED' },
-              orderBy: { createdAt: 'asc' },
-              select: {
-                id: true,
-                content: true,
-                authorName: true,
-                createdAt: true,
-                upvotes: true,
-                downvotes: true,
-                votes: {
-                  where: { voterIP },
-                  select: { voteType: true }
-                },
-                replies: {
-                  where: { status: 'APPROVED' },
-                  orderBy: { createdAt: 'asc' },
-                  select: {
-                    id: true,
-                    content: true,
-                    authorName: true,
-                    createdAt: true,
-                    upvotes: true,
-                    downvotes: true,
-                    votes: {
-                      where: { voterIP },
-                      select: { voteType: true }
-                    },
-                    replies: {
-                      where: { status: 'APPROVED' },
-                      orderBy: { createdAt: 'asc' },
-                      select: {
-                        id: true,
-                        content: true,
-                        authorName: true,
-                        createdAt: true,
-                        upvotes: true,
-                        downvotes: true,
-                        votes: {
-                          where: { voterIP },
-                          select: { voteType: true }
-                        },
-                        replies: {
-                          where: { status: 'APPROVED' },
-                          orderBy: { createdAt: 'asc' },
-                          select: {
-                            id: true,
-                            content: true,
-                            authorName: true,
-                            createdAt: true,
-                            upvotes: true,
-                            downvotes: true,
-                            votes: {
-                              where: { voterIP },
-                              select: { voteType: true }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
         }
       }
     })
 
-    // Recursive function to transform nested comments
-    const transformComment = (comment: any): any => ({
-      ...comment,
-      userVote: comment.votes.length > 0 ? comment.votes[0].voteType : null,
-      votes: undefined, // Remove raw votes from response
-      replies: comment.replies ? comment.replies.map(transformComment) : []
+    // Build nested structure programmatically (supports infinite nesting)
+    const commentMap = new Map()
+    const rootComments = []
+
+    // Transform comments and create map
+    allComments.forEach(comment => {
+      const transformedComment = {
+        ...comment,
+        userVote: comment.votes.length > 0 ? comment.votes[0].voteType : null,
+        votes: undefined,
+        replies: []
+      }
+      commentMap.set(comment.id, transformedComment)
     })
 
-    // Transform the data to include user vote status at all nesting levels
-    const transformedComments = comments.map(transformComment)
+    // Build parent-child relationships
+    allComments.forEach(comment => {
+      const transformedComment = commentMap.get(comment.id)
+      if (comment.parentId) {
+        const parent = commentMap.get(comment.parentId)
+        if (parent) {
+          parent.replies.push(transformedComment)
+        }
+      } else {
+        rootComments.push(transformedComment)
+      }
+    })
 
-    return NextResponse.json(transformedComments)
+    // Sort replies recursively by creation date
+    const sortReplies = (comments) => {
+      comments.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
+      comments.forEach(comment => {
+        if (comment.replies.length > 0) {
+          sortReplies(comment.replies)
+        }
+      })
+    }
+
+    sortReplies(rootComments)
+    const comments = rootComments.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+
+    return NextResponse.json(comments)
   } catch (error) {
     console.error('Error fetching comments:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
