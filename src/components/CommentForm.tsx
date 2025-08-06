@@ -17,6 +17,25 @@ export default function CommentForm({ blogPostId, onCommentSubmitted }: CommentF
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
   const [showMailingListPopup, setShowMailingListPopup] = useState(false)
 
+  const checkEmailSubscription = async (email: string): Promise<boolean> => {
+    try {
+      const response = await fetch('/api/mailing-list/check', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        return data.isSubscribed || false
+      }
+      return false
+    } catch (error) {
+      console.error('Error checking email subscription:', error)
+      return false // If check fails, show popup to be safe
+    }
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
@@ -38,10 +57,18 @@ export default function CommentForm({ blogPostId, onCommentSubmitted }: CommentF
         setMessage({ type: 'success', text: data.message })
         onCommentSubmitted()
         
-        // Show mailing list popup after successful comment submission
-        setTimeout(() => {
-          setShowMailingListPopup(true)
-        }, 1500) // Small delay to let user see success message
+        // Check if user is already subscribed before showing popup
+        const isAlreadySubscribed = await checkEmailSubscription(formData.authorEmail)
+        
+        if (!isAlreadySubscribed) {
+          // Show mailing list popup only if user is not already subscribed
+          console.log('User not subscribed, showing mailing list popup')
+          setTimeout(() => {
+            setShowMailingListPopup(true)
+          }, 1500) // Small delay to let user see success message
+        } else {
+          console.log('User already subscribed, skipping mailing list popup')
+        }
         
       } else {
         setMessage({ type: 'error', text: data.error || 'Failed to submit comment' })
