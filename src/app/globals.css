@@ -71,6 +71,7 @@
   --input-border: #404055;
   --input-focus: #68D08B;
   --thread-line-color: #424483;
+  --card-bg-blog: #2b2d3a;
 }
 
 /* Base Styles with Transitions */
@@ -177,4 +178,21 @@ body {
   .border-theme-hover:hover {
     border-color: var(--border-hover);
   }
+}
+
+/* Blog card styling */
+.blog-card {
+  background: linear-gradient(to right, #f0f9ff, #faf5ff);
+}
+
+[data-theme="dark"] .blog-card {
+  background: #2b2d3a !important;
+}
+
+[data-theme="dark"] .blog-card * {
+  color: white !important;
+}
+
+[data-theme="dark"] .blog-card .blog-accent {
+  color: var(--accent-color) !important;
 } 

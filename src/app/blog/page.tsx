@@ -61,7 +61,7 @@ export default async function BlogPage() {
               {posts.map((post) => (
                 <Link key={post.id} href={`/blog/${post.slug}`}>
                   <article
-                    className="rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden group border cursor-pointer bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20"
+                    className="blog-card rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden group border cursor-pointer"
                     style={{ 
                       borderColor: 'var(--card-border)',
                       boxShadow: 'var(--promo-shadow)'
@@ -69,7 +69,7 @@ export default async function BlogPage() {
                   >
                     <div className="p-8">
                       <div className="mb-4">
-                        <time className="text-sm text-gray-500 dark:text-gray-400">
+                        <time className="text-sm" style={{ color: 'var(--text-muted)' }}>
                           {post.publishedAt ? new Date(post.publishedAt).toLocaleDateString('en-US', {
                             year: 'numeric',
                             month: 'long',
@@ -78,20 +78,19 @@ export default async function BlogPage() {
                         </time>
                       </div>
                       
-                      <h2 className="text-2xl font-bold mb-4 group-hover:opacity-80 transition-colors text-gray-900 dark:text-white">
+                      <h2 className="text-2xl font-bold mb-4 group-hover:opacity-80 transition-colors" style={{ color: 'var(--text-color)' }}>
                         {post.title}
                       </h2>
                       
                       {post.excerpt && (
-                        <p className="mb-6 line-clamp-3 text-gray-700 dark:text-gray-300">
+                        <p className="mb-6 line-clamp-3" style={{ color: 'var(--text-secondary)' }}>
                           {post.excerpt}
                         </p>
                       )}
                       
                       <div className="flex items-center justify-between">
                         <span
-                          className="inline-flex items-center font-medium group-hover:opacity-80 transition-opacity"
-                          style={{ color: 'var(--accent-color)' }}
+                          className="blog-accent inline-flex items-center font-medium group-hover:opacity-80 transition-opacity"
                         >
                           Read More
                           <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -100,7 +99,7 @@ export default async function BlogPage() {
                         </span>
                         
                         {post.author?.name && (
-                          <span className="text-sm text-gray-500 dark:text-gray-400">
+                          <span className="text-sm" style={{ color: 'var(--text-muted)' }}>
                             By {post.author.name}
                           </span>
                         )}
