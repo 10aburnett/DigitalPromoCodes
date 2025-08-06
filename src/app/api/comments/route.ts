@@ -166,23 +166,86 @@ export async function GET(request: NextRequest) {
             votes: {
               where: { voterIP },
               select: { voteType: true }
+            },
+            replies: {
+              where: { status: 'APPROVED' },
+              orderBy: { createdAt: 'asc' },
+              select: {
+                id: true,
+                content: true,
+                authorName: true,
+                createdAt: true,
+                upvotes: true,
+                downvotes: true,
+                votes: {
+                  where: { voterIP },
+                  select: { voteType: true }
+                },
+                replies: {
+                  where: { status: 'APPROVED' },
+                  orderBy: { createdAt: 'asc' },
+                  select: {
+                    id: true,
+                    content: true,
+                    authorName: true,
+                    createdAt: true,
+                    upvotes: true,
+                    downvotes: true,
+                    votes: {
+                      where: { voterIP },
+                      select: { voteType: true }
+                    },
+                    replies: {
+                      where: { status: 'APPROVED' },
+                      orderBy: { createdAt: 'asc' },
+                      select: {
+                        id: true,
+                        content: true,
+                        authorName: true,
+                        createdAt: true,
+                        upvotes: true,
+                        downvotes: true,
+                        votes: {
+                          where: { voterIP },
+                          select: { voteType: true }
+                        },
+                        replies: {
+                          where: { status: 'APPROVED' },
+                          orderBy: { createdAt: 'asc' },
+                          select: {
+                            id: true,
+                            content: true,
+                            authorName: true,
+                            createdAt: true,
+                            upvotes: true,
+                            downvotes: true,
+                            votes: {
+                              where: { voterIP },
+                              select: { voteType: true }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
             }
           }
         }
       }
     })
 
-    // Transform the data to include user vote status
-    const transformedComments = comments.map(comment => ({
+    // Recursive function to transform nested comments
+    const transformComment = (comment: any): any => ({
       ...comment,
       userVote: comment.votes.length > 0 ? comment.votes[0].voteType : null,
       votes: undefined, // Remove raw votes from response
-      replies: comment.replies.map(reply => ({
-        ...reply,
-        userVote: reply.votes.length > 0 ? reply.votes[0].voteType : null,
-        votes: undefined // Remove raw votes from response
-      }))
-    }))
+      replies: comment.replies ? comment.replies.map(transformComment) : []
+    })
+
+    // Transform the data to include user vote status at all nesting levels
+    const transformedComments = comments.map(transformComment)
 
     return NextResponse.json(transformedComments)
   } catch (error) {

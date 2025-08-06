@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import MailingListPopup from './MailingListPopup'
 
 interface CommentFormProps {
@@ -19,6 +19,21 @@ export default function CommentForm({ blogPostId, onCommentSubmitted, parentId, 
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
   const [showMailingListPopup, setShowMailingListPopup] = useState(false)
+
+  // Auto-fill with @username when replying
+  useEffect(() => {
+    if (parentId && parentAuthor) {
+      setFormData(prev => ({
+        ...prev,
+        content: `@${parentAuthor} `
+      }))
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        content: ''
+      }))
+    }
+  }, [parentId, parentAuthor])
 
   const checkEmailSubscription = async (email: string): Promise<boolean> => {
     try {
@@ -84,16 +99,24 @@ export default function CommentForm({ blogPostId, onCommentSubmitted, parentId, 
     }
   }
 
+  const resetFormData = () => {
+    setFormData({ 
+      authorName: '', 
+      authorEmail: '', 
+      content: parentId && parentAuthor ? `@${parentAuthor} ` : ''
+    })
+  }
+
   const handleMailingListClose = () => {
     setShowMailingListPopup(false)
     // Clear form data after mailing list interaction
-    setFormData({ authorName: '', authorEmail: '', content: '' })
+    resetFormData()
   }
 
   const handleMailingListSubmit = (subscribed: boolean) => {
     // Popup component handles the API call, we just need to cleanup
     setShowMailingListPopup(false)
-    setFormData({ authorName: '', authorEmail: '', content: '' })
+    resetFormData()
   }
 
   return (
@@ -191,7 +214,7 @@ export default function CommentForm({ blogPostId, onCommentSubmitted, parentId, 
               borderColor: 'var(--card-border)',
               color: 'var(--text-color)'
             }}
-            placeholder="Share your thoughts..."
+            placeholder={parentId ? `Reply to ${parentAuthor}...` : "Share your thoughts..."}
             required
             disabled={isSubmitting}
           />

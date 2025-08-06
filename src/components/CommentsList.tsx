@@ -107,13 +107,27 @@ export default function CommentsList({ blogPostId, refreshTrigger, onReply }: Co
     const netScore = comment.upvotes - comment.downvotes
     const isVoting = votingStates[comment.id]
     
+    // Limit visual nesting depth to prevent UI from becoming too narrow
+    const maxVisualDepth = 6
+    const visualDepth = Math.min(depth, maxVisualDepth)
+    
     return (
-      <div key={comment.id} className={`${depth > 0 ? 'ml-8 mt-4' : ''}`}>
+      <div key={comment.id} className={`${visualDepth > 0 ? 'ml-8 mt-4' : ''} relative`}>
+        {/* Threading line for nested comments */}
+        {visualDepth > 0 && (
+          <div 
+            className="absolute left-0 top-0 w-0.5 h-full opacity-30"
+            style={{ backgroundColor: 'var(--accent-color)' }}
+          ></div>
+        )}
+        
         <div 
-          className="border rounded-lg p-4" 
+          className="border rounded-lg p-4 relative" 
           style={{ 
             borderColor: 'var(--card-border)',
-            backgroundColor: depth > 0 ? 'var(--background-color)' : 'transparent'
+            backgroundColor: visualDepth > 0 ? 'var(--background-color)' : 'transparent',
+            borderLeftWidth: depth > maxVisualDepth ? '3px' : '1px',
+            borderLeftColor: depth > maxVisualDepth ? 'var(--accent-color)' : 'var(--card-border)'
           }}
         >
           <div className="flex items-start space-x-3">
