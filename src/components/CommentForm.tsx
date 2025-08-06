@@ -147,11 +147,17 @@ export default function CommentForm({ blogPostId, onCommentSubmitted, parentId, 
       )}
 
       {message && (
-        <div className={`p-4 rounded-lg mb-6 ${
-          message.type === 'success' 
-            ? 'bg-green-50 dark:bg-green-900/20 text-green-800 dark:text-green-200 border border-green-200 dark:border-green-800' 
-            : 'bg-red-50 dark:bg-red-900/20 text-red-800 dark:text-red-200 border border-red-200 dark:border-red-800'
-        }`}>
+        <div 
+          className="p-4 rounded-lg mb-6"
+          style={message.type === 'success' ? {
+            backgroundColor: 'var(--accent-color)',
+            color: 'white'
+          } : {
+            backgroundColor: 'light-dark(#fef2f2, rgba(220, 38, 38, 0.1))',
+            color: 'light-dark(#dc2626, #fca5a5)',
+            borderColor: 'light-dark(#fecaca, rgba(220, 38, 38, 0.3))'
+          }}
+        >
           {message.text}
         </div>
       )}

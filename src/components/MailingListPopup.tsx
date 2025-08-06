@@ -218,31 +218,18 @@ export default function MailingListPopup({
           </label>
         </div>
 
-        {/* Action Buttons */}
-        <div className="flex space-x-3">
-          <button
-            onClick={onClose}
-            disabled={isSubmitting}
-            className="flex-1 px-6 py-3 rounded-lg font-medium transition-colors border hover:opacity-80 disabled:opacity-50"
-            style={{ 
-              borderColor: 'var(--border-color)',
-              color: 'var(--text-secondary)',
-              backgroundColor: 'transparent'
-            }}
-          >
-            Maybe Later
-          </button>
-          
+        {/* Action Button */}
+        <div className="flex justify-center">
           <button
             onClick={handleSubmit}
             disabled={isSubmitting}
-            className="flex-1 px-6 py-3 rounded-lg font-medium transition-colors hover:opacity-90 disabled:opacity-50"
+            className="w-full px-6 py-3 rounded-lg font-medium transition-colors hover:opacity-90 disabled:opacity-50"
             style={{ 
               backgroundColor: 'var(--accent-color)', 
               color: 'white'
             }}
           >
-            {isSubmitting ? 'Processing...' : (isSubscribed ? 'Join VIP List!' : 'Continue')}
+            {isSubmitting ? 'Processing...' : 'Continue'}
           </button>
         </div>
         </>

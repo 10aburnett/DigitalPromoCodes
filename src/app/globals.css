@@ -40,6 +40,7 @@
   --input-bg: #ffffff;
   --input-border: #d1d5db;
   --input-focus: #3b82f6;
+  --thread-line-color: #b3cdfc;
 }
 
 /* Dark Theme Override */
@@ -69,6 +70,7 @@
   --input-bg: #3e4050;
   --input-border: #404055;
   --input-focus: #68D08B;
+  --thread-line-color: #424483;
 }
 
 /* Base Styles with Transitions */

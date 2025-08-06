@@ -115,23 +115,24 @@ export default function CommentsList({ blogPostId, refreshTrigger, onReply }: Co
     if (depth > maxNestingDepth) {
       return (
         <div key={comment.id} className="mt-4 relative">
-          {/* Straight vertical line for flattened deep comments - solid light blue */}
+          {/* Straight vertical line for flattened deep comments */}
           <div 
             className="absolute left-0 top-0 w-0.5 h-full"
             style={{ 
-              backgroundColor: '#b3cdfc',
+              backgroundColor: 'var(--thread-line-color, #b3cdfc)',
               marginLeft: '12px'
             }}
           ></div>
           
           <div 
-            className="ml-6 border rounded-lg p-4" 
+            className="ml-6 border rounded-lg p-4"
             style={{ 
               borderColor: 'var(--card-border)',
-              backgroundColor: 'var(--background-color)',
+              backgroundColor: 'var(--card-bg)',
               borderLeftWidth: '2px',
-              borderLeftColor: '#b3cdfc'
+              borderLeftColor: 'var(--thread-line-color, #b3cdfc)'
             }}
+          >
           >
             {renderCommentContent(comment)}
           </div>
@@ -181,7 +182,7 @@ export default function CommentsList({ blogPostId, refreshTrigger, onReply }: Co
           className="border rounded-lg p-4 relative" 
           style={{ 
             borderColor: 'var(--card-border)',
-            backgroundColor: depth > 0 ? 'var(--background-color)' : 'transparent'
+            backgroundColor: depth > 0 ? 'var(--card-bg)' : 'var(--background-color)'
           }}
         >
           {renderCommentContent(comment)}
