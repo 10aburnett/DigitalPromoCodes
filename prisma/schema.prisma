@@ -176,9 +176,32 @@ model Comment {
   blogPostId  String
   blogPost    BlogPost      @relation(fields: [blogPostId], references: [id], onDelete: Cascade)
 
+  // Nested replies support
+  parentId    String?
+  parent      Comment?      @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies     Comment[]     @relation("CommentReplies")
+  
+  // Voting system
+  upvotes     Int           @default(0)
+  downvotes   Int           @default(0)
+  votes       CommentVote[]
+
   @@index([status])
   @@index([createdAt])
   @@index([blogPostId])
+  @@index([parentId])
+}
+
+model CommentVote {
+  id        String    @id @default(cuid())
+  commentId String
+  comment   Comment   @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  voterIP   String    // Using IP address to prevent duplicate votes
+  voteType  VoteType
+  createdAt DateTime  @default(now())
+  
+  @@unique([commentId, voterIP]) // One vote per IP per comment
+  @@index([commentId])
 }
 
 model MailingList {
@@ -208,6 +231,11 @@ enum CommentStatus {
   APPROVED
   REJECTED
   FLAGGED
+}
+
+enum VoteType {
+  UPVOTE
+  DOWNVOTE
 }
 
 enum MailingListStatus {

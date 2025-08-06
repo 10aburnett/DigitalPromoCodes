@@ -5,9 +5,12 @@ import MailingListPopup from './MailingListPopup'
 interface CommentFormProps {
   blogPostId: string
   onCommentSubmitted: () => void
+  parentId?: string
+  parentAuthor?: string
+  onCancel?: () => void
 }
 
-export default function CommentForm({ blogPostId, onCommentSubmitted }: CommentFormProps) {
+export default function CommentForm({ blogPostId, onCommentSubmitted, parentId, parentAuthor, onCancel }: CommentFormProps) {
   const [formData, setFormData] = useState({
     authorName: '',
     authorEmail: '',
@@ -47,7 +50,8 @@ export default function CommentForm({ blogPostId, onCommentSubmitted }: CommentF
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...formData,
-          blogPostId
+          blogPostId,
+          parentId: parentId || null
         })
       })
 
@@ -57,17 +61,20 @@ export default function CommentForm({ blogPostId, onCommentSubmitted }: CommentF
         setMessage({ type: 'success', text: data.message })
         onCommentSubmitted()
         
-        // Check if user is already subscribed before showing popup
-        const isAlreadySubscribed = await checkEmailSubscription(formData.authorEmail)
-        
-        if (!isAlreadySubscribed) {
-          // Show mailing list popup only if user is not already subscribed
-          console.log('User not subscribed, showing mailing list popup')
-          setTimeout(() => {
-            setShowMailingListPopup(true)
-          }, 1500) // Small delay to let user see success message
-        } else {
-          console.log('User already subscribed, skipping mailing list popup')
+        // Only show mailing list popup for top-level comments, not replies
+        if (!parentId) {
+          // Check if user is already subscribed before showing popup
+          const isAlreadySubscribed = await checkEmailSubscription(formData.authorEmail)
+          
+          if (!isAlreadySubscribed) {
+            // Show mailing list popup only if user is not already subscribed
+            console.log('User not subscribed, showing mailing list popup')
+            setTimeout(() => {
+              setShowMailingListPopup(true)
+            }, 1500) // Small delay to let user see success message
+          } else {
+            console.log('User already subscribed, skipping mailing list popup')
+          }
         }
         
       } else {
@@ -100,8 +107,24 @@ export default function CommentForm({ blogPostId, onCommentSubmitted }: CommentF
            boxShadow: 'var(--promo-shadow)'
          }}>
       <h3 className="text-2xl font-bold mb-6" style={{ color: 'var(--text-color)' }}>
-        Leave a Comment
+        {parentId ? `Reply to ${parentAuthor}` : 'Leave a Comment'}
       </h3>
+
+      {parentId && onCancel && (
+        <div className="mb-4">
+          <button
+            onClick={onCancel}
+            className="text-sm px-4 py-2 rounded border transition-colors"
+            style={{ 
+              borderColor: 'var(--card-border)',
+              color: 'var(--text-muted)',
+              backgroundColor: 'var(--background-color)'
+            }}
+          >
+            Cancel Reply
+          </button>
+        </div>
+      )}
 
       {message && (
         <div className={`p-4 rounded-lg mb-6 ${
@@ -187,19 +210,21 @@ export default function CommentForm({ blogPostId, onCommentSubmitted }: CommentF
               color: 'white'
             }}
           >
-            {isSubmitting ? 'Submitting...' : 'Post Comment'}
+            {isSubmitting ? 'Submitting...' : (parentId ? 'Post Reply' : 'Post Comment')}
           </button>
         </div>
       </form>
 
-      {/* Mailing List Popup */}
-      <MailingListPopup
-        isOpen={showMailingListPopup}
-        onClose={handleMailingListClose}
-        userEmail={formData.authorEmail}
-        userName={formData.authorName}
-        onSubmit={handleMailingListSubmit}
-      />
+      {/* Mailing List Popup - only for top-level comments */}
+      {!parentId && (
+        <MailingListPopup
+          isOpen={showMailingListPopup}
+          onClose={handleMailingListClose}
+          userEmail={formData.authorEmail}
+          userName={formData.authorName}
+          onSubmit={handleMailingListSubmit}
+        />
+      )}
     </div>
   )
 }

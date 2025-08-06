@@ -6,16 +6,22 @@ interface Comment {
   content: string
   authorName: string
   createdAt: string
+  upvotes: number
+  downvotes: number
+  userVote: 'UPVOTE' | 'DOWNVOTE' | null
+  replies: Comment[]
 }
 
 interface CommentsListProps {
   blogPostId: string
   refreshTrigger: number
+  onReply?: (parentId: string, parentAuthor: string) => void
 }
 
-export default function CommentsList({ blogPostId, refreshTrigger }: CommentsListProps) {
+export default function CommentsList({ blogPostId, refreshTrigger, onReply }: CommentsListProps) {
   const [comments, setComments] = useState<Comment[]>([])
   const [loading, setLoading] = useState(true)
+  const [votingStates, setVotingStates] = useState<Record<string, boolean>>({})
 
   const fetchComments = async () => {
     try {
@@ -43,6 +49,164 @@ export default function CommentsList({ blogPostId, refreshTrigger }: CommentsLis
       hour: '2-digit',
       minute: '2-digit'
     })
+  }
+
+  const handleVote = async (commentId: string, voteType: 'UPVOTE' | 'DOWNVOTE') => {
+    if (votingStates[commentId]) return // Prevent double-clicking
+    
+    setVotingStates(prev => ({ ...prev, [commentId]: true }))
+    
+    try {
+      const response = await fetch(`/api/comments/${commentId}/vote`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ voteType })
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        
+        // Update the comment in state with new vote counts and user vote
+        setComments(prevComments => 
+          updateCommentVotes(prevComments, commentId, {
+            upvotes: data.upvotes,
+            downvotes: data.downvotes,
+            userVote: data.userVote
+          })
+        )
+      }
+    } catch (error) {
+      console.error('Error voting on comment:', error)
+    } finally {
+      setVotingStates(prev => ({ ...prev, [commentId]: false }))
+    }
+  }
+
+  // Helper function to recursively update vote counts in nested comments
+  const updateCommentVotes = (comments: Comment[], targetId: string, voteData: { upvotes: number, downvotes: number, userVote: 'UPVOTE' | 'DOWNVOTE' | null }): Comment[] => {
+    return comments.map(comment => {
+      if (comment.id === targetId) {
+        return {
+          ...comment,
+          upvotes: voteData.upvotes,
+          downvotes: voteData.downvotes,
+          userVote: voteData.userVote
+        }
+      }
+      if (comment.replies && comment.replies.length > 0) {
+        return {
+          ...comment,
+          replies: updateCommentVotes(comment.replies, targetId, voteData)
+        }
+      }
+      return comment
+    })
+  }
+
+  const renderComment = (comment: Comment, depth = 0) => {
+    const netScore = comment.upvotes - comment.downvotes
+    const isVoting = votingStates[comment.id]
+    
+    return (
+      <div key={comment.id} className={`${depth > 0 ? 'ml-8 mt-4' : ''}`}>
+        <div 
+          className="border rounded-lg p-4" 
+          style={{ 
+            borderColor: 'var(--card-border)',
+            backgroundColor: depth > 0 ? 'var(--background-color)' : 'transparent'
+          }}
+        >
+          <div className="flex items-start space-x-3">
+            {/* Vote buttons */}
+            <div className="flex flex-col items-center space-y-1 pt-1">
+              <button
+                onClick={() => handleVote(comment.id, 'UPVOTE')}
+                disabled={isVoting}
+                className={`p-1 rounded transition-colors ${
+                  comment.userVote === 'UPVOTE' 
+                    ? 'text-orange-500' 
+                    : 'text-gray-400 hover:text-orange-500'
+                } ${isVoting ? 'opacity-50' : ''}`}
+              >
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clipRule="evenodd" />
+                </svg>
+              </button>
+              
+              <span 
+                className={`text-sm font-medium ${
+                  netScore > 0 ? 'text-orange-500' : 
+                  netScore < 0 ? 'text-blue-500' : 
+                  'text-gray-500'
+                }`}
+              >
+                {netScore}
+              </span>
+              
+              <button
+                onClick={() => handleVote(comment.id, 'DOWNVOTE')}
+                disabled={isVoting}
+                className={`p-1 rounded transition-colors ${
+                  comment.userVote === 'DOWNVOTE' 
+                    ? 'text-blue-500' 
+                    : 'text-gray-400 hover:text-blue-500'
+                } ${isVoting ? 'opacity-50' : ''}`}
+              >
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                </svg>
+              </button>
+            </div>
+
+            <div className="flex-1">
+              {/* Comment header */}
+              <div className="flex items-center space-x-2 mb-2">
+                <div 
+                  className="w-8 h-8 rounded-full flex items-center justify-center font-bold text-white text-sm"
+                  style={{ backgroundColor: 'var(--accent-color)' }}
+                >
+                  {comment.authorName.charAt(0).toUpperCase()}
+                </div>
+                <span className="font-medium" style={{ color: 'var(--text-color)' }}>
+                  {comment.authorName}
+                </span>
+                <span className="text-xs" style={{ color: 'var(--text-muted)' }}>
+                  {formatDate(comment.createdAt)}
+                </span>
+              </div>
+              
+              {/* Comment content */}
+              <p 
+                className="whitespace-pre-wrap leading-relaxed mb-3" 
+                style={{ color: 'var(--text-secondary)' }}
+              >
+                {comment.content}
+              </p>
+              
+              {/* Reply button */}
+              {onReply && (
+                <button
+                  onClick={() => onReply(comment.id, comment.authorName)}
+                  className="text-sm font-medium transition-colors"
+                  style={{ color: 'var(--text-muted)' }}
+                  onMouseEnter={(e) => e.target.style.color = 'var(--accent-color)'}
+                  onMouseLeave={(e) => e.target.style.color = 'var(--text-muted)'}
+                >
+                  Reply
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+        
+        {/* Nested replies */}
+        {comment.replies && comment.replies.length > 0 && (
+          <div className="mt-2">
+            {comment.replies.map(reply => renderComment(reply, depth + 1))}
+          </div>
+        )}
+      </div>
+    )
   }
 
   if (loading) {
@@ -86,42 +250,8 @@ export default function CommentsList({ blogPostId, refreshTrigger }: CommentsLis
           </p>
         </div>
       ) : (
-        <div className="space-y-6">
-          {comments.map((comment) => (
-            <div 
-              key={comment.id} 
-              className="border-b pb-6 last:border-b-0" 
-              style={{ borderColor: 'var(--border-color)' }}
-            >
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center space-x-4">
-                  <div 
-                    className="w-10 h-10 rounded-full flex items-center justify-center font-bold text-white"
-                    style={{ backgroundColor: 'var(--accent-color)' }}
-                  >
-                    {comment.authorName.charAt(0).toUpperCase()}
-                  </div>
-                  <div>
-                    <h4 className="font-semibold" style={{ color: 'var(--text-color)' }}>
-                      {comment.authorName}
-                    </h4>
-                    <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
-                      {formatDate(comment.createdAt)}
-                    </p>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="ml-14">
-                <p 
-                  className="whitespace-pre-wrap leading-relaxed" 
-                  style={{ color: 'var(--text-secondary)' }}
-                >
-                  {comment.content}
-                </p>
-              </div>
-            </div>
-          ))}
+        <div className="space-y-4">
+          {comments.map(comment => renderComment(comment))}
         </div>
       )}
     </div>

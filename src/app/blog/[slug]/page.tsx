@@ -25,6 +25,7 @@ export default function BlogPostPage({ params }: BlogPostPageProps) {
   const [post, setPost] = useState<BlogPost | null>(null)
   const [loading, setLoading] = useState(true)
   const [refreshComments, setRefreshComments] = useState(0)
+  const [replyTo, setReplyTo] = useState<{ parentId: string, parentAuthor: string } | null>(null)
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -49,6 +50,19 @@ export default function BlogPostPage({ params }: BlogPostPageProps) {
 
   const handleCommentSubmitted = () => {
     setRefreshComments(prev => prev + 1)
+    setReplyTo(null) // Clear reply state after submission
+  }
+
+  const handleReply = (parentId: string, parentAuthor: string) => {
+    setReplyTo({ parentId, parentAuthor })
+    // Scroll to comment form
+    setTimeout(() => {
+      document.querySelector('[data-comment-form]')?.scrollIntoView({ behavior: 'smooth' })
+    }, 100)
+  }
+
+  const handleCancelReply = () => {
+    setReplyTo(null)
   }
 
   if (loading) {
@@ -134,8 +148,20 @@ export default function BlogPostPage({ params }: BlogPostPageProps) {
 
           {/* Comments Section */}
           <div className="mt-12 space-y-8">
-            <CommentsList blogPostId={post.id} refreshTrigger={refreshComments} />
-            <CommentForm blogPostId={post.id} onCommentSubmitted={handleCommentSubmitted} />
+            <CommentsList 
+              blogPostId={post.id} 
+              refreshTrigger={refreshComments} 
+              onReply={handleReply}
+            />
+            <div data-comment-form>
+              <CommentForm 
+                blogPostId={post.id} 
+                onCommentSubmitted={handleCommentSubmitted}
+                parentId={replyTo?.parentId}
+                parentAuthor={replyTo?.parentAuthor}
+                onCancel={replyTo ? handleCancelReply : undefined}
+              />
+            </div>
           </div>
 
           {/* Navigation */}

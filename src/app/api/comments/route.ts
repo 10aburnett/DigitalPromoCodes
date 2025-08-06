@@ -43,7 +43,7 @@ function containsHateSpeech(content: string): { isBlocked: boolean; reason?: str
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { content, authorName, authorEmail, blogPostId } = body
+    const { content, authorName, authorEmail, blogPostId, parentId } = body
 
     // Validate required fields
     if (!content || !authorName || !authorEmail || !blogPostId) {
@@ -65,6 +65,22 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Blog post not found' }, { status: 404 })
     }
 
+    // If this is a reply, check if parent comment exists and is approved
+    if (parentId) {
+      const parentComment = await prisma.comment.findUnique({
+        where: { id: parentId },
+        select: { id: true, status: true }
+      })
+
+      if (!parentComment) {
+        return NextResponse.json({ error: 'Parent comment not found' }, { status: 404 })
+      }
+
+      if (parentComment.status !== 'APPROVED') {
+        return NextResponse.json({ error: 'Cannot reply to non-approved comments' }, { status: 400 })
+      }
+    }
+
     // Content moderation
     const moderation = containsHateSpeech(content)
     const status = moderation.isBlocked ? 'FLAGGED' : 'PENDING'
@@ -77,6 +93,7 @@ export async function POST(request: NextRequest) {
         authorName: authorName.trim(),
         authorEmail: authorEmail.trim(),
         blogPostId,
+        parentId: parentId || null,
         status,
         flaggedReason,
       }
@@ -104,10 +121,16 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'blogPostId is required' }, { status: 400 })
     }
 
+    // Get user IP for vote status
+    const forwarded = request.headers.get('x-forwarded-for')
+    const voterIP = forwarded ? forwarded.split(',')[0] : request.headers.get('x-real-ip') || 'unknown'
+
+    // Get top-level comments (no parent) with nested replies
     const comments = await prisma.comment.findMany({
       where: {
         blogPostId,
-        status: 'APPROVED'
+        status: 'APPROVED',
+        parentId: null // Only top-level comments
       },
       orderBy: { createdAt: 'desc' },
       select: {
@@ -115,10 +138,44 @@ export async function GET(request: NextRequest) {
         content: true,
         authorName: true,
         createdAt: true,
+        upvotes: true,
+        downvotes: true,
+        votes: {
+          where: { voterIP },
+          select: { voteType: true }
+        },
+        replies: {
+          where: { status: 'APPROVED' },
+          orderBy: { createdAt: 'asc' },
+          select: {
+            id: true,
+            content: true,
+            authorName: true,
+            createdAt: true,
+            upvotes: true,
+            downvotes: true,
+            votes: {
+              where: { voterIP },
+              select: { voteType: true }
+            }
+          }
+        }
       }
     })
 
-    return NextResponse.json(comments)
+    // Transform the data to include user vote status
+    const transformedComments = comments.map(comment => ({
+      ...comment,
+      userVote: comment.votes.length > 0 ? comment.votes[0].voteType : null,
+      votes: undefined, // Remove raw votes from response
+      replies: comment.replies.map(reply => ({
+        ...reply,
+        userVote: reply.votes.length > 0 ? reply.votes[0].voteType : null,
+        votes: undefined // Remove raw votes from response
+      }))
+    }))
+
+    return NextResponse.json(transformedComments)
   } catch (error) {
     console.error('Error fetching comments:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
