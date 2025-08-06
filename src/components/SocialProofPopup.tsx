@@ -92,11 +92,7 @@ function SocialProofPopupItem({ data, onComplete }: SocialProofPopupProps) {
           </div>
           
           <p className="text-xs sm:text-sm leading-relaxed">
-            <span className="font-medium">{data.name}</span> just saved{' '}
-            <span className="font-bold" style={{ color: 'var(--success-color)' }}>
-              {data.amount}
-            </span>
-            {' '}on {data.whopName}
+            Someone just saved money on <span className="font-medium">{data.whopName}</span> by using one of our promo codes!
           </p>
         </div>
       </div>

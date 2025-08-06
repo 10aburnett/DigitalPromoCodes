@@ -100,8 +100,8 @@ export function SocialProofProvider({ children }: { children: React.ReactNode })
     const notification: SocialProofData = {
       ...data,
       id: `notification-${++idCounter}`,
-      name: data.name || getRandomName(),
-      amount: data.amount || generateSavingsAmount(),
+      name: '', // Not used in new message format
+      amount: '', // Not used in new message format
       whopName: formatWhopName(data.whopName),
       // NEVER show actual promo codes for revenue protection
       code: '',
@@ -148,9 +148,9 @@ export function createSocialProofFromWhop(whopData: {
   promoText?: string;
 }): Omit<SocialProofData, 'id'> {
   return {
-    name: '', // Will be set by addNotification after hydration
-    amount: '', // Will be set by addNotification after hydration
-    code: whopData.promoCode || '', // Pass the actual code or empty string
+    name: '', // Not used in new message format
+    amount: '', // Not used in new message format
+    code: '', // Not shown for security
     whopName: whopData.whopName,
   };
 } 
