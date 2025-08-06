@@ -54,12 +54,12 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 
   return {
-    title: `Best Whop Promo Codes & Discount Codes ${currentYear} - Exclusive Digital Product Deals`,
+    title: `WHPCodes - Best Whop Promo Codes & Discount Codes ${currentYear}`,
     description: `Find verified Whop promo codes, discount codes & coupons for ${currentYear}. Get exclusive access to premium digital products, courses, & communities at discounted prices. Each code updated daily!`,
     keywords: 'whop promo codes, whop discount codes, whop coupons, digital product discounts, community access codes, course promo codes, whop deals, exclusive discounts',
     metadataBase: new URL('https://whpcodes.com'),
     openGraph: {
-      title: `Best Whop Promo Codes & Discount Codes ${currentYear} - Exclusive Digital Product Deals`,
+      title: `WHPCodes - Best Whop Promo Codes & Discount Codes ${currentYear}`,
       description: `Find verified Whop promo codes, discount codes & coupons for ${currentYear}. Get exclusive access to premium digital products, courses, & communities at discounted prices. Each code updated daily!`,
       url: 'https://whpcodes.com',
       type: 'website',
