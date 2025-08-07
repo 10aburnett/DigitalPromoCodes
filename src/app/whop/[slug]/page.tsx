@@ -70,6 +70,41 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     };
   }
 
+  // Determine indexing status based on database field
+  let shouldIndex = true; // Default to index
+  
+  if (whopData.indexing === 'INDEX') {
+    shouldIndex = true; // Force index
+  } else if (whopData.indexing === 'NOINDEX') {
+    shouldIndex = false; // Force noindex
+  } else if (whopData.indexing === 'AUTO') {
+    // Use automatic logic (fallback for existing system)
+    const highTrafficCourses = [
+      'Brez marketing ERT',
+      'Remakeit.io creator', 
+      'Interbank Trading Room',
+      'Josh Exclusive VIP Access',
+      'EquiFix',
+      'LinkedIn Client Lab',
+      'Lowkey Discord Membership',
+      'Risen Consulting',
+      'Learn to Trade Academy',
+      'Royalty Hero Premium',
+      'The Blue Vortex',
+      'ThinkorSwim Blessing',
+      'ThinkorSwim Master Scalper',
+      'Korvato Gold Rush'
+    ];
+
+    const hasPromoCode = whopData.promoCodes && whopData.promoCodes.length > 0;
+    const isHighTraffic = highTrafficCourses.some(course => 
+      whopData.whopName.toLowerCase().includes(course.toLowerCase()) ||
+      course.toLowerCase().includes(whopData.whopName.toLowerCase())
+    );
+    
+    shouldIndex = hasPromoCode || isHighTraffic;
+  }
+
   // Get current month and year for SEO
   const currentDate = new Date();
   const currentMonth = currentDate.toLocaleDateString('en-US', { month: 'long' });
@@ -173,6 +208,27 @@ export async function generateMetadata({ params }: { params: { slug: string } })
       currentMonth,
       currentYear.toString()
     ].filter(Boolean).join(', '),
+    robots: shouldIndex ? {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        'max-image-preview': 'large',
+        'max-snippet': -1,
+        'max-video-preview': -1,
+      },
+    } : {
+      index: false,
+      follow: true,
+      googleBot: {
+        index: false,
+        follow: true,
+        'max-image-preview': 'large',
+        'max-snippet': -1,
+        'max-video-preview': -1,
+      },
+    },
     openGraph: {
       title,
       description,
