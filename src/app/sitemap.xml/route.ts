@@ -49,6 +49,8 @@ export async function GET() {
     const staticPages = [
       { url: '', priority: '1.0', changefreq: 'daily' },
       { url: 'blog', priority: '0.8', changefreq: 'weekly' },
+      { url: 'subscribe', priority: '0.7', changefreq: 'monthly' },
+      { url: 'unsubscribe', priority: '0.4', changefreq: 'monthly' },
       { url: 'about', priority: '0.8', changefreq: 'monthly' },
       { url: 'contact', priority: '0.6', changefreq: 'monthly' },
       { url: 'privacy', priority: '0.5', changefreq: 'yearly' },
@@ -64,6 +66,10 @@ export async function GET() {
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <sitemap>
     <loc>${baseUrl}/sitemap-static.xml</loc>
+    <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
+  </sitemap>
+  <sitemap>
+    <loc>${baseUrl}/sitemap-blog.xml</loc>
     <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
   </sitemap>
   ${Array.from({ length: totalPages }, (_, i) => i + 1).map(page => `
