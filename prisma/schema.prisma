@@ -131,6 +131,7 @@ model Whop {
   termsContent        String?
   faqContent          String?
   whopCategory        WhopCategory    @default(OTHER)
+  indexing            IndexingStatus  @default(AUTO)
   OfferTracking       OfferTracking[]
   PromoCode           PromoCode[]
   Review              Review[]
@@ -142,6 +143,7 @@ model Whop {
   @@index([rating])
   @@index([updatedAt])
   @@index([whopCategory])
+  @@index([indexing])
 }
 
 model BlogPost {
@@ -292,4 +294,10 @@ enum WhopCategory {
   COMPUTER_SCIENCE
   PERSONAL_FINANCE
   OTHER
+}
+
+enum IndexingStatus {
+  INDEX     // Force index this page
+  NOINDEX   // Force noindex this page  
+  AUTO      // Use automatic logic (promo codes + high traffic)
 }

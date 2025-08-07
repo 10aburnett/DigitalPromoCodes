@@ -164,7 +164,30 @@ const getWhopBySlug = async (slug: string, isAdmin: boolean) => {
       slug: slug,
       publishedAt: isAdmin ? undefined : { not: null }
     },
-    include: { 
+    select: {
+      id: true,
+      name: true,
+      slug: true,
+      logo: true,
+      description: true,
+      rating: true,
+      displayOrder: true,
+      createdAt: true,
+      updatedAt: true,
+      publishedAt: true,
+      affiliateLink: true,
+      screenshots: true,
+      website: true,
+      price: true,
+      category: true,
+      aboutContent: true,
+      howToRedeemContent: true,
+      promoDetailsContent: true,
+      featuresContent: true,
+      termsContent: true,
+      faqContent: true,
+      whopCategory: true,
+      indexing: true, // Include the new indexing field
       PromoCode: true,
       Review: {
         where: { verified: true },
