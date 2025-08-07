@@ -68,4 +68,4 @@ src/
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
-<!-- Trigger redeploy to fix missing JS chunks (404 errors) --> 
+<!-- Trigger redeploy with updated sitemap implementation --> 
