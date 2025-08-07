@@ -18,26 +18,52 @@ export default async function BlogPage() {
   let errorMessage = '';
 
   try {
-    posts = await prisma.blogPost.findMany({
-      where: { published: true },
-      orderBy: [
-        { pinned: 'desc' },
-        { publishedAt: 'desc' }
-      ],
-      select: {
-        id: true,
-        title: true,
-        slug: true,
-        excerpt: true,
-        publishedAt: true,
-        pinned: true,
-        author: {
-          select: {
-            name: true,
+    // Try with pinned column first, fallback without it
+    try {
+      posts = await prisma.blogPost.findMany({
+        where: { published: true },
+        orderBy: [
+          { pinned: 'desc' },
+          { publishedAt: 'desc' }
+        ],
+        select: {
+          id: true,
+          title: true,
+          slug: true,
+          excerpt: true,
+          publishedAt: true,
+          pinned: true,
+          author: {
+            select: {
+              name: true,
+            }
           }
         }
-      }
-    })
+      })
+    } catch (columnError) {
+      console.log('Pinned column not available, using fallback query');
+      // Fallback query without pinned column
+      posts = await prisma.blogPost.findMany({
+        where: { published: true },
+        orderBy: [
+          { publishedAt: 'desc' }
+        ],
+        select: {
+          id: true,
+          title: true,
+          slug: true,
+          excerpt: true,
+          publishedAt: true,
+          author: {
+            select: {
+              name: true,
+            }
+          }
+        }
+      })
+      // Add pinned: false to all posts for compatibility
+      posts = posts.map(post => ({ ...post, pinned: false }))
+    }
   } catch (error) {
     console.error('Blog page error:', error);
     hasError = true;
