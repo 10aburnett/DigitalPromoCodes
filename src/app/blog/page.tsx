@@ -11,26 +11,36 @@ export const metadata: Metadata = {
 export const dynamic = 'force-dynamic'
 
 export default async function BlogPage() {
-  const posts = await prisma.blogPost.findMany({
-    where: { published: true },
-    orderBy: [
-      { pinned: 'desc' },
-      { publishedAt: 'desc' }
-    ],
-    select: {
-      id: true,
-      title: true,
-      slug: true,
-      excerpt: true,
-      publishedAt: true,
-      pinned: true,
-      author: {
-        select: {
-          name: true,
+  let posts = [];
+  let hasError = false;
+  let errorMessage = '';
+
+  try {
+    posts = await prisma.blogPost.findMany({
+      where: { published: true },
+      orderBy: [
+        { pinned: 'desc' },
+        { publishedAt: 'desc' }
+      ],
+      select: {
+        id: true,
+        title: true,
+        slug: true,
+        excerpt: true,
+        publishedAt: true,
+        pinned: true,
+        author: {
+          select: {
+            name: true,
+          }
         }
       }
-    }
-  })
+    })
+  } catch (error) {
+    console.error('Blog page error:', error);
+    hasError = true;
+    errorMessage = error.message || 'Failed to load blog posts';
+  }
 
   return (
     <div className="min-h-screen py-8 transition-theme" style={{ backgroundColor: 'var(--background-color)', color: 'var(--text-color)' }}>
@@ -54,7 +64,43 @@ export default async function BlogPage() {
             </p>
           </div>
 
-          {posts.length === 0 ? (
+          {hasError ? (
+            <div className="text-center py-16">
+              <div className="p-8 rounded-lg border" style={{ 
+                backgroundColor: 'var(--background-secondary)', 
+                borderColor: 'var(--border-color)' 
+              }}>
+                <div className="mb-4 text-6xl">⚠️</div>
+                <h2 className="text-2xl font-bold mb-4" style={{ color: 'var(--text-color)' }}>
+                  Unable to Load Blog Posts
+                </h2>
+                <p className="text-lg mb-6" style={{ color: 'var(--text-secondary)' }}>
+                  We're experiencing technical difficulties. Please try again in a few moments.
+                </p>
+                <details className="text-left">
+                  <summary className="cursor-pointer font-medium mb-2" style={{ color: 'var(--text-muted)' }}>
+                    Technical Details
+                  </summary>
+                  <pre className="text-sm p-4 rounded bg-gray-100 dark:bg-gray-800 overflow-x-auto" style={{ color: 'var(--text-muted)' }}>
+                    {errorMessage}
+                  </pre>
+                </details>
+                <div className="mt-6">
+                  <a 
+                    href="/blog"
+                    className="inline-block px-6 py-3 rounded-lg font-medium transition-colors hover:opacity-90"
+                    style={{ 
+                      backgroundColor: 'var(--accent-color)', 
+                      color: 'white',
+                      textDecoration: 'none'
+                    }}
+                  >
+                    Try Again
+                  </a>
+                </div>
+              </div>
+            </div>
+          ) : posts.length === 0 ? (
             <div className="text-center py-16">
               <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 p-8 rounded-lg border border-blue-200 dark:border-blue-800">
                 <p className="text-lg text-gray-900 dark:text-white">No blog posts published yet.</p>
