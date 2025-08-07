@@ -7,6 +7,8 @@ export const metadata: Metadata = {
   description: 'Stay updated with the latest news, insights, and tips from our blog.',
 }
 
+// Force deployment refresh after database schema update
+
 // Force dynamic rendering to avoid build-time database connection issues
 export const dynamic = 'force-dynamic'
 
