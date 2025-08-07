@@ -76,42 +76,44 @@ export default async function BlogPage() {
                         📌
                       </div>
                     )}
-                    <div className="p-8">
-                      <div className="mb-4">
-                        <time className="text-sm" style={{ color: 'var(--text-muted)' }}>
-                          {post.publishedAt ? new Date(post.publishedAt).toLocaleDateString('en-US', {
-                            year: 'numeric',
-                            month: 'long',
-                            day: 'numeric'
-                          }) : ''}
-                        </time>
-                      </div>
-                      
-                      <h2 className="text-2xl font-bold mb-4 group-hover:opacity-80 transition-colors" style={{ color: 'var(--text-color)' }}>
-                        {post.title}
-                      </h2>
-                      
-                      {post.excerpt && (
-                        <p className="mb-6 line-clamp-3" style={{ color: 'var(--text-secondary)' }}>
-                          {post.excerpt}
-                        </p>
-                      )}
-                      
-                      <div className="flex items-center justify-between">
-                        <span
-                          className="blog-accent inline-flex items-center font-medium group-hover:opacity-80 transition-opacity"
-                        >
-                          Read More
-                          <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                          </svg>
-                        </span>
+                    <div className="blog-card-content p-8">
+                      <div className="flex flex-col h-full">
+                        <div className="mb-4">
+                          <time className="text-sm" style={{ color: 'var(--text-muted)' }}>
+                            {post.publishedAt ? new Date(post.publishedAt).toLocaleDateString('en-US', {
+                              year: 'numeric',
+                              month: 'long',
+                              day: 'numeric'
+                            }) : ''}
+                          </time>
+                        </div>
                         
-                        {post.author?.name && (
-                          <span className="text-sm" style={{ color: 'var(--text-muted)' }}>
-                            By {post.author.name}
-                          </span>
+                        <h2 className="blog-card-title text-2xl font-bold mb-4 group-hover:opacity-80 transition-colors" style={{ color: 'var(--text-color)' }}>
+                          {post.title}
+                        </h2>
+                        
+                        {post.excerpt && (
+                          <p className="blog-card-excerpt mb-6" style={{ color: 'var(--text-secondary)' }}>
+                            {post.excerpt}
+                          </p>
                         )}
+                        
+                        <div className="flex items-center justify-between mt-auto">
+                          <span
+                            className="blog-accent inline-flex items-center font-medium group-hover:opacity-80 transition-opacity"
+                          >
+                            Read More
+                            <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                            </svg>
+                          </span>
+                          
+                          {post.author?.name && (
+                            <span className="text-sm" style={{ color: 'var(--text-muted)' }}>
+                              By {post.author.name}
+                            </span>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </article>
