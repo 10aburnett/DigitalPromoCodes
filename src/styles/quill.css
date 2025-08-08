@@ -35,6 +35,22 @@
 .blog-content .ql-color-blue { color: #0066cc; }
 .blog-content .ql-color-purple { color: #9933ff; }
 
+/* Fix Quill-specific formatting classes */
+.blog-content .ql-align-center { text-align: center; }
+.blog-content .ql-align-right { text-align: right; }
+.blog-content .ql-align-left { text-align: left; }
+.blog-content .ql-align-justify { text-align: justify; }
+
+/* Fix Quill indentation */
+.blog-content .ql-indent-1 { padding-left: 3em; }
+.blog-content .ql-indent-2 { padding-left: 6em; }
+.blog-content .ql-indent-3 { padding-left: 9em; }
+.blog-content .ql-indent-4 { padding-left: 12em; }
+.blog-content .ql-indent-5 { padding-left: 15em; }
+.blog-content .ql-indent-6 { padding-left: 18em; }
+.blog-content .ql-indent-7 { padding-left: 21em; }
+.blog-content .ql-indent-8 { padding-left: 24em; }
+
 .blog-content h1, .blog-content h2, .blog-content h3 {
   font-weight: bold;
   margin-top: 2rem;
@@ -65,11 +81,27 @@
 .blog-content ul li {
   list-style-type: disc;
   margin-bottom: 0.5rem;
+  display: list-item;
 }
 
 .blog-content ol li {
   list-style-type: decimal;
   margin-bottom: 0.5rem;
+  display: list-item;
+}
+
+/* Ensure nested lists work properly */
+.blog-content ul ul, .blog-content ol ol, .blog-content ul ol, .blog-content ol ul {
+  margin: 0.5rem 0;
+  padding-left: 2rem;
+}
+
+.blog-content ul ul li {
+  list-style-type: circle;
+}
+
+.blog-content ul ul ul li {
+  list-style-type: square;
 }
 
 .blog-content a {
