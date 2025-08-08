@@ -118,18 +118,35 @@
   text-align: right;
 }
 
+/* Handle indented bullet points - ReactQuill uses ql-indent classes */
+.blog-content .ql-indent-1 li:before,
+.blog-content .ql-indent-2 li:before,
+.blog-content .ql-indent-3 li:before,
+.blog-content .ql-indent-4 li:before,
+.blog-content .ql-indent-5 li:before,
+.blog-content .ql-indent-6 li:before,
+.blog-content .ql-indent-7 li:before,
+.blog-content .ql-indent-8 li:before {
+  content: "•";
+  color: var(--text-color);
+  font-weight: bold;
+  position: absolute;
+  left: -1.5rem;
+  top: 0;
+}
+
 /* Ensure nested lists work properly */
 .blog-content ul ul, .blog-content ol ol, .blog-content ul ol, .blog-content ol ul {
   margin: 0.5rem 0;
   padding-left: 2rem;
 }
 
-.blog-content ul ul li {
-  list-style-type: circle;
+.blog-content ul ul li:before {
+  content: "◦";
 }
 
-.blog-content ul ul ul li {
-  list-style-type: square;
+.blog-content ul ul ul li:before {
+  content: "▪";
 }
 
 .blog-content a {
