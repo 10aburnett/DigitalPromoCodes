@@ -1,6 +1,10 @@
 'use client'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import dynamic from 'next/dynamic'
+
+// Dynamically import the markdown editor to avoid SSR issues
+const MDEditor = dynamic(() => import('@uiw/react-md-editor'), { ssr: false })
 
 export default function NewBlogPostPage() {
   const router = useRouter()
@@ -115,16 +119,23 @@ export default function NewBlogPostPage() {
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Content *
             </label>
-            <textarea
-              value={formData.content}
-              onChange={(e) => setFormData(prev => ({ ...prev, content: e.target.value }))}
-              rows={20}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-sm"
-              placeholder="Write your blog post content here. You can use HTML tags for formatting..."
-              required
-            />
+            <div className="border border-gray-300 rounded-md overflow-hidden">
+              <MDEditor
+                value={formData.content}
+                onChange={(value) => setFormData(prev => ({ ...prev, content: value || '' }))}
+                data-color-mode="light"
+                height={500}
+                preview="edit"
+                hideToolbar={false}
+                toolbarHeight={60}
+                previewOptions={{
+                  rehypePlugins: []
+                }}
+              />
+            </div>
             <p className="text-xs text-gray-500 mt-1">
-              Supports HTML formatting (p, h1-h6, strong, em, a, ul, ol, li, blockquote, etc.)
+              Use Markdown formatting: **bold**, *italic*, [links](url), # headings, - bullet points, etc. 
+              Toggle between edit and preview modes using the tabs above.
             </p>
           </div>
 
