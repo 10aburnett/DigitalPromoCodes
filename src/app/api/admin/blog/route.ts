@@ -74,6 +74,51 @@ export async function POST(request: NextRequest) {
       }, { status: 400 })
     }
 
+    // Verify the admin user exists in database before creating post
+    const dbUser = await prisma.user.findUnique({
+      where: { id: adminUser.id },
+      select: { id: true, role: true }
+    })
+    
+    if (!dbUser) {
+      // Fallback to first available admin user if token user doesn't exist
+      const fallbackAdmin = await prisma.user.findFirst({
+        where: { role: 'ADMIN' },
+        select: { id: true }
+      })
+      
+      if (!fallbackAdmin) {
+        return NextResponse.json({ 
+          error: 'No admin user available',
+          debug: `Token user ID ${adminUser.id} not found in database and no fallback admin available`
+        }, { status: 500 })
+      }
+      
+      const post = await prisma.blogPost.create({
+        data: {
+          title,
+          slug,
+          content,
+          excerpt: excerpt || null,
+          published: published || false,
+          publishedAt: published ? new Date() : null,
+          authorId: fallbackAdmin.id,
+        },
+        include: {
+          author: {
+            select: {
+              name: true,
+            }
+          }
+        }
+      })
+      
+      return NextResponse.json({
+        ...post,
+        warning: `Used fallback admin user ${fallbackAdmin.id} as author`
+      })
+    }
+
     const post = await prisma.blogPost.create({
       data: {
         title,
