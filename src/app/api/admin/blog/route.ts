@@ -31,14 +31,21 @@ export async function GET() {
 
 // POST /api/admin/blog - Create new blog post
 export async function POST(request: NextRequest) {
+  console.log('POST /api/admin/blog - Starting request processing')
+  
   try {
+    console.log('Verifying admin token...')
     const adminUser = await verifyAdminToken()
+    console.log('Admin user verification result:', adminUser)
     
     if (!adminUser || adminUser.role !== 'ADMIN') {
+      console.log('Authorization failed - adminUser:', adminUser)
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    console.log('Parsing request body...')
     const body = await request.json()
+    console.log('Request body parsed:', body)
     const { title, slug, content, excerpt, published } = body
 
     // Check if slug already exists
@@ -69,9 +76,14 @@ export async function POST(request: NextRequest) {
       }
     })
 
+    console.log('Blog post created successfully:', post)
     return NextResponse.json(post)
   } catch (error) {
     console.error('Error creating blog post:', error)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+    console.error('Error stack:', error instanceof Error ? error.stack : 'No stack trace')
+    return NextResponse.json({ 
+      error: 'Internal server error', 
+      details: error instanceof Error ? error.message : String(error)
+    }, { status: 500 })
   }
 }
