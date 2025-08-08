@@ -75,19 +75,47 @@
 
 .blog-content ul, .blog-content ol {
   margin: 1.25rem 0;
-  padding-left: 1.5rem;
+  padding-left: 2rem !important;
+  list-style: none;
 }
 
 .blog-content ul li {
-  list-style-type: disc;
+  position: relative;
   margin-bottom: 0.5rem;
-  display: list-item;
+  display: block;
+  padding-left: 0;
+}
+
+.blog-content ul li:before {
+  content: "•";
+  color: var(--text-color);
+  font-weight: bold;
+  position: absolute;
+  left: -1.5rem;
+  top: 0;
+}
+
+.blog-content ol {
+  counter-reset: list-counter;
 }
 
 .blog-content ol li {
-  list-style-type: decimal;
+  position: relative;
   margin-bottom: 0.5rem;
-  display: list-item;
+  display: block;
+  counter-increment: list-counter;
+  padding-left: 0;
+}
+
+.blog-content ol li:before {
+  content: counter(list-counter) ".";
+  color: var(--text-color);
+  font-weight: bold;
+  position: absolute;
+  left: -2rem;
+  top: 0;
+  width: 1.5rem;
+  text-align: right;
 }
 
 /* Ensure nested lists work properly */
