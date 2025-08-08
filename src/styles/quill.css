@@ -1,6 +1,25 @@
 /* Import ReactQuill styles */
 @import 'react-quill/dist/quill.snow.css';
 
+/* Fix ReactQuill editor text visibility in admin dark theme */
+.ql-editor {
+  color: #000000 !important;
+  background-color: #ffffff !important;
+}
+
+.ql-editor p, .ql-editor div, .ql-editor span {
+  color: #000000 !important;
+}
+
+.ql-toolbar {
+  background-color: #f8f9fa !important;
+  border-bottom: 1px solid #dee2e6 !important;
+}
+
+.ql-container {
+  background-color: #ffffff !important;
+}
+
 /* Custom blog content styles to ensure proper display */
 .blog-content {
   font-family: inherit;
