@@ -2,9 +2,23 @@ import { Metadata } from 'next'
 import Link from 'next/link'
 import { prisma } from '@/lib/prisma'
 
+const currentYear = new Date().getFullYear()
+
 export const metadata: Metadata = {
-  title: 'Blog - Latest Updates & Insights',
-  description: 'Stay updated with the latest news, insights, and tips from our blog.',
+  title: `WHP Blog - Latest Whop Promo Codes, Tips & Digital Product Insights ${currentYear}`,
+  description: `Discover the latest Whop promo codes, digital product reviews, exclusive deals, and insider tips for ${currentYear}. Stay updated with the newest discounts and insights from the world of digital products and online communities.`,
+  keywords: `WHP blog, Whop promo codes ${currentYear}, digital products, online courses, Discord communities, exclusive deals, promo code tips, digital marketplace insights`,
+  openGraph: {
+    title: `WHP Blog - Latest Whop Promo Codes & Digital Product Insights ${currentYear}`,
+    description: `Your source for the latest Whop promo codes, exclusive deals, and digital product insights for ${currentYear}. Get insider tips and discover new opportunities in the digital marketplace.`,
+    type: 'website',
+    url: 'https://whpcodes.com/blog'
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: `WHP Blog - Latest Whop Promo Codes & Digital Product Insights ${currentYear}`,
+    description: `Your source for the latest Whop promo codes, exclusive deals, and digital product insights for ${currentYear}. Get insider tips and discover new opportunities in the digital marketplace.`
+  }
 }
 
 // Force deployment refresh after bidirectional database sync completed

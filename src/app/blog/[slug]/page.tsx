@@ -1,9 +1,7 @@
-'use client'
-import { useState, useEffect } from 'react'
+import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import Link from 'next/link'
-import CommentForm from '@/components/CommentForm'
-import CommentsList from '@/components/CommentsList'
+import { prisma } from '@/lib/prisma'
+import BlogPostClient from '@/components/BlogPostClient'
 
 interface BlogPostPageProps {
   params: {
@@ -15,172 +13,127 @@ interface BlogPost {
   id: string
   title: string
   content: string
+  excerpt: string | null
   publishedAt: string | null
   author?: {
     name: string
   }
 }
 
-export default function BlogPostPage({ params }: BlogPostPageProps) {
-  const [post, setPost] = useState<BlogPost | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [refreshComments, setRefreshComments] = useState(0)
-  const [replyTo, setReplyTo] = useState<{ parentId: string, parentAuthor: string } | null>(null)
-
-  useEffect(() => {
-    const fetchPost = async () => {
-      try {
-        const response = await fetch(`/api/blog/${params.slug}`)
-        if (response.ok) {
-          const data = await response.json()
-          setPost(data)
-        } else {
-          setPost(null)
+// Generate dynamic metadata for each blog post
+export async function generateMetadata({ params }: BlogPostPageProps): Promise<Metadata> {
+  try {
+    const post = await prisma.blogPost.findFirst({
+      where: { 
+        slug: params.slug,
+        published: true 
+      },
+      select: {
+        title: true,
+        excerpt: true,
+        content: true,
+        publishedAt: true,
+        author: {
+          select: { name: true }
         }
-      } catch (error) {
-        console.error('Error fetching post:', error)
-        setPost(null)
-      } finally {
-        setLoading(false)
+      }
+    })
+
+    if (!post) {
+      return {
+        title: 'Blog Post Not Found - WHP Codes',
+        description: 'The requested blog post could not be found.'
       }
     }
 
-    fetchPost()
-  }, [params.slug])
+    // Create SEO-optimized meta description
+    // Priority: excerpt > first 150 chars of content > fallback
+    let metaDescription = ''
+    if (post.excerpt) {
+      metaDescription = post.excerpt
+    } else if (post.content) {
+      // Extract first 150 characters from content, clean HTML if any
+      const plainTextContent = post.content.replace(/<[^>]*>/g, '').trim()
+      metaDescription = plainTextContent.length > 150 
+        ? plainTextContent.substring(0, 147) + '...'
+        : plainTextContent
+    } else {
+      metaDescription = `Read "${post.title}" on the WHP Blog. Discover the latest Whop promo codes, digital product insights, and exclusive deals.`
+    }
 
-  const handleCommentSubmitted = () => {
-    setRefreshComments(prev => prev + 1)
-    setReplyTo(null) // Clear reply state after submission
+    // Ensure meta description is between 120-160 characters for optimal SEO
+    if (metaDescription.length < 120) {
+      metaDescription += ' Get the latest Whop promo codes and digital product insights at WHPCodes.com.'
+    }
+
+    const publishedDate = post.publishedAt ? new Date(post.publishedAt).toISOString() : new Date().toISOString()
+    const currentYear = new Date().getFullYear()
+
+    return {
+      title: `${post.title} - WHP Blog | Whop Promo Codes & Digital Products ${currentYear}`,
+      description: metaDescription,
+      keywords: `${post.title}, WHP blog, Whop promo codes ${currentYear}, digital products, ${post.author?.name || 'WHP Team'}`,
+      authors: post.author?.name ? [{ name: post.author.name }] : [{ name: 'WHP Team' }],
+      openGraph: {
+        title: `${post.title} - WHP Blog`,
+        description: metaDescription,
+        type: 'article',
+        url: `https://whpcodes.com/blog/${params.slug}`,
+        publishedTime: publishedDate,
+        authors: post.author?.name ? [post.author.name] : ['WHP Team'],
+        siteName: 'WHP Codes'
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title: `${post.title} - WHP Blog`,
+        description: metaDescription,
+        creator: post.author?.name ? `@${post.author.name.replace(/\s+/g, '')}` : '@WHPCodes'
+      },
+      alternates: {
+        canonical: `https://whpcodes.com/blog/${params.slug}`
+      }
+    }
+  } catch (error) {
+    console.error('Error generating blog post metadata:', error)
+    return {
+      title: 'Blog Post - WHP Codes',
+      description: 'Read the latest insights about Whop promo codes and digital products.'
+    }
   }
+}
 
-  const handleReply = (parentId: string, parentAuthor: string) => {
-    setReplyTo({ parentId, parentAuthor })
-    // Scroll to comment form
-    setTimeout(() => {
-      document.querySelector('[data-comment-form]')?.scrollIntoView({ behavior: 'smooth' })
-    }, 100)
-  }
+// Force dynamic rendering to avoid build-time database connection issues
+export const dynamic = 'force-dynamic'
 
-  const handleCancelReply = () => {
-    setReplyTo(null)
-  }
+export default async function BlogPostPage({ params }: BlogPostPageProps) {
+  let post: BlogPost | null = null
 
-  if (loading) {
-    return (
-      <div className="min-h-screen py-12 transition-theme" style={{ backgroundColor: 'var(--background-color)', color: 'var(--text-color)' }}>
-        <div className="mx-auto w-[90%] md:w-[95%] max-w-[800px]">
-          <div className="animate-pulse space-y-8">
-            <div className="h-8 w-32 rounded" style={{ backgroundColor: 'var(--text-muted)' }}></div>
-            <div className="h-12 w-3/4 rounded" style={{ backgroundColor: 'var(--text-muted)' }}></div>
-            <div className="h-64 w-full rounded" style={{ backgroundColor: 'var(--text-muted)' }}></div>
-          </div>
-        </div>
-      </div>
-    )
+  try {
+    post = await prisma.blogPost.findFirst({
+      where: { 
+        slug: params.slug,
+        published: true 
+      },
+      select: {
+        id: true,
+        title: true,
+        content: true,
+        excerpt: true,
+        publishedAt: true,
+        author: {
+          select: { name: true }
+        }
+      }
+    })
+  } catch (error) {
+    console.error('Error fetching blog post:', error)
+    post = null
   }
 
   if (!post) {
     notFound()
   }
 
-  return (
-    <div className="min-h-screen py-12 transition-theme" style={{ backgroundColor: 'var(--background-color)', color: 'var(--text-color)' }}>
-      <div className="mx-auto w-[90%] md:w-[95%] max-w-[800px]">
-        <div className="space-y-8">
-          {/* Back to Blog */}
-          <div className="mb-8">
-            <Link
-              href="/blog"
-              className="inline-flex items-center font-medium hover:opacity-80 transition-opacity"
-              style={{ color: 'var(--accent-color)' }}
-            >
-              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
-              Back to Blog
-            </Link>
-          </div>
-
-          {/* Article */}
-          <article>
-            <header className="text-center mb-12">
-              <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r bg-clip-text text-transparent py-2" 
-                  style={{ backgroundImage: `linear-gradient(to right, var(--text-color), var(--text-secondary))`, lineHeight: '1.3' }}>
-                {post.title}
-              </h1>
-              <div className="w-20 h-1 mx-auto rounded-full mb-6" style={{ backgroundColor: 'var(--accent-color)' }}></div>
-              
-              <div className="flex items-center justify-center space-x-6" style={{ color: 'var(--text-secondary)' }}>
-                {post.publishedAt && (
-                  <time>
-                    {new Date(post.publishedAt).toLocaleDateString('en-US', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric'
-                    })}
-                  </time>
-                )}
-                
-                {post.author?.name && (
-                  <span>By {post.author.name}</span>
-                )}
-              </div>
-            </header>
-
-            <div className="rounded-2xl shadow-lg p-8 md:p-12 border" 
-                 style={{ 
-                   backgroundColor: 'var(--card-bg)', 
-                   borderColor: 'var(--card-border)',
-                   boxShadow: 'var(--promo-shadow)'
-                 }}>
-              <div 
-                className="prose prose-lg max-w-none whitespace-pre-wrap"
-                style={{ 
-                  color: 'var(--text-color)',
-                  '--tw-prose-headings': 'var(--text-color)',
-                  '--tw-prose-links': 'var(--accent-color)',
-                }}
-              >
-                {post.content}
-              </div>
-            </div>
-          </article>
-
-          {/* Comments Section */}
-          <div className="mt-12 space-y-8">
-            <CommentsList 
-              blogPostId={post.id} 
-              refreshTrigger={refreshComments} 
-              onReply={handleReply}
-            />
-            <div data-comment-form>
-              <CommentForm 
-                blogPostId={post.id} 
-                onCommentSubmitted={handleCommentSubmitted}
-                parentId={replyTo?.parentId}
-                parentAuthor={replyTo?.parentAuthor}
-                onCancel={replyTo ? handleCancelReply : undefined}
-              />
-            </div>
-          </div>
-
-          {/* Navigation */}
-          <div className="mt-12 pt-8 border-t" style={{ borderColor: 'var(--border-color)' }}>
-            <div className="text-center">
-              <Link
-                href="/blog"
-                className="inline-flex items-center justify-center px-6 py-3 font-medium rounded-lg hover:opacity-80 transition-opacity"
-                style={{ 
-                  backgroundColor: 'var(--accent-color)', 
-                  color: 'white'
-                }}
-              >
-                View All Posts
-              </Link>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  )
+  // Pass the post data to the client component for interactivity
+  return <BlogPostClient post={post} />
 }
