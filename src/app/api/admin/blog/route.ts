@@ -41,6 +41,9 @@ export async function POST(request: NextRequest) {
       }, { status: 401 })
     }
     
+    // Debug: Log the adminUser details
+    console.log('Admin user from token:', JSON.stringify(adminUser, null, 2))
+    
     if (adminUser.role !== 'ADMIN') {
       return NextResponse.json({ 
         error: 'Insufficient permissions',
@@ -92,9 +95,18 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(post)
   } catch (error) {
+    // Get adminUser info for debugging
+    let debugInfo = error instanceof Error ? error.message : String(error);
+    try {
+      const adminUser = await verifyAdminToken();
+      debugInfo += ` | Admin User ID: ${adminUser?.id} | Admin Email: ${adminUser?.email}`;
+    } catch (tokenError) {
+      debugInfo += ' | Could not get admin user info for debugging';
+    }
+    
     return NextResponse.json({ 
       error: 'Internal server error',
-      debug: error instanceof Error ? error.message : String(error),
+      debug: debugInfo,
       stack: process.env.NODE_ENV === 'development' ? (error instanceof Error ? error.stack : 'No stack') : undefined
     }, { status: 500 })
   }
