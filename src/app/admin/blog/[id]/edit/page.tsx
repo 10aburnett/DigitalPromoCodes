@@ -3,8 +3,8 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import dynamic from 'next/dynamic'
 
-// Dynamically import the markdown editor to avoid SSR issues
-const MDEditor = dynamic(() => import('@uiw/react-md-editor'), { ssr: false })
+// Dynamically import ReactQuill to avoid SSR issues
+const ReactQuill = dynamic(() => import('react-quill'), { ssr: false })
 
 interface EditBlogPostPageProps {
   params: {
@@ -158,23 +158,30 @@ export default function EditBlogPostPage({ params }: EditBlogPostPageProps) {
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Content *
             </label>
-            <div className="border border-gray-300 rounded-md overflow-hidden">
-              <MDEditor
+            <div className="border border-gray-300 rounded-md">
+              <ReactQuill
                 value={formData.content}
-                onChange={(value) => setFormData(prev => ({ ...prev, content: value || '' }))}
-                data-color-mode="light"
-                height={500}
-                preview="edit"
-                hideToolbar={false}
-                toolbarHeight={60}
-                previewOptions={{
-                  rehypePlugins: []
+                onChange={(value) => setFormData(prev => ({ ...prev, content: value }))}
+                theme="snow"
+                style={{ height: '400px', marginBottom: '50px' }}
+                modules={{
+                  toolbar: [
+                    [{ 'header': [1, 2, 3, false] }],
+                    ['bold', 'italic', 'underline', 'strike'],
+                    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                    ['link', 'blockquote'],
+                    [{ 'align': [] }],
+                    ['clean']
+                  ]
                 }}
+                formats={[
+                  'header', 'bold', 'italic', 'underline', 'strike',
+                  'list', 'bullet', 'link', 'blockquote', 'align'
+                ]}
               />
             </div>
             <p className="text-xs text-gray-500 mt-1">
-              Use Markdown formatting: **bold**, *italic*, [links](url), # headings, - bullet points, etc. 
-              Toggle between edit and preview modes using the tabs above.
+              Use the toolbar above to format your text. What you see is exactly what will appear on the frontend.
             </p>
           </div>
 

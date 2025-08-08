@@ -1,7 +1,6 @@
 'use client'
 import { useState } from 'react'
 import Link from 'next/link'
-import ReactMarkdown from 'react-markdown'
 import CommentForm from '@/components/CommentForm'
 import CommentsList from '@/components/CommentsList'
 
@@ -92,37 +91,14 @@ export default function BlogPostClient({ post }: BlogPostClientProps) {
                    boxShadow: 'var(--promo-shadow)'
                  }}>
               <div 
-                className="prose prose-lg max-w-none"
+                className="prose prose-lg max-w-none blog-content"
                 style={{ 
                   color: 'var(--text-color)',
                   '--tw-prose-headings': 'var(--text-color)',
                   '--tw-prose-links': 'var(--accent-color)',
                 }}
-              >
-                <ReactMarkdown
-                  components={{
-                    a: ({ href, children, ...props }) => (
-                      <a 
-                        href={href} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="font-medium hover:opacity-80 transition-opacity underline"
-                        style={{ color: 'var(--accent-color)' }}
-                        {...props}
-                      >
-                        {children}
-                      </a>
-                    ),
-                    p: ({ children }) => (
-                      <p className="mb-4 leading-relaxed whitespace-pre-wrap">
-                        {children}
-                      </p>
-                    )
-                  }}
-                >
-                  {post.content}
-                </ReactMarkdown>
-              </div>
+                dangerouslySetInnerHTML={{ __html: post.content }}
+              />
             </div>
           </article>
 
