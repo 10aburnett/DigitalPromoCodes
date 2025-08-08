@@ -168,6 +168,7 @@ export default function EditBlogPostPage({ params }: EditBlogPostPageProps) {
                   toolbar: [
                     [{ 'header': [1, 2, 3, false] }],
                     ['bold', 'italic', 'underline', 'strike'],
+                    [{ 'color': [] }, { 'background': [] }],
                     [{ 'list': 'ordered'}, { 'list': 'bullet' }],
                     ['link', 'blockquote'],
                     [{ 'align': [] }],
@@ -176,7 +177,7 @@ export default function EditBlogPostPage({ params }: EditBlogPostPageProps) {
                 }}
                 formats={[
                   'header', 'bold', 'italic', 'underline', 'strike',
-                  'list', 'bullet', 'link', 'blockquote', 'align'
+                  'color', 'background', 'list', 'bullet', 'link', 'blockquote', 'align'
                 ]}
               />
             </div>

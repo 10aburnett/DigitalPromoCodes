@@ -26,6 +26,15 @@
   line-height: 1.7;
 }
 
+/* Ensure color formatting is preserved in blog content */
+.blog-content .ql-color-white { color: #ffffff; }
+.blog-content .ql-color-red { color: #e60000; }
+.blog-content .ql-color-orange { color: #f90; }
+.blog-content .ql-color-yellow { color: #ffff00; }
+.blog-content .ql-color-green { color: #008a00; }
+.blog-content .ql-color-blue { color: #0066cc; }
+.blog-content .ql-color-purple { color: #9933ff; }
+
 .blog-content h1, .blog-content h2, .blog-content h3 {
   font-weight: bold;
   margin-top: 2rem;
