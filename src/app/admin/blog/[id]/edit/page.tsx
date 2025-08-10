@@ -121,6 +121,36 @@ function CustomEditor({ value, onChange }: { value: string, onChange: (value: st
     setShowBgColorPicker(false)
   }
 
+  const appleNotesFormat = () => {
+    if (!editorRef.current) return
+    
+    const selection = window.getSelection()
+    if (!selection?.rangeCount) return
+    
+    const range = selection.getRangeAt(0)
+    
+    if (range.collapsed) {
+      // No selection - apply to entire editor content
+      editorRef.current.style.fontFamily = '-apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", system-ui, sans-serif'
+      editorRef.current.style.fontSize = '13px'
+      editorRef.current.style.letterSpacing = '0.005em'
+    } else {
+      // Apply to selected text only
+      const selectedContent = range.extractContents()
+      const span = document.createElement('span')
+      span.style.fontFamily = '-apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", system-ui, sans-serif'
+      span.style.fontSize = '13px'
+      span.style.letterSpacing = '0.005em'
+      span.appendChild(selectedContent)
+      range.insertNode(span)
+      
+      // Clear selection
+      selection.removeAllRanges()
+    }
+    
+    onChange(editorRef.current.innerHTML)
+  }
+
   const formatHeader = (level: number) => {
     if (!editorRef.current) return
     
@@ -170,6 +200,11 @@ function CustomEditor({ value, onChange }: { value: string, onChange: (value: st
         onChange(editorRef.current.innerHTML)
       }
     }
+  }
+
+  const addZeroWidthSpacing = (text: string) => {
+    // Add zero-width space (U+200B) after each character for minimal spacing
+    return text.replace(/(.)/g, '$1\u200B')
   }
 
   const handleInput = () => {
@@ -295,12 +330,13 @@ function CustomEditor({ value, onChange }: { value: string, onChange: (value: st
           <button type="button" onClick={insertBlockquote} className="px-2 py-1 text-sm border rounded hover:bg-gray-100 text-black">❝</button>
         </div>
         
-        {/* Row 5 - Alignment */}
+        {/* Row 5 - Alignment & Apple Notes */}
         <div className="flex gap-1">
           <button type="button" onClick={() => formatText('justifyLeft')} className="px-2 py-1 text-sm border rounded hover:bg-gray-100 text-black">⬅️</button>
           <button type="button" onClick={() => formatText('justifyCenter')} className="px-2 py-1 text-sm border rounded hover:bg-gray-100 text-black">⬇️</button>
           <button type="button" onClick={() => formatText('justifyRight')} className="px-2 py-1 text-sm border rounded hover:bg-gray-100 text-black">➡️</button>
           <button type="button" onClick={() => formatText('removeFormat')} className="px-2 py-1 text-sm border rounded hover:bg-gray-100 text-black">🧹</button>
+          <button type="button" onClick={appleNotesFormat} className="px-2 py-1 text-sm border rounded hover:bg-gray-100 text-black font-semibold" title="Apply Apple Notes font (SF 13px)">📝</button>
         </div>
       </div>
       
@@ -315,8 +351,10 @@ function CustomEditor({ value, onChange }: { value: string, onChange: (value: st
         style={{ 
           color: '#000000', 
           backgroundColor: '#ffffff',
-          fontSize: '14px',
-          lineHeight: '1.5'
+          fontSize: '13px',
+          lineHeight: '1.5',
+          fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", system-ui, sans-serif',
+          letterSpacing: '0.005em' // Subtle spacing similar to zero-width space effect
         }}
         suppressContentEditableWarning={true}
       />
