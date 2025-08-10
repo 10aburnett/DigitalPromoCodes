@@ -1,7 +1,9 @@
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
+import Script from 'next/script'
 import { prisma } from '@/lib/prisma'
 import BlogPostClient from '@/components/BlogPostClient'
+import { generateArticleSchema, generateBreadcrumbSchema, calculateReadingTime, extractHeadings, processContentWithHeadingIds, optimizeInternalLinkingServer, optimizeImageAltText } from '@/lib/blog-utils'
 
 interface BlogPostPageProps {
   params: {
@@ -15,6 +17,8 @@ interface BlogPost {
   content: string
   excerpt: string | null
   publishedAt: string | null
+  updatedAt: string | null
+  slug: string
   author?: {
     name: string
   }
@@ -33,6 +37,8 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
         excerpt: true,
         content: true,
         publishedAt: true,
+        updatedAt: true,
+        slug: true,
         author: {
           select: { name: true }
         }
@@ -120,6 +126,8 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         content: true,
         excerpt: true,
         publishedAt: true,
+        updatedAt: true,
+        slug: true,
         author: {
           select: { name: true }
         }
@@ -134,6 +142,62 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     notFound()
   }
 
-  // Pass the post data to the client component for interactivity
-  return <BlogPostClient post={post} />
+  // Generate schema markup for SEO
+  const articleSchema = generateArticleSchema({
+    title: post.title,
+    content: post.content,
+    excerpt: post.excerpt,
+    publishedAt: post.publishedAt,
+    updatedAt: post.updatedAt,
+    author: post.author,
+    slug: post.slug
+  })
+  
+  const breadcrumbSchema = generateBreadcrumbSchema(post.title, post.slug)
+  
+  // Get all blog posts for internal linking optimization
+  const allPosts = await prisma.blogPost.findMany({
+    where: { published: true },
+    select: { id: true, title: true, slug: true }
+  })
+  
+  // Process content with all optimizations
+  let optimizedContent = post.content
+  
+  // 1. Optimize image alt text
+  optimizedContent = optimizeImageAltText(optimizedContent, post.title)
+  
+  // 2. Add internal links to other blog posts
+  optimizedContent = await optimizeInternalLinkingServer(optimizedContent, post.id, allPosts)
+  
+  // 3. Add IDs to headings for table of contents
+  optimizedContent = processContentWithHeadingIds(optimizedContent)
+  
+  const processedPost = {
+    ...post,
+    content: optimizedContent,
+    readingTime: calculateReadingTime(post.content),
+    headings: extractHeadings(optimizedContent)
+  }
+
+  return (
+    <>
+      {/* Article Schema Markup */}
+      <Script 
+        id="article-schema" 
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
+      />
+      
+      {/* Breadcrumb Schema Markup */}
+      <Script 
+        id="breadcrumb-schema" 
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+      
+      {/* Pass the processed post data to the client component */}
+      <BlogPostClient post={processedPost} />
+    </>
+  )
 }
