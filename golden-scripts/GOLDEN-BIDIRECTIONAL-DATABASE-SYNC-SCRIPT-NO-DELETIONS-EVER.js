@@ -132,7 +132,8 @@ async function ensureSchemaColumns() {
 
   const requiredColumns = [
     'ALTER TABLE "BlogPost" ADD COLUMN IF NOT EXISTS "pinned" BOOLEAN NOT NULL DEFAULT false',
-    'ALTER TABLE "BlogPost" ADD COLUMN IF NOT EXISTS "pinnedAt" TIMESTAMP(3)'
+    'ALTER TABLE "BlogPost" ADD COLUMN IF NOT EXISTS "pinnedAt" TIMESTAMP(3)',
+    'ALTER TABLE "BlogPost" ADD COLUMN IF NOT EXISTS "authorName" TEXT'
   ];
 
   try {
