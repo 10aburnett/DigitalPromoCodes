@@ -49,7 +49,7 @@ export const translations = {
     // Whop Cards
     'whop.viewDeal': 'View Deal',
     'whop.revealCode': 'Reveal Code',
-    'whop.noCode': 'NO CODE REQUIRED',
+    'whop.noCode': 'CREATOR DOESN\'T ALLOW PROMO CODES AT THIS TIME',
     'whop.getPromo': 'Get Promo',
     
     // Whop Page
@@ -206,7 +206,7 @@ export const translations = {
     // Whop Cards
     'whop.viewDeal': 'Ver Oferta',
     'whop.revealCode': 'Revelar Código',
-    'whop.noCode': 'NO SE REQUIERE CÓDIGO',
+    'whop.noCode': 'EL CREADOR NO PERMITE CÓDIGOS PROMOCIONALES EN ESTE MOMENTO',
     'whop.getPromo': 'Obtener Promoción',
     
     // Whop Page
@@ -363,7 +363,7 @@ export const translations = {
     // Whop Cards
     'whop.viewDeal': 'Bekijk Deal',
     'whop.revealCode': 'Toon Code',
-    'whop.noCode': 'GEEN CODE VEREIST',
+    'whop.noCode': 'MAKER STAAT GEEN PROMOCODES TOE OP DIT MOMENT',
     'whop.getPromo': 'Krijg Promo',
     
     // Whop Page
@@ -520,7 +520,7 @@ export const translations = {
     // Whop Cards
     'whop.viewDeal': 'Voir l\'Offre',
     'whop.revealCode': 'Révéler le Code',
-    'whop.noCode': 'AUCUN CODE REQUIS',
+    'whop.noCode': 'LE CRÉATEUR N\'AUTORISE PAS LES CODES PROMO POUR LE MOMENT',
     'whop.getPromo': 'Obtenir la Promo',
     
     // Whop Page
@@ -677,7 +677,7 @@ export const translations = {
     // Whop Cards
     'whop.viewDeal': 'Angebot Ansehen',
     'whop.revealCode': 'Code Enthüllen',
-    'whop.noCode': 'KEIN CODE ERFORDERLICH',
+    'whop.noCode': 'ERSTELLER ERLAUBT DERZEIT KEINE PROMO-CODES',
     'whop.getPromo': 'Promo Erhalten',
     
     // Whop Page
@@ -834,7 +834,7 @@ export const translations = {
     // Whop Cards
     'whop.viewDeal': 'Vedi Offerta',
     'whop.revealCode': 'Rivela Codice',
-    'whop.noCode': 'NESSUN CODICE RICHIESTO',
+    'whop.noCode': 'IL CREATORE NON CONSENTE CODICI PROMO AL MOMENTO',
     'whop.getPromo': 'Ottieni Promo',
     
     // Whop Page
@@ -991,7 +991,7 @@ export const translations = {
     // Whop Cards
     'whop.viewDeal': 'Ver Oferta',
     'whop.revealCode': 'Revelar Código',
-    'whop.noCode': 'NENHUM CÓDIGO NECESSÁRIO',
+    'whop.noCode': 'CRIADOR NÃO PERMITE CÓDIGOS PROMOCIONAIS NO MOMENTO',
     'whop.getPromo': 'Obter Promoção',
     
     // Whop Page
@@ -1148,7 +1148,7 @@ export const translations = {
     // Whop Cards
     'whop.viewDeal': '查看优惠',
     'whop.revealCode': '显示代码',
-    'whop.noCode': '无需代码',
+    'whop.noCode': '创作者目前不允许促销代码',
     'whop.getPromo': '获取促销',
     
     // Whop Page
