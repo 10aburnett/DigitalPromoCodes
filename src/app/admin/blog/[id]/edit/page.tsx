@@ -290,7 +290,8 @@ export default function EditBlogPostPage({ params }: EditBlogPostPageProps) {
     slug: '',
     excerpt: '',
     content: '',
-    published: false
+    published: false,
+    authorName: ''
   })
 
   useEffect(() => {
@@ -307,7 +308,8 @@ export default function EditBlogPostPage({ params }: EditBlogPostPageProps) {
           slug: post.slug || '',
           excerpt: post.excerpt || '',
           content: post.content || '',
-          published: post.published || false
+          published: post.published || false,
+          authorName: post.authorName || ''
         })
       }
     } catch (error) {
@@ -408,6 +410,22 @@ export default function EditBlogPostPage({ params }: EditBlogPostPageProps) {
                 URL: /blog/{formData.slug}
               </p>
             </div>
+          </div>
+
+          <div className="mt-6">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Author Name
+            </label>
+            <input
+              type="text"
+              value={formData.authorName}
+              onChange={(e) => setFormData(prev => ({ ...prev, authorName: e.target.value }))}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="e.g. Will Smith, Alex Burnett, etc."
+            />
+            <p className="text-xs text-gray-500 mt-1">
+              The name that will appear as "By [Author Name]" on the blog post
+            </p>
           </div>
 
           <div className="mt-6">

@@ -18,6 +18,7 @@ interface BlogPost {
     text: string
     level: number
   }>
+  authorName?: string | null
   author?: {
     name: string
   }
@@ -103,8 +104,8 @@ export default function BlogPostClient({ post }: BlogPostClientProps) {
                   </time>
                 )}
                 
-                {post.author?.name && (
-                  <span>By {post.author.name}</span>
+                {(post.authorName || post.author?.name) && (
+                  <span>By {post.authorName || post.author?.name}</span>
                 )}
                 
                 <span className="flex items-center">

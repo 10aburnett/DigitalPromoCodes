@@ -45,6 +45,7 @@ export default async function BlogPage() {
         excerpt: true,
         publishedAt: true,
         pinned: true,
+        authorName: true,
         author: {
           select: {
             name: true,
@@ -170,9 +171,9 @@ export default async function BlogPage() {
                             </svg>
                           </span>
                           
-                          {post.author?.name && (
+                          {(post.authorName || post.author?.name) && (
                             <span className="text-sm" style={{ color: 'var(--text-muted)' }}>
-                              By {post.author.name}
+                              By {post.authorName || post.author?.name}
                             </span>
                           )}
                         </div>

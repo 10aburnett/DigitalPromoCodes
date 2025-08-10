@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { title, slug, content, excerpt, published } = body
+    const { title, slug, content, excerpt, published, authorName } = body
 
     // Validate required fields
     if (!title || !slug || !content) {
@@ -103,6 +103,7 @@ export async function POST(request: NextRequest) {
           published: published || false,
           publishedAt: published ? new Date() : null,
           authorId: fallbackAdmin.id,
+          authorName: authorName || null,
         },
         include: {
           author: {
@@ -128,6 +129,7 @@ export async function POST(request: NextRequest) {
         published: published || false,
         publishedAt: published ? new Date() : null,
         authorId: adminUser.id,
+        authorName: authorName || null,
       },
       include: {
         author: {

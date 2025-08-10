@@ -19,6 +19,7 @@ interface BlogPost {
   publishedAt: string | null
   updatedAt: string | null
   slug: string
+  authorName: string | null
   author?: {
     name: string
   }
@@ -39,6 +40,7 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
         publishedAt: true,
         updatedAt: true,
         slug: true,
+        authorName: true,
         author: {
           select: { name: true }
         }
@@ -78,22 +80,22 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
     return {
       title: `${post.title} - WHP Blog | Whop Promo Codes & Digital Products ${currentYear}`,
       description: metaDescription,
-      keywords: `${post.title}, WHP blog, Whop promo codes ${currentYear}, digital products, ${post.author?.name || 'WHP Team'}`,
-      authors: post.author?.name ? [{ name: post.author.name }] : [{ name: 'WHP Team' }],
+      keywords: `${post.title}, WHP blog, Whop promo codes ${currentYear}, digital products, ${post.authorName || post.author?.name || 'WHP Team'}`,
+      authors: post.authorName || post.author?.name ? [{ name: post.authorName || post.author?.name }] : [{ name: 'WHP Team' }],
       openGraph: {
         title: `${post.title} - WHP Blog`,
         description: metaDescription,
         type: 'article',
         url: `https://whpcodes.com/blog/${params.slug}`,
         publishedTime: publishedDate,
-        authors: post.author?.name ? [post.author.name] : ['WHP Team'],
+        authors: post.authorName || post.author?.name ? [post.authorName || post.author.name] : ['WHP Team'],
         siteName: 'WHP Codes'
       },
       twitter: {
         card: 'summary_large_image',
         title: `${post.title} - WHP Blog`,
         description: metaDescription,
-        creator: post.author?.name ? `@${post.author.name.replace(/\s+/g, '')}` : '@WHPCodes'
+        creator: post.authorName || post.author?.name ? `@${(post.authorName || post.author.name).replace(/\s+/g, '')}` : '@WHPCodes'
       },
       alternates: {
         canonical: `https://whpcodes.com/blog/${params.slug}`
@@ -128,6 +130,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         publishedAt: true,
         updatedAt: true,
         slug: true,
+        authorName: true,
         author: {
           select: { name: true }
         }
@@ -149,7 +152,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     excerpt: post.excerpt,
     publishedAt: post.publishedAt,
     updatedAt: post.updatedAt,
-    author: post.author,
+    author: post.authorName ? { name: post.authorName } : post.author,
     slug: post.slug
   })
   

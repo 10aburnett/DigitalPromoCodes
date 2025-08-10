@@ -49,7 +49,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     }
 
     const body = await request.json()
-    const { title, slug, content, excerpt, published, pinned, pinnedAt } = body
+    const { title, slug, content, excerpt, published, pinned, pinnedAt, authorName } = body
 
     // Check if slug already exists (excluding current post)
     if (slug) {
@@ -72,6 +72,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     if (slug !== undefined) updateData.slug = slug
     if (content !== undefined) updateData.content = content
     if (excerpt !== undefined) updateData.excerpt = excerpt || null
+    if (authorName !== undefined) updateData.authorName = authorName || null
     
     if (published !== undefined) {
       updateData.published = published

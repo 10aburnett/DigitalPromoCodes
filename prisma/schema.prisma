@@ -160,6 +160,7 @@ model BlogPost {
   updatedAt   DateTime  @updatedAt
   authorId    String?
   author      User?     @relation(fields: [authorId], references: [id])
+  authorName  String?   // New field for flexible author names
   comments    Comment[]
 
   @@index([published])
