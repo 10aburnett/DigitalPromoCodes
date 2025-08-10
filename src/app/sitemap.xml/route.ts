@@ -6,10 +6,13 @@ export async function GET() {
   const baseUrl = 'https://whpcodes.com';
   
   try {
-    // Count total published whops
+    // Count total published whops (EXCLUDE NOINDEX pages)
     const totalWhops = await prisma.whop.count({
       where: {
-        publishedAt: { not: null }
+        AND: [
+          { publishedAt: { not: null } },
+          { indexing: { not: 'NOINDEX' } }  // Exclude NOINDEX pages from sitemap count
+        ]
       }
     });
 
