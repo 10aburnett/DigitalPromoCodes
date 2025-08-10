@@ -178,6 +178,54 @@ function CustomEditor({ value, onChange }: { value: string, onChange: (value: st
     }
   }
 
+  const handlePaste = (e: React.ClipboardEvent) => {
+    e.preventDefault()
+    
+    if (!editorRef.current) return
+    
+    // Get the pasted data
+    const clipboardData = e.clipboardData
+    const htmlData = clipboardData.getData('text/html')
+    const textData = clipboardData.getData('text/plain')
+    
+    // Use HTML data if available (preserves formatting), otherwise use plain text
+    const contentToInsert = htmlData || textData
+    
+    if (contentToInsert) {
+      // Insert the content at the current cursor position
+      const selection = window.getSelection()
+      if (selection && selection.rangeCount > 0) {
+        const range = selection.getRangeAt(0)
+        range.deleteContents()
+        
+        if (htmlData) {
+          // Create a temporary div to parse the HTML
+          const tempDiv = document.createElement('div')
+          tempDiv.innerHTML = htmlData
+          
+          // Insert each node from the parsed HTML
+          const fragment = document.createDocumentFragment()
+          while (tempDiv.firstChild) {
+            fragment.appendChild(tempDiv.firstChild)
+          }
+          range.insertNode(fragment)
+        } else {
+          // Insert plain text
+          const textNode = document.createTextNode(textData)
+          range.insertNode(textNode)
+        }
+        
+        // Move cursor to end of inserted content
+        range.collapse(false)
+        selection.removeAllRanges()
+        selection.addRange(range)
+        
+        // Update content
+        onChange(editorRef.current.innerHTML)
+      }
+    }
+  }
+
   const colors = ['#000000', '#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF', '#00FFFF', '#FFA500', '#800080', '#008000']
 
   return (
@@ -262,6 +310,7 @@ function CustomEditor({ value, onChange }: { value: string, onChange: (value: st
         contentEditable
         onKeyDown={handleKeyDown}
         onInput={handleInput}
+        onPaste={handlePaste}
         className="p-4 min-h-96 focus:outline-none"
         style={{ 
           color: '#000000', 
