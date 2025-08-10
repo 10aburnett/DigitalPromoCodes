@@ -85,14 +85,17 @@ export async function GET() {
       return new Response(sitemapIndex, {
         headers: {
           'Content-Type': 'application/xml',
-          'Cache-Control': 'public, max-age=3600, s-maxage=3600'
+          'Cache-Control': 'public, max-age=300, s-maxage=300'  // Reduced cache for faster updates
         }
       });
     } else {
       // Small site - use single sitemap
       const whops = await prisma.whop.findMany({
         where: {
-          publishedAt: { not: null }
+          AND: [
+            { publishedAt: { not: null } },
+            { indexing: { not: 'NOINDEX' } }  // Exclude NOINDEX pages from single sitemap too
+          ]
         },
         select: {
           slug: true,
