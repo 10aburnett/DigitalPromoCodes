@@ -135,6 +135,7 @@ model Whop {
   OfferTracking       OfferTracking[]
   PromoCode           PromoCode[]
   Review              Review[]
+  PromoCodeSubmission PromoCodeSubmission[]
 
   @@index([createdAt])
   @@index([displayOrder])
@@ -301,4 +302,53 @@ enum IndexingStatus {
   INDEX     // Force index this page
   NOINDEX   // Force noindex this page  
   AUTO      // Use automatic logic (promo codes + high traffic)
+}
+
+model PromoCodeSubmission {
+  id            String               @id @default(cuid())
+  
+  // Submission Details
+  title         String
+  description   String
+  code          String?              // Optional - some submissions might not have codes
+  value         String?              // e.g., "20% off", "$50 off", "Free trial"
+  
+  // Course Association (nullable for general codes)
+  whopId        String?
+  whop          Whop?                @relation(fields: [whopId], references: [id])
+  customCourseName String?           // For new courses not yet on the platform
+  isGeneral     Boolean              @default(false) // True for general codes not tied to specific course
+  
+  // Submitter Information
+  submitterName    String
+  submitterEmail   String
+  submitterMessage String?           // Optional message from submitter
+  
+  // Admin Review
+  status        SubmissionStatus     @default(PENDING)
+  reviewedAt    DateTime?
+  reviewedBy    String?              // Admin who reviewed it
+  adminNotes    String?              // Admin's notes about the submission
+  
+  // Metadata
+  createdAt     DateTime             @default(now())
+  updatedAt     DateTime             @updatedAt
+  
+  // Tracking
+  ipAddress     String?              // For spam prevention
+  userAgent     String?              // For analytics/spam prevention
+
+  @@index([status])
+  @@index([createdAt])
+  @@index([whopId])
+  @@index([isGeneral])
+  @@index([submitterEmail])
+}
+
+enum SubmissionStatus {
+  PENDING       // Awaiting admin review
+  APPROVED      // Approved and live
+  REJECTED      // Rejected by admin
+  DUPLICATE     // Marked as duplicate
+  SPAM          // Marked as spam
 }

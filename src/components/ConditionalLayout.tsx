@@ -8,6 +8,7 @@ import ThemeToggle from './ThemeToggle';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { SocialProofProvider, useSocialProof } from '@/contexts/SocialProofContext';
 import SocialProofPopupManager from './SocialProofPopup';
+import GeneralPromoSubmissionButton from './GeneralPromoSubmissionButton';
 
 interface ConditionalLayoutProps {
   children: React.ReactNode;
@@ -65,6 +66,12 @@ function LayoutContent({ children, faviconUrl }: ConditionalLayoutProps) {
               <Link href={getLocalizedPath('/')} className="transition-all duration-200 hover:translate-y-[-1px] hover:opacity-80" style={{ color: 'var(--text-secondary)' }}>
                 {t('nav.home')}
               </Link>
+              <GeneralPromoSubmissionButton 
+                className="transition-all duration-200 hover:translate-y-[-1px] hover:opacity-80 cursor-pointer"
+                style={{ color: 'var(--text-secondary)' }}
+              >
+                Submit Code
+              </GeneralPromoSubmissionButton>
               <Link href="/subscribe" className="transition-all duration-200 hover:translate-y-[-1px] hover:opacity-80" style={{ color: 'var(--text-secondary)' }}>
                 Subscribe
               </Link>
@@ -101,6 +108,12 @@ function LayoutContent({ children, faviconUrl }: ConditionalLayoutProps) {
                 }}>
                   <span style={{ color: 'var(--accent-color)' }}>WHP</span><span style={{ color: 'var(--text-color)' }}>BLOG</span>
                 </Link>
+                <GeneralPromoSubmissionButton 
+                  className="transition-all duration-200 hover:translate-y-[-1px] hover:opacity-80 cursor-pointer"
+                  style={{ color: 'var(--text-secondary)' }}
+                >
+                  Submit Code
+                </GeneralPromoSubmissionButton>
                 <Link href="/subscribe" className="transition-all duration-200 hover:translate-y-[-1px] hover:opacity-80" style={{ color: 'var(--text-secondary)' }}>
                   Subscribe
                 </Link>

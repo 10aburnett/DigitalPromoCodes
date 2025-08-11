@@ -1,0 +1,515 @@
+'use client'
+import { useState, useEffect, useMemo } from 'react'
+
+interface Whop {
+  id: string
+  name: string
+  slug: string
+}
+
+interface PromoCodeSubmissionFormProps {
+  preselectedWhopId?: string // For course-specific submissions
+  preselectedWhopName?: string // For displaying the preselected course name
+  onClose?: () => void
+  onSuccess?: () => void
+}
+
+export default function PromoCodeSubmissionForm({ 
+  preselectedWhopId, 
+  preselectedWhopName,
+  onClose, 
+  onSuccess 
+}: PromoCodeSubmissionFormProps) {
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [whops, setWhops] = useState<Whop[]>([])
+  const [searchTerm, setSearchTerm] = useState('')
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('')
+  const [showDropdown, setShowDropdown] = useState(false)
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false)
+  const [formData, setFormData] = useState({
+    title: '',
+    description: '',
+    code: '',
+    value: '',
+    submitterName: '',
+    submitterEmail: '',
+    submitterMessage: '',
+    isGeneral: !preselectedWhopId, // Default to general if no preselected course
+    whopId: preselectedWhopId || '',
+    customCourseName: '', // For new courses
+    isNewCourse: false
+  })
+
+  // Initialize search term with preselected course name only once
+  useEffect(() => {
+    if (preselectedWhopName && !searchTerm) {
+      setSearchTerm(preselectedWhopName)
+      setDebouncedSearchTerm(preselectedWhopName)
+    }
+  }, [preselectedWhopName]) // Remove searchTerm from dependency array to prevent auto-refill
+
+  // Debounce search term to improve performance
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm)
+    }, 150)
+
+    return () => clearTimeout(timer)
+  }, [searchTerm])
+
+  // Filter courses based on debounced search term for better performance
+  const filteredWhops = useMemo(() => {
+    if (!debouncedSearchTerm) return whops
+    return whops.filter(whop => 
+      whop.name.toLowerCase().includes(debouncedSearchTerm.toLowerCase())
+    )
+  }, [whops, debouncedSearchTerm])
+
+  // Get selected course name
+  const selectedCourseName = useMemo(() => {
+    if (formData.isNewCourse) return formData.customCourseName
+    const selectedWhop = whops.find(w => w.id === formData.whopId)
+    return selectedWhop?.name || ''
+  }, [whops, formData.whopId, formData.isNewCourse, formData.customCourseName])
+
+  // Load available courses for dropdown
+  useEffect(() => {
+    fetchWhops()
+  }, [])
+
+  const fetchWhops = async () => {
+    try {
+      const response = await fetch('/api/whops/list')
+      if (response.ok) {
+        const data = await response.json()
+        setWhops(data)
+      }
+    } catch (error) {
+      console.error('Error fetching courses:', error)
+    }
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsSubmitting(true)
+
+    // Validate required fields
+    if (!formData.title || !formData.description || !formData.submitterName || !formData.submitterEmail) {
+      alert('Please fill in all required fields.')
+      setIsSubmitting(false)
+      return
+    }
+
+    // Validate promo code and value are provided
+    if (!formData.code.trim() || !formData.value.trim()) {
+      alert('Please provide both a promo code and discount value. If no code is required, enter "No code required" in the promo code field.')
+      setIsSubmitting(false)
+      return
+    }
+
+    // Validate course selection for non-general submissions
+    if (!formData.isGeneral && !formData.whopId && !formData.isNewCourse) {
+      alert('Please select a course or mark it as a new course for course-specific submissions.')
+      setIsSubmitting(false)
+      return
+    }
+
+    // Validate new course name
+    if (!formData.isGeneral && formData.isNewCourse && !formData.customCourseName.trim()) {
+      alert('Please enter the name of the new course.')
+      setIsSubmitting(false)
+      return
+    }
+
+    try {
+      const response = await fetch('/api/promo-submissions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...formData,
+          whopId: formData.isGeneral ? null : (formData.isNewCourse ? null : formData.whopId),
+          customCourseName: formData.isNewCourse ? formData.customCourseName : null
+        })
+      })
+
+      if (response.ok) {
+        // Show success message
+        setShowSuccessMessage(true)
+        
+        // Reset form
+        setTimeout(() => {
+          setFormData({
+            title: '',
+            description: '',
+            code: '',
+            value: '',
+            submitterName: '',
+            submitterEmail: '',
+            submitterMessage: '',
+            isGeneral: !preselectedWhopId,
+            whopId: preselectedWhopId || '',
+            customCourseName: '',
+            isNewCourse: false
+          })
+          setSearchTerm('')
+          setShowSuccessMessage(false)
+          onSuccess?.()
+        }, 15000) // Show success message for 15 seconds
+      } else {
+        throw new Error('Failed to submit promo code')
+      }
+    } catch (error) {
+      console.error('Error submitting promo code:', error)
+      alert('Failed to submit promo code. Please try again.')
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  const handleCourseSelect = (whop: Whop) => {
+    setFormData(prev => ({ 
+      ...prev, 
+      whopId: whop.id, 
+      isNewCourse: false, 
+      customCourseName: '' 
+    }))
+    setSearchTerm(whop.name)
+    setShowDropdown(false)
+  }
+
+  const handleNewCourse = () => {
+    setFormData(prev => ({ 
+      ...prev, 
+      isNewCourse: true, 
+      whopId: '',
+      customCourseName: searchTerm 
+    }))
+    setShowDropdown(false)
+  }
+
+  const handleCloseSuccess = () => {
+    setShowSuccessMessage(false)
+    onSuccess?.() // This closes the entire modal and returns to the original page
+  }
+
+  // Success Message Component
+  if (showSuccessMessage) {
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+           onClick={handleCloseSuccess}>
+        <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-8 text-center relative"
+             onClick={(e) => e.stopPropagation()}>
+          {/* Close button */}
+          <button
+            onClick={handleCloseSuccess}
+            className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-2xl font-bold"
+          >
+            ×
+          </button>
+          
+          <div className="mb-6">
+            <div className="w-16 h-16 mx-auto mb-4 bg-green-100 rounded-full flex items-center justify-center">
+              <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <h3 className="text-2xl font-bold text-gray-900 mb-4">Thank You! 🎉</h3>
+            <p className="text-gray-700 text-lg leading-relaxed">
+              You're awesome! Thanks for making our community better by sharing this promo code. 
+              Your contribution adds real value to our group and helps fellow members save money. 
+            </p>
+            <p className="text-gray-600 mt-4">
+              We'll review your submission and add it to the site once approved. Keep being amazing! ✨
+            </p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="p-6">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-2xl font-bold text-gray-900">Submit a Promo Code</h2>
+            {onClose && (
+              <button
+                onClick={onClose}
+                className="text-gray-500 hover:text-gray-700 text-2xl font-bold"
+              >
+                ×
+              </button>
+            )}
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Promo Type Selection */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-3">
+                Promo Code Type
+              </label>
+              <div className="flex gap-4">
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    checked={!formData.isGeneral}
+                    onChange={() => setFormData(prev => ({ ...prev, isGeneral: false }))}
+                    className="mr-2"
+                  />
+                  Course-Specific
+                </label>
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    checked={formData.isGeneral}
+                    onChange={() => setFormData(prev => ({ ...prev, isGeneral: true, whopId: '' }))}
+                    className="mr-2"
+                  />
+                  General Promo
+                </label>
+              </div>
+            </div>
+
+            {/* Course Selection (only for course-specific) */}
+            {!formData.isGeneral && (
+              <div className="relative">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Select Course *
+                </label>
+                
+                {/* Search input - fully editable */}
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={searchTerm}
+                    onChange={(e) => {
+                      setSearchTerm(e.target.value)
+                      setShowDropdown(true)
+                      // Clear selections when typing
+                      setFormData(prev => ({ 
+                        ...prev, 
+                        whopId: '', 
+                        isNewCourse: false, 
+                        customCourseName: '' 
+                      }))
+                    }}
+                    onFocus={() => setShowDropdown(true)}
+                    placeholder="Search for a course..."
+                    className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required={!formData.isGeneral}
+                  />
+                  <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                    <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                  </div>
+                </div>
+
+                {/* Dropdown results */}
+                {showDropdown && (
+                  <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-y-auto">
+                    {/* Existing courses */}
+                    {filteredWhops.length > 0 && (
+                      <div>
+                        {filteredWhops.map(whop => (
+                          <button
+                            key={whop.id}
+                            type="button"
+                            onClick={() => handleCourseSelect(whop)}
+                            className="w-full px-3 py-2 text-left hover:bg-gray-100 focus:bg-gray-100 focus:outline-none"
+                          >
+                            {whop.name}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                    
+                    {/* New course option */}
+                    {searchTerm && searchTerm.length > 2 && (
+                      <div className="border-t border-gray-200">
+                        <button
+                          type="button"
+                          onClick={handleNewCourse}
+                          className="w-full px-3 py-2 text-left hover:bg-blue-50 focus:bg-blue-50 focus:outline-none text-blue-600"
+                        >
+                          + Add "{searchTerm}" as new course
+                        </button>
+                      </div>
+                    )}
+                    
+                    {/* No results */}
+                    {filteredWhops.length === 0 && searchTerm && (
+                      <div className="px-3 py-2 text-gray-500">
+                        No existing courses found. {searchTerm.length > 2 && 'Use the option above to add as new course.'}
+                      </div>
+                    )}
+                  </div>
+                )}
+                
+                {/* Selected course indicator */}
+                {(selectedCourseName || formData.isNewCourse) && (
+                  <div className="mt-2 px-3 py-2 bg-green-50 border border-green-200 rounded-md text-sm">
+                    {formData.isNewCourse ? (
+                      <span className="text-green-700">
+                        ✅ New course: <strong>{formData.customCourseName}</strong>
+                      </span>
+                    ) : (
+                      <span className="text-green-700">
+                        ✅ Selected: <strong>{selectedCourseName}</strong>
+                      </span>
+                    )}
+                  </div>
+                )}
+
+                {/* Click outside to close dropdown */}
+                {showDropdown && (
+                  <div 
+                    className="fixed inset-0 z-5" 
+                    onClick={() => setShowDropdown(false)}
+                  />
+                )}
+              </div>
+            )}
+
+            {/* Title */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Promo Title *
+              </label>
+              <input
+                type="text"
+                value={formData.title}
+                onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
+                placeholder="e.g. 20% Off Summer Sale, Free Month Trial"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
+              />
+            </div>
+
+            {/* Description */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Description *
+              </label>
+              <textarea
+                value={formData.description}
+                onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+                placeholder="Describe the promo code and any conditions..."
+                rows={3}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
+              />
+            </div>
+
+            {/* Code */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Promo Code *
+              </label>
+              <input
+                type="text"
+                value={formData.code}
+                onChange={(e) => setFormData(prev => ({ ...prev, code: e.target.value }))}
+                placeholder="e.g. SUMMER20, FREEMONTH, or 'No code required'"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
+              />
+              <p className="text-xs text-gray-500 mt-1">
+                If no promo code is needed, enter "No code required"
+              </p>
+            </div>
+
+            {/* Value */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Discount Value *
+              </label>
+              <input
+                type="text"
+                value={formData.value}
+                onChange={(e) => setFormData(prev => ({ ...prev, value: e.target.value }))}
+                placeholder="e.g. 20% off, $50 off, Free trial, Free access"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
+              />
+              <p className="text-xs text-gray-500 mt-1">
+                What do users get with this promo? (discount amount, free trial, etc.)
+              </p>
+            </div>
+
+            {/* Submitter Name */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Your Name *
+              </label>
+              <input
+                type="text"
+                value={formData.submitterName}
+                onChange={(e) => setFormData(prev => ({ ...prev, submitterName: e.target.value }))}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
+              />
+            </div>
+
+            {/* Submitter Email */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Your Email *
+              </label>
+              <input
+                type="email"
+                value={formData.submitterEmail}
+                onChange={(e) => setFormData(prev => ({ ...prev, submitterEmail: e.target.value }))}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
+              />
+            </div>
+
+            {/* Optional Message */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Additional Message
+              </label>
+              <textarea
+                value={formData.submitterMessage}
+                onChange={(e) => setFormData(prev => ({ ...prev, submitterMessage: e.target.value }))}
+                placeholder="Any additional information about this promo code..."
+                rows={2}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+
+            {/* Submit Button */}
+            <div className="flex justify-end space-x-4 pt-6">
+              {onClose && (
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="px-6 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                >
+                  Cancel
+                </button>
+              )}
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
+              >
+                {isSubmitting ? 'Submitting...' : 'Submit a Promo Code'}
+              </button>
+            </div>
+          </form>
+
+          <div className="mt-6 p-4 bg-blue-50 rounded-lg">
+            <p className="text-sm text-blue-800">
+              <strong>Community Guidelines:</strong> Please only submit legitimate promo codes. 
+              All submissions are reviewed by our team before being published. Thank you for 
+              helping build the WHP community! 🎉
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
