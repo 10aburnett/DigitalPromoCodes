@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 
 interface Whop {
   id: string
@@ -21,11 +21,13 @@ export default function PromoCodeSubmissionForm({
   onSuccess 
 }: PromoCodeSubmissionFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [whops, setWhops] = useState<Whop[]>([])
+  const [searchResults, setSearchResults] = useState<Whop[]>([])
   const [searchTerm, setSearchTerm] = useState('')
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('')
   const [showDropdown, setShowDropdown] = useState(false)
   const [showSuccessMessage, setShowSuccessMessage] = useState(false)
+  const [isSearching, setIsSearching] = useState(false)
+  const searchController = useRef<AbortController | null>(null)
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -46,48 +48,65 @@ export default function PromoCodeSubmissionForm({
       setSearchTerm(preselectedWhopName)
       setDebouncedSearchTerm(preselectedWhopName)
     }
-  }, [preselectedWhopName]) // Remove searchTerm from dependency array to prevent auto-refill
+  }, [preselectedWhopName])
 
-  // Debounce search term to improve performance
+  // Optimized debounce with shorter delay for instant feel
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearchTerm(searchTerm)
-    }, 150)
+    }, 100) // Reduced from 150ms to 100ms
 
     return () => clearTimeout(timer)
   }, [searchTerm])
 
-  // Filter courses based on debounced search term for better performance
-  const filteredWhops = useMemo(() => {
-    if (!debouncedSearchTerm) return whops
-    return whops.filter(whop => 
-      whop.name.toLowerCase().includes(debouncedSearchTerm.toLowerCase())
-    )
-  }, [whops, debouncedSearchTerm])
+  // Server-side search with caching and request deduplication
+  const searchWhops = useCallback(async (query: string) => {
+    // Cancel any existing search request
+    if (searchController.current) {
+      searchController.current.abort()
+    }
 
-  // Get selected course name
-  const selectedCourseName = useMemo(() => {
-    if (formData.isNewCourse) return formData.customCourseName
-    const selectedWhop = whops.find(w => w.id === formData.whopId)
-    return selectedWhop?.name || ''
-  }, [whops, formData.whopId, formData.isNewCourse, formData.customCourseName])
+    if (!query.trim() || query.length < 2) {
+      setSearchResults([])
+      setIsSearching(false)
+      return
+    }
 
-  // Load available courses for dropdown
-  useEffect(() => {
-    fetchWhops()
+    // Create new abort controller for this request
+    searchController.current = new AbortController()
+    setIsSearching(true)
+
+    try {
+      const response = await fetch(`/api/whops/search?q=${encodeURIComponent(query)}&limit=20`, {
+        signal: searchController.current.signal
+      })
+      
+      if (response.ok && !searchController.current.signal.aborted) {
+        const data = await response.json()
+        setSearchResults(data)
+      }
+    } catch (error: any) {
+      if (error.name !== 'AbortError') {
+        console.error('Error searching courses:', error)
+      }
+    } finally {
+      setIsSearching(false)
+    }
   }, [])
 
-  const fetchWhops = async () => {
-    try {
-      const response = await fetch('/api/whops/list')
-      if (response.ok) {
-        const data = await response.json()
-        setWhops(data)
-      }
-    } catch (error) {
-      console.error('Error fetching courses:', error)
+  // Trigger search when debounced term changes
+  useEffect(() => {
+    if (showDropdown) {
+      searchWhops(debouncedSearchTerm)
     }
-  }
+  }, [debouncedSearchTerm, showDropdown, searchWhops])
+
+  // Get selected course name efficiently
+  const selectedCourseName = useMemo(() => {
+    if (formData.isNewCourse) return formData.customCourseName
+    const selectedWhop = searchResults.find(w => w.id === formData.whopId)
+    return selectedWhop?.name || ''
+  }, [searchResults, formData.whopId, formData.isNewCourse, formData.customCourseName])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -166,7 +185,7 @@ export default function PromoCodeSubmissionForm({
     }
   }
 
-  const handleCourseSelect = (whop: Whop) => {
+  const handleCourseSelect = useCallback((whop: Whop) => {
     setFormData(prev => ({ 
       ...prev, 
       whopId: whop.id, 
@@ -175,9 +194,14 @@ export default function PromoCodeSubmissionForm({
     }))
     setSearchTerm(whop.name)
     setShowDropdown(false)
-  }
+    // Add selected item to search results if not already there
+    setSearchResults(prev => {
+      const exists = prev.find(w => w.id === whop.id)
+      return exists ? prev : [whop, ...prev]
+    })
+  }, [])
 
-  const handleNewCourse = () => {
+  const handleNewCourse = useCallback(() => {
     setFormData(prev => ({ 
       ...prev, 
       isNewCourse: true, 
@@ -185,7 +209,16 @@ export default function PromoCodeSubmissionForm({
       customCourseName: searchTerm 
     }))
     setShowDropdown(false)
-  }
+  }, [searchTerm])
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (searchController.current) {
+        searchController.current.abort()
+      }
+    }
+  }, [])
 
   const handleCloseSuccess = () => {
     setShowSuccessMessage(false)
@@ -278,70 +311,108 @@ export default function PromoCodeSubmissionForm({
                   Select Course *
                 </label>
                 
-                {/* Search input - fully editable */}
+                {/* Optimized Search input */}
                 <div className="relative">
                   <input
                     type="text"
                     value={searchTerm}
                     onChange={(e) => {
-                      setSearchTerm(e.target.value)
+                      const value = e.target.value
+                      setSearchTerm(value)
                       setShowDropdown(true)
                       // Clear selections when typing
-                      setFormData(prev => ({ 
-                        ...prev, 
-                        whopId: '', 
-                        isNewCourse: false, 
-                        customCourseName: '' 
-                      }))
+                      if (value !== searchTerm) {
+                        setFormData(prev => ({ 
+                          ...prev, 
+                          whopId: '', 
+                          isNewCourse: false, 
+                          customCourseName: '' 
+                        }))
+                      }
                     }}
-                    onFocus={() => setShowDropdown(true)}
-                    placeholder="Search for a course..."
-                    className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    onFocus={() => {
+                      setShowDropdown(true)
+                      if (searchTerm.length >= 2) {
+                        searchWhops(searchTerm)
+                      }
+                    }}
+                    placeholder="Type to search for a course..."
+                    className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
                     required={!formData.isGeneral}
+                    autoComplete="off"
                   />
                   <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                    <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
+                    {isSearching ? (
+                      <div className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+                    ) : (
+                      <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                      </svg>
+                    )}
                   </div>
                 </div>
 
-                {/* Dropdown results */}
+                {/* Optimized Dropdown results */}
                 {showDropdown && (
                   <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-y-auto">
-                    {/* Existing courses */}
-                    {filteredWhops.length > 0 && (
+                    {/* Search instruction for short queries */}
+                    {searchTerm && searchTerm.length < 2 && (
+                      <div className="px-3 py-2 text-gray-500 text-sm">
+                        Type at least 2 characters to search...
+                      </div>
+                    )}
+                    
+                    {/* Loading state */}
+                    {isSearching && searchTerm.length >= 2 && (
+                      <div className="px-3 py-2 text-gray-500 text-sm flex items-center">
+                        <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin mr-2" />
+                        Searching courses...
+                      </div>
+                    )}
+                    
+                    {/* Search results */}
+                    {!isSearching && searchTerm.length >= 2 && searchResults.length > 0 && (
                       <div>
-                        {filteredWhops.map(whop => (
+                        {searchResults.map(whop => (
                           <button
                             key={whop.id}
                             type="button"
                             onClick={() => handleCourseSelect(whop)}
-                            className="w-full px-3 py-2 text-left hover:bg-gray-100 focus:bg-gray-100 focus:outline-none"
+                            className="w-full px-3 py-2 text-left hover:bg-gray-100 focus:bg-gray-100 focus:outline-none transition-colors"
                           >
-                            {whop.name}
+                            <div className="truncate">{whop.name}</div>
                           </button>
                         ))}
+                        {searchResults.length === 20 && (
+                          <div className="px-3 py-1 text-xs text-gray-400 border-t border-gray-100">
+                            Showing first 20 results. Be more specific to narrow down.
+                          </div>
+                        )}
                       </div>
                     )}
                     
                     {/* New course option */}
                     {searchTerm && searchTerm.length > 2 && (
-                      <div className="border-t border-gray-200">
+                      <div className={searchResults.length > 0 ? "border-t border-gray-200" : ""}>
                         <button
                           type="button"
                           onClick={handleNewCourse}
-                          className="w-full px-3 py-2 text-left hover:bg-blue-50 focus:bg-blue-50 focus:outline-none text-blue-600"
+                          className="w-full px-3 py-2 text-left hover:bg-blue-50 focus:bg-blue-50 focus:outline-none text-blue-600 transition-colors"
                         >
-                          + Add "{searchTerm}" as new course
+                          <div className="flex items-center">
+                            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                            </svg>
+                            Add "{searchTerm}" as new course
+                          </div>
                         </button>
                       </div>
                     )}
                     
                     {/* No results */}
-                    {filteredWhops.length === 0 && searchTerm && (
-                      <div className="px-3 py-2 text-gray-500">
-                        No existing courses found. {searchTerm.length > 2 && 'Use the option above to add as new course.'}
+                    {!isSearching && searchTerm.length >= 2 && searchResults.length === 0 && (
+                      <div className="px-3 py-2 text-gray-500 text-sm">
+                        No courses found matching "{searchTerm}". {searchTerm.length > 2 && 'Use the option above to add as new course.'}
                       </div>
                     )}
                   </div>
