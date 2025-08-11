@@ -1,0 +1,33 @@
+#!/bin/bash
+
+# 🛡️ SHELL PROTECTION - PHYSICALLY BLOCKS DANGEROUS COMMANDS
+
+# Get the absolute path to the project directory
+PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Replace npx with our safe wrapper for Prisma commands
+npx() {
+    local cmd="$*"
+    
+    # If it's a Prisma command, use our safe wrapper
+    if [[ "$cmd" == *"prisma"* ]]; then
+        echo "🛡️ Prisma command detected - using safety wrapper..."
+        "${PROJECT_DIR}/scripts/safe-npx.js" "$@"
+    else
+        # For non-Prisma commands, use regular npx
+        command npx "$@"
+    fi
+}
+
+# Also block direct prisma calls
+prisma() {
+    echo "🛡️ Direct prisma command blocked - use npx prisma instead"
+    echo "This ensures all Prisma commands go through safety checks"
+    return 1
+}
+
+# Export the functions so they work in subshells
+export -f npx
+export -f prisma
+
+echo "🛡️ Database protection active - dangerous Prisma commands blocked"

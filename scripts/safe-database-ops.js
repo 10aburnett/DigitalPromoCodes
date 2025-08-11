@@ -1,0 +1,102 @@
+#!/usr/bin/env node
+
+/**
+ * 🔒 SAFE DATABASE OPERATIONS MANAGER
+ * 
+ * This script ensures all database operations are safe by:
+ * 1. Confirming which database we're targeting
+ * 2. Blocking dangerous operations entirely
+ * 3. Only allowing approved operations
+ */
+
+const { execSync } = require('child_process');
+const fs = require('fs');
+const path = require('path');
+
+const PRODUCTION_DB = "postgresql://neondb_owner:npg_LoKgTrZ9ua8D@ep-noisy-hat-abxp8ysf-pooler.eu-west-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require";
+const BACKUP_DB = "postgresql://neondb_owner:npg_TKWsI2cv3zki@ep-rough-rain-ab2qairk-pooler.eu-west-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require";
+
+const SAFE_OPERATIONS = [
+  'db:push',
+  'db:migrate', 
+  'generate'
+];
+
+function getCurrentDatabaseUrl() {
+  const envPath = path.join(__dirname, '../.env');
+  if (fs.existsSync(envPath)) {
+    const envContent = fs.readFileSync(envPath, 'utf8');
+    const match = envContent.match(/DATABASE_URL="([^"]+)"/);
+    if (match) return match[1];
+  }
+  return process.env.DATABASE_URL;
+}
+
+function identifyDatabase(url) {
+  if (url.includes('ep-noisy-hat-abxp8ysf')) return 'PRODUCTION';
+  if (url.includes('ep-rough-rain-ab2qairk')) return 'BACKUP';
+  return 'UNKNOWN';
+}
+
+function safeOperation(operation, args = []) {
+  const currentUrl = getCurrentDatabaseUrl();
+  const dbType = identifyDatabase(currentUrl);
+  
+  console.log('🛡️ SAFE DATABASE OPERATION');
+  console.log('==========================');
+  console.log(`Target: ${dbType} database`);
+  console.log(`Operation: ${operation}`);
+  console.log('');
+  
+  if (!SAFE_OPERATIONS.includes(operation)) {
+    console.error('❌ OPERATION NOT IN APPROVED LIST');
+    console.error('✅ Approved operations:', SAFE_OPERATIONS.join(', '));
+    process.exit(1);
+  }
+  
+  // Execute based on operation type
+  switch(operation) {
+    case 'db:push':
+      console.log('✅ Executing safe database push...');
+      execSync('npx prisma db push', { stdio: 'inherit' });
+      break;
+      
+    case 'db:migrate':
+      if (!args[0]) {
+        console.error('❌ Migration name required');
+        console.error('Usage: npm run db:migrate "migration-name"');
+        process.exit(1);
+      }
+      console.log(`✅ Creating migration: ${args[0]}`);
+      execSync(`npx prisma migrate dev --name "${args[0]}"`, { stdio: 'inherit' });
+      break;
+      
+    case 'generate':
+      console.log('✅ Generating Prisma client...');
+      execSync('npx prisma generate', { stdio: 'inherit' });
+      break;
+      
+    default:
+      console.error('❌ Unknown safe operation');
+      process.exit(1);
+  }
+  
+  console.log('');
+  console.log('🎉 Operation completed successfully');
+}
+
+// CLI interface
+const operation = process.argv[2];
+const args = process.argv.slice(3);
+
+if (!operation) {
+  console.log('🛡️ Safe Database Operations Manager');
+  console.log('');
+  console.log('Available operations:');
+  console.log('  db:push           - Push schema changes');
+  console.log('  db:migrate <name> - Create new migration');
+  console.log('  generate          - Generate Prisma client');
+  process.exit(0);
+}
+
+safeOperation(operation, args);

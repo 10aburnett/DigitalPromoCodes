@@ -184,8 +184,8 @@ async function syncWhops(analysis) {
         });
         
         if (fullWhop) {
-          const { id, createdAt, updatedAt, ...whopData } = fullWhop;
-          await backupDb.whop.create({ data: whopData });
+          // Keep all data including timestamps to preserve exact state
+          await backupDb.whop.create({ data: fullWhop });
           console.log(`   ✅ Added: ${fullWhop.name} (${fullWhop.indexing})`);
         }
       }

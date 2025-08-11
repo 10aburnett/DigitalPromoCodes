@@ -1,0 +1,29 @@
+# 🛡️ DATABASE SAFETY ALIASES 🛡️
+# Add this to your ~/.bashrc or ~/.zshrc to prevent destructive commands
+
+# Disable dangerous Prisma commands completely
+alias prisma-db-push-force-reset='echo "🚨 BLOCKED: This command has caused data loss 4+ times! Use: npx prisma db push (without --force-reset)" && false'
+alias prisma-migrate-reset='echo "🚨 BLOCKED: This command destroys all data! Use: npx prisma migrate dev instead" && false'
+alias prisma-db-reset='echo "🚨 BLOCKED: This command destroys all data! Use safe alternatives." && false'
+
+# Override npx to check for dangerous patterns
+npx() {
+    local cmd="$*"
+    
+    # Check for forbidden patterns
+    if [[ "$cmd" == *"--force-reset"* ]] || [[ "$cmd" == *"reset"* ]]; then
+        echo "🚨 BLOCKED: Dangerous database command detected!"
+        echo "Command: npx $cmd"
+        echo "❌ This pattern has caused data loss multiple times"
+        echo "✅ Use safe alternatives:"
+        echo "  npx prisma db push           (for schema updates)"
+        echo "  npx prisma migrate dev       (for new migrations)"
+        echo "See NEVER-FORCE-RESET.md for details"
+        return 1
+    fi
+    
+    # If safe, run the original npx
+    command npx "$@"
+}
+
+echo "🛡️ Database safety guards loaded. Dangerous Prisma commands are blocked."

@@ -5,7 +5,7 @@
  * ✅ WHAT THIS SCRIPT DOES:
  * - Safely merges two Neon PostgreSQL databases
  * - ONLY ADDS data, NEVER deletes anything
- * - Syncs: BlogPosts, Comments, CommentVotes, MailingList
+ * - Syncs: Users, BlogPosts, Comments, CommentVotes, MailingList
  * - Adds missing schema columns automatically
  * - Shows detailed progress and verification
  * 
@@ -350,12 +350,66 @@ async function syncMailingList(analysis) {
   }
 }
 
+async function syncUsers() {
+  console.log('\n👥 SYNCING USERS (REQUIRED FOR BLOG POSTS)');
+  console.log('==========================================');
+
+  try {
+    // Get users from both databases
+    const backupUsers = await backupDb.user.findMany();
+    const productionUsers = await productionDb.user.findMany();
+
+    console.log(`   Backup Users: ${backupUsers.length}`);
+    console.log(`   Production Users: ${productionUsers.length}`);
+
+    const backupUserIds = new Set(backupUsers.map(u => u.id));
+    const productionUserIds = new Set(productionUsers.map(u => u.id));
+
+    // Add production users to backup
+    const usersToAddToBackup = productionUsers.filter(u => !backupUserIds.has(u.id));
+    if (usersToAddToBackup.length > 0) {
+      console.log(`🔹 Adding ${usersToAddToBackup.length} users to BACKUP...`);
+      for (const user of usersToAddToBackup) {
+        try {
+          // Create user with all data including timestamps to preserve exact state
+          await backupDb.user.create({ data: user });
+          console.log(`   ✅ Added user: ${user.email}`);
+        } catch (error) {
+          console.log(`   ⚠️  Skipped user ${user.email}: ${error.message}`);
+        }
+      }
+    }
+
+    // Add backup users to production
+    const usersToAddToProduction = backupUsers.filter(u => !productionUserIds.has(u.id));
+    if (usersToAddToProduction.length > 0) {
+      console.log(`🔹 Adding ${usersToAddToProduction.length} users to PRODUCTION...`);
+      for (const user of usersToAddToProduction) {
+        try {
+          // Create user with all data including timestamps to preserve exact state
+          await productionDb.user.create({ data: user });
+          console.log(`   ✅ Added user: ${user.email}`);
+        } catch (error) {
+          console.log(`   ⚠️  Skipped user ${user.email}: ${error.message}`);
+        }
+      }
+    }
+
+    console.log('✅ Users sync completed');
+
+  } catch (error) {
+    console.error('❌ Error syncing users:', error);
+    throw error;
+  }
+}
+
 async function verifySync() {
   console.log('\n✅ FINAL VERIFICATION');
   console.log('=====================');
 
   try {
     const backupCounts = {
+      users: await backupDb.user.count(),
       blogPosts: await backupDb.blogPost.count(),
       comments: await backupDb.comment.count(),
       votes: await backupDb.commentVote.count(),
@@ -363,6 +417,7 @@ async function verifySync() {
     };
 
     const productionCounts = {
+      users: await productionDb.user.count(),
       blogPosts: await productionDb.blogPost.count(),
       comments: await productionDb.comment.count(),
       votes: await productionDb.commentVote.count(),
@@ -370,6 +425,7 @@ async function verifySync() {
     };
 
     console.log('📊 FINAL COUNTS:');
+    console.log(`   Users         - Backup: ${backupCounts.users}, Production: ${productionCounts.users}`);
     console.log(`   Blog Posts    - Backup: ${backupCounts.blogPosts}, Production: ${productionCounts.blogPosts}`);
     console.log(`   Comments      - Backup: ${backupCounts.comments}, Production: ${productionCounts.comments}`);
     console.log(`   Votes         - Backup: ${backupCounts.votes}, Production: ${productionCounts.votes}`);
@@ -403,19 +459,22 @@ async function main() {
     // Step 2: Ensure schema columns exist
     await ensureSchemaColumns();
     
-    // Step 3: Sync blog posts
+    // Step 3: Sync users first (required for blog posts foreign keys)
+    await syncUsers();
+    
+    // Step 4: Sync blog posts
     await syncBlogPosts(analysis);
     
-    // Step 4: Sync comments
+    // Step 5: Sync comments
     await syncComments(analysis);
     
-    // Step 5: Sync votes
+    // Step 6: Sync votes
     await syncVotes(analysis);
     
-    // Step 6: Sync mailing list
+    // Step 7: Sync mailing list
     await syncMailingList(analysis);
     
-    // Step 7: Verify everything
+    // Step 8: Verify everything
     await verifySync();
 
     console.log('\n🎉 BIDIRECTIONAL SYNC COMPLETED SUCCESSFULLY!');

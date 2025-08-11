@@ -1,0 +1,153 @@
+#!/usr/bin/env node
+
+const { PrismaClient } = require('@prisma/client')
+
+// Initialize Prisma clients for both databases with hardcoded URLs
+const backupPrisma = new PrismaClient({
+  datasources: {
+    db: {
+      url: "postgresql://neondb_owner:npg_TKWsI2cv3zki@ep-rough-rain-ab2qairk-pooler.eu-west-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
+    }
+  }
+})
+
+const productionPrisma = new PrismaClient({
+  datasources: {
+    db: {
+      url: "postgresql://neondb_owner:npg_LoKgTrZ9ua8D@ep-noisy-hat-abxp8ysf-pooler.eu-west-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
+    }
+  }
+})
+
+console.log('🚀 BIDIRECTIONAL DATABASE SYNC #3 (PROMO CODE SUBMISSIONS)')
+console.log('===========================================================')
+console.log('⚠️  SAFE MODE: ONLY ADDING DATA, NEVER DELETING')
+console.log()
+
+async function syncPromoCodeSubmissions() {
+  try {
+    console.log('🔍 ANALYZING PROMO CODE SUBMISSION DIFFERENCES BETWEEN DATABASES')
+    console.log('================================================================')
+    console.log()
+
+    // Get submissions from both databases
+    const backupSubmissions = await backupPrisma.promoCodeSubmission.findMany({
+      include: {
+        whop: {
+          select: {
+            id: true,
+            name: true,
+            slug: true
+          }
+        }
+      }
+    })
+
+    const productionSubmissions = await productionPrisma.promoCodeSubmission.findMany({
+      include: {
+        whop: {
+          select: {
+            id: true,
+            name: true,
+            slug: true
+          }
+        }
+      }
+    })
+
+    console.log('🎯 PROMO CODE SUBMISSIONS:')
+    console.log(`   Backup: ${backupSubmissions.length} submissions`)
+    console.log(`   Production: ${productionSubmissions.length} submissions`)
+
+    // Find submissions missing in each database
+    const backupSubmissionIds = new Set(backupSubmissions.map(s => s.id))
+    const productionSubmissionIds = new Set(productionSubmissions.map(s => s.id))
+
+    const missingFromProduction = backupSubmissions.filter(s => !productionSubmissionIds.has(s.id))
+    const missingFromBackup = productionSubmissions.filter(s => !backupSubmissionIds.has(s.id))
+
+    console.log(`   Missing from Production: ${missingFromProduction.length} submissions`)
+    console.log(`   Missing from Backup: ${missingFromBackup.length} submissions`)
+    console.log()
+
+    // Sync missing submissions to production
+    if (missingFromProduction.length > 0) {
+      console.log('📤 SYNCING SUBMISSIONS FROM BACKUP TO PRODUCTION')
+      console.log('================================================')
+      
+      for (const submission of missingFromProduction) {
+        try {
+          const { whop, ...submissionData } = submission
+          await productionPrisma.promoCodeSubmission.create({
+            data: submissionData
+          })
+          console.log(`   ✅ Added submission: ${submission.title} (${submission.id})`)
+        } catch (error) {
+          console.log(`   ❌ Failed to add submission ${submission.id}: ${error.message}`)
+        }
+      }
+    } else {
+      console.log('✅ No submissions to sync from Backup to Production')
+    }
+    console.log()
+
+    // Sync missing submissions to backup
+    if (missingFromBackup.length > 0) {
+      console.log('📥 SYNCING SUBMISSIONS FROM PRODUCTION TO BACKUP')
+      console.log('===============================================')
+      
+      for (const submission of missingFromBackup) {
+        try {
+          const { whop, ...submissionData } = submission
+          await backupPrisma.promoCodeSubmission.create({
+            data: submissionData
+          })
+          console.log(`   ✅ Added submission: ${submission.title} (${submission.id})`)
+        } catch (error) {
+          console.log(`   ❌ Failed to add submission ${submission.id}: ${error.message}`)
+        }
+      }
+    } else {
+      console.log('✅ No submissions to sync from Production to Backup')
+    }
+    console.log()
+
+    // Final verification
+    console.log('✅ FINAL VERIFICATION')
+    console.log('=====================')
+
+    const finalBackupSubmissions = await backupPrisma.promoCodeSubmission.count()
+    const finalProductionSubmissions = await productionPrisma.promoCodeSubmission.count()
+
+    console.log('📊 FINAL COUNTS:')
+    console.log(`   Promo Submissions - Backup: ${finalBackupSubmissions}, Production: ${finalProductionSubmissions}`)
+    console.log()
+
+    if (finalBackupSubmissions === finalProductionSubmissions) {
+      console.log('🎉 SUCCESS! Both databases are now fully synchronized for PromoCodeSubmissions!')
+    } else {
+      console.log('⚠️  WARNING: Submission counts still differ between databases')
+    }
+
+    console.log()
+    console.log('🎉 BIDIRECTIONAL SYNC #3 COMPLETED SUCCESSFULLY!')
+    console.log('Both databases now contain all PromoCodeSubmission data from each other.')
+
+  } catch (error) {
+    console.error('❌ SYNC FAILED:', error)
+    throw error
+  } finally {
+    await backupPrisma.$disconnect()
+    await productionPrisma.$disconnect()
+  }
+}
+
+// Run the sync
+syncPromoCodeSubmissions()
+  .then(() => {
+    process.exit(0)
+  })
+  .catch((error) => {
+    console.error('Script failed:', error)
+    process.exit(1)
+  })
