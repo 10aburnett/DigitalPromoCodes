@@ -47,8 +47,15 @@ interface Whop {
 
 async function getWhop(slug: string) {
   try {
-    const response = await fetch(`${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/whops?slug=${slug}`, {
-      cache: 'no-store'
+    // Force fresh data with timestamp to bypass any caching
+    const timestamp = Date.now();
+    const response = await fetch(`${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/whops?slug=${slug}&_t=${timestamp}`, {
+      cache: 'no-store',
+      headers: {
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0'
+      }
     });
     
     if (!response.ok) {
@@ -309,34 +316,9 @@ export default async function WhopPage({ params }: { params: { slug: string } })
     }
   ];
 
-  console.log('🚀 WhopPage rendering:', { slug: params.slug, whopId: whop.id, promoCodesLength: whop.promoCodes?.length });
-  console.error('🚀 DEBUG: WhopPage rendering (error level):', { slug: params.slug, whopId: whop.id, promoCodesLength: whop.promoCodes?.length });
-  console.warn('🚀 DEBUG: WhopPage rendering (warn level):', { slug: params.slug, whopId: whop.id, promoCodesLength: whop.promoCodes?.length });
 
   return (
     <main key={pageKey} className="min-h-screen py-12 pt-24 transition-theme" style={{ backgroundColor: 'var(--background-color)', color: 'var(--text-color)' }}>
-      {/* Client-side debug script */}
-      <script dangerouslySetInnerHTML={{
-        __html: `
-          console.error('🔴 IMMEDIATE DEBUG: Page script executing');
-          console.warn('🟡 IMMEDIATE DEBUG: Page script executing');
-          console.log('🟢 IMMEDIATE DEBUG: Page script executing');
-          
-          // Call debug endpoint
-          fetch('/api/debug-console')
-            .then(r => r.json())
-            .then(data => {
-              console.error('🔴 DEBUG API RESPONSE:', data);
-              console.warn('🟡 DEBUG API RESPONSE:', data);
-              console.log('🟢 DEBUG API RESPONSE:', data);
-            })
-            .catch(e => {
-              console.error('🔴 DEBUG API ERROR:', e);
-              console.warn('🟡 DEBUG API ERROR:', e);
-              console.log('🟢 DEBUG API ERROR:', e);
-            });
-        `
-      }} />
       <div className="mx-auto w-[90%] md:w-[95%] max-w-6xl">
         {/* Main Content Container */}
         <div className="max-w-2xl mx-auto space-y-6 mb-8">
@@ -371,28 +353,6 @@ export default async function WhopPage({ params }: { params: { slug: string } })
               {/* Community Promo Codes Section */}
               <div className="mt-1">
                 <hr className="mb-4" style={{ borderColor: 'var(--border-color)', borderWidth: '1px', opacity: 0.3 }} />
-                
-                {/* Visible Debug Info */}
-                <div style={{ 
-                  backgroundColor: '#ff0000', 
-                  color: 'white', 
-                  padding: '10px', 
-                  margin: '10px 0',
-                  fontFamily: 'monospace',
-                  fontSize: '12px',
-                  border: '2px solid yellow'
-                }}>
-                  <strong>🔥 DEBUG INFO (VISIBLE):</strong><br/>
-                  WhopId: {whop.id}<br/>
-                  Total Promo Codes: {whop.promoCodes?.length || 0}<br/>
-                  Promo Code IDs: {JSON.stringify(whop.promoCodes?.map(p => p.id) || [])}<br/>
-                  Community Codes: {JSON.stringify(whop.promoCodes?.filter(p => p.id.startsWith('community_')).map(p => p.id) || [])}<br/>
-                  Original Codes: {JSON.stringify(whop.promoCodes?.filter(p => !p.id.startsWith('community_')).map(p => p.id) || [])}
-                </div>
-                
-                {console.log('🔥 ABOUT TO RENDER CommunityPromoSection:', { whopId: whop.id, promoCount: whop.promoCodes?.length })}
-                {console.error('🔥 DEBUG: ABOUT TO RENDER CommunityPromoSection (error level):', { whopId: whop.id, promoCount: whop.promoCodes?.length })}
-                {console.warn('🔥 DEBUG: ABOUT TO RENDER CommunityPromoSection (warn level):', { whopId: whop.id, promoCount: whop.promoCodes?.length })}
                 <CommunityPromoSection 
                   whop={{
                     id: whop.id,
