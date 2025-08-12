@@ -51,7 +51,9 @@ const PromoStatsDisplay = forwardRef<PromoStatsDisplayHandle, PromoStatsDisplayP
 
         console.log('🔍 PromoStatsDisplay: Fetching stats with params:', { whopId, promoCodeId });
         
-        const response = await fetch(`/api/promo-stats?${params}`);
+        const url = `/api/promo-stats?${params}`;
+        console.log('🔍 PromoStatsDisplay: Fetching URL:', url);
+        const response = await fetch(url);
         if (response.ok) {
           const data = await response.json();
           console.log('✅ PromoStatsDisplay: Received data:', data);
