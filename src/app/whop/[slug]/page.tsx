@@ -2,6 +2,10 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { Metadata } from 'next';
 import { normalizeImagePath } from '@/lib/image-utils';
+
+// Force dynamic rendering and disable caching
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 import InitialsAvatar from '@/components/InitialsAvatar';
 import WhopLogo from '@/components/WhopLogo';
 import WhopReviewSection from '@/components/WhopReviewSection';
@@ -281,18 +285,6 @@ export default async function WhopPage({ params }: { params: { slug: string } })
     reviews: whopData.reviews || []
   };
 
-  // Debug what data we actually have
-  console.error('🚀 WhopPage: whopData received from API:', {
-    whopId: whopData.whopId,
-    promoCodesLength: whopData.promoCodes?.length,
-    promoCodeIds: whopData.promoCodes?.map(p => p.id)
-  });
-  
-  console.error('🚀 WhopPage: whop object passed to components:', {
-    whopId: whop.id,
-    promoCodesLength: whop.promoCodes?.length,
-    promoCodeIds: whop.promoCodes?.map(p => p.id)
-  });
   
   const firstPromo = whop.promoCodes[0] || null;
   const promoCode = firstPromo?.code || null;
@@ -310,8 +302,8 @@ export default async function WhopPage({ params }: { params: { slug: string } })
     return firstPromo?.value || '0';
   };
 
-  // Create unique key for remounting when slug changes
-  const pageKey = `whop-${params.slug}`;
+  // Create unique key for remounting when slug changes - add timestamp for cache busting
+  const pageKey = `whop-${params.slug}-${Date.now()}`;
 
   // Prepare FAQ data for the collapsible component
   const faqData = [
@@ -367,6 +359,7 @@ export default async function WhopPage({ params }: { params: { slug: string } })
               <div className="mt-1">
                 <hr className="mb-4" style={{ borderColor: 'var(--border-color)', borderWidth: '1px', opacity: 0.3 }} />
                 <CommunityPromoSection 
+                  key={`community-${whop.id}-${whop.promoCodes?.length || 0}-${Date.now()}`}
                   whop={{
                     id: whop.id,
                     name: whop.name,
