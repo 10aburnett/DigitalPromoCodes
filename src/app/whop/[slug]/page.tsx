@@ -315,6 +315,28 @@ export default async function WhopPage({ params }: { params: { slug: string } })
 
   return (
     <main key={pageKey} className="min-h-screen py-12 pt-24 transition-theme" style={{ backgroundColor: 'var(--background-color)', color: 'var(--text-color)' }}>
+      {/* Client-side debug script */}
+      <script dangerouslySetInnerHTML={{
+        __html: `
+          console.error('🔴 IMMEDIATE DEBUG: Page script executing');
+          console.warn('🟡 IMMEDIATE DEBUG: Page script executing');
+          console.log('🟢 IMMEDIATE DEBUG: Page script executing');
+          
+          // Call debug endpoint
+          fetch('/api/debug-console')
+            .then(r => r.json())
+            .then(data => {
+              console.error('🔴 DEBUG API RESPONSE:', data);
+              console.warn('🟡 DEBUG API RESPONSE:', data);
+              console.log('🟢 DEBUG API RESPONSE:', data);
+            })
+            .catch(e => {
+              console.error('🔴 DEBUG API ERROR:', e);
+              console.warn('🟡 DEBUG API ERROR:', e);
+              console.log('🟢 DEBUG API ERROR:', e);
+            });
+        `
+      }} />
       <div className="mx-auto w-[90%] md:w-[95%] max-w-6xl">
         {/* Main Content Container */}
         <div className="max-w-2xl mx-auto space-y-6 mb-8">
