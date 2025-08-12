@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import WhopPageClient from './WhopPageClient'
 import PromoStatsDisplay from './PromoStatsDisplay'
 
@@ -23,6 +23,20 @@ interface CommunityPromoSectionProps {
 }
 
 export default function CommunityPromoSection({ whop, promoCodes }: CommunityPromoSectionProps) {
+  // Client-side debug to see what data reaches the component
+  React.useEffect(() => {
+    console.error('🔍 CommunityPromoSection received data:', {
+      whopId: whop.id,
+      whopName: whop.name,
+      totalPromoCodes: promoCodes.length,
+      promoCodeDetails: promoCodes.map(p => ({
+        id: p.id,
+        title: p.title,
+        code: p.code,
+        isCommunity: p.id.startsWith('community_')
+      }))
+    });
+  }, [whop.id, promoCodes]);
 
   // Separate community codes from original codes
   const communityPromoCodes = promoCodes.filter(code => code.id.startsWith('community_'))
