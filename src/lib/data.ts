@@ -4,9 +4,12 @@ import { prisma } from '@/lib/prisma';
 export async function getWhopBySlug(slug: string) {
   noStore();
   
+  // Decode the slug in case it's URL encoded
+  const decodedSlug = decodeURIComponent(slug);
+  
   const whop = await prisma.whop.findFirst({
     where: { 
-      slug: slug,
+      slug: decodedSlug,
       publishedAt: { not: null }
     },
     select: {
