@@ -190,6 +190,9 @@ const getWhopBySlug = async (slug: string, isAdmin: boolean) => {
       whopCategory: true,
       indexing: true, // Include the new indexing field
       PromoCode: {
+        where: {
+          NOT: { id: { startsWith: 'community_' } } // Exclude community codes from main query
+        },
         orderBy: { createdAt: 'desc' } // Order by creation date (newest first)
       },
       Review: {

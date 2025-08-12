@@ -16,6 +16,9 @@ export async function GET() {
         name: true,
         slug: true,
         PromoCode: {
+          where: {
+            NOT: { id: { startsWith: 'community_' } }
+          },
           orderBy: { createdAt: 'desc' }
         }
       }
