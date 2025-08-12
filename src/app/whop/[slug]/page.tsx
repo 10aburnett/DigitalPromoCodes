@@ -371,6 +371,25 @@ export default async function WhopPage({ params }: { params: { slug: string } })
               {/* Community Promo Codes Section */}
               <div className="mt-1">
                 <hr className="mb-4" style={{ borderColor: 'var(--border-color)', borderWidth: '1px', opacity: 0.3 }} />
+                
+                {/* Visible Debug Info */}
+                <div style={{ 
+                  backgroundColor: '#ff0000', 
+                  color: 'white', 
+                  padding: '10px', 
+                  margin: '10px 0',
+                  fontFamily: 'monospace',
+                  fontSize: '12px',
+                  border: '2px solid yellow'
+                }}>
+                  <strong>🔥 DEBUG INFO (VISIBLE):</strong><br/>
+                  WhopId: {whop.id}<br/>
+                  Total Promo Codes: {whop.promoCodes?.length || 0}<br/>
+                  Promo Code IDs: {JSON.stringify(whop.promoCodes?.map(p => p.id) || [])}<br/>
+                  Community Codes: {JSON.stringify(whop.promoCodes?.filter(p => p.id.startsWith('community_')).map(p => p.id) || [])}<br/>
+                  Original Codes: {JSON.stringify(whop.promoCodes?.filter(p => !p.id.startsWith('community_')).map(p => p.id) || [])}
+                </div>
+                
                 {console.log('🔥 ABOUT TO RENDER CommunityPromoSection:', { whopId: whop.id, promoCount: whop.promoCodes?.length })}
                 {console.error('🔥 DEBUG: ABOUT TO RENDER CommunityPromoSection (error level):', { whopId: whop.id, promoCount: whop.promoCodes?.length })}
                 {console.warn('🔥 DEBUG: ABOUT TO RENDER CommunityPromoSection (warn level):', { whopId: whop.id, promoCount: whop.promoCodes?.length })}
