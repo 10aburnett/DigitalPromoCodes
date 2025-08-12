@@ -230,46 +230,50 @@ export default function PromoCodeSubmissionForm({
     return (
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
            onClick={handleCloseSuccess}>
-        <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-8 text-center relative"
+        <div className="rounded-lg shadow-xl max-w-md w-full p-8 text-center relative transition-theme" 
+             style={{ backgroundColor: 'var(--background-color)' }}
              onClick={(e) => e.stopPropagation()}>
-          {/* Close button */}
           <button
             onClick={handleCloseSuccess}
-            className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-2xl font-bold"
+            className="absolute top-4 right-4 hover:opacity-80 text-2xl font-bold"
+            style={{ color: 'var(--text-secondary)' }}
           >
             ×
           </button>
-          
           <div className="mb-6">
-            <div className="w-16 h-16 mx-auto mb-4 bg-green-100 rounded-full flex items-center justify-center">
-              <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            <div className="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center"
+                 style={{ backgroundColor: 'rgba(34, 197, 94, 0.1)' }}>
+              <svg className="w-8 h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                   strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
               </svg>
             </div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-4">Thank You! 🎉</h3>
-            <p className="text-gray-700 text-lg leading-relaxed">
+            <h3 className="text-2xl font-bold mb-4" style={{ color: 'var(--text-color)' }}>Thank You! 🎉</h3>
+            <p className="text-lg leading-relaxed" style={{ color: 'var(--text-color)' }}>
               You're awesome! Thanks for making our community better by sharing this promo code. 
               Your contribution adds real value to our group and helps fellow members save money. 
             </p>
-            <p className="text-gray-600 mt-4">
+            <p className="mt-4" style={{ color: 'var(--text-secondary)' }}>
               We'll review your submission and add it to the site once approved. Keep being amazing! ✨
             </p>
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+      <div className="rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto transition-theme"
+           style={{ backgroundColor: 'var(--background-color)' }}>
         <div className="p-6">
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold text-gray-900">Submit a Promo Code</h2>
+            <h2 className="text-2xl font-bold" style={{ color: 'var(--text-color)' }}>Submit a Promo Code</h2>
             {onClose && (
               <button
                 onClick={onClose}
-                className="text-gray-500 hover:text-gray-700 text-2xl font-bold"
+                className="hover:opacity-80 text-2xl font-bold"
+                style={{ color: 'var(--text-secondary)' }}
               >
                 ×
               </button>
@@ -279,11 +283,11 @@ export default function PromoCodeSubmissionForm({
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Promo Type Selection */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-3">
+              <label className="block text-sm font-medium mb-3" style={{ color: 'var(--text-color)' }}>
                 Promo Code Type
               </label>
               <div className="flex gap-4">
-                <label className="flex items-center">
+                <label className="flex items-center" style={{ color: 'var(--text-color)' }}>
                   <input
                     type="radio"
                     checked={!formData.isGeneral}
@@ -292,7 +296,7 @@ export default function PromoCodeSubmissionForm({
                   />
                   Course-Specific
                 </label>
-                <label className="flex items-center">
+                <label className="flex items-center" style={{ color: 'var(--text-color)' }}>
                   <input
                     type="radio"
                     checked={formData.isGeneral}
@@ -307,7 +311,7 @@ export default function PromoCodeSubmissionForm({
             {/* Course Selection (only for course-specific) */}
             {!formData.isGeneral && (
               <div className="relative">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-color)' }}>
                   Select Course *
                 </label>
                 
@@ -337,7 +341,13 @@ export default function PromoCodeSubmissionForm({
                       }
                     }}
                     placeholder="Type to search for a course..."
-                    className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+                    className="w-full px-3 py-2 pr-10 border rounded-md focus:outline-none focus:ring-2 transition-colors"
+                    style={{ 
+                      backgroundColor: 'var(--background-secondary)', 
+                      borderColor: 'var(--border-color)', 
+                      color: 'var(--text-color)',
+                      focusRingColor: 'var(--accent-color)'
+                    }}
                     required={!formData.isGeneral}
                     autoComplete="off"
                   />
@@ -345,7 +355,8 @@ export default function PromoCodeSubmissionForm({
                     {isSearching ? (
                       <div className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
                     ) : (
-                      <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                           style={{ color: 'var(--text-secondary)' }}>
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                       </svg>
                     )}
@@ -354,17 +365,18 @@ export default function PromoCodeSubmissionForm({
 
                 {/* Optimized Dropdown results */}
                 {showDropdown && (
-                  <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-y-auto">
+                  <div className="absolute z-10 w-full mt-1 rounded-md shadow-lg max-h-60 overflow-y-auto transition-theme" 
+                       style={{ backgroundColor: 'var(--background-color)', borderColor: 'var(--border-color)', border: '1px solid' }}>
                     {/* Search instruction for short queries */}
                     {searchTerm && searchTerm.length < 2 && (
-                      <div className="px-3 py-2 text-gray-500 text-sm">
+                      <div className="px-3 py-2 text-sm" style={{ color: 'var(--text-secondary)' }}>
                         Type at least 2 characters to search...
                       </div>
                     )}
                     
                     {/* Loading state */}
                     {isSearching && searchTerm.length >= 2 && (
-                      <div className="px-3 py-2 text-gray-500 text-sm flex items-center">
+                      <div className="px-3 py-2 text-secondary text-sm flex items-center">
                         <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin mr-2" />
                         Searching courses...
                       </div>
@@ -378,7 +390,13 @@ export default function PromoCodeSubmissionForm({
                             key={whop.id}
                             type="button"
                             onClick={() => handleCourseSelect(whop)}
-                            className="w-full px-3 py-2 text-left hover:bg-gray-100 focus:bg-gray-100 focus:outline-none transition-colors"
+                            className="w-full px-3 py-2 text-left focus:outline-none transition-colors"
+                            style={{ 
+                              color: 'var(--text-color)',
+                              ':hover': { backgroundColor: 'var(--background-secondary)' }
+                            }}
+                            onMouseEnter={(e) => e.target.style.backgroundColor = 'var(--background-secondary)'}
+                            onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
                           >
                             <div className="truncate">{whop.name}</div>
                           </button>
@@ -411,7 +429,7 @@ export default function PromoCodeSubmissionForm({
                     
                     {/* No results */}
                     {!isSearching && searchTerm.length >= 2 && searchResults.length === 0 && (
-                      <div className="px-3 py-2 text-gray-500 text-sm">
+                      <div className="px-3 py-2 text-sm" style={{ color: 'var(--text-secondary)' }}>
                         No courses found matching "{searchTerm}". {searchTerm.length > 2 && 'Use the option above to add as new course.'}
                       </div>
                     )}
@@ -445,7 +463,7 @@ export default function PromoCodeSubmissionForm({
 
             {/* Title */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-color)' }}>
                 Promo Title *
               </label>
               <input
@@ -453,14 +471,19 @@ export default function PromoCodeSubmissionForm({
                 value={formData.title}
                 onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
                 placeholder="e.g. 20% Off Summer Sale, Free Month Trial"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 transition-colors"
+                style={{ 
+                  backgroundColor: 'var(--background-secondary)', 
+                  borderColor: 'var(--border-color)', 
+                  color: 'var(--text-color)'
+                }}
                 required
               />
             </div>
 
             {/* Description */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-color)' }}>
                 Description *
               </label>
               <textarea
@@ -468,14 +491,19 @@ export default function PromoCodeSubmissionForm({
                 onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
                 placeholder="Describe the promo code and any conditions..."
                 rows={3}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 transition-colors"
+                style={{ 
+                  backgroundColor: 'var(--background-secondary)', 
+                  borderColor: 'var(--border-color)', 
+                  color: 'var(--text-color)'
+                }}
                 required
               />
             </div>
 
             {/* Code */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-color)' }}>
                 Promo Code *
               </label>
               <input
@@ -483,17 +511,22 @@ export default function PromoCodeSubmissionForm({
                 value={formData.code}
                 onChange={(e) => setFormData(prev => ({ ...prev, code: e.target.value }))}
                 placeholder="e.g. SUMMER20, FREEMONTH, or 'No code required'"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 transition-colors"
+                style={{ 
+                  backgroundColor: 'var(--background-secondary)', 
+                  borderColor: 'var(--border-color)', 
+                  color: 'var(--text-color)'
+                }}
                 required
               />
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs mt-1" style={{ color: 'var(--text-secondary)' }}>
                 If no promo code is needed, enter "No code required"
               </p>
             </div>
 
             {/* Value */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-color)' }}>
                 Discount Value *
               </label>
               <input
@@ -501,45 +534,60 @@ export default function PromoCodeSubmissionForm({
                 value={formData.value}
                 onChange={(e) => setFormData(prev => ({ ...prev, value: e.target.value }))}
                 placeholder="e.g. 20% off, $50 off, Free trial, Free access"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 transition-colors"
+                style={{ 
+                  backgroundColor: 'var(--background-secondary)', 
+                  borderColor: 'var(--border-color)', 
+                  color: 'var(--text-color)'
+                }}
                 required
               />
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs mt-1" style={{ color: 'var(--text-secondary)' }}>
                 What do users get with this promo? (discount amount, free trial, etc.)
               </p>
             </div>
 
             {/* Submitter Name */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-color)' }}>
                 Your Name *
               </label>
               <input
                 type="text"
                 value={formData.submitterName}
                 onChange={(e) => setFormData(prev => ({ ...prev, submitterName: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 transition-colors"
+                style={{ 
+                  backgroundColor: 'var(--background-secondary)', 
+                  borderColor: 'var(--border-color)', 
+                  color: 'var(--text-color)'
+                }}
                 required
               />
             </div>
 
             {/* Submitter Email */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-color)' }}>
                 Your Email *
               </label>
               <input
                 type="email"
                 value={formData.submitterEmail}
                 onChange={(e) => setFormData(prev => ({ ...prev, submitterEmail: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 transition-colors"
+                style={{ 
+                  backgroundColor: 'var(--background-secondary)', 
+                  borderColor: 'var(--border-color)', 
+                  color: 'var(--text-color)'
+                }}
                 required
               />
             </div>
 
             {/* Optional Message */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text-color)' }}>
                 Additional Message
               </label>
               <textarea
@@ -547,7 +595,12 @@ export default function PromoCodeSubmissionForm({
                 onChange={(e) => setFormData(prev => ({ ...prev, submitterMessage: e.target.value }))}
                 placeholder="Any additional information about this promo code..."
                 rows={2}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 transition-colors"
+                style={{ 
+                  backgroundColor: 'var(--background-secondary)', 
+                  borderColor: 'var(--border-color)', 
+                  color: 'var(--text-color)'
+                }}
               />
             </div>
 
@@ -557,7 +610,12 @@ export default function PromoCodeSubmissionForm({
                 <button
                   type="button"
                   onClick={onClose}
-                  className="px-6 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                  className="px-6 py-2 border rounded-md hover:opacity-80 transition-opacity"
+                  style={{ 
+                    borderColor: 'var(--border-color)', 
+                    color: 'var(--text-color)',
+                    backgroundColor: 'var(--background-secondary)'
+                  }}
                 >
                   Cancel
                 </button>
@@ -565,15 +623,17 @@ export default function PromoCodeSubmissionForm({
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
+                className="px-6 py-2 rounded-md hover:opacity-90 disabled:opacity-50 transition-opacity"
+                style={{ backgroundColor: 'var(--accent-color)', color: 'white' }}
               >
                 {isSubmitting ? 'Submitting...' : 'Submit a Promo Code'}
               </button>
             </div>
           </form>
 
-          <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-            <p className="text-sm text-blue-800">
+          <div className="mt-6 p-4 rounded-lg transition-theme" 
+               style={{ backgroundColor: 'var(--background-tertiary)' }}>
+            <p className="text-sm" style={{ color: 'var(--text-color)' }}>
               <strong>Community Guidelines:</strong> Please only submit legitimate promo codes. 
               All submissions are reviewed by our team before being published. Thank you for 
               helping build the WHP community! 🎉
@@ -582,5 +642,5 @@ export default function PromoCodeSubmissionForm({
         </div>
       </div>
     </div>
-  )
+  );
 }
