@@ -343,7 +343,8 @@ export default async function WhopPage({ params }: { params: { slug: string } })
               </div>
 
               {/* Community Promo Codes Section */}
-              <div className="mt-6">
+              <div className="mt-1">
+                <hr className="mb-4" style={{ borderColor: 'var(--border-color)', borderWidth: '1px', opacity: 0.3 }} />
                 <CommunityPromoSection 
                   whop={{
                     id: whop.id,
@@ -394,52 +395,81 @@ export default async function WhopPage({ params }: { params: { slug: string } })
             </ol>
           </section>
 
-          {/* Product Info Table */}
-          <section className="rounded-xl px-7 py-6 sm:p-8 border transition-theme" style={{ backgroundColor: 'var(--background-secondary)', borderColor: 'var(--border-color)' }}>
-            <h2 className="text-xl sm:text-2xl font-bold mb-4">Product Details</h2>
-            <div className="overflow-hidden rounded-lg">
-              <table className="min-w-full">
-                <tbody>
-                  {hasPromoCode(whop.name) ? (
-                    <tr className="border-b" style={{ borderColor: 'var(--border-color)' }}>
-                      <td className="py-3 pl-4 pr-2 font-medium w-1/3" style={{ backgroundColor: 'var(--background-color)' }}>Discount Value</td>
-                      <td className="py-3 px-4" style={{ backgroundColor: 'var(--background-secondary)' }}>
-                        {(() => {
-                          const discount = getDiscountPercentage(whop.name);
-                          // If discount already contains $, %, or 'off', return as-is
-                          if (discount.includes('$') || discount.includes('%') || discount.includes('off')) {
-                            return discount;
-                          }
-                          // Otherwise add % symbol for percentage discounts
-                          return `${discount}%`;
-                        })()}
-                      </td>
-                    </tr>
-                  ) : null}
-                  {whop.price && (
-                    <tr className="border-b" style={{ borderColor: 'var(--border-color)' }}>
-                      <td className="py-3 pl-4 pr-2 font-medium w-1/3" style={{ backgroundColor: 'var(--background-color)' }}>Price</td>
-                      <td className="py-3 px-4" style={{ backgroundColor: 'var(--background-secondary)' }}>
-                        <span style={{ 
-                          color: whop.price === 'Free' ? 'var(--success-color)' : 
-                                 whop.price === 'N/A' ? 'var(--text-secondary)' : 'var(--text-color)',
-                          fontWeight: whop.price === 'Free' ? 'bold' : 'normal'
+          {/* Product Details for Each Promo Code */}
+          {whop.promoCodes.map((promo, globalIndex) => {
+            // Calculate the promo number based on whether it's community or original
+            const isCommunity = promo.id.startsWith('community_');
+            const communityCount = whop.promoCodes.filter(p => p.id.startsWith('community_')).length;
+            
+            let promoNumber;
+            if (isCommunity) {
+              // Community codes get numbers 1, 2, 3... based on their position in community codes
+              const communityIndex = whop.promoCodes.filter(p => p.id.startsWith('community_')).indexOf(promo);
+              promoNumber = communityIndex + 1;
+            } else {
+              // Original codes continue numbering after community codes
+              const originalIndex = whop.promoCodes.filter(p => !p.id.startsWith('community_')).indexOf(promo);
+              promoNumber = communityCount + originalIndex + 1;
+            }
+            
+            return (
+              <section key={promo.id} className="rounded-xl px-7 py-6 sm:p-8 border transition-theme" style={{ backgroundColor: 'var(--background-secondary)', borderColor: 'var(--border-color)' }}>
+                <div className="flex items-center gap-3 mb-4">
+                  <h2 className="text-xl sm:text-2xl font-bold">Product Details #{promoNumber}</h2>
+                  <span className="text-sm px-2 py-1 rounded" 
+                        style={{ 
+                          backgroundColor: isCommunity ? 'var(--accent-color)' : 'var(--background-color)', 
+                          color: isCommunity ? 'white' : 'var(--text-color)',
+                          border: !isCommunity ? '1px solid var(--border-color)' : 'none'
                         }}>
-                          {whop.price}
-                        </span>
-                      </td>
-                    </tr>
-                  )}
-                  {whop.category && (
-                    <tr>
-                      <td className="py-3 pl-4 pr-2 font-medium w-1/3" style={{ backgroundColor: 'var(--background-color)' }}>Category</td>
-                      <td className="py-3 px-4" style={{ backgroundColor: 'var(--background-secondary)' }}>{whop.category}</td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </section>
+                    {isCommunity ? 'Community' : 'Original'}
+                  </span>
+                </div>
+                <div className="overflow-hidden rounded-lg">
+                  <table className="min-w-full">
+                    <tbody>
+                      {promo.value && promo.value !== '0' && (
+                        <tr className="border-b" style={{ borderColor: 'var(--border-color)' }}>
+                          <td className="py-3 pl-4 pr-2 font-medium w-1/3" style={{ backgroundColor: 'var(--background-color)' }}>Discount Value</td>
+                          <td className="py-3 px-4" style={{ backgroundColor: 'var(--background-secondary)' }}>
+                            {(() => {
+                              const discount = promo.value;
+                              // If discount already contains $, %, or 'off', return as-is
+                              if (discount.includes('$') || discount.includes('%') || discount.includes('off')) {
+                                return discount;
+                              }
+                              // Otherwise add % symbol for percentage discounts
+                              return `${discount}%`;
+                            })()}
+                          </td>
+                        </tr>
+                      )}
+                      {whop.price && (
+                        <tr className="border-b" style={{ borderColor: 'var(--border-color)' }}>
+                          <td className="py-3 pl-4 pr-2 font-medium w-1/3" style={{ backgroundColor: 'var(--background-color)' }}>Price</td>
+                          <td className="py-3 px-4" style={{ backgroundColor: 'var(--background-secondary)' }}>
+                            <span style={{ 
+                              color: whop.price === 'Free' ? 'var(--success-color)' : 
+                                     whop.price === 'N/A' ? 'var(--text-secondary)' : 'var(--text-color)',
+                              fontWeight: whop.price === 'Free' ? 'bold' : 'normal'
+                            }}>
+                              {whop.price}
+                            </span>
+                          </td>
+                        </tr>
+                      )}
+                      {whop.category && (
+                        <tr className="border-b" style={{ borderColor: 'var(--border-color)' }}>
+                          <td className="py-3 pl-4 pr-2 font-medium w-1/3" style={{ backgroundColor: 'var(--background-color)' }}>Category</td>
+                          <td className="py-3 px-4" style={{ backgroundColor: 'var(--background-secondary)' }}>{whop.category}</td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </section>
+            );
+          })}
 
           {/* About Product Section */}
           <section className="rounded-xl px-7 py-6 sm:p-8 border transition-theme" style={{ backgroundColor: 'var(--background-secondary)', borderColor: 'var(--border-color)' }}>

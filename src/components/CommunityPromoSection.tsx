@@ -61,6 +61,15 @@ export default function CommunityPromoSection({ whop, promoCodes }: CommunityPro
           
           {communityPromoCodes.map((promo, index) => (
             <div key={promo.id} className="mb-3">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-sm font-medium px-2 py-1 rounded" 
+                      style={{ 
+                        backgroundColor: 'var(--accent-color)', 
+                        color: 'white' 
+                      }}>
+                  #{index + 1}
+                </span>
+              </div>
               <WhopPageClient
                 whop={whop}
                 firstPromo={promo}
@@ -82,9 +91,11 @@ export default function CommunityPromoSection({ whop, promoCodes }: CommunityPro
           {/* Simple separator */}
           {originalPromoCodes.length > 0 && (
             <div className="border-t pt-4 mt-4" style={{ borderColor: 'var(--border-color)' }}>
-              <p className="text-sm text-center mb-3" style={{ color: 'var(--text-secondary)' }}>
-                Original Codes
-              </p>
+              <div className="flex items-center gap-2 mb-3">
+                <h3 className="text-lg font-semibold" style={{ color: 'var(--text-color)' }}>
+                  Original Codes
+                </h3>
+              </div>
             </div>
           )}
         </div>
@@ -95,6 +106,16 @@ export default function CommunityPromoSection({ whop, promoCodes }: CommunityPro
         <div className="space-y-3">          
           {originalPromoCodes.map((promo, index) => (
             <div key={promo.id} className="mb-3">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-sm font-medium px-2 py-1 rounded" 
+                      style={{ 
+                        backgroundColor: 'var(--background-color)', 
+                        color: 'var(--text-color)',
+                        border: '1px solid var(--border-color)'
+                      }}>
+                  #{communityPromoCodes.length + index + 1}
+                </span>
+              </div>
               <WhopPageClient
                 whop={whop}
                 firstPromo={promo}
