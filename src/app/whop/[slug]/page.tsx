@@ -280,6 +280,19 @@ export default async function WhopPage({ params }: { params: { slug: string } })
     promoCodes: whopData.promoCodes || [],
     reviews: whopData.reviews || []
   };
+
+  // Debug what data we actually have
+  console.error('🚀 WhopPage: whopData received from API:', {
+    whopId: whopData.whopId,
+    promoCodesLength: whopData.promoCodes?.length,
+    promoCodeIds: whopData.promoCodes?.map(p => p.id)
+  });
+  
+  console.error('🚀 WhopPage: whop object passed to components:', {
+    whopId: whop.id,
+    promoCodesLength: whop.promoCodes?.length,
+    promoCodeIds: whop.promoCodes?.map(p => p.id)
+  });
   
   const firstPromo = whop.promoCodes[0] || null;
   const promoCode = firstPromo?.code || null;
