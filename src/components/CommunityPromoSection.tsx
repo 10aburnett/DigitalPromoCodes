@@ -29,10 +29,6 @@ export default function CommunityPromoSection({ whop, promoCodes }: CommunityPro
   const originalPromoCodes = promoCodes.filter(code => !code.id.startsWith('community_'))
 
 
-  if (communityPromoCodes.length === 0 && originalPromoCodes.length === 0) {
-    return null // No promo codes to display
-  }
-
   // Handle tracking completion to refresh stats
   const handleTrackingComplete = () => {
     // Trigger refresh for all compact stats on the page
@@ -42,6 +38,36 @@ export default function CommunityPromoSection({ whop, promoCodes }: CommunityPro
       element.dispatchEvent(event);
     });
   };
+
+  if (communityPromoCodes.length === 0 && originalPromoCodes.length === 0) {
+    // Create a fake promo code entry for whops without codes but keep the button functionality
+    const fakePromo = {
+      id: 'no-code',
+      title: 'Exclusive Access',
+      description: 'This creator doesn\'t allow promo codes at this time.',
+      code: null,
+      type: 'exclusive',
+      value: '',
+      createdAt: new Date()
+    }
+    
+    return (
+      <div className="space-y-4">
+        <div className="space-y-3">
+          <div className="mb-3">
+            <WhopPageClient
+              whop={whop}
+              firstPromo={fakePromo}
+              promoCode={null}
+              promoTitle="Exclusive Access"
+              onTrackingComplete={handleTrackingComplete}
+            />
+          </div>
+        </div>
+      </div>
+    )
+  }
+
 
   return (
     <div className="space-y-4">
