@@ -2,6 +2,8 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { Metadata } from 'next';
 import { normalizeImagePath } from '@/lib/image-utils';
+import { unstable_noStore as noStore } from 'next/cache';
+import { getWhopBySlug } from '@/lib/data';
 
 // Force dynamic rendering and disable caching
 export const dynamic = 'force-dynamic';
@@ -49,32 +51,11 @@ interface Whop {
   reviews?: Review[];
 }
 
-async function getWhop(slug: string) {
-  try {
-    // Force fresh data with timestamp to bypass any caching
-    const timestamp = Date.now();
-    const response = await fetch(`${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/whops?slug=${slug}&_t=${timestamp}`, {
-      cache: 'no-store',
-      headers: {
-        'Cache-Control': 'no-cache, no-store, must-revalidate',
-        'Pragma': 'no-cache',
-        'Expires': '0'
-      }
-    });
-    
-    if (!response.ok) {
-      return null;
-    }
-    
-    return await response.json();
-  } catch (error) {
-    console.error('Error fetching whop:', error);
-    return null;
-  }
-}
+// Removed - now using direct database query
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
-  const whopData = await getWhop(params.slug);
+  noStore();
+  const whopData = await getWhopBySlug(params.slug);
   
   if (!whopData) {
     return {
@@ -109,10 +90,10 @@ export async function generateMetadata({ params }: { params: { slug: string } })
       'Korvato Gold Rush'
     ];
 
-    const hasPromoCode = whopData.promoCodes && whopData.promoCodes.length > 0;
+    const hasPromoCode = whopData.PromoCode && whopData.PromoCode.length > 0;
     const isHighTraffic = highTrafficCourses.some(course => 
-      whopData.whopName.toLowerCase().includes(course.toLowerCase()) ||
-      course.toLowerCase().includes(whopData.whopName.toLowerCase())
+      whopData.name.toLowerCase().includes(course.toLowerCase()) ||
+      course.toLowerCase().includes(whopData.name.toLowerCase())
     );
     
     shouldIndex = hasPromoCode || isHighTraffic;
@@ -124,12 +105,12 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   const currentYear = currentDate.getFullYear();
   const monthYear = `(${currentMonth} ${currentYear})`;
 
-  const title = `${whopData.whopName} Promo Code ${monthYear}`;
+  const title = `${whopData.name} Promo Code ${monthYear}`;
   
   // Build dynamic meta description
   let description = '';
-  const whopName = whopData.whopName;
-  const promoCodes = whopData.promoCodes || [];
+  const whopName = whopData.name;
+  const promoCodes = whopData.PromoCode || [];
   const firstPromo = promoCodes[0];
   const price = whopData.price;
   const category = whopData.category;
@@ -208,9 +189,9 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     title,
     description,
     keywords: [
-      `${whopData.whopName} promo code`,
-      `${whopData.whopName} discount`,
-      `${whopData.whopName} coupon`,
+      `${whopData.name} promo code`,
+      `${whopData.name} discount`,
+      `${whopData.name} coupon`,
       firstPromo?.value ? 
         (firstPromo.value.includes('$') || firstPromo.value.includes('%') || firstPromo.value.includes('off') 
           ? firstPromo.value 
@@ -249,7 +230,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
       images: whopData.logo ? [
         {
           url: whopData.logo,
-          alt: `${whopData.whopName} Logo`,
+          alt: `${whopData.name} Logo`,
           width: 1200,
           height: 630,
         }
@@ -265,24 +246,40 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 }
 
 export default async function WhopPage({ params }: { params: { slug: string } }) {
-  const whopData = await getWhop(params.slug);
+  noStore();
+  const whopData = await getWhopBySlug(params.slug);
   
   if (!whopData) {
     notFound();
   }
 
-  // Use the processed data from the API which includes smart promoText logic
+  // Transform raw Prisma data to match expected format
   const whop = {
-    id: whopData.whopId,
-    name: whopData.whopName,
+    id: whopData.id,
+    name: whopData.name,
     description: whopData.description,
     logo: whopData.logo,
     affiliateLink: whopData.affiliateLink,
     website: whopData.website || null,
     price: whopData.price,
     category: whopData.category || null,
-    promoCodes: whopData.promoCodes || [],
-    reviews: whopData.reviews || []
+    promoCodes: whopData.PromoCode.map(code => ({
+      id: code.id,
+      title: code.title,
+      description: code.description,
+      code: code.code,
+      type: code.type,
+      value: code.value,
+      createdAt: code.createdAt
+    })),
+    reviews: whopData.Review.map(review => ({
+      id: review.id,
+      author: review.author,
+      content: review.content,
+      rating: review.rating,
+      createdAt: review.createdAt.toISOString(),
+      verified: review.verified
+    }))
   };
 
   
