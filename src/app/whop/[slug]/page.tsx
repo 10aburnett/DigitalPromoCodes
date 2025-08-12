@@ -345,13 +345,14 @@ export default async function WhopPage({ params }: { params: { slug: string } })
               {/* Community Promo Codes Section */}
               <div className="mt-1">
                 <hr className="mb-4" style={{ borderColor: 'var(--border-color)', borderWidth: '1px', opacity: 0.3 }} />
+                {console.log('🔥 ABOUT TO RENDER CommunityPromoSection:', { whopId: whop.id, promoCount: whop.promoCodes?.length })}
                 <CommunityPromoSection 
                   whop={{
                     id: whop.id,
                     name: whop.name,
                     affiliateLink: whop.affiliateLink
                   }}
-                  promoCodes={whop.promoCodes}
+                  promoCodes={whop.promoCodes || []}
                 />
               </div>
 
