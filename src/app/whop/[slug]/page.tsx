@@ -309,6 +309,8 @@ export default async function WhopPage({ params }: { params: { slug: string } })
     }
   ];
 
+  console.log('🚀 WhopPage rendering:', { slug: params.slug, whopId: whop.id, promoCodesLength: whop.promoCodes?.length });
+
   return (
     <main key={pageKey} className="min-h-screen py-12 pt-24 transition-theme" style={{ backgroundColor: 'var(--background-color)', color: 'var(--text-color)' }}>
       <div className="mx-auto w-[90%] md:w-[95%] max-w-6xl">
