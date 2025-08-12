@@ -18,10 +18,26 @@ export async function GET() {
       where: { id: { startsWith: 'community_' } }
     });
     
-    // Check Ayecon specifically
-    const ayeconWhop = await prisma.whop.findFirst({
+    // Check both possible Ayecon slugs
+    const ayeconWhop1 = await prisma.whop.findFirst({
       where: { slug: 'ayecon-academy-1-1-mentorship' }
     });
+    const ayeconWhop2 = await prisma.whop.findFirst({
+      where: { slug: 'ayecon-academy-1:1-mentorship' }
+    });
+    
+    // Find any Ayecon-related whops
+    const ayeconWhops = await prisma.whop.findMany({
+      where: { 
+        OR: [
+          { slug: { contains: 'ayecon' } },
+          { name: { contains: 'Ayecon' } }
+        ]
+      },
+      select: { id: true, slug: true, name: true, publishedAt: true }
+    });
+    
+    const ayeconWhop = ayeconWhop1 || ayeconWhop2;
     
     let ayeconData = null;
     if (ayeconWhop) {
@@ -52,6 +68,7 @@ export async function GET() {
         ids: communityPromos.map(p => p.id)
       },
       ayecon: ayeconData,
+      ayeconWhopsFound: ayeconWhops,
       timestamp: new Date().toISOString(),
       environment: process.env.NODE_ENV
     });
