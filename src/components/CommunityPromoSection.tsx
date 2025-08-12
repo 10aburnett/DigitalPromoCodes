@@ -23,11 +23,24 @@ interface CommunityPromoSectionProps {
 }
 
 export default function CommunityPromoSection({ whop, promoCodes }: CommunityPromoSectionProps) {
+  // Debug logging
+  console.log('CommunityPromoSection render:', {
+    whopName: whop.name,
+    totalPromoCodes: promoCodes.length,
+    promoCodeIds: promoCodes.map(p => ({ id: p.id, isCommunity: p.id.startsWith('community_') }))
+  });
+
   // Separate community codes from original codes
   const communityPromoCodes = promoCodes.filter(code => code.id.startsWith('community_'))
   const originalPromoCodes = promoCodes.filter(code => !code.id.startsWith('community_'))
 
+  console.log('CommunityPromoSection filtered:', {
+    communityCount: communityPromoCodes.length,
+    originalCount: originalPromoCodes.length
+  });
+
   if (communityPromoCodes.length === 0 && originalPromoCodes.length === 0) {
+    console.log('CommunityPromoSection: Returning null - no promo codes');
     return null // No promo codes to display
   }
 
