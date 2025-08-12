@@ -159,7 +159,8 @@ const getWhopCount = async (whereClause: any) => {
 // Direct function for fetching single whop by slug (cache disabled)
 const getWhopBySlug = async (slug: string, isAdmin: boolean) => {
   console.log(`Fetching whop by slug: ${slug} (cache disabled)`);
-  return await prisma.whop.findFirst({
+  
+  const whop = await prisma.whop.findFirst({
     where: { 
       slug: slug,
       publishedAt: isAdmin ? undefined : { not: null }
@@ -188,13 +189,38 @@ const getWhopBySlug = async (slug: string, isAdmin: boolean) => {
       faqContent: true,
       whopCategory: true,
       indexing: true, // Include the new indexing field
-      PromoCode: true,
+      PromoCode: {
+        orderBy: { createdAt: 'desc' } // Order by creation date (newest first)
+      },
       Review: {
         where: { verified: true },
         orderBy: { createdAt: 'desc' }
       }
     }
   });
+
+  if (!whop) return null;
+
+  // Get community-submitted promo codes that have been approved for this whop
+  const communityPromoCodes = await prisma.promoCode.findMany({
+    where: {
+      whopId: whop.id,
+      id: { startsWith: 'community_' } // Community codes have this prefix
+    },
+    orderBy: { createdAt: 'desc' } // Newest community codes first
+  });
+
+  // Combine promo codes with community codes first, then original codes
+  const allPromoCodes = [
+    ...communityPromoCodes,
+    ...whop.PromoCode.filter(code => !code.id.startsWith('community_'))
+  ];
+
+  // Return whop with combined promo codes
+  return {
+    ...whop,
+    PromoCode: allPromoCodes
+  };
 };
 
 // Define a type for decoded JWT token

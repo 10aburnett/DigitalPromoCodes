@@ -9,6 +9,7 @@ import RecommendedWhops from '@/components/RecommendedWhops';
 import FAQSection from '@/components/FAQSection';
 import WhopPageInteractive, { WhopPageCompactStats } from '@/components/WhopPageInteractive';
 import PromoCodeSubmissionButton from '@/components/PromoCodeSubmissionButton';
+import CommunityPromoSection from '@/components/CommunityPromoSection';
 
 interface PromoCode {
   id: string;
@@ -341,18 +342,17 @@ export default async function WhopPage({ params }: { params: { slug: string } })
                 </div>
               </div>
 
-              {/* Interactive Components */}
-              <WhopPageInteractive 
-                key={`interactive-${pageKey}`}
-                whop={{
-                  id: whop.id,
-                  name: whop.name,
-                  affiliateLink: whop.affiliateLink
-                }}
-                firstPromo={firstPromo}
-                promoCode={promoCode}
-                promoTitle={promoTitle}
-              />
+              {/* Community Promo Codes Section */}
+              <div className="mt-6">
+                <CommunityPromoSection 
+                  whop={{
+                    id: whop.id,
+                    name: whop.name,
+                    affiliateLink: whop.affiliateLink
+                  }}
+                  promoCodes={whop.promoCodes}
+                />
+              </div>
 
               {/* Promo Code Submission Button */}
               <div className="mt-6">
