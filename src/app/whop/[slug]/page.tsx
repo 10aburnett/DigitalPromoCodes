@@ -310,6 +310,8 @@ export default async function WhopPage({ params }: { params: { slug: string } })
   ];
 
   console.log('🚀 WhopPage rendering:', { slug: params.slug, whopId: whop.id, promoCodesLength: whop.promoCodes?.length });
+  console.error('🚀 DEBUG: WhopPage rendering (error level):', { slug: params.slug, whopId: whop.id, promoCodesLength: whop.promoCodes?.length });
+  console.warn('🚀 DEBUG: WhopPage rendering (warn level):', { slug: params.slug, whopId: whop.id, promoCodesLength: whop.promoCodes?.length });
 
   return (
     <main key={pageKey} className="min-h-screen py-12 pt-24 transition-theme" style={{ backgroundColor: 'var(--background-color)', color: 'var(--text-color)' }}>
@@ -348,6 +350,8 @@ export default async function WhopPage({ params }: { params: { slug: string } })
               <div className="mt-1">
                 <hr className="mb-4" style={{ borderColor: 'var(--border-color)', borderWidth: '1px', opacity: 0.3 }} />
                 {console.log('🔥 ABOUT TO RENDER CommunityPromoSection:', { whopId: whop.id, promoCount: whop.promoCodes?.length })}
+                {console.error('🔥 DEBUG: ABOUT TO RENDER CommunityPromoSection (error level):', { whopId: whop.id, promoCount: whop.promoCodes?.length })}
+                {console.warn('🔥 DEBUG: ABOUT TO RENDER CommunityPromoSection (warn level):', { whopId: whop.id, promoCount: whop.promoCodes?.length })}
                 <CommunityPromoSection 
                   whop={{
                     id: whop.id,

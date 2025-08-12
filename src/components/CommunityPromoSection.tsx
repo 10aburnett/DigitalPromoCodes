@@ -23,8 +23,18 @@ interface CommunityPromoSectionProps {
 }
 
 export default function CommunityPromoSection({ whop, promoCodes }: CommunityPromoSectionProps) {
-  // Debug logging
+  // Debug logging - multiple levels to ensure visibility
   console.log('CommunityPromoSection render:', {
+    whopName: whop.name,
+    totalPromoCodes: promoCodes.length,
+    promoCodeIds: promoCodes.map(p => ({ id: p.id, isCommunity: p.id.startsWith('community_') }))
+  });
+  console.error('CommunityPromoSection ERROR LOG:', {
+    whopName: whop.name,
+    totalPromoCodes: promoCodes.length,
+    promoCodeIds: promoCodes.map(p => ({ id: p.id, isCommunity: p.id.startsWith('community_') }))
+  });
+  console.warn('CommunityPromoSection WARN LOG:', {
     whopName: whop.name,
     totalPromoCodes: promoCodes.length,
     promoCodeIds: promoCodes.map(p => ({ id: p.id, isCommunity: p.id.startsWith('community_') }))
