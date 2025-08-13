@@ -23,7 +23,7 @@ const whopSchema = z.object({
   promoTitle: z.string().min(1, "Promo title is required"),
   promoDescription: z.string().min(1, "Promo description is required"),
   promoCode: z.string().optional(),
-  promoType: z.enum(["DISCOUNT", "FREE_TRIAL", "BONUS", "CASHBACK"]),
+  promoType: z.enum(["DISCOUNT", "FREE_TRIAL", "EXCLUSIVE_ACCESS", "BUNDLE_DEAL", "LIMITED_TIME"]),
   promoValue: z.string().min(1, "Promo value is required"),
 });
 
@@ -32,7 +32,7 @@ type WhopForm = z.infer<typeof whopSchema>;
 interface Whop {
   id: string;
   name: string;
-  promoCodes?: PromoCode[];
+  PromoCode?: PromoCode[];
 }
 
 interface PromoCode {
@@ -89,7 +89,12 @@ export default function EditWhopPage({
 
   const fetchWhop = async () => {
     try {
-      const response = await fetch(`/api/whops/${params.id}`);
+      // Trust Next.js params as-is (they're already properly encoded for URLs)
+      const idFromPath = params.id;
+      console.log(`Fetching whop: ${idFromPath}`);
+      const response = await fetch(`/api/whops/${idFromPath}`, {
+        cache: "no-store"
+      });
       if (!response.ok) {
         throw new Error("Failed to fetch whop details");
       }
@@ -109,8 +114,8 @@ export default function EditWhopPage({
       setCalculatedRating(data.rating);
       
       // Count verified reviews
-      if (data.reviews && Array.isArray(data.reviews)) {
-        setReviewCount(data.reviews.filter(review => review.verified).length);
+      if (data.Review && Array.isArray(data.Review)) {
+        setReviewCount(data.Review.filter(review => review.verified).length);
       }
       
       // Set logo preview if one exists
@@ -132,8 +137,8 @@ export default function EditWhopPage({
       }
       
       // Set promo code data if it exists
-      if (data.promoCodes && data.promoCodes.length > 0) {
-        const firstPromo = data.promoCodes[0];
+      if (data.PromoCode && data.PromoCode.length > 0) {
+        const firstPromo = data.PromoCode[0];
         setPromoCodeId(firstPromo.id);
         setValue("promoTitle", firstPromo.title);
         setValue("promoDescription", firstPromo.description);
@@ -209,13 +214,16 @@ export default function EditWhopPage({
     try {
       setFormError(null);
       
+      const idFromPath = params.id;
       const method = params.id === "new" ? "POST" : "PUT";
-      const url = params.id === "new" ? "/api/whops" : `/api/whops/${params.id}`;
+      const url = params.id === "new" ? "/api/whops" : `/api/whops/${idFromPath}`;
 
       let currentDisplayOrder = 0;
 
       if (params.id !== "new") {
-        const response = await fetch(`/api/whops/${params.id}`);
+        const response = await fetch(`/api/whops/${idFromPath}`, {
+          cache: "no-store"
+        });
         if (response.ok) {
           const currentData = await response.json();
           currentDisplayOrder = currentData.displayOrder || 0;
@@ -478,8 +486,9 @@ export default function EditWhopPage({
               <select {...register("promoType")} id="promoType" className="text-white bg-[#2c2f3a] border border-[#404055] rounded-md p-2 w-full">
                 <option value="DISCOUNT">Discount</option>
                 <option value="FREE_TRIAL">Free Trial</option>
-                <option value="BONUS">Bonus</option>
-                <option value="CASHBACK">Cashback</option>
+                <option value="EXCLUSIVE_ACCESS">Exclusive Access</option>
+                <option value="BUNDLE_DEAL">Bundle Deal</option>
+                <option value="LIMITED_TIME">Limited Time</option>
               </select>
               {errors.promoType && <p className="admin-error">{errors.promoType.message}</p>}
             </div>
