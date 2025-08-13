@@ -28,18 +28,41 @@ export default function WhopsAdmin() {
   const [selectedWhops, setSelectedWhops] = useState<Set<string>>(new Set());
   const [isDeleting, setIsDeleting] = useState(false);
   const [selectAll, setSelectAll] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalWhops, setTotalWhops] = useState(0);
+  const [whopsPerPage] = useState(50); // Show more whops per page for admin
   const router = useRouter();
 
+  // Debounce search term
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+    }, 1000); // Wait 1000ms after user stops typing
+
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
+
+  // Fetch whops when debounced search term or page changes
   useEffect(() => {
     fetchWhops();
-  }, []);
+  }, [debouncedSearchTerm, currentPage]);
 
   const fetchWhops = async () => {
     try {
-      const response = await fetch('/api/whops');
+      setLoading(true);
+      const params = new URLSearchParams({
+        page: currentPage.toString(),
+        limit: whopsPerPage.toString(),
+        ...(debouncedSearchTerm && { search: debouncedSearchTerm }),
+      });
+      
+      const response = await fetch(`/api/whops?${params}`);
       if (response.ok) {
         const data = await response.json();
         setWhops(data.data || []);
+        setTotalWhops(data.total || 0);
       }
     } catch (error) {
       console.error('Error fetching whops:', error);
@@ -176,6 +199,22 @@ export default function WhopsAdmin() {
     }
   };
 
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+    setSearchTerm(value);
+    setCurrentPage(1); // Reset to first page when searching
+    setSelectedWhops(new Set()); // Clear selections when searching
+    setSelectAll(false);
+  };
+
+  const totalPages = Math.ceil(totalWhops / whopsPerPage);
+
+  const goToPage = (page: number) => {
+    setCurrentPage(page);
+    setSelectedWhops(new Set()); // Clear selections when changing pages
+    setSelectAll(false);
+  };
+
   const handleBulkImport = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
@@ -274,10 +313,46 @@ export default function WhopsAdmin() {
         )}
       </div>
 
+      {/* Search */}
+      <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+        <div className="flex flex-col md:flex-row gap-4 items-center">
+          <div className="flex-1">
+            <label htmlFor="search" className="block text-sm font-medium text-gray-700 mb-2">
+              Search Whops
+            </label>
+            <input
+              type="text"
+              id="search"
+              value={searchTerm}
+              onChange={handleSearchChange}
+              placeholder="Search by name, slug, or description..."
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
+          <div className="text-sm text-gray-600">
+            {debouncedSearchTerm ? (
+              <span>Found {totalWhops} whops matching "{debouncedSearchTerm}"</span>
+            ) : (
+              <span>Total: {totalWhops} whops</span>
+            )}
+            {searchTerm !== debouncedSearchTerm && searchTerm && (
+              <div className="text-xs text-gray-400 mt-1">Searching...</div>
+            )}
+          </div>
+        </div>
+      </div>
+
       {/* Whops List */}
       <div className="bg-white rounded-lg shadow-md overflow-hidden">
         <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
-          <h2 className="text-xl font-semibold">All Whops ({whops.length})</h2>
+          <div>
+            <h2 className="text-xl font-semibold">
+              Whops (Page {currentPage} of {totalPages})
+            </h2>
+            <p className="text-sm text-gray-600 mt-1">
+              Showing {((currentPage - 1) * whopsPerPage) + 1}-{Math.min(currentPage * whopsPerPage, totalWhops)} of {totalWhops} whops
+            </p>
+          </div>
           
           {/* Bulk Actions */}
           <div className="flex gap-2">
@@ -392,8 +467,68 @@ export default function WhopsAdmin() {
         
         {whops.length === 0 && (
           <div className="text-center py-12">
-            <p className="text-gray-500 text-lg">No whops found</p>
-            <p className="text-gray-400 text-sm mt-2">Add your first whop or import from CSV</p>
+            <p className="text-gray-500 text-lg">
+              {debouncedSearchTerm ? `No whops found matching "${debouncedSearchTerm}"` : 'No whops found'}
+            </p>
+            <p className="text-gray-400 text-sm mt-2">
+              {debouncedSearchTerm ? 'Try a different search term' : 'Add your first whop or import from CSV'}
+            </p>
+          </div>
+        )}
+        
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
+            <div className="text-sm text-gray-700">
+              Showing {((currentPage - 1) * whopsPerPage) + 1} to {Math.min(currentPage * whopsPerPage, totalWhops)} of {totalWhops} results
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={() => goToPage(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="px-3 py-1 text-sm border rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+              >
+                Previous
+              </button>
+              
+              {/* Page numbers */}
+              <div className="flex gap-1">
+                {[...Array(Math.min(5, totalPages))].map((_, index) => {
+                  let pageNum;
+                  if (totalPages <= 5) {
+                    pageNum = index + 1;
+                  } else if (currentPage <= 3) {
+                    pageNum = index + 1;
+                  } else if (currentPage >= totalPages - 2) {
+                    pageNum = totalPages - 4 + index;
+                  } else {
+                    pageNum = currentPage - 2 + index;
+                  }
+                  
+                  return (
+                    <button
+                      key={pageNum}
+                      onClick={() => goToPage(pageNum)}
+                      className={`px-3 py-1 text-sm border rounded-md ${
+                        currentPage === pageNum
+                          ? 'bg-blue-600 text-white border-blue-600'
+                          : 'hover:bg-gray-50'
+                      }`}
+                    >
+                      {pageNum}
+                    </button>
+                  );
+                })}
+              </div>
+              
+              <button
+                onClick={() => goToPage(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className="px-3 py-1 text-sm border rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+              >
+                Next
+              </button>
+            </div>
           </div>
         )}
       </div>
