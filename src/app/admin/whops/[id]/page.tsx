@@ -19,12 +19,12 @@ const whopSchema = z.object({
   price: z.string().optional(),
   category: z.string().optional(),
   screenshots: z.array(z.string()).optional(),
-  // Promo code fields
-  promoTitle: z.string().min(1, "Promo title is required"),
-  promoDescription: z.string().min(1, "Promo description is required"),
+  // Promo code fields (all optional)
+  promoTitle: z.string().optional(),
+  promoDescription: z.string().optional(),
   promoCode: z.string().optional(),
-  promoType: z.enum(["DISCOUNT", "FREE_TRIAL", "EXCLUSIVE_ACCESS", "BUNDLE_DEAL", "LIMITED_TIME"]),
-  promoValue: z.string().min(1, "Promo value is required"),
+  promoType: z.enum(["DISCOUNT", "FREE_TRIAL", "EXCLUSIVE_ACCESS", "BUNDLE_DEAL", "LIMITED_TIME"]).optional(),
+  promoValue: z.string().optional(),
 });
 
 type WhopForm = z.infer<typeof whopSchema>;
@@ -268,8 +268,9 @@ export default function EditWhopPage({
 
       const savedWhop = await response.json();
 
-      // Only create a separate promo code if we're creating a new whop and there's no promoCodeId
-      if (params.id === "new" && !promoCodeId) {
+      // Only create a separate promo code if we're creating a new whop, there's no promoCodeId, 
+      // AND the user has filled in the required promo fields
+      if (params.id === "new" && !promoCodeId && data.promoTitle && data.promoDescription && data.promoType && data.promoValue) {
         const promoData = {
           title: data.promoTitle,
           description: data.promoDescription,
@@ -467,22 +468,22 @@ export default function EditWhopPage({
           </div>
           
           <div>
-            <h3 className="text-xl font-semibold mb-4">Promo Code</h3>
+            <h3 className="text-xl font-semibold mb-4">Promo Code (Optional)</h3>
             
             <div className="form-group">
-              <label htmlFor="promoTitle" className="form-label">Promo Title</label>
+              <label htmlFor="promoTitle" className="form-label">Promo Title (Optional)</label>
               <input {...register("promoTitle")} type="text" id="promoTitle" placeholder="e.g. Free Trial Week" />
               {errors.promoTitle && <p className="admin-error">{errors.promoTitle.message}</p>}
             </div>
             
             <div className="form-group">
-              <label htmlFor="promoValue" className="form-label">Promo Value</label>
+              <label htmlFor="promoValue" className="form-label">Promo Value (Optional)</label>
               <input {...register("promoValue")} type="text" id="promoValue" placeholder="e.g. 50% off first month" />
               {errors.promoValue && <p className="admin-error">{errors.promoValue.message}</p>}
             </div>
             
             <div className="form-group">
-              <label htmlFor="promoType" className="form-label">Promo Type</label>
+              <label htmlFor="promoType" className="form-label">Promo Type (Optional)</label>
               <select {...register("promoType")} id="promoType" className="text-white bg-[#2c2f3a] border border-[#404055] rounded-md p-2 w-full">
                 <option value="DISCOUNT">Discount</option>
                 <option value="FREE_TRIAL">Free Trial</option>
@@ -501,7 +502,7 @@ export default function EditWhopPage({
             </div>
             
             <div className="form-group">
-              <label htmlFor="promoDescription" className="form-label">Promo Description</label>
+              <label htmlFor="promoDescription" className="form-label">Promo Description (Optional)</label>
               <textarea {...register("promoDescription")} id="promoDescription" rows={4} placeholder="Describe the promo details and any requirements" />
               {errors.promoDescription && <p className="admin-error">{errors.promoDescription.message}</p>}
             </div>
