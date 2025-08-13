@@ -47,7 +47,7 @@ model OfferTracking {
   promoCodeId String?
   whopId      String?
   PromoCode   PromoCode? @relation(fields: [promoCodeId], references: [id])
-  Whop        Whop?      @relation(fields: [whopId], references: [id])
+  Whop        Whop?      @relation(fields: [whopId], references: [id], onDelete: Cascade)
 
   @@index([actionType])
   @@index([createdAt])
@@ -66,7 +66,7 @@ model PromoCode {
   createdAt     DateTime        @default(now())
   updatedAt     DateTime
   OfferTracking OfferTracking[]
-  whop          Whop            @relation(fields: [whopId], references: [id])
+  whop          Whop            @relation(fields: [whopId], references: [id], onDelete: Cascade)
 
   @@index([createdAt])
   @@index([type])
@@ -82,7 +82,7 @@ model Review {
   updatedAt DateTime
   verified  Boolean  @default(false)
   whopId    String
-  whop      Whop     @relation(fields: [whopId], references: [id])
+  whop      Whop     @relation(fields: [whopId], references: [id], onDelete: Cascade)
 
   @@index([createdAt])
   @@index([rating])
@@ -315,7 +315,7 @@ model PromoCodeSubmission {
   
   // Course Association (nullable for general codes)
   whopId        String?
-  whop          Whop?                @relation(fields: [whopId], references: [id])
+  whop          Whop?                @relation(fields: [whopId], references: [id], onDelete: Cascade)
   customCourseName String?           // For new courses not yet on the platform
   isGeneral     Boolean              @default(false) // True for general codes not tied to specific course
   
