@@ -68,14 +68,17 @@ export async function POST(request: NextRequest) {
     }
 
     // Create promo code
+    const promoCodeId = crypto.randomUUID();
     const promoCode = await prisma.promoCode.create({
       data: {
+        id: promoCodeId,
         whopId,
         code: code || null, // Allow null for "NO CODE REQUIRED" cases
         title,
         description: description || '',
         type,
-        value
+        value,
+        updatedAt: new Date()
       },
       include: {
         whop: {
