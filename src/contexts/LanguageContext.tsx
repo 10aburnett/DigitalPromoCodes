@@ -209,15 +209,32 @@ export function LanguageProvider({ children, locale }: LanguageProviderProps) {
       newPath = '/';
     }
     
+    // Ensure path starts with / for consistent routing
+    if (!newPath.startsWith('/')) {
+      newPath = '/' + newPath;
+    }
+    
     // Update the language state first
     setLanguageState(newLanguage);
     
-    // Use window.location.href for more reliable navigation
-    if (typeof window !== 'undefined') {
-      window.location.href = newPath;
-    } else {
-      // Fallback to router.replace for SSR
-      router.replace(newPath);
+    // Debug logging for troubleshooting
+    console.log('🌐 Language switch:', { 
+      from: language, 
+      to: newLanguage, 
+      currentPath: pathname, 
+      newPath: newPath,
+      environment: process.env.NODE_ENV 
+    });
+    
+    // Use Next.js router for better production compatibility
+    try {
+      router.push(newPath);
+    } catch (error) {
+      console.error('Router.push failed, falling back to window.location:', error);
+      // Fallback to window.location for edge cases
+      if (typeof window !== 'undefined') {
+        window.location.href = newPath;
+      }
     }
   };
 
