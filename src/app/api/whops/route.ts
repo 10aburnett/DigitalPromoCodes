@@ -1136,6 +1136,7 @@ export async function POST(request: Request) {
         category: data.category || null,
         screenshots: data.screenshots || [],
         displayOrder: displayOrder,
+        publishedAt: new Date(), // Automatically publish new whops
         updatedAt: new Date()
       }
     });

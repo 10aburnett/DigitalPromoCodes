@@ -171,6 +171,7 @@ export default function EditWhopPage({
   };
 
   const handleLogoImageError = () => {
+    console.log("Logo image failed to load:", logoPreview);
     setLogoImageError(true);
   };
 
@@ -369,10 +370,23 @@ export default function EditWhopPage({
                     id="logoFile"
                     accept="image/*"
                     onChange={handleLogoChange}
-                    className="w-full"
+                    className="w-full mb-2"
+                  />
+                  <input
+                    type="url"
+                    placeholder="Or paste image URL here..."
+                    onChange={(e) => {
+                      const url = e.target.value;
+                      if (url) {
+                        setLogoPreview(url);
+                        setValue("logo", url);
+                        setLogoImageError(false);
+                      }
+                    }}
+                    className="w-full px-3 py-2 bg-[#2c2f3a] border border-[#404055] rounded-md text-white"
                   />
                   <input {...register("logo")} type="hidden" id="logo" />
-                  <p className="text-xs text-gray-400 mt-1">Upload a new logo image or keep the existing one.</p>
+                  <p className="text-xs text-gray-400 mt-1">Upload a file or paste an image URL.</p>
                 </div>
                 {logoPreview && (
                   <div className="flex-shrink-0">
