@@ -8,6 +8,9 @@ import { languageKeys } from '@/lib/i18n';
 
 const inter = Inter({ subsets: ['latin'] });
 
+// Force Node.js runtime for debugging
+export const runtime = "nodejs";
+
 interface LocaleLayoutProps {
   children: React.ReactNode;
   params: { locale: string };

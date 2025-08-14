@@ -4,12 +4,5 @@
       "path": "/api/cron/publish-whops",
       "schedule": "30 21 * * *"
     }
-  ],
-  "redirects": [
-    {
-      "source": "/whop/monthly-mentorship",
-      "destination": "/whop/ayecon-academy-monthly-mentorship",
-      "permanent": false
-    }
   ]
 }

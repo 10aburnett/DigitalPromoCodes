@@ -22,6 +22,9 @@ const currentYear = new Date().getFullYear();
 // Use a static version for cache busting to prevent hydration mismatches
 const STATIC_VERSION = '1.0.0';
 
+// Force Node.js runtime for debugging
+export const runtime = "nodejs";
+
 // Cache the favicon fetching for 1 hour with better error handling
 const getFaviconUrl = unstable_cache(
   async () => {
