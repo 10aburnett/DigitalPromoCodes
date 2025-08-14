@@ -43,9 +43,13 @@ export function middleware(request: NextRequest) {
     pathname.startsWith('/api/') ||
     pathname.startsWith('/_next/') ||
     pathname.startsWith('/favicon.ico') ||
+    pathname.startsWith('/images/') ||
+    pathname.startsWith('/icons/') ||
+    pathname.startsWith('/logo.') ||
     pathname.includes('.') ||
     pathname.startsWith('/admin/')
   ) {
+    // Skip language routing for static assets and admin/API routes
     // Continue to admin/API logic below
   } else {
     // Handle language routing for other routes
@@ -179,6 +183,6 @@ export const config = {
     '/admin/:path*', 
     '/api/:path*',
     // Language routing (excluding static files and Next.js internals)
-    '/((?!api|_next/static|_next/image|favicon.ico).*)',
+    '/((?!api|_next/static|_next/image|favicon.ico|images|icons|logo\\.|.*\\..*).*)',
   ]
 }; 
