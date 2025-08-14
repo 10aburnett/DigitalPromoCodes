@@ -67,17 +67,25 @@ const WhopReviewSection: React.FC<WhopReviewSectionProps> = ({ whopId, whopName,
     text: '',
   });
 
-  // Normalize and set initial reviews
+  // Normalize and set initial reviews - ALWAYS prioritize server data
   useEffect(() => {
-    // Simply use the initial reviews directly if available
-    if (initialReviews && initialReviews.length > 0) {
+    const storageKey = `whop_reviews_${whopId}`;
+    
+    // ALWAYS use server data if available (including empty array)
+    if (initialReviews !== undefined) {
       const normalizedReviews = initialReviews.map(normalizeReview);
       setReviews(normalizedReviews);
+      
+      // Clear localStorage when we have fresh server data to prevent stale data issues
+      try {
+        localStorage.removeItem(storageKey);
+      } catch (error) {
+        console.error('Error clearing localStorage:', error);
+      }
       return;
     }
     
-    // Fallback to localStorage only if no initial reviews
-    const storageKey = `whop_reviews_${whopId}`;
+    // Only use localStorage as absolute fallback when no server data provided
     try {
       const savedReviews = localStorage.getItem(storageKey);
       if (savedReviews) {
@@ -152,18 +160,12 @@ const WhopReviewSection: React.FC<WhopReviewSectionProps> = ({ whopId, whopName,
         verified: false,
       };
       
-      // Add the new review to the reviews list
+      // Add the new review to the reviews list (temporary until page refresh)
       const updatedReviews = [userReview, ...reviews];
       setReviews(updatedReviews);
       setShowForm(false);
       
-      // Store in localStorage
-      try {
-        const storageKey = `whop_reviews_${whopId}`;
-        localStorage.setItem(storageKey, JSON.stringify(updatedReviews));
-      } catch (error) {
-        console.error('Error saving reviews to localStorage:', error);
-      }
+      // Note: No longer storing in localStorage since we prioritize server data
       
       // Clear form after submission
       setNewReview({

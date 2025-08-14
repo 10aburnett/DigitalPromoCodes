@@ -101,13 +101,18 @@ export async function POST(request: Request) {
 
     console.log('Creating review for whop:', whop.id, whop.name);
 
+    // Generate a unique ID for the review
+    const reviewId = `rev_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
     const review = await prisma.review.create({
       data: {
+        id: reviewId,
         author: data.author,
         content: data.content,
         rating: parseFloat(data.rating),
         whopId: whop.id, // Use the actual whop ID
-        verified: false // Reviews start as unverified
+        verified: false, // Reviews start as unverified
+        updatedAt: new Date()
       },
       include: {
         whop: {
