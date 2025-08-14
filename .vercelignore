@@ -1,0 +1,17 @@
+# keep the app clean
+scripts/**
+tools/**
+bin/**
+dev-scripts/**
+**/*.test.*
+**/*.spec.*
+cypress/**
+playwright/**
+coverage/**
+*.map
+*.snap
+.mocks/**
+__mocks__/**
+storybook/**
+.vscode/**
+*.md
