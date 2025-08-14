@@ -36,7 +36,11 @@
   ],
   "exclude": [
     "node_modules",
-    "scripts/**"
+    "scripts/**",
+    "prisma/**",
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    "cypress/**"
   ],
   "ts-node": {
     "compilerOptions": {
