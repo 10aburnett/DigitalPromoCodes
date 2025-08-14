@@ -167,7 +167,7 @@ async function syncWhops(analysis) {
         });
         
         if (fullWhop) {
-          const { id, createdAt, updatedAt, ...whopData } = fullWhop;
+          const { createdAt, ...whopData } = fullWhop;
           await productionDb.whop.create({ data: whopData });
           console.log(`   ✅ Added: ${fullWhop.name} (${fullWhop.indexing})`);
         }

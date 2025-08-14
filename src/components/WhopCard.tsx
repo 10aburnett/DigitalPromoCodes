@@ -299,8 +299,12 @@ export default function WhopCard({ promo, priority = false }: WhopCardProps) {
           href={promo.affiliateLink || '#'}
           target="_blank"
           rel="noopener noreferrer nofollow"
-          className="w-full font-bold py-3 px-4 rounded-lg text-center transition-all duration-200 block hover:opacity-90 hover:scale-[1.02] transform-gpu"
-          style={{ backgroundColor: 'var(--accent-color)', color: 'white' }}
+          className="w-full font-bold py-3 px-4 rounded-lg text-center transition-all duration-200 block hover:opacity-90 hover:scale-[1.02] transform-gpu border"
+          style={{ 
+            backgroundColor: 'var(--background-secondary)', 
+            color: 'var(--text-color)',
+            borderColor: 'var(--border-color)'
+          }}
           onClick={handleGetPromoClick}
         >
           {t('whop.getPromo')}
@@ -309,8 +313,11 @@ export default function WhopCard({ promo, priority = false }: WhopCardProps) {
         <div className="mt-2">
           <Link 
             href={getDetailPageUrl()}
-            className="text-center block transition-colors duration-200 hover:opacity-80 underline"
-            style={{ color: 'var(--text-secondary)' }}
+            className="w-full font-bold py-3 px-4 rounded-lg text-center transition-all duration-200 block hover:opacity-90 hover:scale-[1.02] transform-gpu"
+            style={{ 
+              backgroundColor: 'var(--accent-color)', 
+              color: 'white'
+            }}
             onClick={handleViewDealClick}
           >
             {t('whop.viewDeal')}

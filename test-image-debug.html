@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Image URL Debug Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; }
+        .image-container { width: 100px; height: 100px; border: 1px solid #000; margin: 10px 0; }
+        img { max-width: 100px; max-height: 100px; object-fit: contain; }
+        .error { color: red; }
+        .success { color: green; }
+    </style>
+</head>
+<body>
+    <h1>Image URL Debug Test</h1>
+    
+    <div class="test-section">
+        <h3>Test 1: External Image URL</h3>
+        <input type="url" id="externalUrl" placeholder="Paste your image URL here" style="width: 400px;">
+        <button onclick="testExternalImage()">Test External URL</button>
+        <div class="image-container" id="externalContainer"></div>
+        <div id="externalResult"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>Test 2: File Upload to Base64</h3>
+        <input type="file" id="fileInput" accept="image/*">
+        <div class="image-container" id="fileContainer"></div>
+        <div id="fileResult"></div>
+    </div>
+    
+    <script>
+        function testExternalImage() {
+            const url = document.getElementById('externalUrl').value;
+            const container = document.getElementById('externalContainer');
+            const result = document.getElementById('externalResult');
+            
+            if (!url) {
+                result.innerHTML = '<span class="error">Please enter a URL</span>';
+                return;
+            }
+            
+            console.log('Testing URL:', url);
+            
+            const img = new Image();
+            img.onload = function() {
+                console.log('Image loaded successfully');
+                result.innerHTML = '<span class="success">✓ Image loads successfully</span>';
+                container.innerHTML = `<img src="${url}" alt="Test image">`;
+            };
+            img.onerror = function(e) {
+                console.log('Image failed to load:', e);
+                result.innerHTML = '<span class="error">✗ Image failed to load (CORS, hotlinking blocked, or invalid URL)</span>';
+                container.innerHTML = '<div style="color: red;">Failed to load</div>';
+            };
+            img.src = url;
+        }
+        
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            const container = document.getElementById('fileContainer');
+            const result = document.getElementById('fileResult');
+            
+            if (!file) return;
+            
+            console.log('File selected:', file.name, file.type, file.size);
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const dataUrl = e.target.result;
+                console.log('Data URL length:', dataUrl.length);
+                container.innerHTML = `<img src="${dataUrl}" alt="Uploaded file">`;
+                result.innerHTML = '<span class="success">✓ File converted to base64 data URL</span>';
+            };
+            reader.onerror = function(e) {
+                console.log('FileReader error:', e);
+                result.innerHTML = '<span class="error">✗ Failed to read file</span>';
+            };
+            reader.readAsDataURL(file);
+        });
+    </script>
+</body>
+</html>

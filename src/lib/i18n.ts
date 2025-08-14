@@ -47,10 +47,10 @@ export const translations = {
     'stats.popular': 'Most Popular',
     
     // Whop Cards
-    'whop.viewDeal': 'View Deal',
+    'whop.viewDeal': 'Get Promo',
     'whop.revealCode': 'Reveal Code',
     'whop.noCode': 'CREATOR DOESN\'T ALLOW PROMO CODES AT THIS TIME',
-    'whop.getPromo': 'Get Promo',
+    'whop.getPromo': 'Go to Page',
     
     // Whop Page
     'whop.promoCode': 'Promo Code',
@@ -204,10 +204,10 @@ export const translations = {
     'stats.popular': 'Más Popular',
     
     // Whop Cards
-    'whop.viewDeal': 'Ver Oferta',
+    'whop.viewDeal': 'Obtener Promoción',
     'whop.revealCode': 'Revelar Código',
     'whop.noCode': 'EL CREADOR NO PERMITE CÓDIGOS PROMOCIONALES EN ESTE MOMENTO',
-    'whop.getPromo': 'Obtener Promoción',
+    'whop.getPromo': 'Ir a la Página',
     
     // Whop Page
     'whop.promoCode': 'Código de Promoción',
@@ -361,10 +361,10 @@ export const translations = {
     'stats.popular': 'Meest Populair',
     
     // Whop Cards
-    'whop.viewDeal': 'Bekijk Deal',
+    'whop.viewDeal': 'Krijg Promo',
     'whop.revealCode': 'Toon Code',
     'whop.noCode': 'MAKER STAAT GEEN PROMOCODES TOE OP DIT MOMENT',
-    'whop.getPromo': 'Krijg Promo',
+    'whop.getPromo': 'Ga naar Pagina',
     
     // Whop Page
     'whop.promoCode': 'Promo Code',
@@ -518,10 +518,10 @@ export const translations = {
     'stats.popular': 'Plus Populaire',
     
     // Whop Cards
-    'whop.viewDeal': 'Voir l\'Offre',
+    'whop.viewDeal': 'Obtenir la Promo',
     'whop.revealCode': 'Révéler le Code',
     'whop.noCode': 'LE CRÉATEUR N\'AUTORISE PAS LES CODES PROMO POUR LE MOMENT',
-    'whop.getPromo': 'Obtenir la Promo',
+    'whop.getPromo': 'Aller à la Page',
     
     // Whop Page
     'whop.promoCode': 'Code Promo',
@@ -675,10 +675,10 @@ export const translations = {
     'stats.popular': 'Am Beliebtesten',
     
     // Whop Cards
-    'whop.viewDeal': 'Angebot Ansehen',
+    'whop.viewDeal': 'Promo Erhalten',
     'whop.revealCode': 'Code Enthüllen',
     'whop.noCode': 'ERSTELLER ERLAUBT DERZEIT KEINE PROMO-CODES',
-    'whop.getPromo': 'Promo Erhalten',
+    'whop.getPromo': 'Zur Seite Gehen',
     
     // Whop Page
     'whop.promoCode': 'Promo Code',
@@ -832,10 +832,10 @@ export const translations = {
     'stats.popular': 'Più Popolare',
     
     // Whop Cards
-    'whop.viewDeal': 'Vedi Offerta',
+    'whop.viewDeal': 'Ottieni Promo',
     'whop.revealCode': 'Rivela Codice',
     'whop.noCode': 'IL CREATORE NON CONSENTE CODICI PROMO AL MOMENTO',
-    'whop.getPromo': 'Ottieni Promo',
+    'whop.getPromo': 'Vai alla Pagina',
     
     // Whop Page
     'whop.promoCode': 'Codice Promo',
@@ -989,10 +989,10 @@ export const translations = {
     'stats.popular': 'Mais Popular',
     
     // Whop Cards
-    'whop.viewDeal': 'Ver Oferta',
+    'whop.viewDeal': 'Obter Promoção',
     'whop.revealCode': 'Revelar Código',
     'whop.noCode': 'CRIADOR NÃO PERMITE CÓDIGOS PROMOCIONAIS NO MOMENTO',
-    'whop.getPromo': 'Obter Promoção',
+    'whop.getPromo': 'Ir para Página',
     
     // Whop Page
     'whop.promoCode': 'Código Promocional',
@@ -1146,10 +1146,10 @@ export const translations = {
     'stats.popular': '最受欢迎',
     
     // Whop Cards
-    'whop.viewDeal': '查看优惠',
+    'whop.viewDeal': '获取促销',
     'whop.revealCode': '显示代码',
     'whop.noCode': '创作者目前不允许促销代码',
-    'whop.getPromo': '获取促销',
+    'whop.getPromo': '转到页面',
     
     // Whop Page
     'whop.promoCode': '促销代码',
