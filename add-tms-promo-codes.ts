@@ -116,7 +116,9 @@ async function addTMSPromoCodes() {
             code: promoData.code,
             type: promoData.type,
             value: promoData.value,
-            whopId: whop.id
+            whop: {
+              connect: { id: whop.id }
+            }
           }
         });
 
