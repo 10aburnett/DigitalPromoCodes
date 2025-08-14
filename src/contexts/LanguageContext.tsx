@@ -226,15 +226,13 @@ export function LanguageProvider({ children, locale }: LanguageProviderProps) {
       environment: process.env.NODE_ENV 
     });
     
-    // Use Next.js router for better production compatibility
-    try {
-      router.push(newPath);
-    } catch (error) {
-      console.error('Router.push failed, falling back to window.location:', error);
-      // Fallback to window.location for edge cases
-      if (typeof window !== 'undefined') {
-        window.location.href = newPath;
-      }
+    // Force a hard navigation for better production compatibility
+    // This ensures the page fully reloads with the new language
+    if (typeof window !== 'undefined') {
+      window.location.href = newPath;
+    } else {
+      // Fallback for SSR
+      router.replace(newPath);
     }
   };
 
