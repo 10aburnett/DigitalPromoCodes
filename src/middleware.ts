@@ -145,7 +145,7 @@ function handleApiRoutes(request: NextRequest) {
   return response;
 }
 
-// Main middleware function with narrow scope
+// Main middleware function - rewrite locale routes to use [locale] structure
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   
@@ -164,19 +164,23 @@ export function middleware(request: NextRequest) {
     return handleAdminAuth(request);
   }
   
-  // === LOCALIZED ROUTE LOGIC (only for prefixed locales) ===
-  const localeMatch = pathname.match(/^\/(es|nl|fr|de|it|pt|zh)(?:\/|$)/);
+  // === LOCALIZED ROUTE REWRITING ===
+  const localeMatch = pathname.match(/^\/(es|nl|fr|de|it|pt|zh)(?:\/(.*))?$/);
   if (localeMatch) {
     const locale = localeMatch[1];
-    // Set locale cookie for SSR components
-    const response = NextResponse.next();
+    const pathAfterLocale = localeMatch[2] || '';
+    
+    // Rewrite to the [locale] dynamic route structure
+    const newUrl = new URL(request.url);
+    newUrl.pathname = `/${locale}/${pathAfterLocale}`;
+    
+    const response = NextResponse.rewrite(newUrl);
     response.cookies.set('locale', locale, { path: '/' });
     return response;
   }
   
-  // === ROOT PATH DETECTION (optional auto-redirect) ===
+  // === ROOT PATH DETECTION ===
   if (pathname === '/') {
-    // Could add locale detection here, but safer to let user choose
     return NextResponse.next();
   }
   
@@ -184,9 +188,10 @@ export function middleware(request: NextRequest) {
   return NextResponse.next();
 }
 
-// TEMPORARILY DISABLE ALL MIDDLEWARE TO TEST
+// Fix for Vercel production locale asset issues
 export const config = {
   matcher: [
-    '/admin/:path*',                  // Only admin routes for now
+    // Match all routes but handle static assets specially
+    '/((?!_next/static|_next/image|favicon|.*\\.(?:png|jpg|jpeg|gif|svg|ico|webp|css|js|woff|woff2|ttf|eot)).*)',
   ],
 };

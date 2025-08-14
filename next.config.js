@@ -56,12 +56,8 @@ const nextConfig = {
       transform: 'react-beautiful-dnd/{{member}}',
     },
   },
-  // Next.js i18n configuration for proper locale handling
-  i18n: {
-    locales: ['en', 'es', 'nl', 'fr', 'de', 'it', 'pt', 'zh'],
-    defaultLocale: 'en',
-    localeDetection: false, // Disable automatic detection, we'll handle it manually
-  },
+  // Asset prefix to ensure assets always load from root
+  assetPrefix: process.env.NODE_ENV === 'production' ? '' : '',
   
   // Temporarily disable custom webpack config to fix chunk loading issues
   // webpack: (config, { dev, isServer }) => {
