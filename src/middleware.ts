@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
+// Define the language codes for routing
+const languageKeys = ['en', 'es', 'nl', 'fr', 'de', 'it', 'pt', 'zh'];
+
 // Simple JWT verification for Edge Runtime
 function verifyJWT(token: string, secret: string): any {
   try {
@@ -24,10 +27,44 @@ function verifyJWT(token: string, secret: string): any {
   }
 }
 
-// Middleware that handles both admin routes and API routes
+// Combined middleware that handles language routing, admin routes, and API routes
 export function middleware(request: NextRequest) {
   // Get the pathname from the URL
   const pathname = request.nextUrl.pathname;
+  
+  // === LANGUAGE ROUTING LOGIC ===
+  // Handle specific redirects first
+  if (pathname === '/whop/monthly-mentorship') {
+    return NextResponse.redirect(new URL('/whop/ayecon-academy-monthly-mentorship', request.url));
+  }
+  
+  // Skip language routing for API routes, static files, and admin routes
+  if (
+    pathname.startsWith('/api/') ||
+    pathname.startsWith('/_next/') ||
+    pathname.startsWith('/favicon.ico') ||
+    pathname.includes('.') ||
+    pathname.startsWith('/admin/')
+  ) {
+    // Continue to admin/API logic below
+  } else {
+    // Handle language routing for other routes
+    if (pathname === '/') {
+      // Root path - continue to admin/API logic
+    } else {
+      const segments = pathname.split('/').filter(Boolean);
+      const firstSegment = segments[0];
+
+      // Handle specific routes that should not be treated as locales
+      if (firstSegment === 'whop' || firstSegment === 'contact' || firstSegment === 'terms' || firstSegment === 'privacy') {
+        // Continue to admin/API logic
+      } else if (languageKeys.includes(firstSegment) && firstSegment !== 'en') {
+        // Valid language route - continue to admin/API logic
+      }
+    }
+  }
+  
+  // === ADMIN/API LOGIC ===
   
   // Handle preflight OPTIONS requests for CORS
   if (request.method === 'OPTIONS') {
@@ -137,5 +174,11 @@ export function middleware(request: NextRequest) {
 
 // Configure the paths that middleware should run on
 export const config = {
-  matcher: ['/admin/:path*', '/api/:path*']
+  matcher: [
+    // Admin and API routes
+    '/admin/:path*', 
+    '/api/:path*',
+    // Language routing (excluding static files and Next.js internals)
+    '/((?!api|_next/static|_next/image|favicon.ico).*)',
+  ]
 }; 
