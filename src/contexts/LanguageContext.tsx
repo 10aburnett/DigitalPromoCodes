@@ -226,14 +226,9 @@ export function LanguageProvider({ children, locale }: LanguageProviderProps) {
       environment: process.env.NODE_ENV 
     });
     
-    // Force a hard navigation for better production compatibility
-    // This ensures the page fully reloads with the new language
-    if (typeof window !== 'undefined') {
-      window.location.href = newPath;
-    } else {
-      // Fallback for SSR
-      router.replace(newPath);
-    }
+    // Use Next.js router for client-side navigation
+    // This avoids full page reloads and works better with the new middleware
+    router.push(newPath);
   };
 
   // Simple and reliable translation function

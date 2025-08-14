@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-// Define the language codes for routing
-const languageKeys = ['en', 'es', 'nl', 'fr', 'de', 'it', 'pt', 'zh'];
+// Define the supported locales (en is default/unprefixed)
+const LOCALES = ['es', 'nl', 'fr', 'de', 'it', 'pt', 'zh'];
 
 // Simple JWT verification for Edge Runtime
 function verifyJWT(token: string, secret: string): any {
@@ -27,48 +27,9 @@ function verifyJWT(token: string, secret: string): any {
   }
 }
 
-// Combined middleware that handles language routing, admin routes, and API routes
-export function middleware(request: NextRequest) {
-  // Get the pathname from the URL
+// Handle admin authentication logic
+function handleAdminAuth(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
-  
-  // === LANGUAGE ROUTING LOGIC ===
-  // Handle specific redirects first
-  if (pathname === '/whop/monthly-mentorship') {
-    return NextResponse.redirect(new URL('/whop/ayecon-academy-monthly-mentorship', request.url));
-  }
-  
-  // Skip language routing for API routes, static files, and admin routes
-  if (
-    pathname.startsWith('/api/') ||
-    pathname.startsWith('/_next/') ||
-    pathname.startsWith('/favicon.ico') ||
-    pathname.startsWith('/images/') ||
-    pathname.startsWith('/icons/') ||
-    pathname.startsWith('/logo.') ||
-    pathname.includes('.') ||
-    pathname.startsWith('/admin/')
-  ) {
-    // Skip language routing for static assets and admin/API routes
-    // Continue to admin/API logic below
-  } else {
-    // Handle language routing for other routes
-    if (pathname === '/') {
-      // Root path - continue to admin/API logic
-    } else {
-      const segments = pathname.split('/').filter(Boolean);
-      const firstSegment = segments[0];
-
-      // Handle specific routes that should not be treated as locales
-      if (firstSegment === 'whop' || firstSegment === 'contact' || firstSegment === 'terms' || firstSegment === 'privacy') {
-        // Continue to admin/API logic
-      } else if (languageKeys.includes(firstSegment) && firstSegment !== 'en') {
-        // Valid language route - continue to admin/API logic
-      }
-    }
-  }
-  
-  // === ADMIN/API LOGIC ===
   
   // Handle preflight OPTIONS requests for CORS
   if (request.method === 'OPTIONS') {
@@ -83,22 +44,73 @@ export function middleware(request: NextRequest) {
     return response;
   }
   
-  // Create response
-  const response = NextResponse.next();
+  // Skip middleware for login page
+  if (pathname === '/admin/login') {
+    return NextResponse.next();
+  }
+  
+  // Get admin-token from cookies
+  const token = request.cookies.get('admin-token')?.value;
+  
+  // Redirect to login if no token found
+  if (!token) {
+    console.log('No admin token found, redirecting to login');
+    return NextResponse.redirect(new URL('/admin/login', request.url));
+  }
+  
+  try {
+    const decoded = verifyJWT(token, process.env.AUTH_SECRET || 'whpcodes-secret-key');
+    
+    // Check if user has admin role
+    if (decoded.role !== 'ADMIN') {
+      console.log('User does not have admin role, redirecting to login');
+      return NextResponse.redirect(new URL('/admin/login', request.url));
+    }
+    
+  } catch (error) {
+    console.log('Token verification failed, redirecting to login:', error.message);
+    const redirectResponse = NextResponse.redirect(new URL('/admin/login', request.url));
+    // Clear the invalid token
+    redirectResponse.cookies.set('admin-token', '', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+      expires: new Date(0),
+    });
+    return redirectResponse;
+  }
+  
+  return NextResponse.next();
+}
 
-  // Add CORS headers for API routes
-  if (pathname.startsWith('/api')) {
+// Handle API routes with CORS
+function handleApiRoutes(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+  
+  // Handle preflight OPTIONS requests for CORS
+  if (request.method === 'OPTIONS') {
+    const response = new NextResponse(null, { status: 204 });
+    
     response.headers.append('Access-Control-Allow-Credentials', 'true');
     response.headers.append('Access-Control-Allow-Origin', request.headers.get('origin') || '*');
     response.headers.append('Access-Control-Allow-Methods', 'GET,DELETE,PATCH,POST,PUT');
-    response.headers.append(
-      'Access-Control-Allow-Headers',
-      'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization'
-    );
+    response.headers.append('Access-Control-Allow-Headers', 
+      'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization');
     
-    // For API routes that require admin authentication
-    if (
-      (pathname.includes('/api/casinos') || 
+    return response;
+  }
+  
+  // Create response with CORS headers
+  const response = NextResponse.next();
+  response.headers.append('Access-Control-Allow-Credentials', 'true');
+  response.headers.append('Access-Control-Allow-Origin', request.headers.get('origin') || '*');
+  response.headers.append('Access-Control-Allow-Methods', 'GET,DELETE,PATCH,POST,PUT');
+  response.headers.append('Access-Control-Allow-Headers', 
+    'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization');
+  
+  // For admin API routes that require authentication
+  if ((pathname.includes('/api/casinos') || 
        pathname.includes('/api/bonuses') || 
        pathname.includes('/api/reviews') ||
        pathname.includes('/api/analytics/wipe') ||
@@ -106,83 +118,78 @@ export function middleware(request: NextRequest) {
        pathname.includes('/api/upload')) && 
       (request.method === 'POST' || 
        request.method === 'PUT' || 
-       request.method === 'DELETE')
-    ) {
-      // Skip this check for public endpoints
-      if (pathname !== '/api/reviews' && !pathname.startsWith('/api/reviews/submit')) {
-        // Get admin-token from cookies
-        const token = request.cookies.get('admin-token');
-        
-        // Return unauthorized if no token found
-        if (!token) {
-          return new NextResponse(
-            JSON.stringify({ error: 'Unauthorized' }),
-            { 
-              status: 401,
-              headers: {
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': request.headers.get('origin') || '*',
-                'Access-Control-Allow-Credentials': 'true'
-              }
+       request.method === 'DELETE')) {
+    
+    // Skip auth check for public endpoints
+    if (pathname !== '/api/reviews' && !pathname.startsWith('/api/reviews/submit')) {
+      // Get admin-token from cookies
+      const token = request.cookies.get('admin-token');
+      
+      // Return unauthorized if no token found
+      if (!token) {
+        return new NextResponse(
+          JSON.stringify({ error: 'Unauthorized' }),
+          { 
+            status: 401,
+            headers: {
+              'Content-Type': 'application/json',
+              'Access-Control-Allow-Origin': request.headers.get('origin') || '*',
+              'Access-Control-Allow-Credentials': 'true'
             }
-          );
-        }
+          }
+        );
       }
     }
-    
-    return response;
   }
   
-  // Skip middleware for login page
-  if (pathname === '/admin/login') {
-    return response;
-  }
-  
-  // Protect admin routes
-  if (pathname.startsWith('/admin')) {
-    // Get admin-token from cookies
-    const token = request.cookies.get('admin-token')?.value;
-    
-    // Redirect to login if no token found
-    if (!token) {
-      console.log('No admin token found, redirecting to login');
-      return NextResponse.redirect(new URL('/admin/login', request.url));
-    }
-    
-    try {
-      const decoded = verifyJWT(token, process.env.AUTH_SECRET || 'whpcodes-secret-key');
-      
-      // Check if user has admin role
-      if (decoded.role !== 'ADMIN') {
-        console.log('User does not have admin role, redirecting to login');
-        return NextResponse.redirect(new URL('/admin/login', request.url));
-      }
-      
-    } catch (error) {
-      console.log('Token verification failed, redirecting to login:', error.message);
-      const redirectResponse = NextResponse.redirect(new URL('/admin/login', request.url));
-      // Clear the invalid token
-      redirectResponse.cookies.set('admin-token', '', {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        path: '/',
-        expires: new Date(0),
-      });
-      return redirectResponse;
-    }
-  }
-
   return response;
 }
 
-// Configure the paths that middleware should run on
+// Main middleware function with narrow scope
+export function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+  
+  // === API ROUTE HANDLING ===
+  if (pathname.startsWith('/api/')) {
+    return handleApiRoutes(request);
+  }
+  
+  // === SPECIFIC REDIRECTS ===
+  if (pathname === '/whop/monthly-mentorship') {
+    return NextResponse.redirect(new URL('/whop/ayecon-academy-monthly-mentorship', request.url));
+  }
+  
+  // === ADMIN AUTH LOGIC (isolated from i18n) ===
+  if (pathname.startsWith('/admin')) {
+    return handleAdminAuth(request);
+  }
+  
+  // === LOCALIZED ROUTE LOGIC (only for prefixed locales) ===
+  const localeMatch = pathname.match(/^\/(es|nl|fr|de|it|pt|zh)(?:\/|$)/);
+  if (localeMatch) {
+    const locale = localeMatch[1];
+    // Set locale cookie for SSR components
+    const response = NextResponse.next();
+    response.cookies.set('locale', locale, { path: '/' });
+    return response;
+  }
+  
+  // === ROOT PATH DETECTION (optional auto-redirect) ===
+  if (pathname === '/') {
+    // Could add locale detection here, but safer to let user choose
+    return NextResponse.next();
+  }
+  
+  // Fall-through: English routes and other paths, no-op
+  return NextResponse.next();
+}
+
+// Narrow matcher - ONLY run on routes that need i18n, admin, or API logic
 export const config = {
   matcher: [
-    // Admin and API routes
-    '/admin/:path*', 
-    '/api/:path*',
-    // Language routing (excluding static files and Next.js internals)
-    '/((?!api|_next/static|_next/image|favicon.ico|images|icons|logo\\.|.*\\..*).*)',
-  ]
-}; 
+    '/',                              // Optional: first-visit detection at root only
+    '/(es|nl|fr|de|it|pt|zh)/:path*', // ONLY localized routes
+    '/admin/:path*',                  // Admin logic isolated
+    '/api/:path*',                    // API routes for CORS and auth
+  ],
+};
