@@ -109,13 +109,16 @@ async function addTMSPromoCodes() {
         }
 
         // Create the new promo code
+        const promoCodeId = `promo_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
         const newPromoCode = await prisma.promoCode.create({
           data: {
+            id: promoCodeId,
             title: promoData.title,
             description: promoData.description,
             code: promoData.code,
             type: promoData.type,
             value: promoData.value,
+            updatedAt: new Date(),
             whop: {
               connect: { id: whop.id }
             }
