@@ -184,12 +184,9 @@ export function middleware(request: NextRequest) {
   return NextResponse.next();
 }
 
-// Narrow matcher - ONLY run on routes that need i18n, admin, or API logic
+// TEMPORARILY DISABLE ALL MIDDLEWARE TO TEST
 export const config = {
   matcher: [
-    '/',                              // Optional: first-visit detection at root only
-    '/(es|nl|fr|de|it|pt|zh)/:path*', // ONLY localized routes
-    '/admin/:path*',                  // Admin logic isolated
-    '/api/:path*',                    // API routes for CORS and auth
+    '/admin/:path*',                  // Only admin routes for now
   ],
 };
