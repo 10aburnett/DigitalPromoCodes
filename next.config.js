@@ -1,5 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Internationalization configuration
+  i18n: {
+    locales: ['en', 'es', 'nl', 'fr', 'de', 'it', 'pt', 'zh'],
+    defaultLocale: 'en',
+    localeDetection: false, // We handle this manually
+  },
   images: {
     unoptimized: false, // Enable image optimization
     domains: ['cdn.prod.website-files.com', 'localhost'],
