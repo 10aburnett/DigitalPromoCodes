@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { verifyAdminToken } from '@/lib/auth-utils'
 
+export const dynamic = 'force-dynamic';
+
 // GET /api/admin/mailing-list - List all mailing list subscribers
 export async function GET(request: NextRequest) {
   try {

@@ -1,6 +1,8 @@
 import { Suspense } from 'react'
 import PromoSubmissionsManager from '@/components/admin/PromoSubmissionsManager'
 
+export const dynamic = 'force-dynamic';
+
 export default function PromoSubmissionsPage() {
   return (
     <div className="container mx-auto px-4 py-8">

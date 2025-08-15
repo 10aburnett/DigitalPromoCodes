@@ -3,6 +3,8 @@ import { prisma } from "@/lib/prisma";
 import { verifyAdminToken } from "@/lib/auth-utils";
 import bcrypt from "bcryptjs";
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(
   request: Request,
   { params }: { params: { id: string } }

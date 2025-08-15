@@ -1,23 +1,25 @@
 "use client";
 // @ts-nocheck
 
+export const dynamic = 'force-dynamic';
+
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { normalizeImagePath } from "@/lib/image-utils";
-import dynamic from 'next/dynamic';
+import dynamicImport from 'next/dynamic';
 
 // Dynamic import for recharts to reduce initial bundle size
-const BarChart = dynamic(() => import('recharts').then(mod => ({ default: mod.BarChart as any })), { ssr: false });
-const Bar = dynamic(() => import('recharts').then(mod => ({ default: mod.Bar as any })), { ssr: false });
-const LineChart = dynamic(() => import('recharts').then(mod => ({ default: mod.LineChart as any })), { ssr: false });
-const Line = dynamic(() => import('recharts').then(mod => ({ default: mod.Line as any })), { ssr: false });
-const XAxis = dynamic(() => import('recharts').then(mod => ({ default: mod.XAxis as any })), { ssr: false });
-const YAxis = dynamic(() => import('recharts').then(mod => ({ default: mod.YAxis as any })), { ssr: false });
-const CartesianGrid = dynamic(() => import('recharts').then(mod => ({ default: mod.CartesianGrid as any })), { ssr: false });
-const Tooltip = dynamic(() => import('recharts').then(mod => ({ default: mod.Tooltip as any })), { ssr: false });
-const Legend = dynamic(() => import('recharts').then(mod => ({ default: mod.Legend as any })), { ssr: false });
-const ResponsiveContainer = dynamic(() => import('recharts').then(mod => ({ default: mod.ResponsiveContainer as any })), { ssr: false });
+const BarChart = dynamicImport(() => import('recharts').then(mod => ({ default: mod.BarChart as any })), { ssr: false });
+const Bar = dynamicImport(() => import('recharts').then(mod => ({ default: mod.Bar as any })), { ssr: false });
+const LineChart = dynamicImport(() => import('recharts').then(mod => ({ default: mod.LineChart as any })), { ssr: false });
+const Line = dynamicImport(() => import('recharts').then(mod => ({ default: mod.Line as any })), { ssr: false });
+const XAxis = dynamicImport(() => import('recharts').then(mod => ({ default: mod.XAxis as any })), { ssr: false });
+const YAxis = dynamicImport(() => import('recharts').then(mod => ({ default: mod.YAxis as any })), { ssr: false });
+const CartesianGrid = dynamicImport(() => import('recharts').then(mod => ({ default: mod.CartesianGrid as any })), { ssr: false });
+const Tooltip = dynamicImport(() => import('recharts').then(mod => ({ default: mod.Tooltip as any })), { ssr: false });
+const Legend = dynamicImport(() => import('recharts').then(mod => ({ default: mod.Legend as any })), { ssr: false });
+const ResponsiveContainer = dynamicImport(() => import('recharts').then(mod => ({ default: mod.ResponsiveContainer as any })), { ssr: false });
 import TimeframeSelector from "./TimeframeSelector";
 
 // Interfaces

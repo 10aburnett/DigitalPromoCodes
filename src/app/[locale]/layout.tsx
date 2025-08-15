@@ -3,12 +3,10 @@ import { Toaster } from "react-hot-toast";
 import { LanguageProvider } from '@/contexts/LanguageContext';
 import { ThemeProvider } from '@/contexts/ThemeContext';
 
+export const dynamic = 'force-dynamic';
+export const dynamicParams = true;
+export const revalidate = 0;
 export const runtime = "nodejs";
-
-// Generate static params for all supported locales
-export function generateStaticParams() {
-  return ["en","es","nl","fr","de","it","pt","zh"].map((locale) => ({ locale }));
-}
 
 export default function LocaleLayout({
   children,

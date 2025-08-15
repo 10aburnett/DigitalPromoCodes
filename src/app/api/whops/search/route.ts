@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
+export const dynamic = 'force-dynamic';
+
 // GET /api/whops/search?q=term&limit=20 - Server-side search for whops
 export async function GET(request: Request) {
   try {

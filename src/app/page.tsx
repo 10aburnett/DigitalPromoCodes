@@ -1,5 +1,3 @@
-import { redirect } from "next/navigation";
-
 export default function RootIndex() {
-  redirect("/en");
+  return <main>Home (EN)</main>;
 } 

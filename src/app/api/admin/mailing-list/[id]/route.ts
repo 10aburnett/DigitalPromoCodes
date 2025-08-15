@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { verifyAdminToken } from '@/lib/auth-utils'
 
+export const dynamic = 'force-dynamic';
+
 // DELETE /api/admin/mailing-list/[id] - Delete a specific subscriber
 export async function DELETE(
   request: NextRequest,

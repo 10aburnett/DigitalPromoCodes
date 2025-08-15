@@ -1,6 +1,5 @@
 /** @type {import('next').NextConfig} */
 module.exports = {
-  experimental: { appDir: true },
   i18n: {
     locales: ["en", "es", "nl", "fr", "de", "it", "pt", "zh"],
     defaultLocale: "en",
