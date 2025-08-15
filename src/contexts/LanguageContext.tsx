@@ -37,18 +37,11 @@ export function LanguageProvider({ children, locale }: LanguageProviderProps) {
   const [language, setLanguageState] = useState<Language>(getInitialLanguage());
   const [isHydrated, setIsHydrated] = useState(false);
 
-  // Simple hydration - no automatic redirects
+  // Simple hydration - no automatic redirects at all
   useEffect(() => {
     setIsHydrated(true);
-    
-    // Detect current language from URL only
-    const pathSegments = pathname.split('/').filter(Boolean);
-    if (pathSegments.length > 0 && languageKeys.includes(pathSegments[0] as Language) && pathSegments[0] !== 'en') {
-      const urlLanguage = pathSegments[0] as Language;
-      if (urlLanguage !== language) {
-        setLanguageState(urlLanguage);
-      }
-    }
+    // Remove ALL auto-detection and auto-redirect logic
+    // Language is controlled purely by the server-side locale prop
   }, []); // Only run once on mount
 
   // Simple, loop-free language switching

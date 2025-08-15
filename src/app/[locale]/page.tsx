@@ -120,6 +120,13 @@ const HomePageLoading = () => (
   </div>
 );
 
+export const runtime = "nodejs";
+
+// Generate static params for all supported locales
+export function generateStaticParams() {
+  return ["en","es","nl","fr","de","it","pt","zh"].map((locale) => ({ locale }));
+}
+
 export default async function LocalizedHome({ params }: { params: { locale: string } }) {
   const { initialWhops, totalUsers, whopNames, totalCount } = await getInitialData();
   const currentYear = new Date().getFullYear();
