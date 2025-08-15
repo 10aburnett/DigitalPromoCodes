@@ -10,7 +10,6 @@ module.exports = {
   eslint: { ignoreDuringBuilds: true },
 
   // Ensure static assets are served from root, not localized paths
-  assetPrefix: '',
   
   // Rewrite static assets to bypass locale prefixing
   async rewrites() { 
