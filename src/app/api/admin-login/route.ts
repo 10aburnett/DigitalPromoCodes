@@ -3,6 +3,8 @@ import { sign } from "jsonwebtoken";
 import { cookies } from "next/headers";
 import { JWT_SECRET } from "@/lib/auth-utils";
 
+export const dynamic = 'force-dynamic';
+
 // Hardcoded admin credentials - only these will work
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "alexburnett21@icloud.com";
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "Grizedale12£";
