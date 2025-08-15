@@ -2,11 +2,6 @@
 const isNuclear = process.env.NUCLEAR_TS_IGNORE === '1';
 
 module.exports = {
-  i18n: {
-    locales: ['en', 'es'],
-    defaultLocale: 'en',
-    localeDetection: false
-  },
   // Ensure these toggles are actually respected
   typescript: { ignoreBuildErrors: isNuclear },
   eslint: { ignoreDuringBuilds: isNuclear },

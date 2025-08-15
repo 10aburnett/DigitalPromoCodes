@@ -133,7 +133,6 @@ export default function CommentsList({ blogPostId, refreshTrigger, onReply }: Co
               borderLeftColor: 'var(--thread-line-color, #b3cdfc)'
             }}
           >
-          >
             {renderCommentContent(comment)}
           </div>
           

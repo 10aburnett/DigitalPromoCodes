@@ -126,7 +126,7 @@ export default async function LocalizedHome({ params }: { params: { locale: stri
   const locale = params.locale as any; // Type assertion for i18n
 
   // Create unique key for this locale to ensure proper remounting
-  const pageKey = `home-${params.locale}`;
+  const pageKey = params.locale.length + params.locale.charCodeAt(0);
 
   return (
     <main key={pageKey} className="min-h-screen py-12 transition-theme" style={{ backgroundColor: 'var(--background-color)', color: 'var(--text-color)' }}>
@@ -164,10 +164,9 @@ export default async function LocalizedHome({ params }: { params: { locale: stri
       {/* Client-side interactive homepage component with Suspense */}
       <Suspense fallback={<HomePageLoading />}>
         <HomePage 
-          key={`homepage-${pageKey}`}
+          key={pageKey}
           initialWhops={initialWhops}
           initialTotal={totalCount}
-          whopNames={whopNames}
           totalUsers={totalUsers}
         />
       </Suspense>

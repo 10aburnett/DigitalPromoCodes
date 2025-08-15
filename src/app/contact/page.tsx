@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useLanguage } from '@/contexts/LanguageContext';
+import styles from './contact.module.css';
 
 export default function Contact() {
   const { t } = useLanguage();
@@ -89,12 +90,11 @@ export default function Contact() {
                   value={formData.name}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-1 focus:ring-opacity-50 transition-colors duration-200"
+                  className={`${styles.input} w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-1 focus:ring-opacity-50 transition-colors duration-200`}
                   style={{ 
                     backgroundColor: 'var(--background-secondary)', 
                     borderColor: 'var(--border-color)',
-                    color: 'var(--text-color)',
-                    ':focus': { borderColor: 'var(--accent-color)' }
+                    color: 'var(--text-color)'
                   }}
                   placeholder={t('contact.name')}
                 />
@@ -111,12 +111,11 @@ export default function Contact() {
                   value={formData.email}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-1 focus:ring-opacity-50 transition-colors duration-200"
+                  className={`${styles.input} w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-1 focus:ring-opacity-50 transition-colors duration-200`}
                   style={{ 
                     backgroundColor: 'var(--background-secondary)', 
                     borderColor: 'var(--border-color)',
-                    color: 'var(--text-color)',
-                    ':focus': { borderColor: 'var(--accent-color)' }
+                    color: 'var(--text-color)'
                   }}
                   placeholder={t('contact.email')}
                 />
@@ -133,12 +132,11 @@ export default function Contact() {
                   value={formData.subject}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-1 focus:ring-opacity-50 transition-colors duration-200"
+                  className={`${styles.input} w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-1 focus:ring-opacity-50 transition-colors duration-200`}
                   style={{ 
                     backgroundColor: 'var(--background-secondary)', 
                     borderColor: 'var(--border-color)',
-                    color: 'var(--text-color)',
-                    ':focus': { borderColor: 'var(--accent-color)' }
+                    color: 'var(--text-color)'
                   }}
                   placeholder={t('contact.subject')}
                 />
@@ -155,12 +153,11 @@ export default function Contact() {
                   onChange={handleChange}
                   required
                   rows={6}
-                  className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-1 focus:ring-opacity-50 transition-colors duration-200 resize-vertical"
+                  className={`${styles.textarea} w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-1 focus:ring-opacity-50 transition-colors duration-200 resize-vertical`}
                   style={{ 
                     backgroundColor: 'var(--background-secondary)', 
                     borderColor: 'var(--border-color)',
-                    color: 'var(--text-color)',
-                    ':focus': { borderColor: 'var(--accent-color)' }
+                    color: 'var(--text-color)'
                   }}
                   placeholder={t('contact.message')}
                 />

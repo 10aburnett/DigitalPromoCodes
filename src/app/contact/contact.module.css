@@ -1,0 +1,16 @@
+.input:focus {
+  border-color: var(--accent-color) !important;
+}
+
+.textarea:focus {
+  border-color: var(--accent-color) !important;
+}
+
+.button:hover {
+  background-color: var(--accent-color-dark, #1e40af) !important;
+  transform: translateY(-1px);
+}
+
+.button:focus {
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5) !important;
+}
