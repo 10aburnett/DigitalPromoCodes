@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, ReactNode, useRef } from 'react';
-import { useRouter, usePathname, useSearchParams } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { Language, defaultLanguage, getTranslation, languageKeys } from '@/lib/i18n';
 
 interface LanguageContextType {
@@ -23,7 +23,6 @@ const LOCALE_RE = /^\/(es|nl|fr|de|it|pt|zh)(?=\/|$)/;
 export function LanguageProvider({ children, locale }: LanguageProviderProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const searchParams = useSearchParams();
   const switching = useRef(false);
   
   // Initialize language - server-safe approach
@@ -57,14 +56,11 @@ export function LanguageProvider({ children, locale }: LanguageProviderProps) {
     if (switching.current) return;
     switching.current = true;
 
-    const qs = searchParams?.toString();
     const clean = pathname.replace(LOCALE_RE, ""); // remove any current prefix
-    const target =
-      newLanguage === "en" ? `${clean}${qs ? `?${qs}` : ""}` :
-      `/${newLanguage}${clean}${qs ? `?${qs}` : ""}`;
+    const target = newLanguage === "en" ? clean || "/" : `/${newLanguage}${clean}`;
 
     // Only navigate if the target actually differs
-    if (target !== pathname + (qs ? `?${qs}` : "")) {
+    if (target !== pathname) {
       setLanguageState(newLanguage);
       router.push(target);
     }
