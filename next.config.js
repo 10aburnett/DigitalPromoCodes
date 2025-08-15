@@ -9,8 +9,28 @@ module.exports = {
   typescript: { ignoreBuildErrors: true },
   eslint: { ignoreDuringBuilds: true },
 
-  // No basePath, no assetPrefix, no rewrites, no headers, no redirects
-  async rewrites() { return []; },
+  // Ensure static assets are served from root, not localized paths
+  assetPrefix: '',
+  
+  // Rewrite static assets to bypass locale prefixing
+  async rewrites() { 
+    return [
+      // Serve static assets from root regardless of locale
+      {
+        source: '/:locale(en|es)/_next/static/:path*',
+        destination: '/_next/static/:path*'
+      },
+      // Also handle API routes and other static files
+      {
+        source: '/:locale(en|es)/api/:path*',
+        destination: '/api/:path*'
+      },
+      {
+        source: '/:locale(en|es)/favicon.ico',
+        destination: '/favicon.ico'
+      }
+    ];
+  },
   async redirects() { return []; },
   async headers() { return []; },
 
