@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -39,6 +39,7 @@ export default function WhopCard({ promo, priority = false }: WhopCardProps) {
   const [imageError, setImageError] = useState(false);
   const [imagePath, setImagePath] = useState('');
   const pathname = usePathname();
+  const cardRef = useRef<HTMLDivElement | null>(null);
 
   // Helper function to get the correct detail page URL based on language
   const getDetailPageUrl = () => {
@@ -198,6 +199,30 @@ export default function WhopCard({ promo, priority = false }: WhopCardProps) {
     }
   };
 
+  // Intersection Observer for prefetching
+  useEffect(() => {
+    if (!cardRef.current) return;
+    
+    const cardElement = cardRef.current;
+    let didPrefetch = false;
+
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting && !didPrefetch) {
+          // Trigger prefetch by simulating mouseover on the link
+          const linkElement = cardElement.querySelector('a[href^="/whop/"], a[href*="/whop/"]') as HTMLAnchorElement;
+          if (linkElement) {
+            linkElement.dispatchEvent(new MouseEvent('mouseover', { bubbles: true }));
+            didPrefetch = true;
+          }
+        }
+      });
+    }, { rootMargin: '200px' });
+
+    io.observe(cardElement);
+    return () => io.disconnect();
+  }, []);
+
   // Determine the best logo path when component mounts
   useEffect(() => {
     try {
@@ -244,10 +269,11 @@ export default function WhopCard({ promo, priority = false }: WhopCardProps) {
   }, [promo.logoUrl, promo.whopName]);
 
   return (
-    <div className="relative">
+    <div ref={cardRef} className="relative">
       <article className="relative p-5 rounded-xl shadow-lg border transition-all hover:shadow-xl hover:border-opacity-50" style={{ background: 'linear-gradient(135deg, var(--background-secondary), var(--background-tertiary))', borderColor: 'var(--border-color)' }}>
         <Link 
           href={getDetailPageUrl()}
+          prefetch={true}
           className="block"
           title={`${promo.whopName} Promo Code - ${promo.promoText} (${new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })})`}
         >
@@ -313,6 +339,7 @@ export default function WhopCard({ promo, priority = false }: WhopCardProps) {
         <div className="mt-2">
           <Link 
             href={getDetailPageUrl()}
+            prefetch={true}
             className="w-full font-bold py-3 px-4 rounded-lg text-center transition-all duration-200 block hover:opacity-90 hover:scale-[1.02] transform-gpu"
             style={{ 
               backgroundColor: 'var(--accent-color)', 

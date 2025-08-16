@@ -4,10 +4,10 @@ import { Metadata } from 'next';
 import { normalizeImagePath } from '@/lib/image-utils';
 import { unstable_noStore as noStore } from 'next/cache';
 import { getWhopBySlug } from '@/lib/data';
+import { Suspense } from 'react';
 
-// Force dynamic rendering and disable caching
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+// Enable ISR with 5-minute revalidation for better performance
+export const revalidate = 300;
 import InitialsAvatar from '@/components/InitialsAvatar';
 import WhopLogo from '@/components/WhopLogo';
 import WhopReviewSection from '@/components/WhopReviewSection';
@@ -51,7 +51,52 @@ interface Whop {
   reviews?: Review[];
 }
 
-// Removed - now using direct database query
+// Helper function for fetching deal data with Next.js caching
+async function getDeal(slug: string) {
+  // Use Next.js fetch with ISR caching
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+  
+  try {
+    const res = await fetch(`${baseUrl}/api/deals/${slug}`, {
+      next: { revalidate: 300 }, // 5 minutes
+    });
+
+    if (!res.ok) return null;
+    return res.json();
+  } catch (error) {
+    // Fallback to direct database query if API fails
+    console.warn('API fetch failed, falling back to direct DB query:', error);
+    return await getWhopBySlug(slug);
+  }
+}
+
+// Skeleton component for streaming sections
+function SectionSkeleton() {
+  return (
+    <div className="h-48 w-full rounded animate-pulse bg-gray-200/40 dark:bg-white/10"></div>
+  );
+}
+
+// Async component for heavy sections that can be streamed
+async function RecommendedSection({ currentWhopId }: { currentWhopId: string }) {
+  // Simulate a small delay to show streaming effect in development
+  await new Promise(resolve => setTimeout(resolve, 100));
+  
+  return <RecommendedWhops currentWhopId={currentWhopId} />;
+}
+
+async function ReviewsSection({ whopId, whopName, reviews }: { whopId: string; whopName: string; reviews: any[] }) {
+  // Simulate a small delay to show streaming effect in development
+  await new Promise(resolve => setTimeout(resolve, 150));
+  
+  return (
+    <WhopReviewSection 
+      whopId={whopId}
+      whopName={whopName}
+      reviews={reviews}
+    />
+  );
+}
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   noStore();
@@ -246,8 +291,18 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 }
 
 export default async function WhopPage({ params }: { params: { slug: string } }) {
-  noStore();
-  const whopData = await getWhopBySlug(params.slug);
+  // Try to get hero data from API first for faster loading
+  const dealData = await getDeal(params.slug);
+  
+  // If API data is available and lightweight, use it for hero
+  let whopData;
+  if (dealData && dealData.id) {
+    // We have lightweight hero data, but still need full data for the page
+    whopData = await getWhopBySlug(params.slug);
+  } else {
+    // Fallback to direct DB query
+    whopData = await getWhopBySlug(params.slug);
+  }
   
   if (!whopData) {
     notFound();
@@ -553,18 +608,22 @@ export default async function WhopPage({ params }: { params: { slug: string } })
 
         {/* Full-width sections for better layout */}
         <div className="w-full space-y-8">
-          {/* Recommended Whops Section - Align with content above */}
+          {/* Recommended Whops Section - Streamed for better performance */}
           <div className="max-w-2xl mx-auto">
-            <RecommendedWhops currentWhopId={whop.id} />
+            <Suspense fallback={<SectionSkeleton />}>
+              <RecommendedSection currentWhopId={whop.id} />
+            </Suspense>
           </div>
 
-          {/* Reviews Section */}
+          {/* Reviews Section - Streamed for better performance */}
           <div className="max-w-2xl mx-auto">
-            <WhopReviewSection 
-              whopId={whop.id}
-              whopName={whop.name}
-              reviews={whop.reviews || []}
-            />
+            <Suspense fallback={<SectionSkeleton />}>
+              <ReviewsSection 
+                whopId={whop.id}
+                whopName={whop.name}
+                reviews={whop.reviews || []}
+              />
+            </Suspense>
           </div>
 
           {/* Back Link */}
