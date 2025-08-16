@@ -274,7 +274,19 @@ const PromoStatsDisplay = forwardRef<PromoStatsDisplayHandle, PromoStatsDisplayP
         {stats.usage.totalCount > 0 && (
           <div className="mt-4 pt-4 border-t" style={{ borderColor: 'var(--border-color)' }}>
             <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full" style={{ backgroundColor: 'var(--success-color)' }}></div>
+              <span
+                aria-hidden="true"
+                className="
+                  inline-block shrink-0
+                  h-1.5 w-1.5        /* 6px on mobile: even smaller */
+                  rounded-full
+                  bg-emerald-500
+                  ring-1 ring-emerald-200/40
+
+                  md:h-2 md:w-2      /* desktop size unchanged */
+                  md:rounded-md      /* keep your desktop corner style */
+                "
+              />
               <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>
                 This code is actively being used by our community
               </span>

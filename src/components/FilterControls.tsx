@@ -106,7 +106,7 @@ export default function FilterControls({ filters, onFilterChange, casinos, class
       </div>
 
       {/* Mobile view - vertical layout */}
-      <div className="sm:hidden flex flex-col gap-3">
+      <div className="sm:hidden flex flex-col gap-1 md:gap-3">
         {/* Search Bar - Full width on mobile */}
         <div className="w-full">
           <div className="relative">
@@ -132,7 +132,7 @@ export default function FilterControls({ filters, onFilterChange, casinos, class
         </div>
 
         {/* Filter Controls - Row on desktop, stack on mobile */}
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-1 md:gap-3">
           {/* Category Dropdown */}
           <select
             value={filters.whopCategory}

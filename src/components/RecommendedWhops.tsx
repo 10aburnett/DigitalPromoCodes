@@ -331,8 +331,8 @@ export default function RecommendedWhops({ currentWhopId }: RecommendedWhopsProp
                   </p>
                   
                   {/* Footer with promo and price */}
-                  <div className="flex items-center justify-between gap-3">
-                    <span className="text-xs font-medium px-2.5 py-1 rounded-full flex-shrink-0" 
+                  <div className="flex flex-wrap items-center gap-2 min-w-0">
+                    <span className="text-xs font-medium px-2.5 py-1 rounded-full shrink-0" 
                           style={{ 
                             backgroundColor: 'var(--accent-color)', 
                             color: 'white' 
@@ -341,7 +341,17 @@ export default function RecommendedWhops({ currentWhopId }: RecommendedWhopsProp
                     </span>
                     
                     {whop.price && (
-                      <span className="text-xs font-semibold flex-shrink-0" 
+                      <span className="
+                        order-2 md:order-none
+                        basis-full md:basis-auto
+                        w-full md:w-auto
+                        text-right md:text-left
+                        md:ml-auto
+                        text-xs font-semibold
+                        leading-tight
+                        truncate md:whitespace-nowrap
+                        max-w-full
+                      " 
                             style={{ 
                               color: whop.price === 'Free' ? 'var(--success-color)' : 'var(--text-secondary)' 
                             }}>

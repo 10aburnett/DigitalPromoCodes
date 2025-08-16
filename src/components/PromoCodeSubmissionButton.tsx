@@ -12,30 +12,34 @@ export default function PromoCodeSubmissionButton({ whopId, whopName }: PromoCod
 
   return (
     <>
-      {/* Submission Button */}
-      <div className="rounded-xl px-7 py-4 border transition-theme" style={{ 
-        backgroundColor: 'var(--background-secondary)', 
-        borderColor: 'var(--border-color)' 
-      }}>
-        <div className="flex items-center justify-between">
-          <div>
-            <h3 className="text-lg font-semibold mb-1">Know a Better Code?</h3>
-            <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+      <section
+        className="better-code-tile rounded-2xl border p-5 md:p-6 shadow-sm
+                   bg-white border-gray-200"  /* light mode unchanged */
+      >
+        {/* This wrapper neutralizes any nested bg-white in dark */}
+        <div className="kill-white flex flex-col md:flex-row md:items-center md:justify-between md:gap-6">
+          <div className="md:flex-1 text-center md:text-left">
+            <h3 className="tile-heading text-2xl font-semibold text-gray-900">
+              Know a Better Code?
+            </h3>
+
+            <p className="tile-description mt-2 md:mt-1 leading-relaxed text-gray-600">
               Help the community by submitting a promo code for {whopName}
             </p>
           </div>
-          <button
-            onClick={() => setShowForm(true)}
-            className="px-4 py-2 rounded-lg font-medium transition-colors"
-            style={{ 
-              backgroundColor: 'var(--accent-color)', 
-              color: 'white' 
-            }}
-          >
-            Submit Code
-          </button>
+
+          <div className="mt-4 md:mt-0 self-center md:self-auto">
+            <button
+              onClick={() => setShowForm(true)}
+              type="button"
+              className="tile-btn inline-flex items-center justify-center rounded-xl px-4 py-3 font-semibold text-white transition-colors
+                         bg-[#497BFF] hover:bg-[#3f6df0]"  /* light mode colors */
+            >
+              Submit Code
+            </button>
+          </div>
         </div>
-      </div>
+      </section>
 
       {/* Submission Form Modal */}
       {showForm && (

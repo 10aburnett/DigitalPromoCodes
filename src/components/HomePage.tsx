@@ -245,14 +245,14 @@ export default function HomePage({ initialWhops, initialTotal, totalUsers, key }
   }, [searchTimeout]);
 
   return (
-    <div className="mx-auto w-[90%] md:w-[95%] max-w-[1280px]">
+    <div className="mx-auto w-[90%] md:w-[95%] max-w-[1280px] mt-[50px] md:mt-0">
       <h1 className="text-4xl font-bold text-center mt-2 mb-12">
         <span style={{ color: 'var(--accent-color)' }}>WHP</span>
         <span style={{ color: 'var(--text-color)' }}>Codes</span>
         <span style={{ color: 'var(--text-color)' }}> - Whop Promo Codes, Coupons & Discounts</span>
       </h1>
       
-      <div className="mb-12" data-filter-section>
+      <div className="mb-1 md:mb-12" data-filter-section>
         <FilterControls
           filters={filters}
           onFilterChange={handleFilterChange}
@@ -262,9 +262,9 @@ export default function HomePage({ initialWhops, initialTotal, totalUsers, key }
 
       {/* Results count */}
       {pagination.total > 0 && (
-        <div className="mb-6 text-center" style={{ color: 'var(--text-secondary)' }}>
+        <p className="mb-6 text-center mt-4 md:mt-0" style={{ color: 'var(--text-secondary)' }}>
           Showing {((pagination.page - 1) * 15) + 1}-{Math.min(pagination.page * 15, pagination.total)} of {pagination.total} results
-        </div>
+        </p>
       )}
 
       {/* Mobile-only Pagination Controls (Top) */}

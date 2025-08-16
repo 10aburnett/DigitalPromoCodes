@@ -233,4 +233,137 @@ body {
   .blog-card {
     min-height: 280px;
   }
-} 
+}
+
+/* === Better Code tile: dark mode overrides (scoped) === */
+html.dark .better-code-tile {
+  background-color: #2b2d3a !important;
+  border-color: transparent !important;
+}
+/* Any nested white panels (CardContent, wrappers, etc) → transparent in dark */
+html.dark .better-code-tile .kill-white,
+html.dark .better-code-tile .kill-white [class*="bg-white"] {
+  background-color: transparent !important;
+  border-color: transparent !important;
+}
+html.dark .better-code-tile .tile-heading {
+  color: #ffffff !important;
+}
+html.dark .better-code-tile .tile-description {
+  color: #a4a5b0 !important;
+}
+html.dark .better-code-tile .tile-btn {
+  background-color: #6466f1 !important;
+  color: #ffffff !important;
+}
+/* Optional nicer hover */
+html.dark .better-code-tile .tile-btn:hover {
+  background-color: #5b5def !important;
+}
+
+/* ===========================
+   Mobile-only DARK fixes for marketing sections
+   Scope: .mobile-dark-section
+   =========================== */
+@media (max-width: 767px) {
+  html.dark .mobile-dark-section {
+    background: transparent !important;        /* let page dark bg through */
+    border-color: rgba(255,255,255,0.08) !important;
+  }
+
+  /* Kill any nested light surfaces (Card, panels, gray/white blocks, gradients) */
+  html.dark .mobile-dark-section [class*="bg-white"],
+  html.dark .mobile-dark-section [class*="bg-gray-50"],
+  html.dark .mobile-dark-section [class*="bg-slate-50"],
+  html.dark .mobile-dark-section [class*="from-white"],
+  html.dark .mobile-dark-section [class*="to-white"],
+  html.dark .mobile-dark-section [class*="bg-gradient"] {
+    background: transparent !important;
+    border-color: rgba(255,255,255,0.06) !important;
+    box-shadow: none !important;
+  }
+
+  /* Typography in these sections */
+  html.dark .mobile-dark-section .md-heading {
+    color: #ffffff !important;
+  }
+  html.dark .mobile-dark-section .md-body {
+    color: #a4a5b0 !important;
+  }
+  html.dark .mobile-dark-section .md-divider {
+    border-color: rgba(255,255,255,0.08) !important;
+  }
+
+  /* "Trusted by 98k+ Users" pill — keep purple tone, ensure dark-friendly ring */
+  html.dark .mobile-dark-section .md-pill {
+    background: rgba(100, 102, 241, 0.15) !important; /* #6466f1 at ~15% */
+    color: #cfd0ff !important;
+    border-color: rgba(255,255,255,0.14) !important;
+    box-shadow: none !important;
+  }
+
+  /* Feature icons on circles: keep your purple */
+  html.dark .mobile-dark-section .md-icon {
+    background: #6466f1 !important;
+    color: #ffffff !important;
+    box-shadow: none !important;
+  }
+}
+
+/* Mobile-only: kill any top border/HR inside the stats section */
+@media (max-width: 767px) {
+  #platform-stats,
+  #platform-stats * {
+    border-top-color: transparent !important;
+  }
+  /* If an <hr> slipped in */
+  #platform-stats hr {
+    display: none !important;
+  }
+}
+
+/* === About section — force dark backgrounds on ALL cards === */
+/* Scope stays tight to the about page wrapper (.about-v2) */
+html.dark .about-v2 .about-card {
+  background-color: #2b2d3a !important;      /* required dark backdrop */
+  border-color: transparent !important;
+  box-shadow: none !important;
+
+  /* kill any gradient on the card itself */
+  background-image: none !important;
+  --tw-gradient-from: transparent !important;
+  --tw-gradient-to: transparent !important;
+  --tw-gradient-stops: initial !important;
+}
+
+/* …and on card pseudo-elements (some UI libs paint gradients there) */
+html.dark .about-v2 .about-card::before,
+html.dark .about-v2 .about-card::after {
+  background: #2b2d3a !important;
+  background-image: none !important;
+  --tw-gradient-from: transparent !important;
+  --tw-gradient-to: transparent !important;
+  --tw-gradient-stops: initial !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+/* Neutralize nested light backgrounds/gradients just in case */
+html.dark .about-v2 .about-card [class*="bg-"],
+html.dark .about-v2 .about-card [class*="from-"],
+html.dark .about-v2 .about-card [class*="via-"],
+html.dark .about-v2 .about-card [class*="to-"],
+html.dark .about-v2 .about-card [class*="bg-gradient"] {
+  background: transparent !important;
+  background-image: none !important;
+  --tw-gradient-from: transparent !important;
+  --tw-gradient-to: transparent !important;
+  --tw-gradient-stops: initial !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+/* Text tokens (colors only — no font-size or spacing changes) */
+html.dark .about-v2 .about-heading    { color: #6466f1 !important; } /* Our Mission */
+html.dark .about-v2 .about-copy-white { color: #ffffff !important; }  /* white copy */
+html.dark .about-v2 .about-copy-muted { color: #a4a5b0 !important; }  /* muted copy */ 

@@ -338,15 +338,34 @@ export default async function WhopPage({ params }: { params: { slug: string } })
                     {promoTitle}
                   </p>
                   {whop.price && (
-                    <div className="mt-3 flex items-center gap-2">
-                      <span className="text-lg font-medium" style={{ color: 'var(--text-secondary)' }}>Price:</span>
-                      <span className="text-lg font-bold px-3 py-1 rounded-full" style={{ 
-                        backgroundColor: whop.price === 'Free' ? 'var(--success-color)' : 
-                                        whop.price === 'N/A' ? 'var(--text-secondary)' : 'var(--success-color)', 
-                        color: 'white' 
-                      }}>
-                        {whop.price}
+                    <div className="mt-3 flex flex-col md:flex-row md:items-center md:gap-3">
+                      {/* Label */}
+                      <span className="text-base font-medium text-gray-600 md:mr-2">
+                        Price:
                       </span>
+
+                      {/* Pill */}
+                      <div className="mt-2 md:mt-0">
+                        <div className="inline-flex items-center rounded-full bg-emerald-600 text-white px-4 py-2 md:px-3 md:py-1.5 shadow-sm">
+                          {whop.price.includes('/') ? (
+                            <>
+                              {/* Amount */}
+                              <span className="font-extrabold text-xl leading-none md:text-lg">
+                                {whop.price.split('/')[0].trim()}
+                              </span>
+                              {/* Interval */}
+                              <span className="ml-2 text-[15px] md:text-sm leading-none whitespace-nowrap opacity-95 font-medium">
+                                / {whop.price.split('/')[1].trim()}
+                              </span>
+                            </>
+                          ) : (
+                            /* Single value like "Free" or "N/A" */
+                            <span className="font-extrabold text-xl leading-none md:text-lg">
+                              {whop.price}
+                            </span>
+                          )}
+                        </div>
+                      </div>
                     </div>
                   )}
                 </div>

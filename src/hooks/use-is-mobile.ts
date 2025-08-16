@@ -1,0 +1,22 @@
+import { useEffect, useState } from "react";
+
+export function useIsMobile(breakpoint = 767) {
+  const [isMobile, setIsMobile] = useState(false);
+  
+  useEffect(() => {
+    const mql = window.matchMedia(`(max-width: ${breakpoint}px)`);
+    const onChange = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    setIsMobile(mql.matches);
+    
+    try {
+      mql.addEventListener("change", onChange);
+      return () => mql.removeEventListener("change", onChange);
+    } catch {
+      // Safari fallback
+      mql.addListener(onChange);
+      return () => mql.removeListener(onChange);
+    }
+  }, [breakpoint]);
+  
+  return isMobile;
+}

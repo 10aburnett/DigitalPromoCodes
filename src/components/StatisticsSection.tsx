@@ -98,7 +98,17 @@ export default function StatisticsSection() {
   // Show placeholder when not yet loaded or while loading
   if (!hasLoaded || loading) {
     return (
-      <section ref={sectionRef} className="py-16" style={{ backgroundColor: 'var(--background-secondary)' }}>
+      <section 
+        ref={sectionRef} 
+        id="platform-stats"
+        className="
+          stats-section
+          pt-5 md:pt-16                    /* increased mobile padding from default to pt-5 */
+          pb-10 md:pb-16 mb-2 md:mb-12 
+          border-t-0 md:border-t md:border-white/10   /* hide mobile border, keep desktop */
+        " 
+        style={{ backgroundColor: 'var(--background-secondary)' }}
+      >
         <div className="mx-auto w-[90%] md:w-[95%] max-w-[1280px]">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4" style={{ color: 'var(--text-color)' }}>{t('home.statistics')}</h2>
@@ -107,10 +117,10 @@ export default function StatisticsSection() {
             </p>
           </div>
           {loading ? (
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4 md:gap-6">
               {[...Array(4)].map((_, i) => (
                 <div key={i} className="text-center">
-                  <div className="rounded-xl p-6 animate-pulse border" style={{ 
+                  <div className="w-full h-[164px] md:h-auto rounded-2xl border p-4 md:p-6 animate-pulse flex flex-col items-center justify-center overflow-hidden" style={{ 
                     backgroundColor: 'var(--background-color)', 
                     borderColor: 'var(--border-color)' 
                   }}>
@@ -153,35 +163,33 @@ export default function StatisticsSection() {
     const animatedValue = typeof value === 'number' ? useCounter(value) : value;
     
     const content = (
-      <div className="rounded-xl p-6 transition-all duration-300 hover:scale-[1.02] hover:shadow-lg border h-full" style={{ 
+      <div className="w-full h-[164px] md:h-auto rounded-2xl border p-4 md:p-6 flex flex-col items-center justify-center text-center overflow-hidden transition-all duration-300 hover:scale-[1.02] hover:shadow-lg" style={{ 
         backgroundColor: 'var(--background-color)', 
         borderColor: 'var(--border-color)',
         ':hover': { borderColor: 'var(--accent-color)' }
       }}>
-        <div className="text-center flex flex-col items-center justify-center h-full">
-          {showLogo && logoUrl ? (
-            <div className="w-8 h-8 mx-auto mb-3 rounded-md overflow-hidden flex items-center justify-center flex-shrink-0" style={{ backgroundColor: 'var(--background-secondary)' }}>
-              <img 
-                src={logoUrl} 
-                alt={`${value} logo`}
-                className="w-full h-full object-cover"
-                onError={(e) => {
-                  e.currentTarget.style.display = 'none';
-                  e.currentTarget.nextElementSibling?.classList.remove('hidden');
-                }}
-              />
-              <div className="text-lg hidden" style={{ color: 'var(--accent-color)' }}>{typeof icon === 'string' ? icon : <div>{icon}</div>}</div>
-            </div>
-          ) : (
-            <div className="mb-3 flex justify-center flex-shrink-0" style={{ color: 'var(--accent-color)' }}>
-              {typeof icon === 'string' ? <div className="text-2xl">{icon}</div> : icon}
-            </div>
-          )}
-          <div className="text-xl md:text-2xl font-bold mb-2 text-center" style={{ color: 'var(--text-color)' }}>
-            {typeof animatedValue === 'number' ? formatNumber(animatedValue) : animatedValue}{suffix}
+        {showLogo && logoUrl ? (
+          <div className="w-8 h-8 mx-auto mb-1 rounded-md overflow-hidden flex items-center justify-center shrink-0" style={{ backgroundColor: 'var(--background-secondary)' }}>
+            <img 
+              src={logoUrl} 
+              alt={`${value} logo`}
+              className="w-full h-full object-cover"
+              onError={(e) => {
+                e.currentTarget.style.display = 'none';
+                e.currentTarget.nextElementSibling?.classList.remove('hidden');
+              }}
+            />
+            <div className="text-lg hidden" style={{ color: 'var(--accent-color)' }}>{typeof icon === 'string' ? icon : <div>{icon}</div>}</div>
           </div>
-          <div className="text-sm leading-tight text-center" style={{ color: 'var(--text-secondary)' }}>{title}</div>
+        ) : (
+          <div className="mb-1 shrink-0 text-2xl" style={{ color: 'var(--accent-color)' }}>
+            {typeof icon === 'string' ? icon : icon}
+          </div>
+        )}
+        <div className="text-2xl font-semibold leading-tight" style={{ color: 'var(--text-color)' }}>
+          {typeof animatedValue === 'number' ? formatNumber(animatedValue) : animatedValue}{suffix}
         </div>
+        <div className="mt-0.5 text-sm leading-snug line-clamp-2 mb-2 md:mb-6" style={{ color: 'var(--text-secondary)' }}>{title}</div>
       </div>
     );
 
@@ -197,7 +205,18 @@ export default function StatisticsSection() {
   };
 
   return (
-    <section ref={sectionRef} className="py-16" style={{ backgroundColor: 'var(--background-secondary)' }}>
+    <section 
+      ref={sectionRef} 
+      id="platform-stats"
+      className="
+        stats-section
+        -mt-8 md:mt-0 
+        pt-5 md:pt-16                    /* increased mobile padding from pt-1 to pt-5 */
+        pb-10 md:pb-16 mb-2 md:mb-12 
+        border-t-0 md:border-t md:border-white/10   /* hide mobile border, keep desktop */
+      " 
+      style={{ backgroundColor: 'var(--background-secondary)' }}
+    >
       <div className="mx-auto w-[90%] md:w-[95%] max-w-[1280px]">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold mb-4" style={{ color: 'var(--text-color)' }}>{t('home.statistics')}</h2>
@@ -206,7 +225,7 @@ export default function StatisticsSection() {
           </p>
         </div>
 
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4 md:gap-6">
           <StatCard
             title={t('stats.users')}
             value={stats?.totalUsers || 0}
