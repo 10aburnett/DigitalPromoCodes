@@ -15,13 +15,7 @@ export async function GET(request: Request, { params }: { params: { page: string
     
     // Get paginated indexable whops only
     const whops = await prisma.whop.findMany({
-      where: {
-        AND: [
-          { publishedAt: { not: null } },
-          { indexingStatus: 'INDEX' },
-          { retired: false }
-        ]
-      },
+      where: { indexingStatus: 'INDEX', retirement: 'NONE' },
       select: {
         slug: true,
         locale: true,

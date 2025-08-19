@@ -1,18 +1,19 @@
 import { NextResponse } from 'next/server';
-import { getNoindexWhops } from '@/lib/data';
+import { prisma } from '@/lib/prisma';
 
 export async function GET() {
   try {
-    const noindexWhops = await getNoindexWhops(50000); // Large limit for all NOINDEX pages
-    
+    const rows = await prisma.whop.findMany({
+      where: { indexingStatus: 'NOINDEX', retirement: 'NONE' },
+      select: { locale: true, slug: true, updatedAt: true },
+    });
+
     const xml = [
       '<?xml version="1.0" encoding="UTF-8"?>',
       '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
-      ...noindexWhops
-        .filter(whop => !whop.retired) // Don't include retired pages (they return 410)
-        .map(whop => 
-          `<url><loc>https://whpcodes.com/whop/${whop.slug}</loc><lastmod>${new Date().toISOString()}</lastmod></url>`
-        ),
+      ...rows.map(r =>
+        `<url><loc>https://whpcodes.com/${r.locale}/whop/${r.slug}</loc><lastmod>${(r.updatedAt ?? new Date()).toISOString()}</lastmod></url>`
+      ),
       '</urlset>',
     ].join('');
 

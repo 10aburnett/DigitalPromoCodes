@@ -8,13 +8,7 @@ export async function GET() {
   try {
     // Count total indexable whops (INDEX + not retired + published)
     const totalWhops = await prisma.whop.count({
-      where: {
-        AND: [
-          { publishedAt: { not: null } },
-          { indexingStatus: 'INDEX' },
-          { retired: false }
-        ]
-      }
+      where: { indexingStatus: 'INDEX', retirement: 'NONE' }
     });
 
     console.log(`Sitemap Index: Found ${totalWhops} published whops`);
@@ -92,13 +86,7 @@ export async function GET() {
     } else {
       // Small site - use single sitemap with indexable whops only
       const whops = await prisma.whop.findMany({
-        where: {
-          AND: [
-            { publishedAt: { not: null } },
-            { indexingStatus: 'INDEX' },
-            { retired: false }
-          ]
-        },
+        where: { indexingStatus: 'INDEX', retirement: 'NONE' },
         select: {
           slug: true,
           locale: true,
