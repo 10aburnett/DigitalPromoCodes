@@ -7,6 +7,30 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model BlogPost {
+  id          String    @id
+  title       String
+  slug        String    @unique
+  content     String
+  excerpt     String?
+  published   Boolean   @default(false)
+  publishedAt DateTime?
+  pinned      Boolean   @default(false)
+  pinnedAt    DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime
+  authorId    String?
+  authorName  String?
+  User        User?     @relation(fields: [authorId], references: [id])
+  Comment     Comment[]
+
+  @@index([createdAt])
+  @@index([pinned])
+  @@index([publishedAt])
+  @@index([published])
+  @@index([slug])
+}
+
 model BulkImport {
   id          String       @id
   filename    String
@@ -17,6 +41,42 @@ model BulkImport {
   errors      String[]     @default([])
   createdAt   DateTime     @default(now())
   updatedAt   DateTime
+}
+
+model Comment {
+  id            String        @id
+  content       String
+  authorName    String
+  authorEmail   String
+  status        CommentStatus @default(PENDING)
+  flaggedReason String?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime
+  blogPostId    String
+  parentId      String?
+  upvotes       Int           @default(0)
+  downvotes     Int           @default(0)
+  BlogPost      BlogPost      @relation(fields: [blogPostId], references: [id], onDelete: Cascade)
+  Comment       Comment?      @relation("CommentToComment", fields: [parentId], references: [id], onDelete: Cascade)
+  other_Comment Comment[]     @relation("CommentToComment")
+  CommentVote   CommentVote[]
+
+  @@index([blogPostId])
+  @@index([createdAt])
+  @@index([parentId])
+  @@index([status])
+}
+
+model CommentVote {
+  id        String   @id
+  commentId String
+  voterIP   String
+  voteType  VoteType
+  createdAt DateTime @default(now())
+  Comment   Comment  @relation(fields: [commentId], references: [id], onDelete: Cascade)
+
+  @@unique([commentId, voterIP])
+  @@index([commentId])
 }
 
 model ContactSubmission {
@@ -37,6 +97,22 @@ model LegalPage {
   content   String
   createdAt DateTime @default(now())
   updatedAt DateTime
+}
+
+model MailingList {
+  id             String            @id
+  email          String            @unique
+  name           String?
+  status         MailingListStatus @default(ACTIVE)
+  source         String?
+  subscribedAt   DateTime          @default(now())
+  unsubscribedAt DateTime?
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime
+
+  @@index([email])
+  @@index([status])
+  @@index([subscribedAt])
 }
 
 model OfferTracking {
@@ -66,10 +142,39 @@ model PromoCode {
   createdAt     DateTime        @default(now())
   updatedAt     DateTime
   OfferTracking OfferTracking[]
-  whop          Whop            @relation(fields: [whopId], references: [id], onDelete: Cascade)
+  Whop          Whop            @relation(fields: [whopId], references: [id], onDelete: Cascade)
 
   @@index([createdAt])
   @@index([type])
+  @@index([whopId])
+}
+
+model PromoCodeSubmission {
+  id               String           @id
+  title            String
+  description      String
+  code             String?
+  value            String?
+  whopId           String?
+  customCourseName String?
+  isGeneral        Boolean          @default(false)
+  submitterName    String
+  submitterEmail   String
+  submitterMessage String?
+  status           SubmissionStatus @default(PENDING)
+  reviewedAt       DateTime?
+  reviewedBy       String?
+  adminNotes       String?
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime
+  ipAddress        String?
+  userAgent        String?
+  Whop             Whop?            @relation(fields: [whopId], references: [id], onDelete: Cascade)
+
+  @@index([createdAt])
+  @@index([isGeneral])
+  @@index([status])
+  @@index([submitterEmail])
   @@index([whopId])
 }
 
@@ -82,7 +187,7 @@ model Review {
   updatedAt DateTime
   verified  Boolean  @default(false)
   whopId    String
-  whop      Whop     @relation(fields: [whopId], references: [id], onDelete: Cascade)
+  Whop      Whop     @relation(fields: [whopId], references: [id], onDelete: Cascade)
 
   @@index([createdAt])
   @@index([rating])
@@ -108,20 +213,20 @@ model User {
   BlogPost  BlogPost[]
 }
 
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model Whop {
-  id                  String          @id
+  id                  String                @id
   name                String
-  slug                String          @unique
-  locale              String          @default("en")
+  slug                String                @unique
   logo                String?
   description         String?
-  rating              Float           @default(0)
-  displayOrder        Int             @default(0)
-  createdAt           DateTime        @default(now())
-  updatedAt           DateTime        @updatedAt
+  rating              Float                 @default(0)
+  displayOrder        Int                   @default(0)
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime
   publishedAt         DateTime?
   affiliateLink       String
-  screenshots         String[]        @default([])
+  screenshots         String[]              @default([])
   website             String?
   price               String?
   category            String?
@@ -131,112 +236,28 @@ model Whop {
   featuresContent     String?
   termsContent        String?
   faqContent          String?
-  whopCategory        WhopCategory    @default(OTHER)
-  indexingStatus      IndexingStatus  @default(INDEX)
-  
-  // NEW retirement enum + redirect support
-  retirement          RetirementMode  @default(NONE)
+  whopCategory        WhopCategory          @default(OTHER)
+  locale              String?               @default("en")
+  indexingStatus      String?               @default("INDEX")
+  retired             Boolean?              @default(false)
+  retirement          RetirementMode?       @default(NONE)
   redirectToPath      String?
-  
-  // LEGACY: keep for fallback during transition
-  retired             Boolean         @default(false)
-  
   OfferTracking       OfferTracking[]
   PromoCode           PromoCode[]
-  Review              Review[]
   PromoCodeSubmission PromoCodeSubmission[]
+  Review              Review[]
 
   @@index([createdAt])
   @@index([displayOrder])
+  @@index([indexingStatus])
+  @@index([locale])
   @@index([name])
   @@index([publishedAt])
   @@index([rating])
-  @@index([updatedAt])
-  @@index([whopCategory])
-  @@index([indexingStatus])
-  @@index([locale])
   @@index([retired])
   @@index([retirement])
-}
-
-model BlogPost {
-  id          String    @id @default(cuid())
-  title       String
-  slug        String    @unique
-  content     String    @db.Text
-  excerpt     String?
-  published   Boolean   @default(false)
-  publishedAt DateTime?
-  pinned      Boolean   @default(false)
-  pinnedAt    DateTime?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  authorId    String?
-  author      User?     @relation(fields: [authorId], references: [id])
-  authorName  String?   // New field for flexible author names
-  comments    Comment[]
-
-  @@index([published])
-  @@index([publishedAt])
-  @@index([createdAt])
-  @@index([slug])
-  @@index([pinned])
-}
-
-model Comment {
-  id          String        @id @default(cuid())
-  content     String        @db.Text
-  authorName  String
-  authorEmail String
-  status      CommentStatus @default(PENDING)
-  flaggedReason String?
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-  blogPostId  String
-  blogPost    BlogPost      @relation(fields: [blogPostId], references: [id], onDelete: Cascade)
-
-  // Nested replies support
-  parentId    String?
-  parent      Comment?      @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
-  replies     Comment[]     @relation("CommentReplies")
-  
-  // Voting system
-  upvotes     Int           @default(0)
-  downvotes   Int           @default(0)
-  votes       CommentVote[]
-
-  @@index([status])
-  @@index([createdAt])
-  @@index([blogPostId])
-  @@index([parentId])
-}
-
-model CommentVote {
-  id        String    @id @default(cuid())
-  commentId String
-  comment   Comment   @relation(fields: [commentId], references: [id], onDelete: Cascade)
-  voterIP   String    // Using IP address to prevent duplicate votes
-  voteType  VoteType
-  createdAt DateTime  @default(now())
-  
-  @@unique([commentId, voterIP]) // One vote per IP per comment
-  @@index([commentId])
-}
-
-model MailingList {
-  id           String            @id @default(cuid())
-  email        String            @unique
-  name         String?
-  status       MailingListStatus @default(ACTIVE)
-  source       String?           // e.g., "blog_comment", "direct_signup"
-  subscribedAt DateTime          @default(now())
-  unsubscribedAt DateTime?
-  createdAt    DateTime          @default(now())
-  updatedAt    DateTime          @updatedAt
-
-  @@index([status])
-  @@index([email])
-  @@index([subscribedAt])
+  @@index([updatedAt])
+  @@index([whopCategory])
 }
 
 model playing_with_neon {
@@ -252,17 +273,6 @@ enum CommentStatus {
   FLAGGED
 }
 
-enum VoteType {
-  UPVOTE
-  DOWNVOTE
-}
-
-enum MailingListStatus {
-  ACTIVE
-  UNSUBSCRIBED
-  BOUNCED
-}
-
 enum ContactStatus {
   UNREAD
   READ
@@ -275,6 +285,18 @@ enum ImportStatus {
   FAILED
 }
 
+enum IndexingStatus {
+  INDEX
+  NOINDEX
+  AUTO
+}
+
+enum MailingListStatus {
+  ACTIVE
+  UNSUBSCRIBED
+  BOUNCED
+}
+
 enum PromoType {
   DISCOUNT
   FREE_TRIAL
@@ -283,9 +305,28 @@ enum PromoType {
   LIMITED_TIME
 }
 
+enum RetirementMode {
+  NONE
+  REDIRECT
+  GONE
+}
+
 enum Role {
   USER
   ADMIN
+}
+
+enum SubmissionStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  DUPLICATE
+  SPAM
+}
+
+enum VoteType {
+  UPVOTE
+  DOWNVOTE
 }
 
 enum WhopCategory {
@@ -308,64 +349,4 @@ enum WhopCategory {
   COMPUTER_SCIENCE
   PERSONAL_FINANCE
   OTHER
-}
-
-enum IndexingStatus {
-  INDEX     // Force index this page
-  NOINDEX   // Force noindex this page  
-}
-
-enum RetirementMode {
-  NONE
-  REDIRECT  
-  GONE
-}
-
-model PromoCodeSubmission {
-  id            String               @id @default(cuid())
-  
-  // Submission Details
-  title         String
-  description   String
-  code          String?              // Optional - some submissions might not have codes
-  value         String?              // e.g., "20% off", "$50 off", "Free trial"
-  
-  // Course Association (nullable for general codes)
-  whopId        String?
-  whop          Whop?                @relation(fields: [whopId], references: [id], onDelete: Cascade)
-  customCourseName String?           // For new courses not yet on the platform
-  isGeneral     Boolean              @default(false) // True for general codes not tied to specific course
-  
-  // Submitter Information
-  submitterName    String
-  submitterEmail   String
-  submitterMessage String?           // Optional message from submitter
-  
-  // Admin Review
-  status        SubmissionStatus     @default(PENDING)
-  reviewedAt    DateTime?
-  reviewedBy    String?              // Admin who reviewed it
-  adminNotes    String?              // Admin's notes about the submission
-  
-  // Metadata
-  createdAt     DateTime             @default(now())
-  updatedAt     DateTime             @updatedAt
-  
-  // Tracking
-  ipAddress     String?              // For spam prevention
-  userAgent     String?              // For analytics/spam prevention
-
-  @@index([status])
-  @@index([createdAt])
-  @@index([whopId])
-  @@index([isGeneral])
-  @@index([submitterEmail])
-}
-
-enum SubmissionStatus {
-  PENDING       // Awaiting admin review
-  APPROVED      // Approved and live
-  REJECTED      // Rejected by admin
-  DUPLICATE     // Marked as duplicate
-  SPAM          // Marked as spam
 }
