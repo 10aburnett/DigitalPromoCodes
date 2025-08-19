@@ -1,9 +1,10 @@
-import { notFound } from 'next/navigation';
+import { notFound, permanentRedirect } from 'next/navigation';
 import Link from 'next/link';
 import { Metadata } from 'next';
 import { normalizeImagePath } from '@/lib/image-utils';
 import { unstable_noStore as noStore } from 'next/cache';
 import { getWhopBySlug } from '@/lib/data';
+import { prisma } from '@/lib/prisma';
 import { Suspense } from 'react';
 
 // Enable ISR with 5-minute revalidation for better performance
@@ -210,6 +211,16 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     }
   }
 
+  // DB-driven robots flags (do not remove any existing metadata fields)
+  const flags = await prisma.whop.findFirst({
+    where: { slug: params.slug }, // If you also have locale, add: , locale: params.locale
+    select: { indexingStatus: true, retirement: true },
+  });
+  const shouldIndex =
+    !!flags &&
+    flags.indexingStatus === 'INDEX' &&
+    flags.retirement === 'NONE';
+
   return {
     title,
     description,
@@ -227,21 +238,11 @@ export async function generateMetadata({ params }: { params: { slug: string } })
       currentMonth,
       currentYear.toString()
     ].filter(Boolean).join(', '),
-    robots: shouldIndex ? {
-      index: true,
+    robots: {
+      index: shouldIndex,
       follow: true,
       googleBot: {
-        index: true,
-        follow: true,
-        'max-image-preview': 'large',
-        'max-snippet': -1,
-        'max-video-preview': -1,
-      },
-    } : {
-      index: false,
-      follow: true,
-      googleBot: {
-        index: false,
+        index: shouldIndex,
         follow: true,
         'max-image-preview': 'large',
         'max-snippet': -1,
@@ -271,6 +272,19 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 }
 
 export default async function WhopPage({ params }: { params: { slug: string } }) {
+  // Minimal retirement guards (no other changes)
+  const flags = await prisma.whop.findFirst({
+    where: { slug: params.slug }, // add locale: params.locale if applicable
+    select: { retirement: true, redirectToPath: true },
+  });
+
+  if (flags?.retirement === 'REDIRECT' && flags.redirectToPath) {
+    return permanentRedirect(flags.redirectToPath); // 308/301
+  }
+  if (flags?.retirement === 'GONE') {
+    return notFound(); // middleware serves exact 410
+  }
+
   // Try to get hero data from API first for faster loading
   const dealData = await getDeal(params.slug);
   
