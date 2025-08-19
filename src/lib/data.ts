@@ -80,7 +80,7 @@ export async function getIndexableWhops(limit = 5000) {
   return prisma.whop.findMany({
     where: { 
       indexingStatus: 'INDEX', 
-      retired: false,
+      retirement: 'NONE',
       publishedAt: { not: null }
     },
     select: { 
@@ -97,7 +97,7 @@ export async function getNoindexWhops(limit = 50000) {
   return prisma.whop.findMany({
     where: { 
       indexingStatus: 'NOINDEX',
-      retired: false,
+      retirement: 'NONE',
       publishedAt: { not: null }
     },
     select: { 
