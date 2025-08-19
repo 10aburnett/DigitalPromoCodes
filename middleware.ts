@@ -1,11 +1,30 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { RETIRED_PATHS, NOINDEX_PATHS } from './app/_generated/seo-indexes';
 
 // Define the language codes
 const languageKeys = ['en', 'es', 'nl', 'fr', 'de', 'it', 'pt', 'zh'];
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  
+  // SEO: Handle retired pages with 410 Gone
+  const normalizedPath = pathname.replace(/\/+$/, ''); // normalize trailing slash
+  if (RETIRED_PATHS.has(normalizedPath)) {
+    return new NextResponse('Gone', { 
+      status: 410,
+      headers: {
+        'Cache-Control': 'public, max-age=300, s-maxage=300, stale-while-revalidate=60'
+      }
+    });
+  }
+
+  // SEO: Add X-Robots-Tag for NOINDEX pages (belt-and-braces)
+  if (NOINDEX_PATHS.has(normalizedPath)) {
+    const response = NextResponse.next();
+    response.headers.set('X-Robots-Tag', 'noindex, follow');
+    return response;
+  }
   
   // Handle specific redirects
   if (pathname === '/whop/monthly-mentorship') {

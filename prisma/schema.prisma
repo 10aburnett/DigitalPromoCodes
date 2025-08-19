@@ -112,12 +112,13 @@ model Whop {
   id                  String          @id
   name                String
   slug                String          @unique
+  locale              String          @default("en")
   logo                String?
   description         String?
   rating              Float           @default(0)
   displayOrder        Int             @default(0)
   createdAt           DateTime        @default(now())
-  updatedAt           DateTime
+  updatedAt           DateTime        @updatedAt
   publishedAt         DateTime?
   affiliateLink       String
   screenshots         String[]        @default([])
@@ -131,7 +132,15 @@ model Whop {
   termsContent        String?
   faqContent          String?
   whopCategory        WhopCategory    @default(OTHER)
-  indexing            IndexingStatus  @default(AUTO)
+  indexingStatus      IndexingStatus  @default(INDEX)
+  
+  // NEW retirement enum + redirect support
+  retirement          RetirementMode  @default(NONE)
+  redirectToPath      String?
+  
+  // LEGACY: keep for fallback during transition
+  retired             Boolean         @default(false)
+  
   OfferTracking       OfferTracking[]
   PromoCode           PromoCode[]
   Review              Review[]
@@ -144,7 +153,10 @@ model Whop {
   @@index([rating])
   @@index([updatedAt])
   @@index([whopCategory])
-  @@index([indexing])
+  @@index([indexingStatus])
+  @@index([locale])
+  @@index([retired])
+  @@index([retirement])
 }
 
 model BlogPost {
@@ -301,7 +313,12 @@ enum WhopCategory {
 enum IndexingStatus {
   INDEX     // Force index this page
   NOINDEX   // Force noindex this page  
-  AUTO      // Use automatic logic (promo codes + high traffic)
+}
+
+enum RetirementMode {
+  NONE
+  REDIRECT  
+  GONE
 }
 
 model PromoCodeSubmission {

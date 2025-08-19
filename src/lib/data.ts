@@ -1,7 +1,7 @@
 import { unstable_noStore as noStore } from 'next/cache';
 import { prisma } from '@/lib/prisma';
 
-export async function getWhopBySlug(slug: string) {
+export async function getWhopBySlug(slug: string, locale: string = 'en') {
   noStore();
   
   // Decode the slug in case it's URL encoded
@@ -10,6 +10,7 @@ export async function getWhopBySlug(slug: string) {
   const whop = await prisma.whop.findFirst({
     where: { 
       slug: decodedSlug,
+      locale,
       publishedAt: { not: null }
     },
     select: {
@@ -35,7 +36,9 @@ export async function getWhopBySlug(slug: string) {
       termsContent: true,
       faqContent: true,
       whopCategory: true,
-      indexing: true,
+      indexingStatus: true,
+      retired: true,
+      locale: true,
       PromoCode: {
         where: {
           NOT: { id: { startsWith: 'community_' } }
@@ -71,4 +74,38 @@ export async function getWhopBySlug(slug: string) {
     ...whop,
     PromoCode: allPromoCodes
   };
+}
+
+export async function getIndexableWhops(limit = 5000) {
+  return prisma.whop.findMany({
+    where: { 
+      indexingStatus: 'INDEX', 
+      retired: false,
+      publishedAt: { not: null }
+    },
+    select: { 
+      slug: true, 
+      locale: true, 
+      updatedAt: true 
+    },
+    take: limit,
+    orderBy: { updatedAt: 'desc' }
+  });
+}
+
+export async function getNoindexWhops(limit = 50000) {
+  return prisma.whop.findMany({
+    where: { 
+      indexingStatus: 'NOINDEX',
+      retired: false,
+      publishedAt: { not: null }
+    },
+    select: { 
+      slug: true, 
+      locale: true, 
+      updatedAt: true
+    },
+    take: limit,
+    orderBy: { updatedAt: 'desc' }
+  });
 }

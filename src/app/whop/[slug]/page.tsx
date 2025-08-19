@@ -100,7 +100,7 @@ async function ReviewsSection({ whopId, whopName, reviews }: { whopId: string; w
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   noStore();
-  const whopData = await getWhopBySlug(params.slug);
+  const whopData = await getWhopBySlug(params.slug, 'en');
   
   if (!whopData) {
     return {
@@ -109,40 +109,20 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     };
   }
 
-  // Determine indexing status based on database field
-  let shouldIndex = true; // Default to index
-  
-  if (whopData.indexing === 'INDEX') {
-    shouldIndex = true; // Force index
-  } else if (whopData.indexing === 'NOINDEX') {
-    shouldIndex = false; // Force noindex
-  } else if (whopData.indexing === 'AUTO') {
-    // Use automatic logic (fallback for existing system)
-    const highTrafficCourses = [
-      'Brez marketing ERT',
-      'Remakeit.io creator', 
-      'Interbank Trading Room',
-      'Josh Exclusive VIP Access',
-      'EquiFix',
-      'LinkedIn Client Lab',
-      'Lowkey Discord Membership',
-      'Risen Consulting',
-      'Learn to Trade Academy',
-      'Royalty Hero Premium',
-      'The Blue Vortex',
-      'ThinkorSwim Blessing',
-      'ThinkorSwim Master Scalper',
-      'Korvato Gold Rush'
-    ];
-
-    const hasPromoCode = whopData.PromoCode && whopData.PromoCode.length > 0;
-    const isHighTraffic = highTrafficCourses.some(course => 
-      whopData.name.toLowerCase().includes(course.toLowerCase()) ||
-      course.toLowerCase().includes(whopData.name.toLowerCase())
-    );
-    
-    shouldIndex = hasPromoCode || isHighTraffic;
+  // Check if whop is retired - return basic metadata for 410 pages
+  if (whopData.retired) {
+    return {
+      title: 'Content No Longer Available',
+      description: 'This content has been retired and is no longer available.',
+      robots: {
+        index: false,
+        follow: false
+      }
+    };
   }
+
+  // Determine indexing status based on database field
+  const shouldIndex = whopData.indexingStatus === 'INDEX';
 
   // Get current month and year for SEO
   const currentDate = new Date();
@@ -298,14 +278,19 @@ export default async function WhopPage({ params }: { params: { slug: string } })
   let whopData;
   if (dealData && dealData.id) {
     // We have lightweight hero data, but still need full data for the page
-    whopData = await getWhopBySlug(params.slug);
+    whopData = await getWhopBySlug(params.slug, 'en');
   } else {
     // Fallback to direct DB query
-    whopData = await getWhopBySlug(params.slug);
+    whopData = await getWhopBySlug(params.slug, 'en');
   }
   
   if (!whopData) {
     notFound();
+  }
+
+  // If page is retired, don't render - let route handler return 410
+  if (whopData.retired) {
+    return null;
   }
 
   // Transform raw Prisma data to match expected format

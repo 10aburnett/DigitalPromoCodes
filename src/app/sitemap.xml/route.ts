@@ -6,12 +6,13 @@ export async function GET() {
   const baseUrl = 'https://whpcodes.com';
   
   try {
-    // Count total published whops (EXCLUDE NOINDEX pages)
+    // Count total indexable whops (INDEX + not retired + published)
     const totalWhops = await prisma.whop.count({
       where: {
         AND: [
           { publishedAt: { not: null } },
-          { indexing: { not: 'NOINDEX' } }  // Exclude NOINDEX pages from sitemap count
+          { indexingStatus: 'INDEX' },
+          { retired: false }
         ]
       }
     });
@@ -89,16 +90,18 @@ export async function GET() {
         }
       });
     } else {
-      // Small site - use single sitemap
+      // Small site - use single sitemap with indexable whops only
       const whops = await prisma.whop.findMany({
         where: {
           AND: [
             { publishedAt: { not: null } },
-            { indexing: { not: 'NOINDEX' } }  // Exclude NOINDEX pages from single sitemap too
+            { indexingStatus: 'INDEX' },
+            { retired: false }
           ]
         },
         select: {
           slug: true,
+          locale: true,
           updatedAt: true
         }
       });

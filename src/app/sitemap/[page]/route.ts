@@ -13,16 +13,18 @@ export async function GET(request: Request, { params }: { params: { page: string
     // Calculate offset for pagination
     const skip = (page - 1) * WHOPS_PER_SITEMAP;
     
-    // Get paginated whops (EXCLUDE NOINDEX pages from sitemap)
+    // Get paginated indexable whops only
     const whops = await prisma.whop.findMany({
       where: {
         AND: [
           { publishedAt: { not: null } },
-          { indexing: { not: 'NOINDEX' } }  // Exclude NOINDEX pages from sitemap
+          { indexingStatus: 'INDEX' },
+          { retired: false }
         ]
       },
       select: {
         slug: true,
+        locale: true,
         updatedAt: true
       },
       skip,
