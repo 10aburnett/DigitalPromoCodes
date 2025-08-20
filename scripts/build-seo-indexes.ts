@@ -27,6 +27,13 @@ async function main() {
   
   await prisma.$connect();
   
+  // Debug logging for preview deployment troubleshooting
+  console.log('[seo-gen] host', new URL(process.env.DATABASE_URL!).host);
+  console.log('[seo-gen] ayecon', await prisma.whop.findUnique({ 
+    where: { slug: 'ayecon-academy-1:1-mentorship' }, 
+    select: { slug: true, retirement: true, indexingStatus: true, retired: true } 
+  }));
+  
   try {
     // Check if we have the new retirement column or need to fall back to legacy
     const hasRetirement = await hasColumn('Whop', 'retirement');
