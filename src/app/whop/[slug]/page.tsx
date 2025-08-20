@@ -9,6 +9,10 @@ import { Suspense } from 'react';
 
 // Enable ISR with 5-minute revalidation for better performance
 export const revalidate = 300;
+// Force runtime render; ignore any stale static params
+export const dynamic = 'force-dynamic';
+export const dynamicParams = true;
+
 import InitialsAvatar from '@/components/InitialsAvatar';
 import WhopLogo from '@/components/WhopLogo';
 import WhopReviewSection from '@/components/WhopReviewSection';
@@ -121,9 +125,6 @@ export async function generateMetadata({ params }: { params: { slug: string } })
       }
     };
   }
-
-  // Determine indexing status based on database field
-  const shouldIndex = whopData.indexingStatus === 'INDEX';
 
   // Get current month and year for SEO
   const currentDate = new Date();
@@ -272,35 +273,56 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 }
 
 export default async function WhopPage({ params }: { params: { slug: string } }) {
-  // Minimal retirement guards (no other changes)
-  const flags = await prisma.whop.findFirst({
-    where: { slug: params.slug }, // add locale: params.locale if applicable
-    select: { retirement: true, redirectToPath: true },
-  });
+  const { slug } = params;
 
+  // 1) Your existing lookup (keep exactly as-is)
+  const dealData = await getDeal(slug);
+  
+  let whopData;
+  if (dealData && dealData.id) {
+    whopData = await getWhopBySlug(slug, 'en');
+  } else {
+    whopData = await getWhopBySlug(slug, 'en');
+  }
+
+  // 2) If helper returned nothing, try a direct Prisma lookup (slug-only; no locale)
+  let flags: 
+    | { indexingStatus: 'INDEX' | 'NOINDEX'; retirement: 'NONE' | 'REDIRECT' | 'GONE'; redirectToPath: string | null }
+    | null = null;
+
+  if (!whopData) {
+    flags = await prisma.whop.findFirst({
+      where: { slug },
+      select: { indexingStatus: true, retirement: true, redirectToPath: true },
+    });
+  } else {
+    // Fetch flags for existing whop data
+    flags = await prisma.whop.findFirst({
+      where: { slug },
+      select: { indexingStatus: true, retirement: true, redirectToPath: true },
+    });
+  }
+
+  // 3) Retirement guards (respect enum)
   if (flags?.retirement === 'REDIRECT' && flags.redirectToPath) {
-    return permanentRedirect(flags.redirectToPath); // 308/301
+    return permanentRedirect(flags.redirectToPath); // 308
   }
   if (flags?.retirement === 'GONE') {
     return notFound(); // middleware serves exact 410
   }
 
-  // Try to get hero data from API first for faster loading
-  const dealData = await getDeal(params.slug);
-  
-  // If API data is available and lightweight, use it for hero
-  let whopData;
-  if (dealData && dealData.id) {
-    // We have lightweight hero data, but still need full data for the page
-    whopData = await getWhopBySlug(params.slug, 'en');
-  } else {
-    // Fallback to direct DB query
-    whopData = await getWhopBySlug(params.slug, 'en');
+  // 4) TEMP DEBUG: only when explicitly enabled
+  if (!whopData && process.env.SEO_DEBUG === '1') {
+    return (
+      <pre style={{ padding: 16 }}>
+        {'DEBUG: whop not found\n'}
+        {JSON.stringify({ slug, flags }, null, 2)}
+      </pre>
+    );
   }
-  
-  if (!whopData) {
-    notFound();
-  }
+
+  // 5) Original behaviour if still nothing and not debugging
+  if (!whopData) return notFound();
 
   // If page is retired, don't render - let route handler return 410
   if (whopData.retired) {
