@@ -27,9 +27,10 @@ function verifyJWT(token: string, secret: string): any {
 
 // Middleware that handles admin routes, API routes, and SEO
 export function middleware(request: NextRequest) {
-  // 🔧 Bypass all middleware logic when skipping SEO build
   if (process.env.SKIP_SEO_BUILD === '1') {
-    return NextResponse.next();
+    const res = NextResponse.next();
+    res.headers.set('x-skip-seo', '1');
+    return res;
   }
 
   // Get the pathname from the URL
