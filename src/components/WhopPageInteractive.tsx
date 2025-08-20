@@ -8,6 +8,7 @@ interface WhopPageInteractiveProps {
   whop: {
     id: string;
     name: string;
+    slug: string;
     affiliateLink: string | null;
   };
   firstPromo: {
@@ -22,11 +23,12 @@ interface WhopPageInteractiveProps {
 }
 
 // Standalone compact stats component
-export function WhopPageCompactStats({ whopId, promoCodeId }: { whopId: string; promoCodeId: string }) {
+export function WhopPageCompactStats({ whopId, promoCodeId, slug }: { whopId: string; promoCodeId: string; slug?: string }) {
   return (
     <PromoStatsDisplay 
       whopId={whopId} 
       promoCodeId={promoCodeId}
+      slug={slug}
       compact={true}
     />
   );
@@ -65,6 +67,7 @@ export default function WhopPageInteractive({ whop, firstPromo, promoCode, promo
             ref={mainStatsRef}
             whopId={whop.id} 
             promoCodeId={firstPromo.id}
+            slug={whop.slug}
           />
         </div>
       )}

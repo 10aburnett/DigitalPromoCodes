@@ -24,6 +24,7 @@ interface PromoStats {
 interface PromoStatsDisplayProps {
   whopId: string;
   promoCodeId?: string;
+  slug?: string;
   compact?: boolean;
 }
 
@@ -32,7 +33,7 @@ export interface PromoStatsDisplayHandle {
 }
 
 const PromoStatsDisplay = forwardRef<PromoStatsDisplayHandle, PromoStatsDisplayProps>(
-  ({ whopId, promoCodeId, compact = false }, ref) => {
+  ({ whopId, promoCodeId, slug, compact = false }, ref) => {
     const [stats, setStats] = useState<PromoStats | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -43,19 +44,20 @@ const PromoStatsDisplay = forwardRef<PromoStatsDisplayHandle, PromoStatsDisplayP
         setError(null);
         setLoading(true);
         
-        let qs = '';
-        if (promoCodeId) qs = `promoCodeId=${promoCodeId}`;
-        else if (whopId) qs = `whopId=${whopId}`;
+        const params = new URLSearchParams();
+        if (slug) params.set('slug', slug);
+        else if (promoCodeId) params.set('promoCodeId', String(promoCodeId));
+        else if (whopId) params.set('whopId', String(whopId));
         else {
           // fallback: derive slug from URL like /whop/{slug} or /en/whop/{slug}
           const p = typeof window !== 'undefined' ? window.location.pathname : '';
           const m = p.match(/^\/(?:[a-z]{2}\/)?whop\/(.+)$/);
-          if (m?.[1]) qs = `slug=${encodeURIComponent(m[1])}`;
+          if (m?.[1]) params.set('slug', m[1]);
         }
 
-        if (!qs) return; // nothing to query
+        if (params.toString() === '') return; // nothing to query
 
-        const url = `/api/promo-stats?${qs}`;
+        const url = `/api/promo-stats?${params.toString()}`;
         const res = await fetch(url, { cache: 'no-store' });
         const data = await res.json().catch(() => null);
 
@@ -95,7 +97,7 @@ const PromoStatsDisplay = forwardRef<PromoStatsDisplayHandle, PromoStatsDisplayP
 
     useEffect(() => {
       fetchStats();
-    }, [whopId, promoCodeId]);
+    }, [whopId, promoCodeId, slug]);
 
     // Listen for custom refresh events in compact mode
     useEffect(() => {
