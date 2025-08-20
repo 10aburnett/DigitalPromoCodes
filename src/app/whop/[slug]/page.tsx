@@ -461,6 +461,7 @@ export default async function WhopPage({ params }: { params: { slug: string } })
                     affiliateLink: whop.affiliateLink
                   }}
                   promoCodes={whop.promoCodes || []}
+                  slug={params.slug}
                 />
               </div>
 
@@ -603,6 +604,7 @@ export default async function WhopPage({ params }: { params: { slug: string } })
                   <WhopPageCompactStats 
                     whopId={whop.id}
                     promoCodeId={firstPromo.id}
+                    slug={params.slug}
                   />
                 </div>
               )}

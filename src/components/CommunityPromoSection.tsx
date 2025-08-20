@@ -20,9 +20,10 @@ interface CommunityPromoSectionProps {
     affiliateLink: string | null
   }
   promoCodes: PromoCode[]
+  slug?: string
 }
 
-export default function CommunityPromoSection({ whop, promoCodes }: CommunityPromoSectionProps) {
+export default function CommunityPromoSection({ whop, promoCodes, slug }: CommunityPromoSectionProps) {
 
   // Separate community codes from original codes
   const communityPromoCodes = promoCodes.filter(code => code.id.startsWith('community_'))
@@ -110,6 +111,7 @@ export default function CommunityPromoSection({ whop, promoCodes }: CommunityPro
                 <PromoStatsDisplay 
                   whopId={whop.id}
                   promoCodeId={promo.id}
+                  slug={slug}
                   compact={false}
                 />
               </div>
@@ -156,6 +158,7 @@ export default function CommunityPromoSection({ whop, promoCodes }: CommunityPro
                 <PromoStatsDisplay 
                   whopId={whop.id}
                   promoCodeId={promo.id}
+                  slug={slug}
                   compact={false}
                 />
               </div>
