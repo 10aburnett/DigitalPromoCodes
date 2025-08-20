@@ -42,36 +42,48 @@ const PromoStatsDisplay = forwardRef<PromoStatsDisplayHandle, PromoStatsDisplayP
       try {
         setError(null);
         setLoading(true);
-        const params = new URLSearchParams();
-        if (promoCodeId) {
-          params.append('promoCodeId', promoCodeId);
-        } else {
-          params.append('whopId', whopId);
+        
+        let qs = '';
+        if (promoCodeId) qs = `promoCodeId=${promoCodeId}`;
+        else if (whopId) qs = `whopId=${whopId}`;
+        else {
+          // fallback: derive slug from URL like /whop/{slug} or /en/whop/{slug}
+          const p = typeof window !== 'undefined' ? window.location.pathname : '';
+          const m = p.match(/^\/(?:[a-z]{2}\/)?whop\/(.+)$/);
+          if (m?.[1]) qs = `slug=${encodeURIComponent(m[1])}`;
         }
 
-        console.log('🔍 PromoStatsDisplay: Fetching stats with params:', { whopId, promoCodeId });
-        
-        const url = `/api/promo-stats?${params}`;
-        console.log('🔍 PromoStatsDisplay: Fetching URL:', url);
-        const response = await fetch(url);
-        if (response.ok) {
-          const data = await response.json();
-          console.log('✅ PromoStatsDisplay: Received data:', data);
-          
-          // If we requested stats for a specific promo code, use that data
-          if (promoCodeId && data.promoCode) {
-            setStats(data);
-          } 
-          // If we requested whop stats and got an array, use the first promo code
-          else if (data.promoStats && data.promoStats.length > 0) {
-            setStats(data.promoStats[0]);
-          } else {
-            console.warn('⚠️ PromoStatsDisplay: No valid stats data found in response');
-          }
-        } else {
-          const errorText = await response.text();
-          console.error('❌ PromoStatsDisplay: API error:', response.status, errorText);
-          setError(`Failed to load stats (${response.status})`);
+        if (!qs) return; // nothing to query
+
+        const url = `/api/promo-stats?${qs}`;
+        const res = await fetch(url, { cache: 'no-store' });
+        const data = await res.json().catch(() => null);
+
+        console.log('[promo-stats]', url, data); // TEMP: verify non-zero payload
+
+        const usage = data?.usage ?? null;
+        const today = usage?.todayClicks ?? usage?.todayCount ?? 0;
+        const total = usage?.totalCount ?? 0;
+        const lastUsed = usage?.lastUsed ?? null;
+
+        if (usage) {
+          setStats({
+            promoCode: {
+              id: promoCodeId || '',
+              title: 'Promo Code',
+              code: '',
+              type: '',
+              value: '',
+              createdAt: new Date().toISOString()
+            },
+            usage: {
+              todayCount: today,
+              totalCount: total,
+              todayClicks: today,
+              lastUsed,
+              verifiedDate: new Date().toISOString()
+            }
+          });
         }
       } catch (error) {
         console.error('❌ PromoStatsDisplay: Error fetching promo stats:', error);
