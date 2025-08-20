@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useImperativeHandle, forwardRef, useRef } from 'react';
+import { usePathname } from 'next/navigation';
 
 interface PromoStats {
   promoCode: {
@@ -38,22 +39,21 @@ const PromoStatsDisplay = forwardRef<PromoStatsDisplayHandle, PromoStatsDisplayP
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const containerRef = useRef<HTMLDivElement>(null);
+    const pathname = usePathname();
 
     const fetchStats = async () => {
       try {
         setError(null);
         setLoading(true);
         
+        // Derive slug from pathname first
+        const derivedSlug = pathname?.split('/').filter(Boolean).pop();
+        
         const params = new URLSearchParams();
-        if (slug) params.set('slug', slug);
+        if (derivedSlug) params.set('slug', derivedSlug);
+        else if (slug) params.set('slug', slug);
         else if (promoCodeId) params.set('promoCodeId', String(promoCodeId));
         else if (whopId) params.set('whopId', String(whopId));
-        else {
-          // fallback: derive slug from URL like /whop/{slug} or /en/whop/{slug}
-          const p = typeof window !== 'undefined' ? window.location.pathname : '';
-          const m = p.match(/^\/(?:[a-z]{2}\/)?whop\/(.+)$/);
-          if (m?.[1]) params.set('slug', m[1]);
-        }
 
         if (params.toString() === '') return; // nothing to query
 
@@ -63,30 +63,30 @@ const PromoStatsDisplay = forwardRef<PromoStatsDisplayHandle, PromoStatsDisplayP
 
         console.log('[promo-stats]', url, data); // TEMP: verify non-zero payload
 
+        // Map new API shape
         const usage = data?.usage ?? null;
         const today = usage?.todayClicks ?? usage?.todayCount ?? 0;
         const total = usage?.totalCount ?? 0;
         const lastUsed = usage?.lastUsed ?? null;
 
-        if (usage) {
-          setStats({
-            promoCode: {
-              id: promoCodeId || '',
-              title: 'Promo Code',
-              code: '',
-              type: '',
-              value: '',
-              createdAt: new Date().toISOString()
-            },
-            usage: {
-              todayCount: today,
-              totalCount: total,
-              todayClicks: today,
-              lastUsed,
-              verifiedDate: new Date().toISOString()
-            }
-          });
-        }
+        // Always set stats with the mapped data
+        setStats({
+          promoCode: {
+            id: promoCodeId || '',
+            title: 'Promo Code',
+            code: '',
+            type: '',
+            value: '',
+            createdAt: new Date().toISOString()
+          },
+          usage: {
+            todayCount: today,
+            totalCount: total,
+            todayClicks: today,
+            lastUsed,
+            verifiedDate: new Date().toISOString()
+          }
+        });
       } catch (error) {
         console.error('❌ PromoStatsDisplay: Error fetching promo stats:', error);
         setError('Unable to load usage statistics');
