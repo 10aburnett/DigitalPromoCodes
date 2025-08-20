@@ -5,6 +5,8 @@ export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 export async function GET(request: NextRequest) {
+  const SOFT = process.env.SOFT_FAIL_STATS === '1' || process.env.NODE_ENV === 'production';
+  
   try {
     const { searchParams } = new URL(request.url);
     const promoCodeId = searchParams.get('promoCodeId');
@@ -192,18 +194,15 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(stats);
   } catch (error) {
-    console.error("Error fetching promo stats:", error);
-    console.error("Error details:", {
-      message: error instanceof Error ? error.message : "Unknown error",
-      stack: error instanceof Error ? error.stack : undefined,
-      name: error instanceof Error ? error.name : undefined
-    });
-    return NextResponse.json(
-      { 
-        error: "Failed to fetch promo statistics",
-        details: error instanceof Error ? error.message : "Unknown error"
-      },
-      { status: 500 }
-    );
+    console.error('[stats] error', error);
+    if (!SOFT) {
+      return NextResponse.json({ error: 'stats failed' }, { status: 500 });
+    }
+    const res = NextResponse.json({
+      usage: { todayCount: 0, totalCount: 0, todayClicks: 0, lastUsed: null },
+      overallStats: { todayClicks: 0 }
+    }, { status: 200 });
+    res.headers.set('x-stats-degraded', '1');
+    return res;
   }
 } 
