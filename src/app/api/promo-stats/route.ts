@@ -15,8 +15,11 @@ export async function GET(request: NextRequest) {
 
     if (!promoCodeId && !whopId) {
       return NextResponse.json(
-        { error: "Missing promoCodeId or whopId parameter" },
-        { status: 400 }
+        {
+          usage: { todayCount: 0, totalCount: 0, todayClicks: 0, lastUsed: null },
+          overallStats: { todayClicks: 0 }
+        },
+        { status: 200, headers: { 'cache-control': 'no-store' } }
       );
     }
 
@@ -35,7 +38,13 @@ export async function GET(request: NextRequest) {
       });
 
       if (!promoCode) {
-        return NextResponse.json({ error: "Promo code not found" }, { status: 404 });
+        return NextResponse.json(
+          {
+            usage: { todayCount: 0, totalCount: 0, todayClicks: 0, lastUsed: null },
+            overallStats: { todayClicks: 0 }
+          },
+          { status: 200, headers: { 'cache-control': 'no-store' } }
+        );
       }
 
       // Get usage count for today
@@ -111,7 +120,13 @@ export async function GET(request: NextRequest) {
       });
 
       if (!whop) {
-        return NextResponse.json({ error: "Whop not found" }, { status: 404 });
+        return NextResponse.json(
+          {
+            usage: { todayCount: 0, totalCount: 0, todayClicks: 0, lastUsed: null },
+            overallStats: { todayClicks: 0 }
+          },
+          { status: 200, headers: { 'cache-control': 'no-store' } }
+        );
       }
 
       const promoStats = await Promise.all(
@@ -193,17 +208,15 @@ export async function GET(request: NextRequest) {
       };
     }
 
-    return NextResponse.json(stats);
+    return NextResponse.json(stats, { headers: { 'cache-control': 'no-store' } });
   } catch (error) {
-    console.error('[stats] error', error);
-    if (!SOFT) {
-      return NextResponse.json({ error: 'stats failed' }, { status: 500 });
-    }
-    const res = NextResponse.json({
-      usage: { todayCount: 0, totalCount: 0, todayClicks: 0, lastUsed: null },
-      overallStats: { todayClicks: 0 }
-    }, { status: 200 });
-    res.headers.set('x-stats-degraded', '1');
-    return res;
+    console.error('[promo-stats]', error);
+    return NextResponse.json(
+      {
+        usage: { todayCount: 0, totalCount: 0, todayClicks: 0, lastUsed: null },
+        overallStats: { todayClicks: 0 }
+      },
+      { status: 200, headers: { 'cache-control': 'no-store' } }
+    );
   }
 } 
