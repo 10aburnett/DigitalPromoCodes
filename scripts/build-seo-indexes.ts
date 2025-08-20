@@ -1,6 +1,12 @@
 import fs from 'node:fs/promises';
 import { prisma } from '../src/lib/prisma';
 
+// Emergency skip for production builds
+if (process.env.SKIP_SEO_BUILD === '1') {
+  console.log('[seo] skipping build-time SEO index generation');
+  process.exit(0);
+}
+
 // No-locale path builder
 const pathFor = (slug: string) => `/whop/${slug}`;
 
@@ -52,4 +58,6 @@ export const NOINDEX_PATHS = new Set<string>(${JSON.stringify(noindexPaths, null
 main().catch(e => { 
   console.error('❌ Failed to build SEO indexes:', e); 
   process.exit(1); 
+}).finally(() => {
+  prisma.$disconnect();
 });
