@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "dev:seo": "ts-node --transpile-only scripts/build-seo-indexes.ts && next dev",
+    "prebuild": "ts-node --transpile-only scripts/build-seo-indexes.ts",
     "build": "next build",
     "build:migrate": "prisma migrate deploy && next build",
     "build:dev": "next build",
@@ -19,7 +20,6 @@
     "db:migrate": "node scripts/database-safety-guard.js 'npx prisma migrate dev' && npx prisma migrate dev",
     "seo:backfill-retirement": "ts-node --transpile-only scripts/backfill-retirement.ts",
     "seo:build-indexes": "ts-node --transpile-only scripts/build-seo-indexes.ts",
-    "postbuild": "npm run seo:build-indexes",
     "db:seed": "ts-node prisma/seed.ts",
     "fix-prices": "ts-node scripts/fix-prices.ts",
     "fix-prices:apply": "ts-node scripts/fix-prices.ts --apply",
