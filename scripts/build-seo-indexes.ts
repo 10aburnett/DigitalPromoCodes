@@ -2,16 +2,12 @@ import fs from 'node:fs/promises';
 import { prisma } from '../src/lib/prisma';
 
 // Emergency skip for production builds
-if (process.env.SKIP_SEO_BUILD === '1') {
-  console.log('[seo] skipping build-time SEO index generation');
+if (process.env.SKIP_SEO_BUILD === '1' || process.env.SKIP_SEO_BUILD === 'true') {
+  console.log('[seo] skipping build');
   process.exit(0);
 }
 
-// Better error handling
-process.on('unhandledRejection', (e) => {
-  console.error('[seo] unhandled rejection', e);
-  process.exit(1);
-});
+process.on('unhandledRejection', e => { console.error('[seo] unhandled', e); process.exit(1); });
 
 // No-locale path builder
 const pathFor = (slug: string) => `/whop/${slug}`;
