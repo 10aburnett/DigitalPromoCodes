@@ -1,0 +1,13 @@
+# build/deps
+node_modules
+.next/cache
+coverage
+dist
+
+# local artifacts
+*.dump
+*.sql
+*.sqlite*
+*.log
+.DS_Store
+tmp

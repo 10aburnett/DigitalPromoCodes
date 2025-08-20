@@ -116,3 +116,7 @@ dist
 # Temporary folders
 tmp/
 temp/ 
+# local db artifacts
+*.dump
+*.sql
+
