@@ -5,6 +5,8 @@ export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
+const STATS_DEBUG = process.env.STATS_DEBUG === '1';
+
 export async function GET(request: NextRequest) {
   const SOFT = process.env.SOFT_FAIL_STATS === '1' || process.env.NODE_ENV === 'production';
   
@@ -208,6 +210,14 @@ export async function GET(request: NextRequest) {
       };
     }
 
+    if (STATS_DEBUG) {
+      stats.debug = {
+        source: 'promo-stats',
+        dbHost: new URL(process.env.STATS_DATABASE_URL || process.env.DATABASE_URL || '').host,
+        params: { promoCodeId, whopId }
+      };
+    }
+    
     return NextResponse.json(stats, { headers: { 'cache-control': 'no-store' } });
   } catch (error) {
     console.error('[promo-stats]', error);
