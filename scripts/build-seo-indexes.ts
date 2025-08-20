@@ -4,19 +4,34 @@ import { prisma } from '../src/lib/prisma';
 // No-locale path builder
 const pathFor = (slug: string) => `/whop/${slug}`;
 
+async function hasColumn(table: string, column: string) {
+  const rows = await prisma.$queryRaw<Array<{ exists: boolean }>>`
+    SELECT EXISTS (
+      SELECT 1 FROM information_schema.columns
+      WHERE table_schema = 'public' AND table_name = ${table} AND column_name = ${column}
+    ) AS "exists"
+  `;
+  return rows[0]?.exists === true;
+}
+
 async function main() {
   console.log('🔨 Building SEO indexes...');
   
-  // Prefer Prisma API for portability between dev/prod schemas
-  const retired = await prisma.whop.findMany({
-    where: { retirement: 'GONE' },
-    select: { slug: true },
-  });
+  // Check if we have the new retirement column or need to fall back to legacy
+  const hasRetirement = await hasColumn('Whop', 'retirement');
+  const hasIndexingStatus = await hasColumn('Whop', 'indexingStatus');
+  
+  console.log(`📊 Schema check: retirement=${hasRetirement}, indexingStatus=${hasIndexingStatus}`);
+  
+  // Get retired paths with fallback to legacy column
+  const retired = hasRetirement
+    ? await prisma.whop.findMany({ where: { retirement: 'GONE' }, select: { slug: true } })
+    : await prisma.whop.findMany({ where: { retired: true }, select: { slug: true } });
 
-  const noindex = await prisma.whop.findMany({
-    where: { indexingStatus: 'NOINDEX', retirement: 'NONE' },
-    select: { slug: true },
-  });
+  // Get noindex paths with fallback to legacy column
+  const noindex = hasRetirement && hasIndexingStatus
+    ? await prisma.whop.findMany({ where: { indexingStatus: 'NOINDEX', retirement: 'NONE' }, select: { slug: true } })
+    : await prisma.whop.findMany({ where: { indexing: 'NOINDEX' }, select: { slug: true } });
 
   const retiredPaths = retired.map(r => pathFor(r.slug));
   const noindexPaths = noindex.map(r => pathFor(r.slug));
