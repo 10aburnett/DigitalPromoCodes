@@ -16,8 +16,9 @@ Allow: /privacy
 Allow: /terms
 Allow: /whop/
 
-# Sitemap
+# Sitemaps
 Sitemap: ${baseUrl}/sitemap.xml
+Sitemap: ${baseUrl}/deindex-sitemap
 
 # Crawl delay
 Crawl-delay: 1`;

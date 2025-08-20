@@ -239,6 +239,9 @@ export async function generateMetadata({ params }: { params: { slug: string } })
       currentMonth,
       currentYear.toString()
     ].filter(Boolean).join(', '),
+    alternates: { 
+      canonical: `https://whpcodes.com/whop/${params.slug}` 
+    },
     robots: {
       index: shouldIndex,
       follow: true,

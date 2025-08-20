@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { RETIRED_PATHS, NOINDEX_PATHS } from './app/_generated/seo-indexes';
 
 // Simple JWT verification for Edge Runtime
 function verifyJWT(token: string, secret: string): any {
@@ -24,10 +25,51 @@ function verifyJWT(token: string, secret: string): any {
   }
 }
 
-// Middleware that handles both admin routes and API routes
+// Middleware that handles admin routes, API routes, and SEO
 export function middleware(request: NextRequest) {
   // Get the pathname from the URL
   const pathname = request.nextUrl.pathname;
+  const url = request.nextUrl;
+  const path = url.pathname.replace(/\/+$/, '');
+
+  // SEO LOGIC FIRST (for whop routes)
+  if (path.startsWith('/whop/') || path.match(/^\/([a-z]{2}(?:-[A-Z]{2})?)\/whop\//)) {
+    // prove middleware executed (dev only)
+    const res = NextResponse.next();
+    if (process.env.NODE_ENV !== 'production') res.headers.set('x-mw-hit', '1');
+
+    // 1) normalize legacy locale URLs → /whop/:slug
+    const m = path.match(/^\/([a-z]{2}(?:-[A-Z]{2})?)\/whop\/(.+)$/);
+    if (m) {
+      return NextResponse.redirect(new URL(`/whop/${m[2]}`, url), 308);
+    }
+
+    // 2) handle specific redirects (preserve existing)
+    if (path === '/whop/monthly-mentorship') {
+      return NextResponse.redirect(new URL('/whop/ayecon-academy-monthly-mentorship', url));
+    }
+
+    // 3) exact 410 for retired
+    if (RETIRED_PATHS.has(path)) {
+      return new NextResponse('Gone', { 
+        status: 410, 
+        headers: {
+          ...(process.env.NODE_ENV !== 'production' ? {'x-mw-hit':'1'} : {}),
+          'Cache-Control': 's-maxage=300, stale-while-revalidate=60'
+        }
+      });
+    }
+
+    // 4) X-Robots-Tag for NOINDEX
+    if (NOINDEX_PATHS.has(path)) {
+      res.headers.set('X-Robots-Tag', 'noindex, follow');
+    }
+
+    // 5) fall through to admin/API logic if needed, or return
+    if (!path.startsWith('/admin') && !path.startsWith('/api')) {
+      return res;
+    }
+  }
   
   // Handle preflight OPTIONS requests for CORS
   if (request.method === 'OPTIONS') {
@@ -137,5 +179,10 @@ export function middleware(request: NextRequest) {
 
 // Configure the paths that middleware should run on
 export const config = {
-  matcher: ['/admin/:path*', '/api/:path*']
+  matcher: [
+    '/admin/:path*', 
+    '/api/:path*',
+    '/whop/:path*',
+    '/:locale/whop/:path*'
+  ]
 }; 
