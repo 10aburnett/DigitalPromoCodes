@@ -238,7 +238,7 @@ model Whop {
   faqContent          String?
   whopCategory        WhopCategory          @default(OTHER)
   locale              String?               @default("en")
-  indexingStatus      String?               @default("INDEX")
+  indexingStatus      String?               @db.Text
   retired             Boolean?              @default(false)
   retirement          RetirementMode?       @default(NONE)
   redirectToPath      String?
@@ -285,11 +285,6 @@ enum ImportStatus {
   FAILED
 }
 
-enum IndexingStatus {
-  INDEX
-  NOINDEX
-  AUTO
-}
 
 enum MailingListStatus {
   ACTIVE
