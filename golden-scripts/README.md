@@ -36,6 +36,15 @@ This folder contains the **GOLDEN** collection of database synchronization scrip
 - ✅ Comment status (APPROVED/PENDING/REJECTED)
 - ✅ Cross-database blog post reference resolution
 
+### 5. `GOLDEN-BIDIRECTIONAL-DATABASE-SYNC-SCRIPT-NO-DELETIONS-EVER-NUMBER-5-SEO-COLUMNS.js`
+**Purpose**: Syncs NEW SEO hardening columns for complete coverage  
+**What it handles**:
+- ✅ Whop.retirement (NONE/REDIRECT/GONE enum)
+- ✅ Whop.redirectToPath (redirect URL for retired content)
+- ✅ Whop.indexingStatus (INDEX/NOINDEX/AUTO status)
+- ✅ Creates missing RetirementMode enum automatically
+- ✅ Schema updates and index creation
+
 ## 🚀 How to Use
 
 ### Complete Sync (Recommended Order):
@@ -48,6 +57,9 @@ node golden-scripts/GOLDEN-BIDIRECTIONAL-DATABASE-SYNC-SCRIPT-NO-DELETIONS-EVER-
 
 # 3. Sync comments (use this instead of Script #1 for comments)
 node golden-scripts/GOLDEN-COMMENTS-SYNC-SCRIPT-NO-DELETIONS-EVER.js
+
+# 5. Sync NEW SEO columns (REQUIRED for SEO hardening system)
+node golden-scripts/GOLDEN-BIDIRECTIONAL-DATABASE-SYNC-SCRIPT-NO-DELETIONS-EVER-NUMBER-5-SEO-COLUMNS.js
 ```
 
 ### Individual Sync:
@@ -55,14 +67,18 @@ Run any script individually when you only need to sync specific data types.
 
 ## 📊 Database Coverage
 
-| Data Type | Script #1 | Script #2 | Script #3 |
-|-----------|-----------|-----------|-----------|
-| Blog Posts | ✅ | ❌ | ❌ |
-| Comments | ⚠️ (broken) | ❌ | ✅ |
-| Mailing List | ✅ | ❌ | ❌ |
-| Whops | ❌ | ✅ | ❌ |
-| Promo Codes | ❌ | ✅ | ❌ |
-| Comment Votes | ✅ | ❌ | ❌ |
+| Data Type | Script #1 | Script #2 | Script #3 | Script #5 |
+|-----------|-----------|-----------|-----------|-----------|
+| Blog Posts | ✅ | ❌ | ❌ | ❌ |
+| Comments | ⚠️ (broken) | ❌ | ✅ | ❌ |
+| Mailing List | ✅ | ❌ | ❌ | ❌ |
+| Whops | ❌ | ✅ | ❌ | ❌ |
+| Promo Codes | ❌ | ✅ | ❌ | ❌ |
+| Comment Votes | ✅ | ❌ | ❌ | ❌ |
+| **SEO Columns** | ❌ | ❌ | ❌ | ✅ |
+| Retirement Status | ❌ | ❌ | ❌ | ✅ |
+| Redirect Paths | ❌ | ❌ | ❌ | ✅ |
+| Indexing Status | ❌ | ❌ | ❌ | ✅ |
 
 ## 🔧 Database Configuration
 
