@@ -1,7 +1,7 @@
 import fs from 'node:fs/promises';
 import { prisma } from '../src/lib/prisma';
 
-const pathFor = (locale: string, slug: string) => `/${locale}/whop/${slug}`;
+const pathFor = (_locale: string, slug: string) => `/whop/${slug}`;
 
 async function main() {
   console.log('🔨 Building SEO indexes...');
@@ -28,11 +28,11 @@ export const RETIRED_PATHS = new Set<string>(${JSON.stringify(retiredPaths, null
 export const NOINDEX_PATHS = new Set<string>(${JSON.stringify(noindexPaths, null, 2)});
 `;
 
-  await fs.mkdir('./app/_generated', { recursive: true });
-  await fs.writeFile('./app/_generated/seo-indexes.ts', code);
+  await fs.mkdir('./src/app/_generated', { recursive: true });
+  await fs.writeFile('./src/app/_generated/seo-indexes.ts', code);
   
   console.log(`✅ Generated SEO indexes: retired=${retiredPaths.length}, noindex=${noindexPaths.length}`);
-  console.log('📁 Written to: ./app/_generated/seo-indexes.ts');
+  console.log('📁 Written to: ./src/app/_generated/seo-indexes.ts');
 }
 
 main().catch(e => { 

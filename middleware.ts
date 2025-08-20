@@ -1,12 +1,21 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { RETIRED_PATHS, NOINDEX_PATHS } from './app/_generated/seo-indexes';
+import { RETIRED_PATHS, NOINDEX_PATHS } from './src/app/_generated/seo-indexes';
 
 // Define the language codes
 const languageKeys = ['en', 'es', 'nl', 'fr', 'de', 'it', 'pt', 'zh'];
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  
+  // Locale prefix normalizer: /en/whop/foo -> /whop/foo
+  const path = request.nextUrl.pathname.replace(/\/+$/, '');
+  const m = path.match(/^\/([a-z]{2}(?:-[A-Z]{2})?)\/whop\/(.+)$/);
+  if (m) {
+    const dest = new URL(`/whop/${m[2]}`, request.url);
+    // 308 keeps method; good for SEO "permanent" semantics
+    return NextResponse.redirect(dest, 308);
+  }
   
   // SEO: Handle retired pages with 410 Gone
   const normalizedPath = pathname.replace(/\/+$/, ''); // normalize trailing slash

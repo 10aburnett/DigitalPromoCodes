@@ -10,7 +10,6 @@ export async function getWhopBySlug(slug: string, locale: string = 'en') {
   const whop = await prisma.whop.findFirst({
     where: { 
       slug: decodedSlug,
-      locale,
       publishedAt: { not: null }
     },
     select: {

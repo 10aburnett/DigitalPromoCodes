@@ -1,0 +1,49 @@
+# Page snapshot
+
+```yaml
+- banner:
+  - link "WHPCODES":
+    - /url: /
+  - link "WHPBLOG":
+    - /url: /blog
+  - navigation:
+    - link "Home":
+      - /url: /
+    - button "Submit Code"
+    - link "Subscribe":
+      - /url: /subscribe
+    - link "About":
+      - /url: /about
+    - link "Contact":
+      - /url: /contact
+  - button "Select language":
+    - text: 🇺🇸 English
+    - img
+  - button "Switch to dark mode":
+    - img
+    - img
+- heading "Page Not Found" [level=2]
+- paragraph: We could not find the page you were looking for.
+- link "Return Home":
+  - /url: /
+- contentinfo:
+  - link "WHPCODES":
+    - /url: /
+  - link "WHPBLOG":
+    - /url: /blog
+  - button "Submit Code"
+  - link "Subscribe":
+    - /url: /subscribe
+  - link "About":
+    - /url: /about
+  - link "Privacy Policy":
+    - /url: /privacy
+  - link "Terms of Service":
+    - /url: /terms
+  - link "Contact":
+    - /url: /contact
+  - link "Unsubscribe":
+    - /url: /unsubscribe
+  - text: © 2025 WHPCodes. All rights reserved.
+- alert
+```

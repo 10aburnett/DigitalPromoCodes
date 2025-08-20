@@ -4,11 +4,15 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "dev:seo": "ts-node --transpile-only scripts/build-seo-indexes.ts && next dev",
     "build": "next build",
     "build:migrate": "prisma migrate deploy && next build",
     "build:dev": "next build",
     "start": "next start",
     "lint": "next lint",
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:seo": "playwright test tests/seo.spec.ts",
     "postinstall": "prisma generate",
     "db:check-safety": "node scripts/database-safety-guard.js",
     "db:push": "node scripts/database-safety-guard.js 'npx prisma db push' && npx prisma db push",
@@ -69,6 +73,7 @@
     "zod": "^3.24.3"
   },
   "devDependencies": {
+    "@playwright/test": "^1.54.2",
     "@types/bcryptjs": "^2.4.6",
     "@types/jsonwebtoken": "^9.0.9",
     "@types/node": "^20",

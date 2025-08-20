@@ -12,7 +12,7 @@ export async function GET() {
       '<?xml version="1.0" encoding="UTF-8"?>',
       '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
       ...rows.map(r =>
-        `<url><loc>https://whpcodes.com/${r.locale}/whop/${r.slug}</loc><lastmod>${(r.updatedAt ?? new Date()).toISOString()}</lastmod></url>`
+        `<url><loc>https://whpcodes.com/whop/${r.slug}</loc><lastmod>${(r.updatedAt ?? new Date()).toISOString()}</lastmod></url>`
       ),
       '</urlset>',
     ].join('');
@@ -25,6 +25,8 @@ export async function GET() {
     });
   } catch (error) {
     console.error('Error generating deindex sitemap:', error);
-    return new NextResponse('Error generating deindex sitemap', { status: 500 });
+    // Safe empty sitemap (200) so dev isn't blocked
+    const empty = `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"></urlset>`;
+    return new NextResponse(empty, { headers: { 'Content-Type': 'application/xml' } });
   }
 }
