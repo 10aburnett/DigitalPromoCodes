@@ -71,31 +71,52 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { whopId, rating, author, content, verified } = body
+    console.log('[admin/reviews POST] received body:', JSON.stringify(body, null, 2))
+    
+    let { whopId, whopSlug, slug, rating, author, content, verified } = body
 
-    // Validate required fields
-    if (!whopId || typeof rating !== 'number') {
-      return NextResponse.json({ 
-        error: 'whopId and numeric rating are required' 
-      }, { status: 400 })
+    // Normalize rating
+    const ratingNum = Number(rating);
+    if (!Number.isFinite(ratingNum) || ratingNum < 1 || ratingNum > 5) {
+      return NextResponse.json({ error: 'rating must be 1–5' }, { status: 400 });
     }
 
-    // Ensure whop exists
-    const whopExists = await prisma.whop.findUnique({ 
-      where: { id: whopId }, 
-      select: { id: true }
-    })
-    
-    if (!whopExists) {
+    // Resolve whop id if only slug was provided
+    let resolvedWhopId = whopId?.toString().trim() || null;
+    const slugToUse = (whopSlug || slug)?.toString().trim();
+
+    if (!resolvedWhopId && slugToUse) {
+      const whop = await prisma.whop.findFirst({
+        where: { slug: slugToUse },
+        select: { id: true },
+      });
+      resolvedWhopId = whop?.id ?? null;
+    }
+
+    if (!resolvedWhopId) {
       return NextResponse.json({ 
-        error: 'Invalid whopId' 
-      }, { status: 400 })
+        error: 'Invalid whopId', 
+        debug: { whopId, whopSlug, slug, resolvedWhopId }
+      }, { status: 400 });
+    }
+
+    // Ensure the whop exists
+    const exists = await prisma.whop.findUnique({
+      where: { id: resolvedWhopId },
+      select: { id: true },
+    });
+    
+    if (!exists) {
+      return NextResponse.json({ 
+        error: 'Whop not found in database',
+        debug: { resolvedWhopId }
+      }, { status: 400 });
     }
 
     const review = await prisma.review.create({
       data: {
-        whopId,
-        rating,
+        whopId: resolvedWhopId,
+        rating: ratingNum,
         author: author || 'Anonymous',
         content: content || '',
         verified: verified || false,
