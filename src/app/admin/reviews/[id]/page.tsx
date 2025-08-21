@@ -9,6 +9,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 interface Whop {
   id: string;
   name: string;
+  slug: string;
 }
 
 const reviewSchema = z.object({
@@ -171,6 +172,22 @@ export default function EditReviewPage({ params }: { params: { id: string } }) {
     setError(null);
     
     try {
+      // Debug: log the form data being sent
+      console.log('Form data being submitted:', data);
+      console.log('Selected whop:', selectedWhop);
+      
+      // Ensure we have proper whop data
+      const payload = {
+        whopId: data.whopId || selectedWhop?.id,
+        whopSlug: selectedWhop?.slug,
+        author: data.author,
+        rating: Number(data.rating),
+        content: data.content,
+        verified: data.verified
+      };
+      
+      console.log('Payload being sent:', payload);
+      
       const url = params.id === "new" 
         ? '/api/admin/reviews' 
         : `/api/admin/reviews/${params.id}`;
@@ -182,7 +199,7 @@ export default function EditReviewPage({ params }: { params: { id: string } }) {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify(payload),
       });
       
       if (!response.ok) {
