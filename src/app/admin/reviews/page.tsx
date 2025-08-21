@@ -39,7 +39,7 @@ export default function ReviewsPage() {
       
       // Add a unique query parameter to prevent caching
       const timestamp = new Date().getTime();
-      const response = await fetch(`/api/reviews?t=${timestamp}&page=1&pageSize=100`);
+      const response = await fetch(`/api/admin/reviews?t=${timestamp}&page=1&pageSize=100`);
       
       console.log("Response status:", response.status);
       
@@ -50,8 +50,8 @@ export default function ReviewsPage() {
       const data = await response.json();
       console.log("Parsed response:", data);
       
-      // The API returns an array directly, not a paginated response
-      const reviewsData = Array.isArray(data) ? data : (data.data || []);
+      // The admin API returns { items: [] }
+      const reviewsData = Array.isArray(data) ? data : (data.items || data.data || []);
       
       if (!Array.isArray(reviewsData)) {
         console.error("Expected array of reviews but received:", typeof reviewsData);
@@ -75,7 +75,7 @@ export default function ReviewsPage() {
 
     try {
       console.log(`Deleting review ${id}...`);
-      const response = await fetch(`/api/reviews/${id}`, {
+      const response = await fetch(`/api/admin/reviews/${id}`, {
         method: "DELETE",
         credentials: 'include',
         headers: {
@@ -107,11 +107,12 @@ export default function ReviewsPage() {
       setVerifying(id);
       console.log(`Verifying review ${id}...`);
       
-      const response = await fetch(`/api/reviews/${id}/verify`, {
-        method: "PUT",
+      const response = await fetch(`/api/admin/reviews/${id}`, {
+        method: "PATCH",
         headers: {
           'Content-Type': 'application/json'
-        }
+        },
+        body: JSON.stringify({ verified: true })
       });
       
       if (!response.ok) {
@@ -170,7 +171,7 @@ export default function ReviewsPage() {
       setIsDeleting(true);
       const selectedIds = Array.from(selectedReviews);
       
-      const response = await fetch('/api/reviews/bulk-delete', {
+      const response = await fetch('/api/admin/reviews/bulk-delete', {
         method: 'DELETE',
         credentials: 'include',
         headers: {
@@ -223,7 +224,7 @@ export default function ReviewsPage() {
     try {
       setIsVerifying(true);
       
-      const response = await fetch('/api/reviews/bulk-verify', {
+      const response = await fetch('/api/admin/reviews/bulk-verify', {
         method: 'PUT',
         credentials: 'include',
         headers: {
