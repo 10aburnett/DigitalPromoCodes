@@ -11,6 +11,60 @@ interface RouteParams {
   }
 }
 
+// GET /api/admin/reviews/[id] - Get single review
+export async function GET(request: NextRequest, { params }: RouteParams) {
+  try {
+    const adminUser = await verifyAdminToken()
+    
+    if (!adminUser || adminUser.role !== 'ADMIN') {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const review = await prisma.review.findUnique({
+      where: { id: params.id },
+      select: {
+        id: true,
+        author: true,
+        content: true,
+        rating: true,
+        createdAt: true,
+        updatedAt: true,
+        verified: true,
+        whopId: true,
+      }
+    })
+
+    if (!review) {
+      return NextResponse.json({ error: 'Review not found' }, { status: 404 })
+    }
+
+    // Get whop details if whopId exists
+    let whop = null
+    if (review.whopId) {
+      whop = await prisma.whop.findUnique({
+        where: { id: review.whopId },
+        select: { id: true, name: true, slug: true }
+      })
+    }
+
+    return NextResponse.json({
+      ...review,
+      whop
+    })
+  } catch (e: any) {
+    console.error('[api/admin/reviews/[id]] GET fail', e)
+    return NextResponse.json(
+      { 
+        error: e?.message, 
+        code: e?.code, 
+        meta: e?.meta ?? null, 
+        stack: process.env.NODE_ENV === 'development' ? e?.stack : undefined
+      },
+      { status: 500 }
+    )
+  }
+}
+
 // PATCH /api/admin/reviews/[id] - Update review verification status
 export async function PATCH(request: NextRequest, { params }: RouteParams) {
   try {

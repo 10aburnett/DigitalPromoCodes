@@ -108,7 +108,7 @@ export default function EditReviewPage({ params }: { params: { id: string } }) {
       try {
         // Only fetch review data if we have an ID (not for new reviews)
         if (params.id !== "new") {
-          const response = await fetch(`/api/reviews/${params.id}`);
+          const response = await fetch(`/api/admin/reviews/${params.id}`);
           if (!response.ok) {
             throw new Error("Failed to fetch review");
           }
@@ -172,10 +172,10 @@ export default function EditReviewPage({ params }: { params: { id: string } }) {
     
     try {
       const url = params.id === "new" 
-        ? '/api/reviews' 
-        : `/api/reviews/${params.id}`;
+        ? '/api/admin/reviews' 
+        : `/api/admin/reviews/${params.id}`;
       
-      const method = params.id === "new" ? 'POST' : 'PUT';
+      const method = params.id === "new" ? 'POST' : 'PATCH';
       
       const response = await fetch(url, {
         method,

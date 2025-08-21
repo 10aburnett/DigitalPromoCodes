@@ -60,3 +60,72 @@ export async function GET() {
     )
   }
 }
+
+// POST /api/admin/reviews - Create new review
+export async function POST(request: NextRequest) {
+  try {
+    const adminUser = await verifyAdminToken()
+    
+    if (!adminUser || adminUser.role !== 'ADMIN') {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const body = await request.json()
+    const { whopId, rating, author, content, verified } = body
+
+    // Validate required fields
+    if (!whopId || typeof rating !== 'number') {
+      return NextResponse.json({ 
+        error: 'whopId and numeric rating are required' 
+      }, { status: 400 })
+    }
+
+    // Ensure whop exists
+    const whopExists = await prisma.whop.findUnique({ 
+      where: { id: whopId }, 
+      select: { id: true }
+    })
+    
+    if (!whopExists) {
+      return NextResponse.json({ 
+        error: 'Invalid whopId' 
+      }, { status: 400 })
+    }
+
+    const review = await prisma.review.create({
+      data: {
+        whopId,
+        rating,
+        author: author || 'Anonymous',
+        content: content || '',
+        verified: verified || false,
+      },
+      select: {
+        id: true,
+        author: true,
+        content: true,
+        rating: true,
+        createdAt: true,
+        updatedAt: true,
+        verified: true,
+        whopId: true,
+      }
+    })
+
+    return NextResponse.json(review, { 
+      status: 201,
+      headers: { 'Cache-Control': 'no-store' }
+    });
+  } catch (e: any) {
+    console.error('[api/admin/reviews POST] fail', e)
+    return NextResponse.json(
+      { 
+        error: e?.message, 
+        code: e?.code, 
+        meta: e?.meta ?? null, 
+        stack: process.env.NODE_ENV === 'development' ? e?.stack : undefined
+      },
+      { status: 500 }
+    )
+  }
+}
