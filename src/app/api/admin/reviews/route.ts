@@ -112,6 +112,8 @@ export async function POST(request: NextRequest) {
       }, { status: 400 });
     }
 
+    const now = new Date();
+
     const review = await prisma.review.create({
       data: {
         id: randomUUID(), // temp fix until DB default is added
@@ -120,6 +122,8 @@ export async function POST(request: NextRequest) {
         author: author || 'Anonymous',
         content: content || '',
         verified: verified || false,
+        createdAt: now,
+        updatedAt: now,
       },
       select: {
         id: true,
