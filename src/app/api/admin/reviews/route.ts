@@ -81,41 +81,39 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'rating must be 1–5' }, { status: 400 });
     }
 
-    // Resolve whop id if only slug was provided
-    let resolvedWhopId = whopId?.toString().trim() || null;
-    const slugToUse = (whopSlug || slug)?.toString().trim();
-
-    if (!resolvedWhopId && slugToUse) {
-      const whop = await prisma.whop.findFirst({
-        where: { slug: slugToUse },
-        select: { id: true },
+    // Resolve whop by id first, then slug, then name (if you want)
+    let whop = null;
+    if (whopId) {
+      const idCoerced = /^\d+$/.test(String(whopId)) ? Number(whopId) : String(whopId);
+      whop = await prisma.whop.findUnique({ 
+        where: { id: idCoerced as any }, 
+        select: { id: true } 
       });
-      resolvedWhopId = whop?.id ?? null;
     }
-
-    if (!resolvedWhopId) {
-      return NextResponse.json({ 
-        error: 'Invalid whopId', 
-        debug: { whopId, whopSlug, slug, resolvedWhopId }
-      }, { status: 400 });
-    }
-
-    // Ensure the whop exists
-    const exists = await prisma.whop.findUnique({
-      where: { id: resolvedWhopId },
-      select: { id: true },
-    });
     
-    if (!exists) {
+    if (!whop && (whopSlug || slug)) {
+      const slugToUse = decodeURIComponent((whopSlug || slug).toString().trim());
+      whop = await prisma.whop.findFirst({
+        where: { 
+          OR: [
+            { slug: slugToUse }, 
+            { name: { equals: slugToUse, mode: 'insensitive' } }
+          ] 
+        },
+        select: { id: true }
+      });
+    }
+    
+    if (!whop) {
       return NextResponse.json({ 
         error: 'Whop not found in database',
-        debug: { resolvedWhopId }
+        debug: { whopId, whopSlug, slug, attempted: { whopId, whopSlug, slug } }
       }, { status: 400 });
     }
 
     const review = await prisma.review.create({
       data: {
-        whopId: resolvedWhopId,
+        whopId: whop.id,
         rating: ratingNum,
         author: author || 'Anonymous',
         content: content || '',
