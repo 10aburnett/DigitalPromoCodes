@@ -26,9 +26,17 @@ export async function GET() {
     })
 
     return NextResponse.json(posts)
-  } catch (error) {
-    console.error('Error fetching blog posts:', error)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+  } catch (e: any) {
+    console.error('[api/admin/blog] fail', e)
+    return NextResponse.json(
+      { 
+        error: e?.message, 
+        code: e?.code, 
+        meta: e?.meta ?? null, 
+        stack: process.env.NODE_ENV === 'development' ? e?.stack : undefined
+      },
+      { status: 500 }
+    )
   }
 }
 

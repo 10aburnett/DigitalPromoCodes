@@ -33,8 +33,16 @@ export async function GET(request: NextRequest) {
     })
 
     return NextResponse.json(submissions)
-  } catch (error) {
-    console.error('Error fetching promo submissions:', error)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+  } catch (e: any) {
+    console.error('[api/admin/promo-submissions] fail', e)
+    return NextResponse.json(
+      { 
+        error: e?.message, 
+        code: e?.code, 
+        meta: e?.meta ?? null, 
+        stack: process.env.NODE_ENV === 'development' ? e?.stack : undefined
+      },
+      { status: 500 }
+    )
   }
 }

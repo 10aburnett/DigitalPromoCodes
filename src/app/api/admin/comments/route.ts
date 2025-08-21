@@ -27,8 +27,16 @@ export async function GET() {
     })
 
     return NextResponse.json(comments)
-  } catch (error) {
-    console.error('Error fetching comments:', error)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+  } catch (e: any) {
+    console.error('[api/admin/comments] fail', e)
+    return NextResponse.json(
+      { 
+        error: e?.message, 
+        code: e?.code, 
+        meta: e?.meta ?? null, 
+        stack: process.env.NODE_ENV === 'development' ? e?.stack : undefined
+      },
+      { status: 500 }
+    )
   }
 }
