@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { verifyAdminToken } from '@/lib/auth-utils'
+import { randomUUID } from 'crypto'
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -113,6 +114,7 @@ export async function POST(request: NextRequest) {
 
     const review = await prisma.review.create({
       data: {
+        id: randomUUID(), // temp fix until DB default is added
         whopId: whop.id,
         rating: ratingNum,
         author: author || 'Anonymous',

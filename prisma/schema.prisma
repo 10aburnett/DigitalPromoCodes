@@ -179,7 +179,7 @@ model PromoCodeSubmission {
 }
 
 model Review {
-  id        String   @id
+  id        String   @id @default(cuid())
   author    String
   content   String
   rating    Float    @default(0)
