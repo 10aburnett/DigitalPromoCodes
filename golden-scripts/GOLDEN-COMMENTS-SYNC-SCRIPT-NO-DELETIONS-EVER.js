@@ -33,7 +33,7 @@ async function syncComments() {
   const productionDb = new PrismaClient({
     datasources: {
       db: {
-        url: "postgresql://neondb_owner:npg_HrV2CqlDGv4t@ep-noisy-hat-abxp8ysf-pooler.eu-west-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
+        url: "postgresql://neondb_owner:npg_HrV2CqlDGv4t@ep-noisy-hat-abxp8ysf-pooler.eu-west-2.aws.neon.tech/neondb?sslmode=require"
       }
     }
   });
@@ -41,7 +41,7 @@ async function syncComments() {
   const backupDb = new PrismaClient({
     datasources: {
       db: {
-        url: "postgresql://neondb_owner:npg_TKWsI2cv3zki@ep-rough-rain-ab2qairk-pooler.eu-west-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
+        url: "postgresql://neondb_owner:npg_TKWsI2cv3zki@ep-rough-rain-ab2qairk-pooler.eu-west-2.aws.neon.tech/neondb?sslmode=require"
       }
     }
   });

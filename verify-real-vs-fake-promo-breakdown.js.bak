@@ -1,0 +1,103 @@
+const { PrismaClient } = require('@prisma/client');
+
+// Database connections
+const backupDb = new PrismaClient({
+  datasources: {
+    db: {
+      url: "postgresql://neondb_owner:npg_TKWsI2cv3zki@ep-rough-rain-ab2qairk-pooler.eu-west-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
+    }
+  }
+});
+
+const productionDb = new PrismaClient({
+  datasources: {
+    db: {
+      url: "postgresql://neondb_owner:npg_LoKgTrZ9ua8D@ep-noisy-hat-abxp8ysf-pooler.eu-west-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
+    }
+  }
+});
+
+async function verifyPromoBreakdown() {
+  try {
+    console.log('🔍 REAL vs FAKE PROMO CODE BREAKDOWN');
+    console.log('=====================================\n');
+
+    // Known fake promo codes
+    const fakePromoCodes = ['SAVE20', 'VIP15', 'EXCLUSIVE25', 'MEMBER20', 'SPECIAL15', 'LIMITED30', 'FLASH20', 'TODAY25', 'NOW15', 'QUICK10', 'DISCOUNT30', 'SAVE25', 'OFF20', 'DEAL35', 'PROMO40'];
+
+    // Check backup database
+    console.log('📊 BACKUP DATABASE (rough-rain):');
+    const backupAllPromos = await backupDb.promoCode.findMany({
+      select: {
+        id: true,
+        code: true,
+        value: true,
+        whop: { select: { name: true } }
+      },
+      orderBy: { code: 'asc' }
+    });
+
+    const backupReal = backupAllPromos.filter(p => !fakePromoCodes.includes(p.code));
+    const backupFake = backupAllPromos.filter(p => fakePromoCodes.includes(p.code));
+
+    console.log(`   Total promo codes: ${backupAllPromos.length}`);
+    console.log(`   💎 Real promo codes: ${backupReal.length}`);
+    console.log(`   🎯 Fake promo codes: ${backupFake.length}`);
+
+    console.log('\n   💎 REAL PROMO CODES:');
+    backupReal.forEach(promo => {
+      console.log(`     - ${promo.code} (${promo.value}% off) on "${promo.whop.name}"`);
+    });
+
+    console.log('\n   🎯 FAKE PROMO CODES:');
+    backupFake.forEach(promo => {
+      console.log(`     - ${promo.code} (${promo.value}% off) on "${promo.whop.name}"`);
+    });
+
+    // Check production database
+    console.log('\n📊 PRODUCTION DATABASE (noisy-hat):');
+    const productionAllPromos = await productionDb.promoCode.findMany({
+      select: {
+        id: true,
+        code: true,
+        value: true,
+        whop: { select: { name: true } }
+      },
+      orderBy: { code: 'asc' }
+    });
+
+    const productionReal = productionAllPromos.filter(p => !fakePromoCodes.includes(p.code));
+    const productionFake = productionAllPromos.filter(p => fakePromoCodes.includes(p.code));
+
+    console.log(`   Total promo codes: ${productionAllPromos.length}`);
+    console.log(`   💎 Real promo codes: ${productionReal.length}`);
+    console.log(`   🎯 Fake promo codes: ${productionFake.length}`);
+
+    console.log('\n   💎 REAL PROMO CODES:');
+    productionReal.forEach(promo => {
+      console.log(`     - ${promo.code} (${promo.value}% off) on "${promo.whop.name}"`);
+    });
+
+    console.log('\n   🎯 FAKE PROMO CODES:');
+    productionFake.forEach(promo => {
+      console.log(`     - ${promo.code} (${promo.value}% off) on "${promo.whop.name}"`);
+    });
+
+    // Final verification
+    console.log('\n🏆 FINAL VERIFICATION:');
+    console.log('======================');
+    console.log(`📊 Backup Database:  ${backupReal.length} real + ${backupFake.length} fake = ${backupAllPromos.length} total`);
+    console.log(`📊 Production Database: ${productionReal.length} real + ${productionFake.length} fake = ${productionAllPromos.length} total`);
+    
+    const synchronized = backupAllPromos.length === productionAllPromos.length && backupReal.length === productionReal.length && backupFake.length === productionFake.length;
+    console.log(`✅ Databases synchronized: ${synchronized ? 'YES' : 'NO'}`);
+
+  } catch (error) {
+    console.error('❌ Error:', error);
+  } finally {
+    await backupDb.$disconnect();
+    await productionDb.$disconnect();
+  }
+}
+
+verifyPromoBreakdown();
