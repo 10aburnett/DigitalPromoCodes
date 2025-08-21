@@ -57,7 +57,7 @@ const PromoStatsDisplay = forwardRef<PromoStatsDisplayHandle, PromoStatsDisplayP
 
         if (params.toString() === '') return; // nothing to query
 
-        const url = `/api/promo-stats?${params.toString()}`;
+        const url = `/api/promo-stats?${params.toString()}&ts=${Date.now()}`;
         const res = await fetch(url, { cache: 'no-store' });
         const data = await res.json().catch(() => null);
 

@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { unstable_noStore as noStore } from 'next/cache';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 const startOfTodayUTC = () => {
   const d = new Date();
@@ -11,6 +13,8 @@ const startOfTodayUTC = () => {
 };
 
 export async function GET(request: NextRequest) {
+  noStore(); // hard-disable Next data cache for this handler
+  
   try {
     const { searchParams } = new URL(request.url);
     const promoCodeId = searchParams.get('promoCodeId');
@@ -42,7 +46,12 @@ export async function GET(request: NextRequest) {
             usage: { todayCount, totalCount, todayClicks: todayCount, lastUsed: lastUsage?.createdAt ?? null },
             overallStats: { todayClicks: todayCount }
           }, { 
-            headers: { 'Cache-Control': 'public, max-age=60, stale-while-revalidate=300' } 
+            headers: {
+          'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0',
+          'Pragma': 'no-cache',
+          'Expires': '0',
+          'Vary': 'Cookie'
+        } 
           });
         }
       }
@@ -84,7 +93,12 @@ export async function GET(request: NextRequest) {
         usage: { todayCount, totalCount, todayClicks: todayCount, lastUsed: lastUsage?.createdAt ?? null },
         overallStats: { todayClicks: todayCount }
       }, { 
-        headers: { 'Cache-Control': 'public, max-age=60, stale-while-revalidate=300' } 
+        headers: {
+          'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0',
+          'Pragma': 'no-cache',
+          'Expires': '0',
+          'Vary': 'Cookie'
+        } 
       });
     }
 
