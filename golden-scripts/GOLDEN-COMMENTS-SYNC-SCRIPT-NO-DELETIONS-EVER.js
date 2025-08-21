@@ -33,7 +33,7 @@ async function syncComments() {
   const productionDb = new PrismaClient({
     datasources: {
       db: {
-        url: "postgresql://neondb_owner:npg_LoKgTrZ9ua8D@ep-noisy-hat-abxp8ysf-pooler.eu-west-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
+        url: "postgresql://neondb_owner:npg_HrV2CqlDGv4t@ep-noisy-hat-abxp8ysf-pooler.eu-west-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
       }
     }
   });
@@ -54,12 +54,12 @@ async function syncComments() {
 
     // Get all comments from production
     const prodComments = await productionDb.comment.findMany({
-      include: { blogPost: { select: { id: true, title: true, slug: true } } }
+      include: { BlogPost: { select: { id: true, title: true, slug: true } } }
     });
     
     // Get all comments from backup
     const backupComments = await backupDb.comment.findMany({
-      include: { blogPost: { select: { id: true, title: true, slug: true } } }
+      include: { BlogPost: { select: { id: true, title: true, slug: true } } }
     });
 
     console.log(`Production comments: ${prodComments.length}`);
@@ -70,7 +70,7 @@ async function syncComments() {
       console.log('=====================================');
 
       // Get all blog posts from backup to create ID mapping
-      const backupPosts = await backupDb.blogPost.findMany({
+      const backupPosts = await backupDb.BlogPost.findMany({
         select: { id: true, title: true, slug: true }
       });
 
@@ -87,10 +87,10 @@ async function syncComments() {
         
         if (!existsInBackup) {
           console.log(`\n📝 Syncing comment: "${prodComment.content.substring(0, 50)}..."`);
-          console.log(`   Original blog post: ${prodComment.blogPost.title}`);
+          console.log(`   Original blog post: ${prodComment.BlogPost.title}`);
           
           // Find the matching blog post ID in backup
-          const backupPostId = postTitleToBackupId[prodComment.blogPost.title];
+          const backupPostId = postTitleToBackupId[prodComment.BlogPost.title];
           
           if (backupPostId) {
             console.log(`   Found matching backup post ID: ${backupPostId}`);

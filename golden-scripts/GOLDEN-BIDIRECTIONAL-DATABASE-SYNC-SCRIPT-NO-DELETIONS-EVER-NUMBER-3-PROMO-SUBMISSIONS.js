@@ -14,7 +14,7 @@ const backupPrisma = new PrismaClient({
 const productionPrisma = new PrismaClient({
   datasources: {
     db: {
-      url: "postgresql://neondb_owner:npg_LoKgTrZ9ua8D@ep-noisy-hat-abxp8ysf-pooler.eu-west-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
+      url: "postgresql://neondb_owner:npg_HrV2CqlDGv4t@ep-noisy-hat-abxp8ysf-pooler.eu-west-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
     }
   }
 })
@@ -33,7 +33,7 @@ async function syncPromoCodeSubmissions() {
     // Get submissions from both databases
     const backupSubmissions = await backupPrisma.promoCodeSubmission.findMany({
       include: {
-        whop: {
+        Whop: {
           select: {
             id: true,
             name: true,
@@ -45,7 +45,7 @@ async function syncPromoCodeSubmissions() {
 
     const productionSubmissions = await productionPrisma.promoCodeSubmission.findMany({
       include: {
-        whop: {
+        Whop: {
           select: {
             id: true,
             name: true,

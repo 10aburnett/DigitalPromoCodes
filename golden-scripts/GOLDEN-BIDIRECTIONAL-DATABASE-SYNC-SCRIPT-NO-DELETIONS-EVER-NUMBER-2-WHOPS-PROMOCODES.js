@@ -43,7 +43,7 @@ const backupDb = new PrismaClient({
 const productionDb = new PrismaClient({
   datasources: {
     db: {
-      url: "postgresql://neondb_owner:npg_LoKgTrZ9ua8D@ep-noisy-hat-abxp8ysf-pooler.eu-west-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
+      url: "postgresql://neondb_owner:npg_HrV2CqlDGv4t@ep-noisy-hat-abxp8ysf-pooler.eu-west-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
     }
   }
 });
@@ -55,10 +55,10 @@ async function analyzeDataDifferences() {
   try {
     // Check Whops
     const backupWhops = await backupDb.whop.findMany({
-      select: { id: true, name: true, slug: true, indexing: true }
+      select: { id: true, name: true, slug: true }
     });
     const productionWhops = await productionDb.whop.findMany({
-      select: { id: true, name: true, slug: true, indexing: true }
+      select: { id: true, name: true, slug: true }
     });
 
     console.log(`\n🎯 WHOPS:`);
@@ -72,9 +72,9 @@ async function analyzeDataDifferences() {
     const onlyInProduction = productionWhops.filter(w => !backupSlugs.has(w.slug));
     
     console.log(`   Missing from Production: ${onlyInBackup.length} whops`);
-    onlyInBackup.forEach(w => console.log(`     - ${w.name} (${w.indexing})`));
+    onlyInBackup.forEach(w => console.log(`     - ${w.name}`));
     console.log(`   Missing from Backup: ${onlyInProduction.length} whops`);
-    onlyInProduction.forEach(w => console.log(`     - ${w.name} (${w.indexing})`));
+    onlyInProduction.forEach(w => console.log(`     - ${w.name}`));
 
     // Check PromoCodes
     const backupPromos = await backupDb.promoCode.findMany({
@@ -169,7 +169,7 @@ async function syncWhops(analysis) {
         if (fullWhop) {
           const { createdAt, ...whopData } = fullWhop;
           await productionDb.whop.create({ data: whopData });
-          console.log(`   ✅ Added: ${fullWhop.name} (${fullWhop.indexing})`);
+          console.log(`   ✅ Added: ${fullWhop.name}`);
         }
       }
     }
@@ -186,7 +186,7 @@ async function syncWhops(analysis) {
         if (fullWhop) {
           // Keep all data including timestamps to preserve exact state
           await backupDb.whop.create({ data: fullWhop });
-          console.log(`   ✅ Added: ${fullWhop.name} (${fullWhop.indexing})`);
+          console.log(`   ✅ Added: ${fullWhop.name}`);
         }
       }
     }
@@ -269,15 +269,15 @@ async function verifySync() {
     const backupCounts = {
       whops: await backupDb.whop.count(),
       promos: await backupDb.promoCode.count(),
-      indexedWhops: await backupDb.whop.count({ where: { indexing: 'INDEX' } }),
-      noindexedWhops: await backupDb.whop.count({ where: { indexing: 'NOINDEX' } })
+      // indexedWhops: await backupDb.whop.count({ where: { indexing: 'INDEX' } }),
+      // noindexedWhops: await backupDb.whop.count({ where: { indexing: 'NOINDEX' } })
     };
 
     const productionCounts = {
       whops: await productionDb.whop.count(),
       promos: await productionDb.promoCode.count(),
-      indexedWhops: await productionDb.whop.count({ where: { indexing: 'INDEX' } }),
-      noindexedWhops: await productionDb.whop.count({ where: { indexing: 'NOINDEX' } })
+      // indexedWhops: await productionDb.whop.count({ where: { indexing: 'INDEX' } }),
+      // noindexedWhops: await productionDb.whop.count({ where: { indexing: 'NOINDEX' } })
     };
 
     console.log('📊 FINAL COUNTS:');
