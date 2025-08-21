@@ -30,14 +30,15 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     const review = await prisma.review.update({
       where: { id: params.id },
       data: { verified },
-      include: {
-        Whop: {
-          select: {
-            id: true,
-            name: true,
-            slug: true,
-          }
-        }
+      select: {
+        id: true,
+        author: true,
+        content: true,
+        rating: true,
+        createdAt: true,
+        updatedAt: true,
+        verified: true,
+        whopId: true,
       }
     })
 

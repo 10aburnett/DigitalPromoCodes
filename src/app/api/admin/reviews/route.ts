@@ -14,20 +14,39 @@ export async function GET() {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const reviews = await prisma.review.findMany({
+    // 1) No include — just scalars + FK ids
+    const rows = await prisma.review.findMany({
       orderBy: { createdAt: 'desc' },
-      include: {
-        Whop: {
-          select: {
-            id: true,
-            name: true,
-            slug: true,
-          }
-        }
-      }
-    })
+      select: {
+        id: true,
+        author: true,
+        content: true,
+        rating: true,
+        createdAt: true,
+        updatedAt: true,
+        verified: true,
+        whopId: true,
+      },
+    });
 
-    return NextResponse.json(reviews)
+    // 2) Collect whop ids
+    const whopIds = [...new Set(rows.map(r => r.whopId).filter(Boolean))] as string[];
+
+    // 3) Fetch whops by id
+    const whops = whopIds.length ? await prisma.whop.findMany({ 
+      where: { id: { in: whopIds } }, 
+      select: { id: true, slug: true, name: true } 
+    }) : [];
+
+    const whopById = new Map(whops.map(w => [w.id, w]));
+
+    // 4) Join results
+    const items = rows.map(r => ({
+      ...r,
+      whop: r.whopId ? whopById.get(r.whopId) ?? null : null,
+    }));
+
+    return NextResponse.json(items);
   } catch (e: any) {
     console.error('[api/admin/reviews] fail', e)
     return NextResponse.json(
