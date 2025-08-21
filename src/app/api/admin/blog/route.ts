@@ -17,9 +17,11 @@ export async function GET() {
     const posts = await prisma.blogPost.findMany({
       orderBy: { createdAt: 'desc' },
       include: {
-        author: {
+        User: {
           select: {
+            id: true,
             name: true,
+            email: true,
           }
         }
       }
@@ -117,9 +119,11 @@ export async function POST(request: NextRequest) {
           authorName: authorName || null,
         },
         include: {
-          author: {
+          User: {
             select: {
+              id: true,
               name: true,
+              email: true,
             }
           }
         }

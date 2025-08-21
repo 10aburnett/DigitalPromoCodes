@@ -34,7 +34,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
         flaggedReason: status === 'FLAGGED' ? flaggedReason : null,
       },
       include: {
-        blogPost: {
+        BlogPost: {
           select: {
             title: true,
             slug: true,

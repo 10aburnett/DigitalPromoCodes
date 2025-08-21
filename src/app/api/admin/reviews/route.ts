@@ -5,7 +5,7 @@ import { verifyAdminToken } from '@/lib/auth-utils'
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-// GET /api/admin/comments - List all comments for moderation
+// GET /api/admin/reviews - List all reviews for moderation
 export async function GET() {
   try {
     const adminUser = await verifyAdminToken()
@@ -14,21 +14,22 @@ export async function GET() {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const comments = await prisma.comment.findMany({
+    const reviews = await prisma.review.findMany({
       orderBy: { createdAt: 'desc' },
       include: {
-        BlogPost: {
+        Whop: {
           select: {
-            title: true,
+            id: true,
+            name: true,
             slug: true,
           }
         }
       }
     })
 
-    return NextResponse.json(comments)
+    return NextResponse.json(reviews)
   } catch (e: any) {
-    console.error('[api/admin/comments] fail', e)
+    console.error('[api/admin/reviews] fail', e)
     return NextResponse.json(
       { 
         error: e?.message, 

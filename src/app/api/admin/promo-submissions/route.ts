@@ -16,23 +16,49 @@ export async function GET(request: NextRequest) {
       whereClause.status = status
     }
 
-    const submissions = await prisma.promoCodeSubmission.findMany({
+    // 1) pull submissions WITHOUT the broken include
+    const subs = await prisma.promoCodeSubmission.findMany({
       where: whereClause,
-      include: {
-        whop: {
-          select: {
-            id: true,
-            name: true,
-            slug: true
-          }
-        }
+      orderBy: { createdAt: 'desc' },
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        code: true,
+        value: true,
+        submitterName: true,
+        submitterEmail: true,
+        submitterMessage: true,
+        status: true,
+        reviewedAt: true,
+        reviewedBy: true,
+        adminNotes: true,
+        createdAt: true,
+        updatedAt: true,
+        whopId: true,
+        customCourseName: true,
+        isGeneral: true,
       },
-      orderBy: [
-        { createdAt: 'desc' } // Newest submissions first
-      ]
-    })
+    });
 
-    return NextResponse.json(submissions)
+    // 2) collect target whops by id
+    const ids = [...new Set(subs.map(s => s.whopId).filter(Boolean))] as string[];
+
+    // 3) fetch whops by id
+    const whopsById = ids.length ? await prisma.whop.findMany({ 
+      where: { id: { in: ids } }, 
+      select: { id: true, slug: true, name: true } 
+    }) : [];
+
+    const byId = new Map(whopsById.map(w => [w.id, w]));
+
+    // 4) join results
+    const items = subs.map(s => ({
+      ...s,
+      whop: s.whopId ? byId.get(s.whopId) ?? null : null,
+    }));
+
+    return NextResponse.json(items);
   } catch (e: any) {
     console.error('[api/admin/promo-submissions] fail', e)
     return NextResponse.json(
