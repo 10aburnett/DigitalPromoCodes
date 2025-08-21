@@ -6,15 +6,16 @@ import { prisma } from '@/lib/prisma';
 
 export async function GET() {
   try {
-    const [posts, comments, promoSubmissions, mailingList] = await Promise.all([
+    const [posts, comments, promoSubmissions, mailingList, reviews] = await Promise.all([
       prisma.blogPost.count(),
       prisma.comment.count(),
       prisma.promoCodeSubmission.count(),
       prisma.mailingList.count(),
+      prisma.review.count(),
     ]);
     return NextResponse.json({
       ok: true,
-      counts: { posts, comments, promoSubmissions, mailingList },
+      counts: { posts, comments, promoSubmissions, mailingList, reviews },
       timestamp: new Date().toISOString(),
       database: 'Connected successfully'
     });
