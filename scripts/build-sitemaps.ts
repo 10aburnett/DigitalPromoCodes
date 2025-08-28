@@ -39,17 +39,6 @@ ${urlEntries}
 </urlset>`
 }
 
-function generateSitemapIndexXml(sitemapFiles: string[]): string {
-  const now = new Date().toISOString()
-  const sitemapEntries = sitemapFiles.map(file => `  <sitemap>
-    <loc>${SITE_URL}/sitemaps/${file}</loc>
-    <lastmod>${now}</lastmod>
-  </sitemap>`).join('\n')
-
-  return `${generateXmlHeader()}<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${sitemapEntries}
-</sitemapindex>`
-}
 
 function chunkArray<T>(array: T[], chunkSize: number): T[][] {
   const chunks: T[][] = []
@@ -194,16 +183,28 @@ ${blogUrls}
     }
   }
 
-  // Generate main sitemap index
-  const allSitemaps = [
-    ...indexFilenames.map(filename => filename), // index-1.xml, index-2.xml, etc.
-    'static.xml',
-    ...(blogPosts.length > 0 ? ['blog.xml'] : [])
+  // --- write /public/sitemap.xml as a sitemapindex ---
+  const base = process.env.SITE_URL || 'https://whpcodes.com'
+  const now = new Date().toISOString()
+
+  const parts = [
+    `${base}/sitemaps/index-1.xml`,
+    `${base}/sitemaps/static.xml`,
+    `${base}/sitemaps/blog.xml`,
+    ...(process.env.INCLUDE_TEMP_SITEMAPS === '1'
+        ? [`${base}/sitemaps/noindex.xml`, `${base}/sitemaps/gone.xml`]
+        : []),
   ]
-  
-  const sitemapIndexXml = generateSitemapIndexXml(allSitemaps)
+
+  const sitemapIndexXml =
+    `<?xml version="1.0" encoding="UTF-8"?>\n` +
+    `<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +
+    parts.map(u => `  <sitemap><loc>${u}</loc><lastmod>${now}</lastmod></sitemap>`).join('\n') +
+    `\n</sitemapindex>\n`
+
+  mkdirSync(publicDir, { recursive: true })
   writeFileSync(join(publicDir, 'sitemap.xml'), sitemapIndexXml)
-  console.log(`🎯 Created sitemap.xml referencing ${allSitemaps.length} child sitemaps: ${allSitemaps.join(', ')}`)
+  console.log(`🎯 Created sitemap.xml referencing ${parts.length} child sitemaps: ${parts.map(p => p.split('/').pop()).join(', ')}`)
 
   console.log('🎉 Sitemap generation complete!')
 }
