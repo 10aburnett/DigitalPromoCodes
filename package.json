@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "dev:seo": "ts-node --transpile-only scripts/build-seo-indexes.ts && next dev",
-    "prebuild": "ts-node --transpile-only scripts/build-seo-indexes.ts",
+    "prebuild": "ts-node --transpile-only scripts/build-seo-indexes.ts && ts-node --transpile-only scripts/build-sitemaps.ts",
     "build": "next build",
     "build:migrate": "prisma migrate deploy && next build",
     "build:dev": "next build",

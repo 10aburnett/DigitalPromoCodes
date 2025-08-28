@@ -52,10 +52,6 @@ export const RETIRED_PATHS = new Set<string>([
   "/whop/passive-apex",
   "/whop/galytv",
   "/whop/pine-script-pro-trader",
-  "/whop/exclusive",
-  "/whop/discord",
-  "/whop/risen-consulting-coaching",
-  "/whop/academy",
   "/whop/rich-realm",
   "/whop/pokelytics-server-windows",
   "/whop/ansley-jean-fitness",
@@ -2340,7 +2336,6 @@ export const RETIRED_PATHS = new Set<string>([
   "/whop/visionaries-locks",
   "/whop/jesse-ai-vip",
   "/whop/special-offer-link",
-  "/whop/ayecon-academy-1:1-mentorship",
   "/whop/deposits",
   "/whop/majorcutz",
   "/whop/content-growth-engine",
@@ -2362,8 +2357,12 @@ export const RETIRED_PATHS = new Set<string>([
   "/whop/premium-crypto"
 ]);
 export const NOINDEX_PATHS = new Set<string>([
+  "/whop/exclusive",
+  "/whop/academy",
+  "/whop/risen-consulting-coaching",
   "/whop/kiva-services",
   "/whop/admit-one",
+  "/whop/discord",
   "/whop/atn-13000",
   "/whop/faceless-instagram-pages",
   "/whop/nepq-pro",
