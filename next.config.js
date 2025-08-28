@@ -56,6 +56,25 @@ const nextConfig = {
       transform: 'react-beautiful-dnd/{{member}}',
     },
   },
+  // Custom headers for sitemap files
+  async headers() {
+    return [
+      {
+        source: '/sitemap.xml',
+        headers: [
+          { key: 'Content-Type', value: 'application/xml; charset=utf-8' },
+          { key: 'Cache-Control', value: 'public, max-age=0, s-maxage=300, stale-while-revalidate=86400' },
+        ],
+      },
+      {
+        source: '/sitemaps/:path*',
+        headers: [
+          { key: 'Content-Type', value: 'application/xml; charset=utf-8' },
+          { key: 'Cache-Control', value: 'public, max-age=0, s-maxage=300, stale-while-revalidate=86400' },
+        ],
+      },
+    ];
+  },
   // Temporarily disable custom webpack config to fix chunk loading issues
   // webpack: (config, { dev, isServer }) => {
   //   // Custom webpack config disabled until chunk naming is resolved
