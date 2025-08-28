@@ -110,6 +110,57 @@ async function main() {
     gone: gone.length,
   })
 
+  // Generate static pages sitemap
+  const staticPages = [
+    { url: '', priority: '1.0', changefreq: 'daily' },
+    { url: 'blog', priority: '0.8', changefreq: 'weekly' },
+    { url: 'subscribe', priority: '0.7', changefreq: 'monthly' },
+    { url: 'unsubscribe', priority: '0.4', changefreq: 'monthly' },
+    { url: 'about', priority: '0.8', changefreq: 'monthly' },
+    { url: 'contact', priority: '0.6', changefreq: 'monthly' },
+    { url: 'privacy', priority: '0.5', changefreq: 'yearly' },
+    { url: 'terms', priority: '0.5', changefreq: 'yearly' }
+  ]
+
+  const staticUrls = staticPages.map(page => `  <url>
+    <loc>${SITE_URL}${page.url ? `/${page.url}` : ''}</loc>
+    <lastmod>${new Date().toISOString()}</lastmod>
+    <changefreq>${page.changefreq}</changefreq>
+    <priority>${page.priority}</priority>
+  </url>`).join('\n')
+
+  const staticXml = `${generateXmlHeader()}<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${staticUrls}
+</urlset>`
+  writeFileSync(join(sitemapsDir, 'static.xml'), staticXml)
+  console.log(`📄 Created static.xml with ${staticPages.length} URLs`)
+
+  // Generate blog sitemap
+  let blogPosts = []
+  try {
+    blogPosts = await prisma.blogPost.findMany({
+      where: { published: true },
+      select: { slug: true, updatedAt: true }
+    })
+  } catch (error) {
+    console.log('⚠️ No blog posts table found')
+  }
+
+  if (blogPosts.length > 0) {
+    const blogUrls = blogPosts.map(post => `  <url>
+    <loc>${SITE_URL}/blog/${post.slug}</loc>
+    <lastmod>${post.updatedAt.toISOString()}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>`).join('\n')
+
+    const blogXml = `${generateXmlHeader()}<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${blogUrls}
+</urlset>`
+    writeFileSync(join(sitemapsDir, 'blog.xml'), blogXml)
+    console.log(`📝 Created blog.xml with ${blogPosts.length} URLs`)
+  }
+
   // Generate indexable URLs
   const indexableUrls = cleanIndex.map(whop => buildUrl(whop.slug, whop.locale))
   
@@ -144,9 +195,15 @@ async function main() {
   }
 
   // Generate main sitemap index
-  const sitemapIndexXml = generateSitemapIndexXml(indexFilenames)
+  const allSitemaps = [
+    ...indexFilenames.map(filename => filename), // index-1.xml, index-2.xml, etc.
+    'static.xml',
+    ...(blogPosts.length > 0 ? ['blog.xml'] : [])
+  ]
+  
+  const sitemapIndexXml = generateSitemapIndexXml(allSitemaps)
   writeFileSync(join(publicDir, 'sitemap.xml'), sitemapIndexXml)
-  console.log(`🎯 Created sitemap.xml referencing ${indexFilenames.length} index files`)
+  console.log(`🎯 Created sitemap.xml referencing ${allSitemaps.length} child sitemaps: ${allSitemaps.join(', ')}`)
 
   console.log('🎉 Sitemap generation complete!')
 }

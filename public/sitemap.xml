@@ -2,6 +2,14 @@
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <sitemap>
     <loc>https://whpcodes.com/sitemaps/index-1.xml</loc>
-    <lastmod>2025-08-28T02:03:29.986Z</lastmod>
+    <lastmod>2025-08-28T02:54:57.427Z</lastmod>
+  </sitemap>
+  <sitemap>
+    <loc>https://whpcodes.com/sitemaps/static.xml</loc>
+    <lastmod>2025-08-28T02:54:57.427Z</lastmod>
+  </sitemap>
+  <sitemap>
+    <loc>https://whpcodes.com/sitemaps/blog.xml</loc>
+    <lastmod>2025-08-28T02:54:57.427Z</lastmod>
   </sitemap>
 </sitemapindex>
