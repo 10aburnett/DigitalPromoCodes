@@ -70,4 +70,4 @@ src/
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
-<!-- Trigger redeploy with updated sitemap implementation --> 
+<!-- Trigger redeploy with sitemap environment variables - 2025-08-28 --> 
