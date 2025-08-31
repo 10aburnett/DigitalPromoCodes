@@ -2,6 +2,7 @@ import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Script from 'next/script'
 import { prisma } from '@/lib/prisma'
+import { getBlogPostBySlug } from '@/lib/blog'
 import BlogPostClient from '@/components/BlogPostClient'
 import { generateArticleSchema, generateBreadcrumbSchema, calculateReadingTime, extractHeadings, processContentWithHeadingIds, optimizeInternalLinkingServer, optimizeImageAltText } from '@/lib/blog-utils'
 
@@ -20,7 +21,7 @@ interface BlogPost {
   updatedAt: string | null
   slug: string
   authorName: string | null
-  author?: {
+  author: {
     name: string
   }
 }
@@ -28,24 +29,7 @@ interface BlogPost {
 // Generate dynamic metadata for each blog post
 export async function generateMetadata({ params }: BlogPostPageProps): Promise<Metadata> {
   try {
-    const post = await prisma.blogPost.findFirst({
-      where: { 
-        slug: params.slug,
-        published: true 
-      },
-      select: {
-        title: true,
-        excerpt: true,
-        content: true,
-        publishedAt: true,
-        updatedAt: true,
-        slug: true,
-        authorName: true,
-        author: {
-          select: { name: true }
-        }
-      }
-    })
+    const post = await getBlogPostBySlug(params.slug)
 
     if (!post) {
       return {
@@ -80,22 +64,22 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
     return {
       title: `${post.title} - WHP Blog | Whop Promo Codes & Digital Products ${currentYear}`,
       description: metaDescription,
-      keywords: `${post.title}, WHP blog, Whop promo codes ${currentYear}, digital products, ${post.authorName || post.author?.name || 'WHP Team'}`,
-      authors: post.authorName || post.author?.name ? [{ name: post.authorName || post.author?.name }] : [{ name: 'WHP Team' }],
+      keywords: `${post.title}, WHP blog, Whop promo codes ${currentYear}, digital products, ${post.author.name || 'WHP Team'}`,
+      authors: [{ name: post.author.name || 'WHP Team' }],
       openGraph: {
         title: `${post.title} - WHP Blog`,
         description: metaDescription,
         type: 'article',
         url: `https://whpcodes.com/blog/${params.slug}`,
         publishedTime: publishedDate,
-        authors: post.authorName || post.author?.name ? [post.authorName || post.author.name] : ['WHP Team'],
+        authors: [post.author.name || 'WHP Team'],
         siteName: 'WHP Codes'
       },
       twitter: {
         card: 'summary_large_image',
         title: `${post.title} - WHP Blog`,
         description: metaDescription,
-        creator: post.authorName || post.author?.name ? `@${(post.authorName || post.author.name).replace(/\s+/g, '')}` : '@WHPCodes'
+        creator: `@${post.author.name.replace(/\s+/g, '') || 'WHPCodes'}`
       },
       alternates: {
         canonical: `https://whpcodes.com/blog/${params.slug}`
@@ -117,25 +101,16 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   let post: BlogPost | null = null
 
   try {
-    post = await prisma.blogPost.findFirst({
-      where: { 
-        slug: params.slug,
-        published: true 
-      },
-      select: {
-        id: true,
-        title: true,
-        content: true,
-        excerpt: true,
-        publishedAt: true,
-        updatedAt: true,
-        slug: true,
-        authorName: true,
-        author: {
-          select: { name: true }
-        }
+    const fetchedPost = await getBlogPostBySlug(params.slug)
+    if (fetchedPost) {
+      post = {
+        ...fetchedPost,
+        content: fetchedPost.content || '',
+        publishedAt: fetchedPost.publishedAt ? fetchedPost.publishedAt.toISOString() : null,
+        updatedAt: fetchedPost.updatedAt ? fetchedPost.updatedAt.toISOString() : null,
+        authorName: fetchedPost.author.name
       }
-    })
+    }
   } catch (error) {
     console.error('Error fetching blog post:', error)
     post = null
@@ -152,7 +127,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     excerpt: post.excerpt,
     publishedAt: post.publishedAt,
     updatedAt: post.updatedAt,
-    author: post.authorName ? { name: post.authorName } : post.author,
+    author: post.author,
     slug: post.slug
   })
   
