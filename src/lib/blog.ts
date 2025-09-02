@@ -18,6 +18,19 @@ export type BlogPostFull = BlogListItem & {
   headings?: any[];
 };
 
+export type AdminPost = {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string | null;
+  published: boolean;
+  pinned: boolean;
+  publishedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+  author: { id: string | null; name: string };
+};
+
 export async function getPublishedBlogPosts(): Promise<BlogListItem[]> {
   const posts = await prisma.blogPost.findMany({
     where: { published: true },
@@ -85,4 +98,52 @@ export async function getBlogPostBySlug(slug: string): Promise<BlogPostFull | nu
       name: (post.User?.name ?? post.authorName ?? 'Unknown').trim(),
     },
   };
+}
+
+function normalize(p: any): AdminPost {
+  return {
+    id: p.id,
+    title: p.title,
+    slug: p.slug,
+    excerpt: p.excerpt ?? null,
+    published: !!p.published,
+    pinned: !!p.pinned,
+    publishedAt: p.publishedAt ? p.publishedAt.toISOString() : null,
+    createdAt: p.createdAt.toISOString(),
+    updatedAt: p.updatedAt.toISOString(),
+    // relation is User; fall back to scalar authorName so this never breaks
+    author: { id: p.authorId ?? null, name: (p.User?.name ?? p.authorName ?? "Admin").trim() },
+  };
+}
+
+/** Return ALL posts for admin (drafts + published). No filters by default. */
+export async function getAdminBlogPosts(opts?: { page?: number; limit?: number }) {
+  const page = Math.max(1, opts?.page ?? 1);
+  const limit = Math.min(100, Math.max(1, opts?.limit ?? 50));
+
+  const [total, rows] = await prisma.$transaction([
+    prisma.blogPost.count(),
+    prisma.blogPost.findMany({
+      orderBy: [{ pinned: "desc" }, { publishedAt: "desc" }, { createdAt: "desc" }],
+      skip: (page - 1) * limit,
+      take: limit,
+      select: {
+        id: true,
+        title: true,
+        slug: true,
+        excerpt: true,
+        published: true,
+        pinned: true,
+        publishedAt: true,
+        createdAt: true,
+        updatedAt: true,
+        authorId: true,
+        authorName: true,
+        User: { select: { id: true, name: true } }, // relation is User
+      },
+    }),
+  ]);
+
+  const items = rows.map(normalize);
+  return { ok: true as const, page, limit, total, items };
 }

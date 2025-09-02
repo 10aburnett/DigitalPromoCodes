@@ -371,6 +371,7 @@ export default function NewBlogPostPage() {
     excerpt: '',
     content: '',
     published: false,
+    pinned: false,
     authorName: ''
   })
 
@@ -394,21 +395,55 @@ export default function NewBlogPostPage() {
     setLoading(true)
 
     try {
+      const payload = {
+        title: formData.title,
+        slug: formData.slug || undefined, // let server generate from title if empty
+        excerpt: formData.excerpt || undefined,
+        content: formData.content,
+        published: formData.published,
+        pinned: formData.pinned,
+        authorName: formData.authorName || undefined,
+      }
+
       const response = await fetch('/api/admin/blog', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify(formData)
+        body: JSON.stringify(payload)
       })
 
-      if (response.ok) {
-        router.push('/admin/blog')
+      let data: any = {};
+      try { 
+        data = await response.json(); 
+      } catch { 
+        /* ignore */ 
+      }
+
+      if (!response.ok) {
+        // SEE THE ACTUAL ERROR
+        console.error('Create post failed:', data);
+        const msg =
+          data?.code === 'SLUG_EXISTS' ? 'Slug already exists.'
+          : data?.code === 'P2003'     ? 'Invalid author (foreign key).'
+          : data?.code === 'P2011'     ? 'DB requires a non-null field (likely authorId).'
+          : data?.code === 'P2000'     ? 'One of the values is too long for its column.'
+          : data?.code === 'BAD_JSON' || data?.code === 'UNSUPPORTED_CONTENT_TYPE'
+                                      ? 'Admin form is not sending JSON.'
+          : data?.code === 'VALIDATION_FAILED'
+                                      ? 'Validation failed. Check title/slug/booleans.'
+          : data?.error || 'Failed to create post';
+        throw new Error(msg);
+      }
+
+      // success: redirect to the new post
+      if (data.post?.slug) {
+        router.push(`/blog/${data.post.slug}`);
       } else {
-        throw new Error('Failed to create post')
+        router.push('/admin/blog');
       }
     } catch (error) {
       console.error('Error creating post:', error)
-      alert('Failed to create post. Please try again.')
+      alert(error instanceof Error ? error.message : 'Failed to create post. Please try again.')
     } finally {
       setLoading(false)
     }
@@ -501,17 +536,32 @@ export default function NewBlogPostPage() {
             </p>
           </div>
 
-          <div className="mt-6 flex items-center">
-            <input
-              type="checkbox"
-              id="published"
-              checked={formData.published}
-              onChange={(e) => setFormData(prev => ({ ...prev, published: e.target.checked }))}
-              className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-            />
-            <label htmlFor="published" className="ml-2 block text-sm text-gray-700">
-              Publish immediately
-            </label>
+          <div className="mt-6 space-y-3">
+            <div className="flex items-center">
+              <input
+                type="checkbox"
+                id="published"
+                checked={formData.published}
+                onChange={(e) => setFormData(prev => ({ ...prev, published: e.target.checked }))}
+                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+              />
+              <label htmlFor="published" className="ml-2 block text-sm text-gray-700">
+                Publish immediately
+              </label>
+            </div>
+            
+            <div className="flex items-center">
+              <input
+                type="checkbox"
+                id="pinned"
+                checked={formData.pinned}
+                onChange={(e) => setFormData(prev => ({ ...prev, pinned: e.target.checked }))}
+                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+              />
+              <label htmlFor="pinned" className="ml-2 block text-sm text-gray-700">
+                Pin to top
+              </label>
+            </div>
           </div>
         </div>
 

@@ -28,7 +28,8 @@ export default function AdminBlogPage() {
   const fetchPosts = async () => {
     try {
       const response = await fetch('/api/admin/blog', {
-        credentials: 'include'
+        credentials: 'include',
+        cache: 'no-store'
       })
       
       if (!response.ok) {
@@ -40,7 +41,20 @@ export default function AdminBlogPage() {
       }
       
       const data = await response.json()
-      setPosts(Array.isArray(data) ? data : [])
+      console.log('Fetched data:', data) // Debug log
+      
+      // Handle ultra-compatible response format - find the array regardless of key
+      const postsArray = 
+        data.items ||
+        data.posts ||
+        data.rows ||
+        data.list ||
+        data.results ||
+        (data.payload && data.payload.items) ||
+        (Array.isArray(data.data) ? data.data : data.data?.items) ||
+        []
+      
+      setPosts(Array.isArray(postsArray) ? postsArray : [])
     } catch (error) {
       console.error('Error fetching posts:', error)
       setError('Failed to load blog posts')

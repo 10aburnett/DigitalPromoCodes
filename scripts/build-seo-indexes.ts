@@ -49,7 +49,7 @@ async function main() {
     // Get noindex paths with fallback to legacy column
     const noindex = hasRetirement && hasIndexingStatus
       ? await prisma.whop.findMany({ where: { indexingStatus: 'NOINDEX', retirement: 'NONE' }, select: { slug: true } })
-      : await prisma.whop.findMany({ where: { indexing: 'NOINDEX' }, select: { slug: true } });
+      : await prisma.whop.findMany({ where: { indexingStatus: 'NOINDEX' }, select: { slug: true } });
 
     const retiredPaths = retired.map(r => pathFor(r.slug));
     const noindexPaths = noindex.map(r => pathFor(r.slug));
