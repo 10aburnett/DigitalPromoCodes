@@ -8,21 +8,22 @@ datasource db {
 }
 
 model BlogPost {
-  id          String    @id @default(cuid())
-  title       String
-  slug        String    @unique
-  content     Json?
-  excerpt     String?
-  published   Boolean   @default(false)
-  publishedAt DateTime?
-  pinned      Boolean   @default(false)
-  pinnedAt    DateTime?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  authorId    String?
-  authorName  String?
-  User        User?     @relation(fields: [authorId], references: [id])
-  Comment     Comment[]
+  id           String    @id @default(cuid())
+  title        String
+  slug         String    @unique
+  content      String
+  excerpt      String?
+  published    Boolean   @default(false)
+  publishedAt  DateTime?
+  pinned       Boolean   @default(false)
+  pinnedAt     DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  authorId     String?
+  authorName   String?
+  content_text String?
+  User         User?     @relation(fields: [authorId], references: [id])
+  Comment      Comment[]
 
   @@index([createdAt])
   @@index([pinned])
@@ -238,10 +239,11 @@ model Whop {
   faqContent          String?
   whopCategory        WhopCategory          @default(OTHER)
   locale              String?               @default("en")
-  indexingStatus      String?               @db.Text
+  indexingStatus      String?               @default("INDEX")
   retired             Boolean?              @default(false)
   retirement          RetirementMode?       @default(NONE)
   redirectToPath      String?
+  indexing            IndexingStatus        @default(AUTO)
   OfferTracking       OfferTracking[]
   PromoCode           PromoCode[]
   PromoCodeSubmission PromoCodeSubmission[]
@@ -343,4 +345,10 @@ enum WhopCategory {
   COMPUTER_SCIENCE
   PERSONAL_FINANCE
   OTHER
+}
+
+enum IndexingStatus {
+  INDEX
+  NOINDEX
+  AUTO
 }

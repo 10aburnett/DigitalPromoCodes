@@ -38,6 +38,27 @@ export function middleware(request: NextRequest) {
   const url = request.nextUrl;
   const path = url.pathname.replace(/\/+$/, '');
 
+  // Skip static and public assets - NEVER apply middleware to these
+  if (
+    pathname.startsWith('/_next/') ||
+    pathname.startsWith('/static/') ||
+    pathname.startsWith('/favicon') ||
+    pathname === '/site.webmanifest' ||
+    pathname.startsWith('/sitemaps/') ||
+    pathname === '/robots.txt' ||
+    pathname === '/sitemap.xml' ||
+    pathname.endsWith('.png') ||
+    pathname.endsWith('.jpg') ||
+    pathname.endsWith('.jpeg') ||
+    pathname.endsWith('.gif') ||
+    pathname.endsWith('.svg') ||
+    pathname.endsWith('.ico') ||
+    pathname.endsWith('.css') ||
+    pathname.endsWith('.js')
+  ) {
+    return NextResponse.next();
+  }
+
   // SEO LOGIC FIRST (for whop routes)
   if (path.startsWith('/whop/') || path.match(/^\/([a-z]{2}(?:-[A-Z]{2})?)\/whop\//)) {
     // prove middleware executed (dev only)

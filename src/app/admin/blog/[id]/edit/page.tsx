@@ -8,11 +8,8 @@ function CustomEditor({ value, onChange }: { value: string, onChange: (value: st
   const [showColorPicker, setShowColorPicker] = useState(false)
   const [showBgColorPicker, setShowBgColorPicker] = useState(false)
   
-  useEffect(() => {
-    if (editorRef.current && editorRef.current.innerHTML !== value) {
-      editorRef.current.innerHTML = value
-    }
-  }, [value])
+  // Force re-mount when value changes from empty to populated (for rich editor)
+  const editorKey = value ? 'loaded' : 'loading'
 
   const insertBulletAtCaret = () => {
     if (!editorRef.current) return
@@ -342,6 +339,7 @@ function CustomEditor({ value, onChange }: { value: string, onChange: (value: st
       
       {/* Editor */}
       <div
+        key={editorKey}
         ref={editorRef}
         contentEditable
         onKeyDown={handleKeyDown}
@@ -357,6 +355,7 @@ function CustomEditor({ value, onChange }: { value: string, onChange: (value: st
           letterSpacing: '0.005em' // Subtle spacing similar to zero-width space effect
         }}
         suppressContentEditableWarning={true}
+        dangerouslySetInnerHTML={{ __html: value }}
       />
     </div>
   )
@@ -387,20 +386,34 @@ export default function EditBlogPostPage({ params }: EditBlogPostPageProps) {
 
   const fetchPost = async () => {
     try {
-      const response = await fetch(`/api/admin/blog/${params.id}`)
-      if (response.ok) {
-        const post = await response.json()
-        setFormData({
-          title: post.title || '',
-          slug: post.slug || '',
-          excerpt: post.excerpt || '',
-          content: post.content || '',
-          published: post.published || false,
-          authorName: post.authorName || ''
-        })
+      const response = await fetch(`/api/admin/blog/${params.id}`, { cache: 'no-store' })
+      if (!response.ok) throw new Error(`HTTP ${response.status}`)
+      
+      const json = await response.json()
+      console.log('API Response:', json) // Debug log
+      
+      // Normalize response - handle {ok: true, post: {...}} or other shapes
+      const post = json.post || json.data?.post || json.data || json.item || json
+      if (!post || typeof post !== 'object') {
+        throw new Error('Invalid API response shape')
       }
+      
+      // Never JSON.parse HTML content - use as string directly
+      const content = typeof post.content === 'string' 
+        ? post.content 
+        : (typeof post.content_text === 'string' ? post.content_text : '')
+      
+      setFormData({
+        title: post.title || '',
+        slug: post.slug || '',
+        excerpt: post.excerpt || '',
+        content, // Use the normalized content
+        published: post.published || false,
+        authorName: post.authorName || ''
+      })
     } catch (error) {
       console.error('Error fetching post:', error)
+      alert(`Failed to load post: ${error.message}`)
     } finally {
       setLoading(false)
     }
