@@ -68,12 +68,14 @@ export default function AdminBlogPage() {
       const response = await fetch(`/api/admin/blog/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ published: !published }),
+        body: JSON.stringify({ action: 'publish', value: !published }),
         credentials: 'include'
       })
       
       if (response.ok) {
         fetchPosts()
+      } else {
+        console.error('Failed to toggle publish status:', response.status, await response.text())
       }
     } catch (error) {
       console.error('Error updating post:', error)
@@ -85,15 +87,14 @@ export default function AdminBlogPage() {
       const response = await fetch(`/api/admin/blog/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          pinned: !pinned,
-          pinnedAt: !pinned ? new Date().toISOString() : null
-        }),
+        body: JSON.stringify({ action: 'pin', value: !pinned }),
         credentials: 'include'
       })
       
       if (response.ok) {
         fetchPosts()
+      } else {
+        console.error('Failed to toggle pin status:', response.status, await response.text())
       }
     } catch (error) {
       console.error('Error updating post:', error)
