@@ -72,7 +72,9 @@ export default function PromoSubmissionsManager() {
       if (response.ok) {
         await fetchSubmissions() // Refresh the list
       } else {
-        alert('Failed to update submission status')
+        const errorData = await response.json().catch(() => ({}))
+        console.error('API Error:', response.status, errorData)
+        alert(`Failed to update submission status: ${errorData.error || errorData.details || 'Unknown error'}`)
       }
     } catch (error) {
       console.error('Error updating submission:', error)
@@ -194,46 +196,69 @@ export default function PromoSubmissionsManager() {
                 </div>
               )}
 
-              {submission.status === 'PENDING' && (
-                <div className="flex flex-wrap gap-2 pt-4 border-t border-gray-200">
-                  <button
-                    onClick={() => handleStatusUpdate(submission.id, 'APPROVED', 'Approved for publication')}
-                    disabled={processingId === submission.id}
-                    className="bg-green-600 text-white px-4 py-2 rounded text-sm font-medium hover:bg-green-700 disabled:opacity-50"
-                  >
-                    {processingId === submission.id ? 'Processing...' : '✓ Approve'}
-                  </button>
-                  
-                  <button
-                    onClick={() => {
-                      const notes = prompt('Reason for rejection (optional):')
-                      if (notes !== null) {
-                        handleStatusUpdate(submission.id, 'REJECTED', notes || 'Rejected by admin')
-                      }
-                    }}
-                    disabled={processingId === submission.id}
-                    className="bg-red-600 text-white px-4 py-2 rounded text-sm font-medium hover:bg-red-700 disabled:opacity-50"
-                  >
-                    ✗ Reject
-                  </button>
-                  
-                  <button
-                    onClick={() => handleStatusUpdate(submission.id, 'DUPLICATE', 'Marked as duplicate')}
-                    disabled={processingId === submission.id}
-                    className="bg-orange-600 text-white px-4 py-2 rounded text-sm font-medium hover:bg-orange-700 disabled:opacity-50"
-                  >
-                    Duplicate
-                  </button>
-                  
-                  <button
-                    onClick={() => handleStatusUpdate(submission.id, 'SPAM', 'Marked as spam')}
-                    disabled={processingId === submission.id}
-                    className="bg-gray-600 text-white px-4 py-2 rounded text-sm font-medium hover:bg-gray-700 disabled:opacity-50"
-                  >
-                    Spam
-                  </button>
-                </div>
-              )}
+              <div className="flex flex-wrap gap-2 pt-4 border-t border-gray-200">
+                {submission.status === 'PENDING' ? (
+                  <>
+                    <button
+                      onClick={() => handleStatusUpdate(submission.id, 'APPROVED', 'Approved for publication')}
+                      disabled={processingId === submission.id}
+                      className="bg-green-600 text-white px-4 py-2 rounded text-sm font-medium hover:bg-green-700 disabled:opacity-50"
+                    >
+                      {processingId === submission.id ? 'Processing...' : '✓ Approve'}
+                    </button>
+                    
+                    <button
+                      onClick={() => {
+                        const notes = prompt('Reason for rejection (optional):')
+                        if (notes !== null) {
+                          handleStatusUpdate(submission.id, 'REJECTED', notes || 'Rejected by admin')
+                        }
+                      }}
+                      disabled={processingId === submission.id}
+                      className="bg-red-600 text-white px-4 py-2 rounded text-sm font-medium hover:bg-red-700 disabled:opacity-50"
+                    >
+                      ✗ Reject
+                    </button>
+                    
+                    <button
+                      onClick={() => handleStatusUpdate(submission.id, 'DUPLICATE', 'Marked as duplicate')}
+                      disabled={processingId === submission.id}
+                      className="bg-orange-600 text-white px-4 py-2 rounded text-sm font-medium hover:bg-orange-700 disabled:opacity-50"
+                    >
+                      Duplicate
+                    </button>
+                    
+                    <button
+                      onClick={() => handleStatusUpdate(submission.id, 'SPAM', 'Marked as spam')}
+                      disabled={processingId === submission.id}
+                      className="bg-gray-600 text-white px-4 py-2 rounded text-sm font-medium hover:bg-gray-700 disabled:opacity-50"
+                    >
+                      Spam
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button
+                      onClick={() => {
+                        const reason = prompt('Reason for reverting to pending (optional):')
+                        if (reason !== null) {
+                          handleStatusUpdate(submission.id, 'PENDING', reason || 'Reverted to pending for re-evaluation')
+                        }
+                      }}
+                      disabled={processingId === submission.id}
+                      className="bg-blue-600 text-white px-4 py-2 rounded text-sm font-medium hover:bg-blue-700 disabled:opacity-50"
+                    >
+                      {processingId === submission.id ? 'Processing...' : '🔄 Revert to Pending'}
+                    </button>
+                    
+                    <span className="text-sm text-gray-500 self-center">
+                      Current status: <span className={`font-medium px-2 py-1 rounded text-xs ${getStatusColor(submission.status)}`}>
+                        {submission.status}
+                      </span>
+                    </span>
+                  </>
+                )}
+              </div>
             </div>
           ))}
         </div>
