@@ -151,7 +151,7 @@ model PromoCode {
 }
 
 model PromoCodeSubmission {
-  id               String           @id
+  id               String           @id @default(cuid())
   title            String
   description      String
   code             String?
@@ -167,7 +167,7 @@ model PromoCodeSubmission {
   reviewedBy       String?
   adminNotes       String?
   createdAt        DateTime         @default(now())
-  updatedAt        DateTime
+  updatedAt        DateTime         @updatedAt
   ipAddress        String?
   userAgent        String?
   Whop             Whop?            @relation(fields: [whopId], references: [id], onDelete: Cascade)

@@ -1,48 +1,110 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import { NextResponse } from 'next/server';
+import { z } from 'zod';
+import { prisma } from '@/lib/prisma';
+import { randomUUID } from 'crypto';
+
+export const runtime = 'nodejs';           // IMPORTANT for Prisma on Vercel
+export const dynamic = 'force-dynamic';
+
+const TypeSchema = z
+  .enum(['GENERAL', 'COURSE'])
+  .or(z.literal('General Promo'))
+  .or(z.literal('Course-Specific'))
+  .transform((v) => (v === 'Course-Specific' ? 'COURSE' : v === 'General Promo' ? 'GENERAL' : v));
+
+const BodySchema = z.object({
+  type: TypeSchema.optional().default('GENERAL'),     // radio
+  title: z.string().min(2).max(200),     // Promo Title
+  description: z.string().min(2).max(4000),
+  code: z.string().min(1).max(100).optional().nullable(),      // user can type "No code required" too
+  value: z.string().min(1).max(200).optional().nullable(),     // Discount Value
+  // Support both new and legacy field names
+  name: z.string().min(2).max(200).optional(),      // Your Name (new format)
+  email: z.string().email().max(320).optional(),    // Your Email (new format)
+  message: z.string().max(4000).optional(),         // Additional Message (new format)
+  submitterName: z.string().min(2).max(200).optional(),    // Legacy format
+  submitterEmail: z.string().email().max(320).optional(),  // Legacy format  
+  submitterMessage: z.string().max(4000).optional(),       // Legacy format
+  isGeneral: z.boolean().optional(),
+  whopId: z.string().optional().nullable(),
+  customCourseName: z.string().max(200).optional().nullable(),
+}).refine((data) => {
+  // Require either new format (name + email) or legacy format (submitterName + submitterEmail)
+  const hasNewFormat = data.name && data.email;
+  const hasLegacyFormat = data.submitterName && data.submitterEmail;
+  return hasNewFormat || hasLegacyFormat;
+}, {
+  message: "Either 'name' and 'email' OR 'submitterName' and 'submitterEmail' are required",
+  path: ['name'] // Show error on name field
+});
+
+async function parseBody(req: Request) {
+  const ctype = req.headers.get('content-type') || '';
+  if (ctype.includes('application/json')) {
+    const json = await req.json();
+    return json;
+  }
+  if (ctype.includes('application/x-www-form-urlencoded') || ctype.includes('multipart/form-data')) {
+    const fd = await req.formData();
+    return Object.fromEntries(fd.entries());
+  }
+  // fall back
+  try {
+    return await req.json();
+  } catch {
+    return {};
+  }
+}
 
 // POST /api/promo-submissions - Submit new promo code
-export async function POST(request: NextRequest) {
+export async function POST(req: Request) {
   try {
-    const body = await request.json()
-    const {
-      title,
-      description,
-      code,
-      value,
-      submitterName,
-      submitterEmail,
-      submitterMessage,
-      isGeneral,
-      whopId,
-      customCourseName
-    } = body
-
-    // Validate required fields
-    if (!title || !description || !submitterName || !submitterEmail) {
+    const raw = await parseBody(req);
+    console.log('Received promo submission:', raw); // Debug log
+    
+    const parsed = BodySchema.parse(raw);
+    
+    // Handle both new and legacy field names
+    const title = parsed.title;
+    const description = parsed.description;
+    const code = parsed.code;
+    const value = parsed.value;
+    const name = parsed.name || parsed.submitterName;
+    const email = parsed.email || parsed.submitterEmail;
+    const message = parsed.message || parsed.submitterMessage;
+    const type = parsed.type;
+    
+    // Validate required fields after parsing
+    if (!title || !description || !name || !email) {
       return NextResponse.json({
+        ok: false,
         error: 'Missing required fields',
-        debug: 'title, description, submitterName, and submitterEmail are required'
+        details: 'title, description, name, and email are required'
       }, { status: 400 })
     }
 
+    // Determine if this is a general promo (legacy isGeneral field or type field)
+    const isGeneralPromo = parsed.isGeneral ?? (type === 'GENERAL');
+    
     // If not general, validate course selection
-    if (!isGeneral) {
-      if (!whopId && !customCourseName) {
+    if (!isGeneralPromo) {
+      if (!parsed.whopId && !parsed.customCourseName) {
         return NextResponse.json({
+          ok: false,
           error: 'Course selection required for course-specific promo codes'
         }, { status: 400 })
       }
 
       // If whopId is provided, verify the course exists
-      if (whopId) {
+      if (parsed.whopId) {
         const whopExists = await prisma.whop.findUnique({
-          where: { id: whopId },
+          where: { id: parsed.whopId },
           select: { id: true }
         })
 
         if (!whopExists) {
           return NextResponse.json({
+            ok: false,
             error: 'Selected course not found'
           }, { status: 400 })
         }
@@ -50,33 +112,42 @@ export async function POST(request: NextRequest) {
     }
 
     // Get client IP and User-Agent for spam prevention
-    const forwarded = request.headers.get('x-forwarded-for')
-    const ip = forwarded ? forwarded.split(',')[0] : request.ip
-    const userAgent = request.headers.get('user-agent')
+    const forwarded = req.headers.get('x-forwarded-for')
+    const ip = forwarded ? forwarded.split(',')[0] : null
+    const userAgent = req.headers.get('user-agent')
 
+    // Generate UUID for the submission (belt-and-braces fix for stale Prisma client)
+    const id = randomUUID();
+    
     // Create the submission
     const submission = await prisma.promoCodeSubmission.create({
       data: {
+        id, // Explicit ID to work with stale client
         title,
         description,
         code: code || null,
         value: value || null,
-        submitterName,
-        submitterEmail,
-        submitterMessage: submitterMessage || null,
-        isGeneral: Boolean(isGeneral),
-        whopId: isGeneral ? null : whopId,
-        customCourseName: customCourseName || null,
+        submitterName: name,
+        submitterEmail: email,
+        submitterMessage: message || null,
+        isGeneral: isGeneralPromo,
+        whopId: isGeneralPromo ? null : parsed.whopId,
+        customCourseName: parsed.customCourseName || null,
         ipAddress: ip || null,
         userAgent: userAgent || null,
       },
-      include: {
-        whop: {
-          select: {
-            name: true,
-            slug: true
-          }
-        }
+      select: {
+        id: true,
+        status: true,
+        title: true,
+        description: true,
+        code: true,
+        value: true,
+        submitterName: true,
+        submitterEmail: true,
+        submitterMessage: true,
+        isGeneral: true,
+        createdAt: true,
       }
     })
 
@@ -85,30 +156,33 @@ export async function POST(request: NextRequest) {
       id: submission.id,
       title: submission.title,
       isGeneral: submission.isGeneral,
-      course: submission.whop?.name || submission.customCourseName || 'General',
       submitter: submission.submitterEmail
     })
 
-    return NextResponse.json({
-      success: true,
-      submissionId: submission.id,
-      message: 'Promo code submitted successfully! We\'ll review it and add it to the site if approved.'
-    })
+    return NextResponse.json({ ok: true, submission }, { status: 201 });
+  } catch (e: any) {
+    // Zod validation error
+    if (e?.issues) {
+      return NextResponse.json({ ok: false, error: 'Invalid input', issues: e.issues }, { status: 400 });
+    }
 
-  } catch (error) {
-    console.error('Error creating promo code submission:', error)
-    
-    return NextResponse.json({
-      error: 'Internal server error',
-      debug: error instanceof Error ? error.message : 'Unknown error'
-    }, { status: 500 })
+    // Prisma known errors
+    if (e?.code === 'P2002') {
+      return NextResponse.json({ ok: false, error: 'Duplicate record', code: e.code, meta: e.meta }, { status: 409 });
+    }
+
+    console.error('POST /api/promo-submissions failed:', e);
+    return NextResponse.json(
+      { ok: false, error: 'Server error', code: e?.code ?? 'UNKNOWN', details: e?.message ?? String(e) },
+      { status: 500 },
+    );
   }
 }
 
 // GET /api/promo-submissions - List submissions (for admin)
-export async function GET(request: NextRequest) {
+export async function GET(req: Request) {
   try {
-    const { searchParams } = new URL(request.url)
+    const { searchParams } = new URL(req.url)
     const status = searchParams.get('status')
     const limit = parseInt(searchParams.get('limit') || '50')
     const offset = parseInt(searchParams.get('offset') || '0')
@@ -125,7 +199,7 @@ export async function GET(request: NextRequest) {
       take: limit,
       skip: offset,
       include: {
-        whop: {
+        Whop: {
           select: {
             name: true,
             slug: true
@@ -143,10 +217,12 @@ export async function GET(request: NextRequest) {
       offset
     })
 
-  } catch (error) {
-    console.error('Error fetching promo submissions:', error)
+  } catch (error: any) {
+    console.error('GET /api/promo-submissions failed:', error)
     return NextResponse.json({
-      error: 'Internal server error'
+      ok: false,
+      error: 'Server error',
+      details: error?.message ?? String(error)
     }, { status: 500 })
   }
 }

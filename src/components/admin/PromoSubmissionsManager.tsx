@@ -54,7 +54,7 @@ export default function PromoSubmissionsManager() {
 
   const handleStatusUpdate = async (
     submissionId: string, 
-    newStatus: 'APPROVED' | 'REJECTED' | 'DUPLICATE' | 'SPAM',
+    newStatus: 'APPROVED' | 'REJECTED' | 'DUPLICATE' | 'SPAM' | 'PENDING',
     adminNotes?: string
   ) => {
     setProcessingId(submissionId)
@@ -79,6 +79,40 @@ export default function PromoSubmissionsManager() {
     } catch (error) {
       console.error('Error updating submission:', error)
       alert('Error updating submission')
+    } finally {
+      setProcessingId(null)
+    }
+  }
+
+  const handleDelete = async (submissionId: string, submissionTitle: string) => {
+    // Confirm deletion with strong warning
+    if (!confirm(`⚠️ PERMANENT DELETE WARNING ⚠️\n\nAre you sure you want to permanently delete the submission "${submissionTitle}"?\n\nThis will DELETE the record from the database and CANNOT BE UNDONE.\n\nClick OK only if you are absolutely sure.`)) {
+      return
+    }
+
+    setProcessingId(submissionId)
+    try {
+      // Call the proper DELETE endpoint with ID in path
+      const response = await fetch(`/api/admin/promo-submissions/${encodeURIComponent(submissionId)}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' }
+      })
+
+      if (response.ok) {
+        const result = await response.json()
+        console.log('Submission permanently deleted from database:', result)
+        
+        // Remove from UI immediately and refresh
+        await fetchSubmissions()
+        alert(`✅ Successfully deleted from database: "${submissionTitle}"`)
+      } else {
+        const errorData = await response.json().catch(() => ({}))
+        console.error('Delete API Error:', response.status, errorData)
+        alert(`❌ Failed to delete from database: ${errorData.error || errorData.details || 'Unknown error'}`)
+      }
+    } catch (error) {
+      console.error('Error deleting submission from database:', error)
+      alert('❌ Network error: Failed to delete submission from database')
     } finally {
       setProcessingId(null)
     }
@@ -258,6 +292,15 @@ export default function PromoSubmissionsManager() {
                     </span>
                   </>
                 )}
+                
+                {/* Delete button - available for all submissions */}
+                <button
+                  onClick={() => handleDelete(submission.id, submission.title)}
+                  disabled={processingId === submission.id}
+                  className="bg-red-800 text-white px-4 py-2 rounded text-sm font-medium hover:bg-red-900 disabled:opacity-50 border-2 border-red-600"
+                >
+                  {processingId === submission.id ? 'Deleting...' : '🗑️ Delete'}
+                </button>
               </div>
             </div>
           ))}
