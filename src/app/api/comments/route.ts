@@ -1,5 +1,29 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { z } from 'zod'
+
+export const runtime = 'nodejs'; // IMPORTANT for Prisma on Vercel
+export const dynamic = 'force-dynamic';
+
+// Accept "", null, undefined ➜ turn into undefined (no parent)
+const ParentId = z.preprocess(
+  (v) => (v === '' || v === null || v === undefined ? undefined : v),
+  z.string().trim().min(1).optional()
+);
+
+// Validation schema for comment submission
+const CommentSchema = z.object({
+  content: z.string().trim().min(1, 'Comment must be at least 1 character').max(4000),
+  authorName: z.string().trim().min(2, 'Name must be at least 2 characters').max(100),
+  authorEmail: z.string().trim().email('Valid email required').toLowerCase().max(320),
+  blogPostId: z.string().min(1, 'Missing blog post ID').optional(),
+  postSlug: z.string().min(1, 'Missing post slug').optional(),
+  parentId: ParentId.optional(),
+  // Honeypot field (keep hidden on client)
+  website: z.string().max(0).optional().or(z.literal('')),
+}).refine((data) => {
+  return data.blogPostId || data.postSlug;
+}, { message: "Either blogPostId or postSlug is required" });
 
 // Hate speech and harmful content detection
 const BLOCKED_PATTERNS = [
@@ -39,27 +63,70 @@ function containsHateSpeech(content: string): { isBlocked: boolean; reason?: str
   return { isBlocked: false }
 }
 
+async function parseRequest(req: Request) {
+  const ct = req.headers.get('content-type') || '';
+  if (ct.includes('application/json')) {
+    return CommentSchema.parse(await req.json());
+  }
+  // Handle form submissions
+  if (ct.includes('application/x-www-form-urlencoded') || ct.includes('multipart/form-data')) {
+    const form = await req.formData();
+    return CommentSchema.parse({
+      content: String(form.get('content') ?? form.get('comment') ?? ''),
+      authorName: String(form.get('authorName') ?? form.get('name') ?? ''),
+      authorEmail: String(form.get('authorEmail') ?? form.get('email') ?? ''),
+      blogPostId: String(form.get('blogPostId') ?? ''),
+      postSlug: String(form.get('postSlug') ?? ''),
+      parentId: form.get('parentId'),
+      website: String(form.get('website') ?? ''),
+    });
+  }
+  // Fallback
+  try {
+    return CommentSchema.parse(await req.json());
+  } catch {
+    return CommentSchema.parse({});
+  }
+}
+
 // POST /api/comments - Submit a new comment
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json()
-    const { content, authorName, authorEmail, blogPostId, parentId } = body
-
-    // Validate required fields
-    if (!content || !authorName || !authorEmail || !blogPostId) {
-      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
+    console.log('Comment submission received');
+    
+    // Parse and validate the data
+    const data = await parseRequest(request);
+    console.log('Processing comment submission:', { 
+      authorName: data.authorName, 
+      authorEmail: data.authorEmail, 
+      blogPostId: data.blogPostId,
+      postSlug: data.postSlug 
+    });
+    
+    // Check honeypot (spam protection)
+    if (data.website && data.website.length > 0) {
+      console.log('Honeypot triggered, rejecting spam comment');
+      return NextResponse.json({
+        error: 'Invalid comment data',
+        details: { website: ['This field should be empty'] }
+      }, { status: 400 });
     }
+    
+    const { content, authorName, authorEmail, blogPostId, postSlug, parentId } = data;
 
-    // Basic email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    if (!emailRegex.test(authorEmail)) {
-      return NextResponse.json({ error: 'Invalid email address' }, { status: 400 })
+    // Resolve blog post - prefer postSlug, fallback to blogPostId
+    let blogPost;
+    if (postSlug) {
+      blogPost = await prisma.blogPost.findUnique({
+        where: { slug: postSlug, published: true },
+        select: { id: true }
+      });
+    } else if (blogPostId) {
+      blogPost = await prisma.blogPost.findUnique({
+        where: { id: blogPostId, published: true },
+        select: { id: true }
+      });
     }
-
-    // Check if blog post exists
-    const blogPost = await prisma.blogPost.findUnique({
-      where: { id: blogPostId, published: true }
-    })
 
     if (!blogPost) {
       return NextResponse.json({ error: 'Blog post not found' }, { status: 404 })
@@ -69,7 +136,7 @@ export async function POST(request: NextRequest) {
     if (parentId) {
       const parentComment = await prisma.comment.findUnique({
         where: { id: parentId },
-        select: { id: true, status: true }
+        select: { id: true, status: true, blogPostId: true }
       })
 
       if (!parentComment) {
@@ -79,6 +146,10 @@ export async function POST(request: NextRequest) {
       if (parentComment.status !== 'APPROVED') {
         return NextResponse.json({ error: 'Cannot reply to non-approved comments' }, { status: 400 })
       }
+
+      if (parentComment.blogPostId !== blogPost.id) {
+        return NextResponse.json({ error: 'Invalid parent comment' }, { status: 400 })
+      }
     }
 
     // Content moderation - auto-approve unless severely offensive
@@ -86,18 +157,27 @@ export async function POST(request: NextRequest) {
     const status = moderation.isBlocked ? 'FLAGGED' : 'APPROVED'
     const flaggedReason = moderation.reason || null
 
-    // Create comment
+    // Create comment - DO NOT pass id, let Prisma auto-generate it
     const comment = await prisma.comment.create({
       data: {
         content: content.trim(),
         authorName: authorName.trim(),
         authorEmail: authorEmail.trim(),
-        blogPostId,
+        blogPostId: blogPost.id,
         parentId: parentId || null,
         status,
         flaggedReason,
+      },
+      select: {
+        id: true,
+        content: true,
+        authorName: true,
+        createdAt: true,
+        status: true
       }
     })
+
+    console.log('Comment created successfully:', comment.id);
 
     return NextResponse.json({ 
       success: true, 
@@ -114,20 +194,59 @@ export async function POST(request: NextRequest) {
         userVote: null
       }
     })
-  } catch (error) {
-    console.error('Error creating comment:', error)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+  } catch (err: any) {
+    console.error('Comments API error:', err);
+    
+    // Zod validation errors
+    if (err?.name === 'ZodError') {
+      return NextResponse.json({
+        error: 'Invalid comment data',
+        details: err.flatten()
+      }, { status: 400 });
+    }
+    
+    // Prisma duplicate key (unlikely but handle it)
+    if (err?.code === 'P2002') {
+      return NextResponse.json({
+        success: true,
+        duplicate: true,
+        message: 'Comment already submitted'
+      }, { status: 200 });
+    }
+    
+    // Generic server error
+    return NextResponse.json({
+      error: 'Server error',
+      details: err?.message ?? String(err),
+      code: err?.code
+    }, { status: 500 });
   }
 }
 
-// GET /api/comments?blogPostId=xxx - Get approved comments for a blog post
+// GET /api/comments?blogPostId=xxx OR ?postSlug=xxx - Get approved comments for a blog post
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
     const blogPostId = searchParams.get('blogPostId')
+    const postSlug = searchParams.get('postSlug')
 
-    if (!blogPostId) {
-      return NextResponse.json({ error: 'blogPostId is required' }, { status: 400 })
+    if (!blogPostId && !postSlug) {
+      return NextResponse.json({ error: 'blogPostId or postSlug is required' }, { status: 400 })
+    }
+
+    // Resolve blog post
+    let post;
+    if (postSlug) {
+      post = await prisma.blogPost.findUnique({
+        where: { slug: postSlug },
+        select: { id: true }
+      });
+    } else if (blogPostId) {
+      post = { id: blogPostId };
+    }
+
+    if (!post) {
+      return NextResponse.json({ error: 'Blog post not found' }, { status: 404 })
     }
 
     // Get user IP for vote status
@@ -137,7 +256,7 @@ export async function GET(request: NextRequest) {
     // Get ALL approved comments for this blog post (flattened)
     const allComments = await prisma.comment.findMany({
       where: {
-        blogPostId,
+        blogPostId: post.id,
         status: 'APPROVED'
       },
       select: {
@@ -148,7 +267,7 @@ export async function GET(request: NextRequest) {
         upvotes: true,
         downvotes: true,
         parentId: true,
-        votes: {
+        CommentVote: {
           where: { voterIP },
           select: { voteType: true }
         }
@@ -163,8 +282,8 @@ export async function GET(request: NextRequest) {
     allComments.forEach(comment => {
       const transformedComment = {
         ...comment,
-        userVote: comment.votes.length > 0 ? comment.votes[0].voteType : null,
-        votes: undefined,
+        userVote: comment.CommentVote.length > 0 ? comment.CommentVote[0].voteType : null,
+        CommentVote: undefined,
         replies: []
       }
       commentMap.set(comment.id, transformedComment)
