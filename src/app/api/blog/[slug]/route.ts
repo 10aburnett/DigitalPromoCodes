@@ -16,7 +16,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
         published: true 
       },
       include: {
-        author: {
+        User: {
           select: {
             name: true,
           }

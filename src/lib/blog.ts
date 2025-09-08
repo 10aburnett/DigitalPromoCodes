@@ -56,8 +56,8 @@ export async function getPublishedBlogPosts(): Promise<BlogListItem[]> {
     publishedAt: p.publishedAt ?? null,
     pinned: p.pinned ?? false,
     author: {
-      // prefer relation name; fall back to scalar; then to "Unknown"
-      name: (p.User?.name ?? p.authorName ?? 'Unknown').trim(),
+      // prefer scalar authorName; fall back to relation name; then to "Unknown"
+      name: (p.authorName ?? p.User?.name ?? 'Unknown').trim(),
     },
   }));
 }
@@ -94,8 +94,8 @@ export async function getBlogPostBySlug(slug: string): Promise<BlogPostFull | nu
     pinned: post.pinned ?? false,
     content: post.content ?? null,
     author: {
-      // prefer relation name; fall back to scalar; then to "Unknown"
-      name: (post.User?.name ?? post.authorName ?? 'Unknown').trim(),
+      // prefer scalar authorName; fall back to relation name; then to "Unknown"
+      name: (post.authorName ?? post.User?.name ?? 'Unknown').trim(),
     },
   };
 }
@@ -111,8 +111,8 @@ function normalize(p: any): AdminPost {
     publishedAt: p.publishedAt ? p.publishedAt.toISOString() : null,
     createdAt: p.createdAt.toISOString(),
     updatedAt: p.updatedAt.toISOString(),
-    // relation is User; fall back to scalar authorName so this never breaks
-    author: { id: p.authorId ?? null, name: (p.User?.name ?? p.authorName ?? "Admin").trim() },
+    // prefer scalar authorName; fall back to relation User name
+    author: { id: p.authorId ?? null, name: (p.authorName ?? p.User?.name ?? "Admin").trim() },
   };
 }
 
