@@ -10,10 +10,10 @@ interface Comment {
   status: 'PENDING' | 'APPROVED' | 'REJECTED' | 'FLAGGED'
   flaggedReason?: string
   createdAt: string
-  blogPost: {
+  BlogPost?: {
     title: string
     slug: string
-  }
+  } | null
 }
 
 export default function AdminCommentsPage() {
@@ -99,7 +99,7 @@ export default function AdminCommentsPage() {
     )
   }
 
-  const filteredComments = comments.filter(comment => {
+  const filteredComments = (comments || []).filter(comment => {
     if (filter === 'all') return true
     return comment.status === filter.toUpperCase()
   })
@@ -139,7 +139,7 @@ export default function AdminCommentsPage() {
               }`}
             >
               {f.charAt(0).toUpperCase() + f.slice(1)} 
-              {f !== 'all' && `(${comments.filter(c => c.status === f.toUpperCase()).length})`}
+              {f !== 'all' && `(${(comments || []).filter(c => c.status === f.toUpperCase()).length})`}
             </button>
           ))}
         </div>
@@ -169,13 +169,17 @@ export default function AdminCommentsPage() {
                     </div>
                     
                     <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                      On: <Link 
-                        href={`/blog/${comment.blogPost.slug}`} 
-                        className="text-blue-600 hover:text-blue-800 dark:text-blue-400"
-                        target="_blank"
-                      >
-                        {comment.blogPost.title}
-                      </Link>
+                      On: {comment.BlogPost ? (
+                        <Link 
+                          href={`/blog/${comment.BlogPost.slug}`} 
+                          className="text-blue-600 hover:text-blue-800 dark:text-blue-400"
+                          target="_blank"
+                        >
+                          {comment.BlogPost.title || comment.BlogPost.slug}
+                        </Link>
+                      ) : (
+                        <span className="text-gray-500 italic">Post deleted or unavailable</span>
+                      )}
                     </p>
                     
                     <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
