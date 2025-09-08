@@ -1,11 +1,12 @@
-import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { prisma } from "@/lib/prisma";
-import { authOptions } from "@/lib/auth";
+import { NextRequest, NextResponse } from 'next/server'
+import { prisma } from '@/lib/prisma'
+import { z } from 'zod'
 
-export const maxDuration = 60; // Allow the function to run for 60 seconds
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+export const maxDuration = 60;
 
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const whopId = searchParams.get('whopId');
@@ -35,7 +36,7 @@ export async function GET(request: Request) {
     const reviews = await prisma.review.findMany({
       where: whereClause,
       include: {
-        whop: {
+        Whop: {
           select: {
             id: true,
             name: true,
@@ -60,78 +61,146 @@ export async function GET(request: Request) {
   }
 }
 
-export async function POST(request: Request) {
-  try {
-    const data = await request.json();
-    
-    // Validate required fields
-    if (!data.author || !data.content || !data.rating || !data.whopId) {
-      return NextResponse.json(
-        { error: 'Missing required fields: author, content, rating, whopId' },
-        { status: 400 }
-      );
-    }
+const Rating = z.preprocess(v => Number(v), z.number().int().min(1).max(5))
 
-    // Validate rating is between 1 and 5
-    if (data.rating < 1 || data.rating > 5) {
-      return NextResponse.json(
-        { error: 'Rating must be between 1 and 5' },
-        { status: 400 }
-      );
-    }
+const ReviewSchema = z.object({
+  whopSlug: z.string().trim().optional(),
+  whopId: z.string().trim().optional(),
+  author: z.string().trim().min(2, 'Name must be at least 2 characters').max(100),
+  content: z.string().trim().min(1, 'Review must be at least 1 character').max(2000),
+  rating: Rating,
+  website: z.string().max(0).optional().or(z.literal(''))
+}).refine((data) => {
+  return data.whopId || data.whopSlug;
+}, { message: "Either whopId or whopSlug is required" });
 
-    // Find the whop by ID or slug to ensure it exists and get the correct ID
-    const whop = await prisma.whop.findFirst({
-      where: {
-        OR: [
-          { id: data.whopId },
-          { slug: data.whopId }
-        ]
-      },
-      select: { id: true, name: true }
+async function parseRequest(req: Request) {
+  const ct = req.headers.get('content-type') || '';
+  if (ct.includes('application/json')) {
+    return ReviewSchema.parse(await req.json());
+  }
+  // Handle form submissions
+  if (ct.includes('application/x-www-form-urlencoded') || ct.includes('multipart/form-data')) {
+    const form = await req.formData();
+    return ReviewSchema.parse({
+      whopSlug: String(form.get('whopSlug') ?? ''),
+      whopId: String(form.get('whopId') ?? ''),
+      author: String(form.get('author') ?? form.get('name') ?? ''),
+      content: String(form.get('content') ?? form.get('review') ?? ''),
+      rating: form.get('rating'),
+      website: String(form.get('website') ?? '')
     });
+  }
+  // Fallback
+  try {
+    return ReviewSchema.parse(await req.json());
+  } catch {
+    return ReviewSchema.parse({});
+  }
+}
+
+export async function POST(request: NextRequest) {
+  try {
+    console.log('Review submission received');
+    
+    // Parse and validate the data
+    const data = await parseRequest(request);
+    console.log('Processing review submission:', { 
+      author: data.author, 
+      whopId: data.whopId,
+      whopSlug: data.whopSlug,
+      rating: data.rating 
+    });
+    
+    // Check honeypot (spam protection)
+    if (data.website && data.website.length > 0) {
+      console.log('Honeypot triggered, rejecting spam review');
+      return NextResponse.json({
+        error: 'Invalid review data',
+        details: { website: ['This field should be empty'] }
+      }, { status: 400 });
+    }
+    
+    const { whopSlug, whopId, author, content, rating } = data;
+
+    // Resolve whop - prefer whopSlug, fallback to whopId
+    let whop;
+    if (whopSlug) {
+      whop = await prisma.whop.findUnique({
+        where: { slug: whopSlug },
+        select: { id: true, name: true }
+      });
+    } else if (whopId) {
+      whop = await prisma.whop.findUnique({
+        where: { id: whopId },
+        select: { id: true, name: true }
+      });
+    }
 
     if (!whop) {
-      console.error('Whop not found for whopId:', data.whopId);
-      return NextResponse.json(
-        { error: 'Whop not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Whop not found' }, { status: 404 })
     }
 
     console.log('Creating review for whop:', whop.id, whop.name);
 
-    // Generate a unique ID for the review
-    const reviewId = `rev_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-
+    // Create review - DO NOT pass id, let Prisma auto-generate it
     const review = await prisma.review.create({
       data: {
-        id: reviewId,
-        author: data.author,
-        content: data.content,
-        rating: parseFloat(data.rating),
-        whopId: whop.id, // Use the actual whop ID
-        verified: false, // Reviews start as unverified
-        updatedAt: new Date()
+        author: author.trim(),
+        content: content.trim(),
+        rating: rating,
+        whopId: whop.id,
+        verified: false
       },
-      include: {
-        whop: {
-          select: {
-            id: true,
-            name: true,
-            slug: true,
-            logo: true
-          }
-        }
+      select: {
+        id: true,
+        author: true,
+        content: true,
+        rating: true,
+        createdAt: true,
+        verified: true
       }
     });
 
-    return NextResponse.json(review, { status: 201 });
-  } catch (error) {
-    console.error('Error creating review:', error);
-    return NextResponse.json(
-      { error: 'Failed to create review' },
-      { status: 500 }
-    );
+    console.log('Review created successfully:', review.id);
+
+    return NextResponse.json({ 
+      success: true, 
+      message: 'Review posted successfully',
+      review: {
+        id: review.id,
+        author: review.author,
+        content: review.content,
+        rating: review.rating,
+        createdAt: review.createdAt,
+        verified: review.verified
+      }
+    });
+  } catch (err: any) {
+    console.error('Reviews API error:', err);
+    
+    // Zod validation errors
+    if (err?.name === 'ZodError') {
+      return NextResponse.json({
+        error: 'Invalid review data',
+        details: err.flatten()
+      }, { status: 400 });
+    }
+    
+    // Prisma duplicate key (unlikely but handle it)
+    if (err?.code === 'P2002') {
+      return NextResponse.json({
+        success: true,
+        duplicate: true,
+        message: 'Review already submitted'
+      }, { status: 200 });
+    }
+    
+    // Generic server error
+    return NextResponse.json({
+      error: 'Server error',
+      details: err?.message ?? String(err),
+      code: err?.code
+    }, { status: 500 });
   }
 } 
