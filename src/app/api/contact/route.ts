@@ -2,25 +2,49 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { sendContactEmail, sendAutoReply } from '@/lib/email';
 import { z } from 'zod';
+import { randomUUID } from 'crypto';
 
-// Validation schema for contact submissions
-const contactSchema = z.object({
-  name: z.string().min(1, "Name is required"),
-  email: z.string().min(1, "Email is required").refine(
-    (email) => {
-      // Very permissive email validation - just needs @ and some characters
-      return email.includes('@') && email.length > 3;
-    },
-    "Please enter a valid email address"
-  ),
-  subject: z.string().min(1, "Subject is required"),
-  message: z.string().min(10, "Message must be at least 10 characters"),
+export const runtime = 'nodejs'; // IMPORTANT for Prisma on Vercel
+export const dynamic = 'force-dynamic';
+
+// FINAL schema with proper validation
+const ContactSchema = z.object({
+  name: z.string().trim().min(2, 'Name must be at least 2 characters').max(100),
+  email: z.string().trim().email('Valid email required').toLowerCase().max(320),
+  subject: z.string().trim().min(2, 'Subject must be at least 2 characters').max(200),
+  message: z.string().trim().min(10, 'Message must be at least 10 characters').max(4000),
+  // Honeypot (keep hidden on the client). Any content -> reject.
+  website: z.string().max(0).optional().or(z.literal('')),
 });
 
 // Validation schema for bulk delete
 const bulkDeleteSchema = z.object({
   ids: z.array(z.string()).min(1, "At least one ID is required"),
 });
+
+async function parseRequest(req: Request) {
+  const ct = req.headers.get('content-type') || '';
+  if (ct.includes('application/json')) {
+    return ContactSchema.parse(await req.json());
+  }
+  // Handle form submissions
+  if (ct.includes('application/x-www-form-urlencoded') || ct.includes('multipart/form-data')) {
+    const form = await req.formData();
+    return ContactSchema.parse({
+      name: String(form.get('name') ?? ''),
+      email: String(form.get('email') ?? ''),
+      subject: String(form.get('subject') ?? ''),
+      message: String(form.get('message') ?? ''),
+      website: String(form.get('website') ?? ''),
+    });
+  }
+  // Fallback
+  try {
+    return ContactSchema.parse(await req.json());
+  } catch {
+    return ContactSchema.parse({});
+  }
+}
 
 export async function GET(request: Request) {
   try {
@@ -47,40 +71,51 @@ export async function GET(request: Request) {
   }
 }
 
-export async function POST(request: Request) {
+export async function POST(req: Request) {
   try {
     console.log('Contact form submission received');
     
-    // Parse request body
-    const data = await request.json();
-    console.log('Received data:', JSON.stringify(data, null, 2));
+    // Parse and validate the data
+    const data = await parseRequest(req);
+    console.log('Processing contact submission:', { name: data.name, email: data.email, subject: data.subject });
     
-    // Validate the data
-    const validationResult = contactSchema.safeParse(data);
-    if (!validationResult.success) {
-      console.error('Validation failed:', validationResult.error.format());
+    // Check honeypot (spam protection)
+    if (data.website && data.website.length > 0) {
+      console.log('Honeypot triggered, rejecting spam submission');
       return NextResponse.json({
-        error: "Invalid contact data",
-        details: validationResult.error.format(),
+        error: 'Invalid contact data',
+        details: { website: ['This field should be empty'] }
       }, { status: 400 });
     }
     
-    const { name, email, subject, message } = validationResult.data;
+    const { name, email, subject, message } = data;
     
-    // Save to database
+    // Generate UUID for belt-and-braces compatibility
+    const id = randomUUID();
+    
+    // Save to database with explicit ID
     const submission = await prisma.contactSubmission.create({
       data: {
+        id, // Explicit ID for compatibility
         name,
         email,
         subject,
         message,
         status: 'UNREAD'
+      },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        subject: true,
+        status: true,
+        createdAt: true
       }
     });
     
     console.log('Contact submission saved:', submission.id);
     
-    // Send emails
+    // Send emails (wrapped in try/catch to not fail the request)
     try {
       // Send notification email to whpcodes@gmail.com
       await sendContactEmail({ name, email, subject, message });
@@ -91,22 +126,41 @@ export async function POST(request: Request) {
       console.log('Auto-reply email sent');
       
     } catch (emailError) {
-      console.error('Email sending failed:', emailError);
-      // Don't fail the request if email fails, just log it
-      // The contact form submission was successful in the database
+      console.error('Email sending failed (continuing anyway):', emailError);
+      // Don't fail the request if email fails - the submission was successful
     }
     
     return NextResponse.json({
-      success: true,
+      ok: true,
       message: "Contact form submitted successfully",
-      id: submission.id
-    }, { status: 201 });
+      submission: submission
+    }, { status: 200 });
     
-  } catch (error: any) {
-    console.error('Error processing contact submission:', error);
+  } catch (err: any) {
+    console.error('Contact API error:', err);
+    
+    // Zod validation errors
+    if (err?.name === 'ZodError') {
+      return NextResponse.json({
+        error: 'Invalid contact data',
+        details: err.flatten()
+      }, { status: 400 });
+    }
+    
+    // Prisma duplicate key (unlikely but handle it)
+    if (err?.code === 'P2002') {
+      return NextResponse.json({
+        ok: true,
+        duplicate: true,
+        message: 'Contact form already submitted'
+      }, { status: 200 });
+    }
+    
+    // Generic server error
     return NextResponse.json({
-      error: "Failed to submit contact form",
-      details: error.message
+      error: 'Server error',
+      details: err?.message ?? String(err),
+      code: err?.code
     }, { status: 500 });
   }
 }
