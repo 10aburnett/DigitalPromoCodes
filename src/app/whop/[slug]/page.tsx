@@ -7,10 +7,9 @@ import { getWhopBySlug } from '@/lib/data';
 import { prisma } from '@/lib/prisma';
 import { Suspense } from 'react';
 
-// Enable ISR with 5-minute revalidation for better performance
-export const revalidate = 300;
-// Force runtime render; ignore any stale static params
+// Force dynamic rendering for content management testing
 export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 export const dynamicParams = true;
 
 import InitialsAvatar from '@/components/InitialsAvatar';
@@ -21,6 +20,9 @@ import FAQSection from '@/components/FAQSection';
 import WhopPageInteractive, { WhopPageCompactStats } from '@/components/WhopPageInteractive';
 import PromoCodeSubmissionButton from '@/components/PromoCodeSubmissionButton';
 import CommunityPromoSection from '@/components/CommunityPromoSection';
+import { sanitizeAndRenderHtml } from '@/lib/html-sanitizer';
+import { parseFaqContent } from '@/lib/faq-types';
+import { isMeaningfulHtml, fromDescriptionToHtml } from '@/lib/about';
 
 interface PromoCode {
   id: string;
@@ -342,6 +344,12 @@ export default async function WhopPage({ params }: { params: { slug: string } })
     website: whopData.website || null,
     price: whopData.price,
     category: whopData.category || null,
+    aboutContent: whopData.aboutContent,
+    howToRedeemContent: whopData.howToRedeemContent,
+    promoDetailsContent: whopData.promoDetailsContent,
+    featuresContent: whopData.featuresContent,
+    termsContent: whopData.termsContent,
+    faqContent: whopData.faqContent,
     promoCodes: whopData.PromoCode.map(code => ({
       id: code.id,
       title: code.title,
@@ -381,8 +389,8 @@ export default async function WhopPage({ params }: { params: { slug: string } })
   // Create unique key for remounting when slug changes - add timestamp for cache busting
   const pageKey = `whop-${params.slug}-${Date.now()}`;
 
-  // Prepare FAQ data for the collapsible component
-  const faqData = [
+  // Prepare fallback FAQ data for the collapsible component (used only if no database FAQ content)
+  const fallbackFaqData = [
     {
       question: `How do I use the ${whop.name} promo code?`,
       answer: `To use the ${promoTitle} for ${whop.name}, simply click "Reveal Code" above to visit their website.${hasPromoCode(whop.name) ? ' Copy the promo code and enter it during checkout.' : ' The discount will be automatically applied when you purchase through our link.'}`
@@ -478,31 +486,39 @@ export default async function WhopPage({ params }: { params: { slug: string } })
           {/* How to Redeem Section */}
           <section className="rounded-xl px-7 py-6 sm:p-8 border transition-theme" style={{ backgroundColor: 'var(--background-secondary)', borderColor: 'var(--border-color)' }}>
             <h2 className="text-xl sm:text-2xl font-bold mb-4">How to Redeem</h2>
-            <ol className="space-y-2 text-base sm:text-lg" style={{ color: 'var(--text-secondary)' }}>
-              <li className="flex items-start">
-                <span className="mr-2 font-semibold">1.</span>
-                <span>Click "Reveal Code" above to visit {whop.name} and get your exclusive offer</span>
-              </li>
-              {hasPromoCode(whop.name) ? (
+            {whop.howToRedeemContent && whop.howToRedeemContent.trim() !== '' ? (
+              <div 
+                className="text-base sm:text-lg leading-relaxed prose prose-sm max-w-none prose-headings:text-current prose-p:text-current prose-ul:text-current prose-ol:text-current prose-li:text-current prose-strong:text-current prose-em:text-current prose-a:text-blue-600 hover:prose-a:text-blue-700" 
+                style={{ color: 'var(--text-secondary)' }}
+                dangerouslySetInnerHTML={{ __html: sanitizeAndRenderHtml(whop.howToRedeemContent) }}
+              />
+            ) : (
+              <ol className="space-y-2 text-base sm:text-lg" style={{ color: 'var(--text-secondary)' }}>
                 <li className="flex items-start">
-                  <span className="mr-2 font-semibold">2.</span>
-                  <span>Copy the revealed promo code and enter it during checkout</span>
+                  <span className="mr-2 font-semibold">1.</span>
+                  <span>Click "Reveal Code" above to visit {whop.name} and get your exclusive offer</span>
                 </li>
-              ) : (
+                {hasPromoCode(whop.name) ? (
+                  <li className="flex items-start">
+                    <span className="mr-2 font-semibold">2.</span>
+                    <span>Copy the revealed promo code and enter it during checkout</span>
+                  </li>
+                ) : (
+                  <li className="flex items-start">
+                    <span className="mr-2 font-semibold">2.</span>
+                    <span>No code needed - the discount will be automatically applied</span>
+                  </li>
+                )}
                 <li className="flex items-start">
-                  <span className="mr-2 font-semibold">2.</span>
-                  <span>No code needed - the discount will be automatically applied</span>
+                  <span className="mr-2 font-semibold">3.</span>
+                  <span>Complete your purchase to access the exclusive content</span>
                 </li>
-              )}
-              <li className="flex items-start">
-                <span className="mr-2 font-semibold">3.</span>
-                <span>Complete your purchase to access the exclusive content</span>
-              </li>
-              <li className="flex items-start">
-                <span className="mr-2 font-semibold">4.</span>
-                <span>Enjoy your {promoTitle} and start learning!</span>
-              </li>
-            </ol>
+                <li className="flex items-start">
+                  <span className="mr-2 font-semibold">4.</span>
+                  <span>Enjoy your {promoTitle} and start learning!</span>
+                </li>
+              </ol>
+            )}
           </section>
 
           {/* Product Details for Each Promo Code */}
@@ -581,55 +597,99 @@ export default async function WhopPage({ params }: { params: { slug: string } })
             );
           })}
 
-          {/* About Product Section */}
-          <section className="rounded-xl px-7 py-6 sm:p-8 border transition-theme" style={{ backgroundColor: 'var(--background-secondary)', borderColor: 'var(--border-color)' }}>
-            <h2 className="text-xl sm:text-2xl font-bold mb-4">About {whop.name}</h2>
-            <div className="text-base sm:text-lg leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
-              <p>{whop.description}</p>
-            </div>
-          </section>
+          {/* About Section - Smart fallback: aboutContent first, then description */}
+          {(() => {
+            const aboutHtml = isMeaningfulHtml(whop.aboutContent)
+              ? whop.aboutContent!
+              : fromDescriptionToHtml(whop.description);
+            
+            return aboutHtml && (
+              <section className="rounded-xl px-7 py-6 sm:p-8 border transition-theme" style={{ backgroundColor: 'var(--background-secondary)', borderColor: 'var(--border-color)' }}>
+                <h2 className="text-xl sm:text-2xl font-bold mb-4">About {whop.name}</h2>
+                <div 
+                  className="text-base sm:text-lg leading-relaxed prose prose-sm max-w-none prose-headings:text-current prose-p:text-current prose-ul:text-current prose-ol:text-current prose-li:text-current prose-strong:text-current prose-em:text-current prose-a:text-blue-600 hover:prose-a:text-blue-700" 
+                  style={{ color: 'var(--text-secondary)' }}
+                  dangerouslySetInnerHTML={{ __html: aboutHtml }}
+                />
+              </section>
+            );
+          })()}
 
           {/* Promo Details Section */}
           <section className="rounded-xl px-7 py-6 sm:p-8 border transition-theme" style={{ backgroundColor: 'var(--background-secondary)', borderColor: 'var(--border-color)' }}>
             <h2 className="text-xl sm:text-2xl font-bold mb-4">Promo Details</h2>
-            <div className="p-4 rounded-lg mb-4" style={{ backgroundColor: 'var(--background-color)' }}>
-              <h3 className="text-lg font-semibold mb-2" style={{ color: 'var(--accent-color)' }}>{promoTitle}</h3>
-              <p className="text-base sm:text-lg leading-relaxed mb-3" style={{ color: 'var(--text-secondary)' }}>
-                Get exclusive access and special discounts with our promo code.
-              </p>
-              
-              {/* Compact usage stats */}
-              {firstPromo && (
-                <div className="mt-3 pt-3 border-t" style={{ borderColor: 'var(--border-color)' }}>
-                  <WhopPageCompactStats 
-                    whopId={whop.id}
-                    promoCodeId={firstPromo.id}
-                    slug={params.slug}
-                  />
+            {whop.promoDetailsContent && whop.promoDetailsContent.trim() !== '' ? (
+              <div 
+                className="text-base sm:text-lg leading-relaxed prose prose-sm max-w-none prose-headings:text-current prose-p:text-current prose-ul:text-current prose-ol:text-current prose-li:text-current prose-strong:text-current prose-em:text-current prose-a:text-blue-600 hover:prose-a:text-blue-700" 
+                style={{ color: 'var(--text-secondary)' }}
+                dangerouslySetInnerHTML={{ __html: sanitizeAndRenderHtml(whop.promoDetailsContent) }}
+              />
+            ) : (
+              <>
+                <div className="p-4 rounded-lg mb-4" style={{ backgroundColor: 'var(--background-color)' }}>
+                  <h3 className="text-lg font-semibold mb-2" style={{ color: 'var(--accent-color)' }}>{promoTitle}</h3>
+                  <p className="text-base sm:text-lg leading-relaxed mb-3" style={{ color: 'var(--text-secondary)' }}>
+                    Get exclusive access and special discounts with our promo code.
+                  </p>
+                  
+                  {/* Compact usage stats */}
+                  {firstPromo && (
+                    <div className="mt-3 pt-3 border-t" style={{ borderColor: 'var(--border-color)' }}>
+                      <WhopPageCompactStats 
+                        whopId={whop.id}
+                        promoCodeId={firstPromo.id}
+                        slug={params.slug}
+                      />
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
-            
-            {/* Promo Type Badge */}
-            <div className="flex flex-wrap gap-2">
-              <span className="px-3 py-1 rounded-full text-sm font-medium" style={{ backgroundColor: 'var(--background-color)', color: 'var(--accent-color)' }}>
-                {firstPromo?.type?.replace('_', ' ').toUpperCase() || 'DISCOUNT'} OFFER
-              </span>
-            </div>
+                
+                {/* Promo Type Badge */}
+                <div className="flex flex-wrap gap-2">
+                  <span className="px-3 py-1 rounded-full text-sm font-medium" style={{ backgroundColor: 'var(--background-color)', color: 'var(--accent-color)' }}>
+                    {firstPromo?.type?.replace('_', ' ').toUpperCase() || 'DISCOUNT'} OFFER
+                  </span>
+                </div>
+              </>
+            )}
           </section>
 
           {/* Terms & Conditions */}
           <section className="rounded-xl px-7 py-6 sm:p-8 border transition-theme" style={{ backgroundColor: 'var(--background-secondary)', borderColor: 'var(--border-color)' }}>
             <h2 className="text-xl sm:text-2xl font-bold mb-4">Terms & Conditions</h2>
-            <p className="text-base sm:text-lg leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
-              This exclusive offer for {whop.name} is available through our partnership.
-              {hasPromoCode(whop.name) ? ' Use the promo code during checkout to get your discount.' : ' The discount will be automatically applied when you click through our link.'}
-              {' '}Terms and conditions apply as set by {whop.name}. Offer subject to availability and may be modified or discontinued at any time.
-            </p>
+            {whop.termsContent && whop.termsContent.trim() !== '' ? (
+              <div 
+                className="text-base sm:text-lg leading-relaxed prose prose-sm max-w-none prose-headings:text-current prose-p:text-current prose-ul:text-current prose-ol:text-current prose-li:text-current prose-strong:text-current prose-em:text-current prose-a:text-blue-600 hover:prose-a:text-blue-700" 
+                style={{ color: 'var(--text-secondary)' }}
+                dangerouslySetInnerHTML={{ __html: sanitizeAndRenderHtml(whop.termsContent) }}
+              />
+            ) : (
+              <p className="text-base sm:text-lg leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+                This exclusive offer for {whop.name} is available through our partnership.
+                {hasPromoCode(whop.name) ? ' Use the promo code during checkout to get your discount.' : ' The discount will be automatically applied when you click through our link.'}
+                {' '}Terms and conditions apply as set by {whop.name}. Offer subject to availability and may be modified or discontinued at any time.
+              </p>
+            )}
           </section>
 
-          {/* FAQ Section */}
-          <FAQSection faqs={faqData} />
+          {/* FAQ Section - Enhanced with structured FAQ support */}
+          <FAQSection 
+            faqContent={whop.faqContent}
+            faqs={fallbackFaqData}
+            whopName={whop.name}
+          />
+
+          {/* Features Section - Only render if database content exists */}
+          {whop.featuresContent && whop.featuresContent.trim() !== '' && (
+            <section className="rounded-xl px-7 py-6 sm:p-8 border transition-theme" style={{ backgroundColor: 'var(--background-secondary)', borderColor: 'var(--border-color)' }}>
+              <h2 className="text-xl sm:text-2xl font-bold mb-4">Features</h2>
+              <div 
+                className="text-base sm:text-lg leading-relaxed prose prose-sm max-w-none prose-headings:text-current prose-p:text-current prose-ul:text-current prose-ol:text-current prose-li:text-current prose-strong:text-current prose-em:text-current prose-a:text-blue-600 hover:prose-a:text-blue-700" 
+                style={{ color: 'var(--text-secondary)' }}
+                dangerouslySetInnerHTML={{ __html: sanitizeAndRenderHtml(whop.featuresContent) }}
+              />
+            </section>
+          )}
         </div>
 
         {/* Full-width sections for better layout */}
