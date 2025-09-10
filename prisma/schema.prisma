@@ -101,19 +101,22 @@ model LegalPage {
 }
 
 model MailingList {
-  id             String            @id @default(cuid())
-  email          String            @unique
-  name           String?
-  status         MailingListStatus @default(ACTIVE)
-  source         String?
-  subscribedAt   DateTime          @default(now())
-  unsubscribedAt DateTime?
-  createdAt      DateTime          @default(now())
-  updatedAt      DateTime          @updatedAt
+  id               String            @id @default(cuid())
+  email            String            @unique
+  name             String?
+  status           MailingListStatus @default(ACTIVE)
+  statusChangedAt  DateTime          @default(now())
+  source           String?
+  subscribedAt     DateTime          @default(now())
+  unsubscribedAt   DateTime?
+  reoptinToken     String?
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
 
   @@index([email])
   @@index([status])
   @@index([subscribedAt])
+  @@index([statusChangedAt])
 }
 
 model OfferTracking {
