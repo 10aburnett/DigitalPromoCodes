@@ -6,12 +6,15 @@ export interface FaqItem {
   answerHtml: string;
 }
 
+export const PlainText = z.string().max(5000); // Use for page sections
+
 export const FaqItemSchema = z.object({
-  question: z.string().min(8, "Question must be at least 8 characters").max(160, "Question must be under 160 characters"),
-  answerHtml: z.string().min(20, "Answer must be at least 20 characters").max(2000, "Answer must be under 2000 characters"),
+  question: z.string().min(8).max(160),
+  // Name stays "answerHtml" but content is plain text
+  answerHtml: z.string().min(1).max(3000)
 });
 
-export const FaqArraySchema = z.array(FaqItemSchema).min(3, "Must have at least 3 FAQs").max(12, "Cannot have more than 12 FAQs");
+export const FaqArraySchema = z.array(FaqItemSchema).min(3).max(12);
 
 export function sanitizeAnswerHtml(html: string): string {
   return DOMPurify.sanitize(html, {

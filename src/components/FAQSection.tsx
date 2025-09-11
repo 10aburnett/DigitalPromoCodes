@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { FaqItem, parseFaqContent } from '@/lib/faq-types';
+import RenderPlain from '@/components/RenderPlain';
+import { looksLikeHtml, toPlainText } from '@/lib/textRender';
 
 interface LegacyFAQItem {
   question: string;
@@ -12,6 +14,14 @@ interface FAQSectionProps {
   faqs?: LegacyFAQItem[];
   faqContent?: string | null;
   whopName?: string;
+}
+
+// Helper function to determine FAQ content type
+function getFaqAnswerType(answerText: string): { text: string; isHtml: boolean } {
+  return {
+    text: answerText,
+    isHtml: looksLikeHtml(answerText)
+  };
 }
 
 export default function FAQSection({ faqs = [], faqContent, whopName }: FAQSectionProps) {
@@ -30,16 +40,19 @@ export default function FAQSection({ faqs = [], faqContent, whopName }: FAQSecti
       console.log('🔍 FAQ Debug - is parsed array:', Array.isArray(parsed));
       
       if (Array.isArray(parsed)) {
-        // Structured FAQs from our editor
-        const structuredFaqs = parsed.map(faq => ({
-          question: faq.question,
-          answer: faq.answerHtml,
-          isHtml: true
-        }));
+        // Structured FAQs from our editor - now support plain text
+        const structuredFaqs = parsed.map(faq => {
+          const answerType = getFaqAnswerType(faq.answerHtml);
+          return {
+            question: faq.question,
+            answer: answerType.text,
+            isHtml: answerType.isHtml
+          };
+        });
         console.log('✅ FAQ Debug - Using structured FAQs:', structuredFaqs);
         setDisplayFaqs(structuredFaqs);
         
-        // Generate JSON-LD for structured FAQs
+        // Generate JSON-LD for structured FAQs (use plain text for schema)
         generateJsonLd(parsed, whopName);
         return;
       } else if (typeof parsed === 'string') {
@@ -77,7 +90,8 @@ export default function FAQSection({ faqs = [], faqContent, whopName }: FAQSecti
         "name": faq.question,
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": faq.answerHtml.replace(/<[^>]*>/g, ''), // Strip HTML for JSON-LD
+          // For JSON-LD, always use plain text
+          "text": toPlainText(faq.answerHtml)
         }
       }))
     };
@@ -149,17 +163,16 @@ export default function FAQSection({ faqs = [], faqContent, whopName }: FAQSecti
                     : 'max-h-0 opacity-0'
                 } overflow-hidden`}
               >
-                <div className="px-4 pb-4">
+                <div className="px-4 pb-4" style={{ color: 'var(--text-secondary)' }}>
                   {faq.isHtml ? (
                     <div 
-                      style={{ color: 'var(--text-secondary)' }}
-                      className="leading-relaxed prose prose-sm max-w-none prose-headings:text-current prose-p:text-current prose-ul:text-current prose-ol:text-current prose-li:text-current prose-strong:text-current prose-em:text-current prose-a:text-blue-600 hover:prose-a:text-blue-700"
+                      className="leading-relaxed prose prose-sm max-w-none whitespace-break-spaces prose-headings:text-current prose-p:text-current prose-ul:text-current prose-ol:text-current prose-li:text-current prose-strong:text-current prose-em:text-current prose-a:text-blue-600 hover:prose-a:text-blue-700"
                       dangerouslySetInnerHTML={{ __html: faq.answer }}
                     />
                   ) : (
-                    <p style={{ color: 'var(--text-secondary)' }} className="leading-relaxed whitespace-pre-wrap">
-                      {faq.answer}
-                    </p>
+                    <div className="leading-relaxed">
+                      <RenderPlain text={faq.answer} />
+                    </div>
                   )}
                 </div>
               </div>

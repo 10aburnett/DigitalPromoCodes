@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
-import { FaqArraySchema, sanitizeAnswerHtml, FaqItem } from "@/lib/faq-types";
+import { FaqArraySchema, FaqItem } from "@/lib/faq-types";
 
 // CUID pattern (what your database actually uses)
 const CUID = /^c[a-z0-9]{24}$/i;
@@ -19,13 +19,16 @@ export async function PUT(
   { params }: { params: { id: string } }
 ) {
   try {
-    const idOrSlug = decodeURIComponent(params.id);
-    
-    // Resolve to real ID - accept either CUID or slug
-    const whop = CUID.test(idOrSlug)
-      ? await prisma.whop.findUnique({ where: { id: idOrSlug } })
-      : await prisma.whop.findUnique({ where: { slug: idOrSlug } });
-
+    const key = decodeURIComponent(params.id);
+    const whop = await prisma.whop.findFirst({ 
+      where: { 
+        OR: [
+          { id: key },
+          { slug: key }
+        ]
+      }, 
+      select: { id: true, slug: true }
+    });
     if (!whop) {
       return NextResponse.json({ error: "Whop not found" }, { status: 404 });
     }
@@ -44,13 +47,13 @@ export async function PUT(
           const validationResult = FaqArraySchema.safeParse(faqArray);
           
           if (validationResult.success) {
-            // Sanitize all HTML content
-            const sanitizedFaqs = validationResult.data.map((faq: FaqItem) => ({
+            // Now handling plain text content - just trim whitespace
+            const processedFaqs = validationResult.data.map((faq: FaqItem) => ({
               question: faq.question.trim(),
-              answerHtml: sanitizeAnswerHtml(faq.answerHtml)
+              answerHtml: faq.answerHtml.trim() // Plain text content, just trim
             }));
             
-            processedFaqContent = JSON.stringify(sanitizedFaqs);
+            processedFaqContent = JSON.stringify(processedFaqs);
           } else {
             return NextResponse.json(
               { error: "Invalid FAQ structure", details: validationResult.error.issues },

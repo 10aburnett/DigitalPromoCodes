@@ -20,9 +20,11 @@ import FAQSection from '@/components/FAQSection';
 import WhopPageInteractive, { WhopPageCompactStats } from '@/components/WhopPageInteractive';
 import PromoCodeSubmissionButton from '@/components/PromoCodeSubmissionButton';
 import CommunityPromoSection from '@/components/CommunityPromoSection';
-import { sanitizeAndRenderHtml } from '@/lib/html-sanitizer';
 import { parseFaqContent } from '@/lib/faq-types';
-import { isMeaningfulHtml, fromDescriptionToHtml } from '@/lib/about';
+import RenderPlain from '@/components/RenderPlain';
+import { looksLikeHtml, isMeaningful, escapeHtml, toPlainText } from '@/lib/textRender';
+
+
 
 interface PromoCode {
   id: string;
@@ -486,12 +488,17 @@ export default async function WhopPage({ params }: { params: { slug: string } })
           {/* How to Redeem Section */}
           <section className="rounded-xl px-7 py-6 sm:p-8 border transition-theme" style={{ backgroundColor: 'var(--background-secondary)', borderColor: 'var(--border-color)' }}>
             <h2 className="text-xl sm:text-2xl font-bold mb-4">How to Redeem</h2>
-            {whop.howToRedeemContent && whop.howToRedeemContent.trim() !== '' ? (
-              <div 
-                className="text-base sm:text-lg leading-relaxed prose prose-sm max-w-none prose-headings:text-current prose-p:text-current prose-ul:text-current prose-ol:text-current prose-li:text-current prose-strong:text-current prose-em:text-current prose-a:text-blue-600 hover:prose-a:text-blue-700" 
-                style={{ color: 'var(--text-secondary)' }}
-                dangerouslySetInnerHTML={{ __html: sanitizeAndRenderHtml(whop.howToRedeemContent) }}
-              />
+            {isMeaningful(whop.howToRedeemContent) ? (
+              <div className="text-base sm:text-lg leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+                {looksLikeHtml(whop.howToRedeemContent!) ? (
+                  <div 
+                    className="prose prose-sm max-w-none whitespace-break-spaces prose-headings:text-current prose-p:text-current prose-ul:text-current prose-ol:text-current prose-li:text-current prose-strong:text-current prose-em:text-current prose-a:text-blue-600 hover:prose-a:text-blue-700"
+                    dangerouslySetInnerHTML={{ __html: whop.howToRedeemContent! }}
+                  />
+                ) : (
+                  <RenderPlain text={whop.howToRedeemContent!} />
+                )}
+              </div>
             ) : (
               <ol className="space-y-2 text-base sm:text-lg" style={{ color: 'var(--text-secondary)' }}>
                 <li className="flex items-start">
@@ -599,18 +606,23 @@ export default async function WhopPage({ params }: { params: { slug: string } })
 
           {/* About Section - Smart fallback: aboutContent first, then description */}
           {(() => {
-            const aboutHtml = isMeaningfulHtml(whop.aboutContent)
-              ? whop.aboutContent!
-              : fromDescriptionToHtml(whop.description);
+            const aboutVal =
+              isMeaningful(whop.aboutContent) ? whop.aboutContent
+              : (isMeaningful(whop.description) ? whop.description : null);
             
-            return aboutHtml && (
+            return aboutVal && (
               <section className="rounded-xl px-7 py-6 sm:p-8 border transition-theme" style={{ backgroundColor: 'var(--background-secondary)', borderColor: 'var(--border-color)' }}>
                 <h2 className="text-xl sm:text-2xl font-bold mb-4">About {whop.name}</h2>
-                <div 
-                  className="text-base sm:text-lg leading-relaxed prose prose-sm max-w-none prose-headings:text-current prose-p:text-current prose-ul:text-current prose-ol:text-current prose-li:text-current prose-strong:text-current prose-em:text-current prose-a:text-blue-600 hover:prose-a:text-blue-700" 
-                  style={{ color: 'var(--text-secondary)' }}
-                  dangerouslySetInnerHTML={{ __html: aboutHtml }}
-                />
+                <div className="text-base sm:text-lg leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+                  {looksLikeHtml(aboutVal) ? (
+                    <div 
+                      className="prose prose-sm max-w-none whitespace-break-spaces prose-headings:text-current prose-p:text-current prose-ul:text-current prose-ol:text-current prose-li:text-current prose-strong:text-current prose-em:text-current prose-a:text-blue-600 hover:prose-a:text-blue-700"
+                      dangerouslySetInnerHTML={{ __html: aboutVal }}
+                    />
+                  ) : (
+                    <RenderPlain text={aboutVal} />
+                  )}
+                </div>
               </section>
             );
           })()}
@@ -618,12 +630,17 @@ export default async function WhopPage({ params }: { params: { slug: string } })
           {/* Promo Details Section */}
           <section className="rounded-xl px-7 py-6 sm:p-8 border transition-theme" style={{ backgroundColor: 'var(--background-secondary)', borderColor: 'var(--border-color)' }}>
             <h2 className="text-xl sm:text-2xl font-bold mb-4">Promo Details</h2>
-            {whop.promoDetailsContent && whop.promoDetailsContent.trim() !== '' ? (
-              <div 
-                className="text-base sm:text-lg leading-relaxed prose prose-sm max-w-none prose-headings:text-current prose-p:text-current prose-ul:text-current prose-ol:text-current prose-li:text-current prose-strong:text-current prose-em:text-current prose-a:text-blue-600 hover:prose-a:text-blue-700" 
-                style={{ color: 'var(--text-secondary)' }}
-                dangerouslySetInnerHTML={{ __html: sanitizeAndRenderHtml(whop.promoDetailsContent) }}
-              />
+            {isMeaningful(whop.promoDetailsContent) ? (
+              <div className="text-base sm:text-lg leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+                {looksLikeHtml(whop.promoDetailsContent!) ? (
+                  <div 
+                    className="prose prose-sm max-w-none whitespace-break-spaces prose-headings:text-current prose-p:text-current prose-ul:text-current prose-ol:text-current prose-li:text-current prose-strong:text-current prose-em:text-current prose-a:text-blue-600 hover:prose-a:text-blue-700"
+                    dangerouslySetInnerHTML={{ __html: whop.promoDetailsContent! }}
+                  />
+                ) : (
+                  <RenderPlain text={whop.promoDetailsContent!} />
+                )}
+              </div>
             ) : (
               <>
                 <div className="p-4 rounded-lg mb-4" style={{ backgroundColor: 'var(--background-color)' }}>
@@ -657,12 +674,17 @@ export default async function WhopPage({ params }: { params: { slug: string } })
           {/* Terms & Conditions */}
           <section className="rounded-xl px-7 py-6 sm:p-8 border transition-theme" style={{ backgroundColor: 'var(--background-secondary)', borderColor: 'var(--border-color)' }}>
             <h2 className="text-xl sm:text-2xl font-bold mb-4">Terms & Conditions</h2>
-            {whop.termsContent && whop.termsContent.trim() !== '' ? (
-              <div 
-                className="text-base sm:text-lg leading-relaxed prose prose-sm max-w-none prose-headings:text-current prose-p:text-current prose-ul:text-current prose-ol:text-current prose-li:text-current prose-strong:text-current prose-em:text-current prose-a:text-blue-600 hover:prose-a:text-blue-700" 
-                style={{ color: 'var(--text-secondary)' }}
-                dangerouslySetInnerHTML={{ __html: sanitizeAndRenderHtml(whop.termsContent) }}
-              />
+            {isMeaningful(whop.termsContent) ? (
+              <div className="text-base sm:text-lg leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+                {looksLikeHtml(whop.termsContent!) ? (
+                  <div 
+                    className="prose prose-sm max-w-none whitespace-break-spaces prose-headings:text-current prose-p:text-current prose-ul:text-current prose-ol:text-current prose-li:text-current prose-strong:text-current prose-em:text-current prose-a:text-blue-600 hover:prose-a:text-blue-700"
+                    dangerouslySetInnerHTML={{ __html: whop.termsContent! }}
+                  />
+                ) : (
+                  <RenderPlain text={whop.termsContent!} />
+                )}
+              </div>
             ) : (
               <p className="text-base sm:text-lg leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
                 This exclusive offer for {whop.name} is available through our partnership.
@@ -680,14 +702,19 @@ export default async function WhopPage({ params }: { params: { slug: string } })
           />
 
           {/* Features Section - Only render if database content exists */}
-          {whop.featuresContent && whop.featuresContent.trim() !== '' && (
+          {isMeaningful(whop.featuresContent) && (
             <section className="rounded-xl px-7 py-6 sm:p-8 border transition-theme" style={{ backgroundColor: 'var(--background-secondary)', borderColor: 'var(--border-color)' }}>
               <h2 className="text-xl sm:text-2xl font-bold mb-4">Features</h2>
-              <div 
-                className="text-base sm:text-lg leading-relaxed prose prose-sm max-w-none prose-headings:text-current prose-p:text-current prose-ul:text-current prose-ol:text-current prose-li:text-current prose-strong:text-current prose-em:text-current prose-a:text-blue-600 hover:prose-a:text-blue-700" 
-                style={{ color: 'var(--text-secondary)' }}
-                dangerouslySetInnerHTML={{ __html: sanitizeAndRenderHtml(whop.featuresContent) }}
-              />
+              <div className="text-base sm:text-lg leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+                {looksLikeHtml(whop.featuresContent!) ? (
+                  <div 
+                    className="prose prose-sm max-w-none whitespace-break-spaces prose-headings:text-current prose-p:text-current prose-ul:text-current prose-ol:text-current prose-li:text-current prose-strong:text-current prose-em:text-current prose-a:text-blue-600 hover:prose-a:text-blue-700"
+                    dangerouslySetInnerHTML={{ __html: whop.featuresContent! }}
+                  />
+                ) : (
+                  <RenderPlain text={whop.featuresContent!} />
+                )}
+              </div>
             </section>
           )}
         </div>

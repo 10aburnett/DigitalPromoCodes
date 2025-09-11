@@ -61,11 +61,7 @@ export default function FaqEditor({ initialFaqs, onChange, className = "" }: Faq
 
   const updateFaq = (index: number, field: keyof FaqItem, value: string) => {
     const newFaqs = [...faqs];
-    if (field === 'answerHtml') {
-      newFaqs[index][field] = sanitizeAnswerHtml(value);
-    } else {
-      newFaqs[index][field] = value;
-    }
+    newFaqs[index][field] = value;
     setFaqs(newFaqs);
   };
 
@@ -227,18 +223,18 @@ export default function FaqEditor({ initialFaqs, onChange, className = "" }: Faq
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Answer ({faq.answerHtml.length}/2000 chars, ~{wordCount(faq.answerHtml)} words)
+                    Answer ({faq.answerHtml.length}/3000 chars, ~{wordCount(faq.answerHtml)} words)
                   </label>
                   <textarea
                     value={faq.answerHtml}
                     onChange={(e) => updateFaq(index, 'answerHtml', e.target.value)}
-                    placeholder="Provide a detailed answer. You can use basic HTML: <p>, <strong>, <em>, <ul>, <ol>, <li>, <a>"
-                    maxLength={2000}
+                    placeholder="Provide a detailed answer in plain text. Line breaks will be preserved."
+                    maxLength={3000}
                     rows={4}
-                    className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono text-sm"
+                    className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono text-sm whitespace-break-spaces"
                   />
                   <p className="text-xs text-gray-500 mt-1">
-                    Allowed HTML: &lt;p&gt;, &lt;strong&gt;, &lt;em&gt;, &lt;ul&gt;, &lt;ol&gt;, &lt;li&gt;, &lt;a&gt;
+                    Type plain text. Line breaks will be preserved on the public page.
                   </p>
                 </div>
               </div>
@@ -259,10 +255,9 @@ export default function FaqEditor({ initialFaqs, onChange, className = "" }: Faq
                         <h4 className="font-semibold text-gray-900 mb-2">
                           Q: {faq.question}
                         </h4>
-                        <div 
-                          className="text-gray-700 prose prose-sm max-w-none"
-                          dangerouslySetInnerHTML={{ __html: faq.answerHtml }}
-                        />
+                        <div className="text-gray-700 whitespace-break-spaces">
+                          {faq.answerHtml}
+                        </div>
                       </div>
                     ))}
                 </div>

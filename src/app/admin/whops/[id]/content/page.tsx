@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 import Link from "next/link";
 import FaqEditor from "@/components/admin/FaqEditor";
 import { FaqItem, parseFaqContent } from "@/lib/faq-types";
-import { isMeaningfulHtml, fromDescriptionToHtml } from "@/lib/about";
+import { isMeaningful } from "@/lib/textRender";
 
 interface Whop {
   id: string;
@@ -229,33 +229,11 @@ export default function WhopContentEditor() {
             value={aboutContent}
             onChange={(e) => setAboutContent(e.target.value)}
             placeholder="Enter about content for this whop..."
-            className="w-full h-40 p-3 border border-gray-300 rounded-lg resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full h-40 p-3 border border-gray-300 rounded-lg resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono whitespace-break-spaces"
           />
-          {/* Smart fallback preview */}
-          {whop && (
-            <div className="mt-4 p-3 bg-gray-50 border border-gray-200 rounded-lg">
-              <h3 className="text-sm font-medium text-gray-700 mb-2">Preview (what visitors will see):</h3>
-              {(() => {
-                const previewAboutHtml = isMeaningfulHtml(aboutContent)
-                  ? aboutContent
-                  : fromDescriptionToHtml(whop.description);
-                
-                return previewAboutHtml ? (
-                  <div 
-                    className="text-sm text-gray-600 prose prose-sm max-w-none" 
-                    dangerouslySetInnerHTML={{ __html: previewAboutHtml }}
-                  />
-                ) : (
-                  <p className="text-sm text-gray-500 italic">No content to display (no About content and no description)</p>
-                );
-              })()}
-              {!isMeaningfulHtml(aboutContent) && whop.description && (
-                <p className="text-xs text-blue-600 mt-2">
-                  ℹ️ Currently using description as fallback. Add About content above to override.
-                </p>
-              )}
-            </div>
-          )}
+          <p className="text-xs text-gray-500 mt-2">
+            Type plain text. Line breaks will be preserved. Smart fallback to description happens on public page.
+          </p>
         </div>
 
         {/* How to Redeem Content */}
@@ -265,8 +243,11 @@ export default function WhopContentEditor() {
             value={howToRedeemContent}
             onChange={(e) => setHowToRedeemContent(e.target.value)}
             placeholder="Enter how to redeem instructions..."
-            className="w-full h-40 p-3 border border-gray-300 rounded-lg resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full h-40 p-3 border border-gray-300 rounded-lg resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono whitespace-break-spaces"
           />
+          <p className="text-xs text-gray-500 mt-2">
+            Type plain text. Line breaks will be preserved.
+          </p>
         </div>
 
         {/* Promo Details Content */}
@@ -276,8 +257,11 @@ export default function WhopContentEditor() {
             value={promoDetailsContent}
             onChange={(e) => setPromoDetailsContent(e.target.value)}
             placeholder="Enter promo details content..."
-            className="w-full h-40 p-3 border border-gray-300 rounded-lg resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full h-40 p-3 border border-gray-300 rounded-lg resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono whitespace-break-spaces"
           />
+          <p className="text-xs text-gray-500 mt-2">
+            Type plain text. Line breaks will be preserved.
+          </p>
         </div>
 
         {/* Features Content */}
@@ -287,8 +271,11 @@ export default function WhopContentEditor() {
             value={featuresContent}
             onChange={(e) => setFeaturesContent(e.target.value)}
             placeholder="Enter features content..."
-            className="w-full h-40 p-3 border border-gray-300 rounded-lg resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full h-40 p-3 border border-gray-300 rounded-lg resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono whitespace-break-spaces"
           />
+          <p className="text-xs text-gray-500 mt-2">
+            Type plain text. Line breaks will be preserved.
+          </p>
         </div>
 
         {/* Terms Content */}
@@ -298,8 +285,11 @@ export default function WhopContentEditor() {
             value={termsContent}
             onChange={(e) => setTermsContent(e.target.value)}
             placeholder="Enter terms and conditions content..."
-            className="w-full h-40 p-3 border border-gray-300 rounded-lg resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full h-40 p-3 border border-gray-300 rounded-lg resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono whitespace-break-spaces"
           />
+          <p className="text-xs text-gray-500 mt-2">
+            Type plain text. Line breaks will be preserved.
+          </p>
         </div>
 
         {/* FAQ Content */}

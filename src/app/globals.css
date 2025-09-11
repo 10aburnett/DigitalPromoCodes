@@ -367,3 +367,17 @@ html.dark .about-v2 .about-card [class*="bg-gradient"] {
 html.dark .about-v2 .about-heading    { color: #6466f1 !important; } /* Our Mission */
 html.dark .about-v2 .about-copy-white { color: #ffffff !important; }  /* white copy */
 html.dark .about-v2 .about-copy-muted { color: #a4a5b0 !important; }  /* muted copy */ 
+
+/* Consistent tab width for plain text rendering */
+.prose { 
+  tab-size: 4; 
+}
+
+/* Preserve indents/multiple spaces inside HTML content too */
+.prose.whitespace-break-spaces,
+.prose.whitespace-break-spaces p,
+.prose.whitespace-break-spaces li,
+.prose.whitespace-break-spaces blockquote,
+.prose.whitespace-break-spaces pre {
+  white-space: break-spaces;
+}
