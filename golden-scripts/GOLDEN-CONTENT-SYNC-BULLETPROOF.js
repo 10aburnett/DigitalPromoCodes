@@ -173,11 +173,10 @@ async function analyzeContentGaps() {
           slug: true,
           name: true,
           description: true,
-          imageUrl: true,
-          whopUrl: true,
+          logo: true,
+          affiliateLink: true,
+          website: true,
           category: true,
-          verified: true,
-          featured: true,
           aboutContent: true,
           howToRedeemContent: true,
           promoDetailsContent: true,
@@ -194,11 +193,10 @@ async function analyzeContentGaps() {
           slug: true,
           name: true,
           description: true,
-          imageUrl: true,
-          whopUrl: true,
+          logo: true,
+          affiliateLink: true,
+          website: true,
           category: true,
-          verified: true,
-          featured: true,
           aboutContent: true,
           howToRedeemContent: true,
           promoDetailsContent: true,
@@ -303,11 +301,10 @@ async function syncWhopsWithContent(analysis) {
                 faqContent: source.faqContent ?? null,
                 // Copy all other fields that exist in source
                 description: source.description ?? '',
-                imageUrl: source.imageUrl ?? '',
-                whopUrl: source.whopUrl ?? '',
-                category: source.category ?? '',
-                verified: source.verified ?? false,
-                featured: source.featured ?? false,
+                logo: source.logo ?? null,
+                affiliateLink: source.affiliateLink ?? '',
+                website: source.website ?? null,
+                category: source.category ?? null,
                 createdAt: source.createdAt,
                 updatedAt: source.updatedAt
               },
@@ -336,8 +333,9 @@ async function syncWhopsWithContent(analysis) {
           'faqContent',
           // Additional fields for comprehensive sync
           'description',
-          'imageUrl',
-          'whopUrl'
+          'logo',
+          'affiliateLink',
+          'website'
         ];
         
         for (const field of fields) {
