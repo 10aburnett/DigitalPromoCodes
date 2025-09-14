@@ -24,10 +24,15 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# Local env files
+# Local env files - NEVER COMMIT CREDENTIALS
 .env
-.env*.local
+.env*
 .env.sync
+.env.local
+.env.development
+.env.production
+.env.staging
+.env.test
 
 # Vercel
 .vercel
