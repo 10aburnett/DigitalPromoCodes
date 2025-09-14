@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { z } from 'zod'
+import { randomUUID } from 'crypto'
 
 export const runtime = 'nodejs'; // IMPORTANT for Prisma on Vercel
 export const dynamic = 'force-dynamic';
@@ -157,9 +158,11 @@ export async function POST(request: NextRequest) {
     const status = moderation.isBlocked ? 'FLAGGED' : 'APPROVED'
     const flaggedReason = moderation.reason || null
 
-    // Create comment - DO NOT pass id, let Prisma auto-generate it
+    // Create comment - production DB requires explicit id and updatedAt
+    const now = new Date();
     const comment = await prisma.comment.create({
       data: {
+        id: randomUUID(), // ✅ Required by production DB
         content: content.trim(),
         authorName: authorName.trim(),
         authorEmail: authorEmail.trim(),
@@ -167,6 +170,8 @@ export async function POST(request: NextRequest) {
         parentId: parentId || null,
         status,
         flaggedReason,
+        createdAt: now,
+        updatedAt: now, // ✅ Required by production DB
       },
       select: {
         id: true,
