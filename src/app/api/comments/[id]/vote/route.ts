@@ -1,175 +1,138 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
-import { randomUUID } from 'crypto'
+import { NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
-// POST /api/comments/[id]/vote - Vote on a comment
-export async function POST(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+type Vote = "UPVOTE" | "DOWNVOTE";
+
+function getClientIP(req: Request) {
+  const h = req.headers;
+  return (
+    h.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+    h.get("cf-connecting-ip") ||
+    h.get("x-real-ip") ||
+    "unknown"
+  );
+}
+
+export async function POST(req: Request, { params }: { params: { id: string } }) {
   try {
-    const body = await request.json()
-    const { voteType } = body
-    const commentId = params.id
-
-    // Validate voteType
-    if (!voteType || !['UPVOTE', 'DOWNVOTE'].includes(voteType)) {
-      return NextResponse.json({ error: 'Valid vote type required (UPVOTE or DOWNVOTE)' }, { status: 400 })
+    const { voteType } = (await req.json()) as { voteType: Vote };
+    if (voteType !== "UPVOTE" && voteType !== "DOWNVOTE") {
+      return NextResponse.json({ error: "Invalid voteType" }, { status: 400 });
     }
 
-    // Get user IP address for vote tracking
-    const forwarded = request.headers.get('x-forwarded-for')
-    const voterIP = forwarded ? forwarded.split(',')[0] : request.headers.get('x-real-ip') || 'unknown'
+    const ip = getClientIP(req);
+    const commentId = params.id;
 
-    // Check if comment exists and is approved
-    const comment = await prisma.comment.findUnique({
-      where: { id: commentId },
-      select: { id: true, status: true }
-    })
-
-    if (!comment) {
-      return NextResponse.json({ error: 'Comment not found' }, { status: 404 })
-    }
-
-    if (comment.status !== 'APPROVED') {
-      return NextResponse.json({ error: 'Cannot vote on non-approved comments' }, { status: 400 })
-    }
-
-    // Check if user has already voted on this comment
-    const existingVote = await prisma.commentVote.findUnique({
-      where: {
-        commentId_voterIP: {
-          commentId,
-          voterIP
-        }
-      }
-    })
-
-    const now = new Date()
-
-    // Use transaction to handle vote changes atomically
     const result = await prisma.$transaction(async (tx) => {
-      if (existingVote) {
-        if (existingVote.voteType === voteType) {
-          // Remove vote if same type (toggle off)
-          await tx.commentVote.delete({
-            where: { id: existingVote.id }
+      // 1) Load comment
+      const comment = await tx.comment.findUnique({
+        where: { id: commentId },
+        select: { id: true, upvotes: true, downvotes: true },
+      });
+      if (!comment) {
+        return { status: 404 as const, body: { error: "Comment not found" } };
+      }
+
+      // 2) Load existing vote by composite unique (commentId, voterIP).
+      // If your Prisma model has @@unique([commentId, voterIP]) this will work.
+      // (If not, the catch fallback uses findFirst.)
+      let existing = await tx.commentVote
+        .findUnique({
+          where: { commentId_voterIP: { commentId: comment.id, voterIP: ip } },
+        })
+        .catch(() =>
+          tx.commentVote.findFirst({
+            where: { commentId: comment.id, voterIP: ip },
           })
+        );
 
-          // Update comment vote counts
-          if (voteType === 'UPVOTE') {
-            await tx.comment.update({
-              where: { id: commentId },
-              data: {
-                upvotes: { decrement: 1 },
-                updatedAt: now // ✅ Required by production DB
-              }
-            })
-          } else {
-            await tx.comment.update({
-              where: { id: commentId },
-              data: {
-                downvotes: { decrement: 1 },
-                updatedAt: now // ✅ Required by production DB
-              }
-            })
-          }
-
-          return { action: 'removed', voteType: null }
-        } else {
-          // Change vote type
-          await tx.commentVote.update({
-            where: { id: existingVote.id },
-            data: {
-              voteType,
-              updatedAt: now // ✅ Required by production DB
-            }
-          })
-
-          // Update comment vote counts (remove old, add new)
-          if (voteType === 'UPVOTE') {
-            await tx.comment.update({
-              where: { id: commentId },
-              data: {
-                upvotes: { increment: 1 },
-                downvotes: { decrement: 1 },
-                updatedAt: now // ✅ Required by production DB
-              }
-            })
-          } else {
-            await tx.comment.update({
-              where: { id: commentId },
-              data: {
-                downvotes: { increment: 1 },
-                upvotes: { decrement: 1 },
-                updatedAt: now // ✅ Required by production DB
-              }
-            })
-          }
-
-          return { action: 'changed', voteType }
-        }
-      } else {
-        // Create new vote
+      // 3) Apply voting rules
+      if (!existing) {
+        // Create new vote (NO updatedAt — your table doesn't have it)
         await tx.commentVote.create({
           data: {
-            id: randomUUID(), // ✅ Required by production DB
-            commentId,
-            voterIP,
-            voteType,
-            createdAt: now,
-            updatedAt: now // ✅ Required by production DB
-          }
-        })
+            id: crypto.randomUUID(),
+            commentId: comment.id,
+            voterIP: ip,
+            voteType, // enum in DB
+            createdAt: new Date(), // your table has this
+          },
+        });
 
-        // Update comment vote counts
-        if (voteType === 'UPVOTE') {
+        // increment the corresponding counter
+        if (voteType === "UPVOTE") {
           await tx.comment.update({
-            where: { id: commentId },
-            data: {
-              upvotes: { increment: 1 },
-              updatedAt: now // ✅ Required by production DB
-            }
-          })
+            where: { id: comment.id },
+            data: { upvotes: { increment: 1 }, updatedAt: new Date() },
+          });
         } else {
           await tx.comment.update({
-            where: { id: commentId },
+            where: { id: comment.id },
+            data: { downvotes: { increment: 1 }, updatedAt: new Date() },
+          });
+        }
+      } else if (existing.voteType === voteType) {
+        // Toggle off (same vote twice) => remove vote + decrement the counter
+        await tx.commentVote.delete({ where: { id: existing.id } });
+
+        if (voteType === "UPVOTE") {
+          await tx.comment.update({
+            where: { id: comment.id },
+            data: { upvotes: { decrement: 1 }, updatedAt: new Date() },
+          });
+        } else {
+          await tx.comment.update({
+            where: { id: comment.id },
+            data: { downvotes: { decrement: 1 }, updatedAt: new Date() },
+          });
+        }
+      } else {
+        // Switch vote (UPVOTE -> DOWNVOTE or vice versa)
+        await tx.commentVote.update({
+          where: { id: existing.id },
+          data: {
+            voteType, // only change the enum
+            // DO NOT set updatedAt here — the table doesn't have it
+          },
+        });
+
+        if (voteType === "UPVOTE") {
+          await tx.comment.update({
+            where: { id: comment.id },
+            data: {
+              upvotes: { increment: 1 },
+              downvotes: { decrement: 1 },
+              updatedAt: new Date(),
+            },
+          });
+        } else {
+          await tx.comment.update({
+            where: { id: comment.id },
             data: {
               downvotes: { increment: 1 },
-              updatedAt: now // ✅ Required by production DB
-            }
-          })
+              upvotes: { decrement: 1 },
+              updatedAt: new Date(),
+            },
+          });
         }
-
-        return { action: 'added', voteType }
       }
-    })
 
-    // Get updated vote counts
-    const updatedComment = await prisma.comment.findUnique({
-      where: { id: commentId },
-      select: { upvotes: true, downvotes: true }
-    })
+      // Return fresh counts
+      const refreshed = await tx.comment.findUnique({
+        where: { id: comment.id },
+        select: { id: true, upvotes: true, downvotes: true },
+      });
 
-    return NextResponse.json({
-      success: true,
-      action: result.action,
-      userVote: result.voteType,
-      upvotes: updatedComment?.upvotes || 0,
-      downvotes: updatedComment?.downvotes || 0
-    })
-
-  } catch (err: any) {
-    console.error('Comment vote error:', {
-      message: err?.message,
-      code: err?.code,
-      meta: err?.meta,
-      stack: err?.stack
+      return { status: 200 as const, body: refreshed };
     });
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+
+    return NextResponse.json(result.body, { status: result.status });
+  } catch (err: any) {
+    console.error("Comment vote error:", err);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
