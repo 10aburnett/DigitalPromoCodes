@@ -119,7 +119,8 @@ export async function POST(req: Request) {
 
     // Generate UUID for the submission (belt-and-braces fix for stale Prisma client)
     const id = randomUUID();
-    
+    const now = new Date();
+
     // Create the submission
     const submission = await prisma.promoCodeSubmission.create({
       data: {
@@ -136,6 +137,8 @@ export async function POST(req: Request) {
         customCourseName: parsed.customCourseName || null,
         ipAddress: ip || null,
         userAgent: userAgent || null,
+        createdAt: now,
+        updatedAt: now,
       },
       select: {
         id: true,
