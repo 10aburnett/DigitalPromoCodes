@@ -1,5 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { randomUUID } from 'crypto'
+
+export const runtime = 'nodejs'
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
 // POST /api/comments/[id]/vote - Vote on a comment
 export async function POST(
@@ -44,6 +49,8 @@ export async function POST(
       }
     })
 
+    const now = new Date()
+
     // Use transaction to handle vote changes atomically
     const result = await prisma.$transaction(async (tx) => {
       if (existingVote) {
@@ -57,12 +64,18 @@ export async function POST(
           if (voteType === 'UPVOTE') {
             await tx.comment.update({
               where: { id: commentId },
-              data: { upvotes: { decrement: 1 } }
+              data: {
+                upvotes: { decrement: 1 },
+                updatedAt: now // ✅ Required by production DB
+              }
             })
           } else {
             await tx.comment.update({
               where: { id: commentId },
-              data: { downvotes: { decrement: 1 } }
+              data: {
+                downvotes: { decrement: 1 },
+                updatedAt: now // ✅ Required by production DB
+              }
             })
           }
 
@@ -71,24 +84,29 @@ export async function POST(
           // Change vote type
           await tx.commentVote.update({
             where: { id: existingVote.id },
-            data: { voteType }
+            data: {
+              voteType,
+              updatedAt: now // ✅ Required by production DB
+            }
           })
 
           // Update comment vote counts (remove old, add new)
           if (voteType === 'UPVOTE') {
             await tx.comment.update({
               where: { id: commentId },
-              data: { 
+              data: {
                 upvotes: { increment: 1 },
-                downvotes: { decrement: 1 }
+                downvotes: { decrement: 1 },
+                updatedAt: now // ✅ Required by production DB
               }
             })
           } else {
             await tx.comment.update({
               where: { id: commentId },
-              data: { 
+              data: {
                 downvotes: { increment: 1 },
-                upvotes: { decrement: 1 }
+                upvotes: { decrement: 1 },
+                updatedAt: now // ✅ Required by production DB
               }
             })
           }
@@ -99,9 +117,12 @@ export async function POST(
         // Create new vote
         await tx.commentVote.create({
           data: {
+            id: randomUUID(), // ✅ Required by production DB
             commentId,
             voterIP,
-            voteType
+            voteType,
+            createdAt: now,
+            updatedAt: now // ✅ Required by production DB
           }
         })
 
@@ -109,12 +130,18 @@ export async function POST(
         if (voteType === 'UPVOTE') {
           await tx.comment.update({
             where: { id: commentId },
-            data: { upvotes: { increment: 1 } }
+            data: {
+              upvotes: { increment: 1 },
+              updatedAt: now // ✅ Required by production DB
+            }
           })
         } else {
           await tx.comment.update({
             where: { id: commentId },
-            data: { downvotes: { increment: 1 } }
+            data: {
+              downvotes: { increment: 1 },
+              updatedAt: now // ✅ Required by production DB
+            }
           })
         }
 
@@ -136,8 +163,13 @@ export async function POST(
       downvotes: updatedComment?.downvotes || 0
     })
 
-  } catch (error) {
-    console.error('Error voting on comment:', error)
+  } catch (err: any) {
+    console.error('Comment vote error:', {
+      message: err?.message,
+      code: err?.code,
+      meta: err?.meta,
+      stack: err?.stack
+    });
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
