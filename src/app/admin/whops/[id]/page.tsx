@@ -252,6 +252,17 @@ export default function EditWhopPage({
         promoValue: data.promoValue
       };
 
+      // Debug: Log what we're sending
+      console.log('📤 CLIENT: Sending whop data:', JSON.stringify(whopData, null, 2));
+      console.log('📤 CLIENT: Promo fields check:', {
+        promoCodeId: promoCodeId,
+        promoTitle: data.promoTitle,
+        promoDescription: data.promoDescription,
+        promoCode: data.promoCode,
+        promoType: data.promoType,
+        promoValue: data.promoValue
+      });
+
       // Save the whop with promo code data included
       const response = await fetch(url, {
         method,
@@ -263,8 +274,14 @@ export default function EditWhopPage({
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to save whop");
+        const body = await response.text();
+        console.error('📤 CLIENT: API FAILED', response.status, body);
+        try {
+          const errorData = JSON.parse(body);
+          throw new Error(errorData.error || "Failed to save whop");
+        } catch {
+          throw new Error(`Failed to save whop: ${response.status} ${body}`);
+        }
       }
 
       const savedWhop = await response.json();
