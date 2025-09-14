@@ -5,6 +5,7 @@ import { randomUUID } from 'crypto';
 
 export const runtime = 'nodejs';           // IMPORTANT for Prisma on Vercel
 export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 const TypeSchema = z
   .enum(['GENERAL', 'COURSE'])
@@ -160,20 +161,27 @@ export async function POST(req: Request) {
     })
 
     return NextResponse.json({ ok: true, submission }, { status: 201 });
-  } catch (e: any) {
+  } catch (err: any) {
+    console.error('Promo submissions route error:', {
+      message: err?.message,
+      code: err?.code,
+      meta: err?.meta,
+      stack: err?.stack,
+      name: err?.name
+    });
+
     // Zod validation error
-    if (e?.issues) {
-      return NextResponse.json({ ok: false, error: 'Invalid input', issues: e.issues }, { status: 400 });
+    if (err?.issues) {
+      return NextResponse.json({ ok: false, error: 'Invalid input', issues: err.issues }, { status: 400 });
     }
 
     // Prisma known errors
-    if (e?.code === 'P2002') {
-      return NextResponse.json({ ok: false, error: 'Duplicate record', code: e.code, meta: e.meta }, { status: 409 });
+    if (err?.code === 'P2002') {
+      return NextResponse.json({ ok: false, error: 'Duplicate record', code: err.code, meta: err.meta }, { status: 409 });
     }
 
-    console.error('POST /api/promo-submissions failed:', e);
     return NextResponse.json(
-      { ok: false, error: 'Server error', code: e?.code ?? 'UNKNOWN', details: e?.message ?? String(e) },
+      { ok: false, error: 'Server error', code: err?.code ?? 'UNKNOWN', details: err?.message ?? String(err) },
       { status: 500 },
     );
   }
@@ -217,12 +225,19 @@ export async function GET(req: Request) {
       offset
     })
 
-  } catch (error: any) {
-    console.error('GET /api/promo-submissions failed:', error)
+  } catch (err: any) {
+    console.error('GET promo submissions route error:', {
+      message: err?.message,
+      code: err?.code,
+      meta: err?.meta,
+      stack: err?.stack,
+      name: err?.name
+    });
     return NextResponse.json({
       ok: false,
       error: 'Server error',
-      details: error?.message ?? String(error)
-    }, { status: 500 })
+      details: err?.message ?? String(err),
+      code: err?.code
+    }, { status: 500 });
   }
 }

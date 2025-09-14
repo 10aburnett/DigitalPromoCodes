@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
+export const runtime = 'nodejs'; // IMPORTANT for Prisma on Vercel
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 // POST /api/mailing-list/unsubscribe - Unsubscribe user from mailing list
 export async function POST(request: NextRequest) {
   try {
@@ -52,8 +56,19 @@ export async function POST(request: NextRequest) {
       success: true, 
       message: 'Successfully unsubscribed from mailing list'
     })
-  } catch (error) {
-    console.error('Error unsubscribing from mailing list:', error)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+  } catch (err: any) {
+    console.error('Unsubscribe route error:', {
+      message: err?.message,
+      code: err?.code,
+      meta: err?.meta,
+      stack: err?.stack,
+      name: err?.name
+    });
+    return NextResponse.json({
+      ok: false,
+      error: 'Server error',
+      details: err?.message ?? String(err),
+      code: err?.code
+    }, { status: 500 });
   }
 }

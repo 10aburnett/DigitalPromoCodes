@@ -5,6 +5,7 @@ import { randomUUID } from 'crypto';
 
 export const runtime = 'nodejs'; // IMPORTANT for Prisma on Vercel
 export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 const SubscribeSchema = z.object({
   name: z.string().trim().min(1).max(80).optional(),
@@ -86,30 +87,36 @@ export async function POST(req: Request) {
     }, { status: 200 });
 
   } catch (err: any) {
-    console.error('VIP subscribe error:', err);
-    
+    console.error('Subscribe route error:', {
+      message: err?.message,
+      code: err?.code,
+      meta: err?.meta,
+      stack: err?.stack,
+      name: err?.name
+    });
+
     // Prisma duplicate key (should not happen with upsert, but just in case)
     if (err?.code === 'P2002') {
-      return NextResponse.json({ 
-        ok: true, 
+      return NextResponse.json({
+        ok: true,
         duplicate: true,
         message: 'Already subscribed to mailing list'
       }, { status: 200 });
     }
-    
+
     // Zod validation errors
     if (err?.name === 'ZodError') {
-      return NextResponse.json({ 
+      return NextResponse.json({
         ok: false,
-        error: 'Invalid input', 
+        error: 'Invalid input',
         issues: err.flatten?.() || err.issues || []
       }, { status: 400 });
     }
-    
+
     // Generic server error
-    return NextResponse.json({ 
+    return NextResponse.json({
       ok: false,
-      error: 'Server error', 
+      error: 'Server error',
       details: err?.message ?? String(err),
       code: err?.code
     }, { status: 500 });

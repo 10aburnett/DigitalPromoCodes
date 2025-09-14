@@ -6,6 +6,7 @@ import { randomUUID } from 'crypto';
 
 export const runtime = 'nodejs'; // IMPORTANT for Prisma on Vercel
 export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 // FINAL schema with proper validation
 const ContactSchema = z.object({
@@ -137,7 +138,13 @@ export async function POST(req: Request) {
     }, { status: 200 });
     
   } catch (err: any) {
-    console.error('Contact API error:', err);
+    console.error('Contact route error:', {
+      message: err?.message,
+      code: err?.code,
+      meta: err?.meta,
+      stack: err?.stack,
+      name: err?.name
+    });
     
     // Zod validation errors
     if (err?.name === 'ZodError') {
