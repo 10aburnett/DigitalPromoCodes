@@ -2,6 +2,7 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { Prisma } from '@prisma/client';
+import { randomUUID } from 'crypto';
 import { prisma } from '@/lib/prisma';
 import { verifyAdminToken } from '@/lib/auth-utils';
 
@@ -141,6 +142,7 @@ export async function POST(req: Request) {
 
     const now = new Date();
     const data: any = {
+      id: randomUUID(), // ✅ Required by production DB
       title: body.title,
       slug: body.slug,
       excerpt: body.excerpt ?? null,
@@ -150,6 +152,8 @@ export async function POST(req: Request) {
       pinned: body.pinned ?? false,
       pinnedAt: body.pinned ? now : null,
       authorName: body.authorName ?? adminUser.name ?? 'Admin',
+      createdAt: now,
+      updatedAt: now, // ✅ Required by production DB
     };
 
     // Optional FK: only set if it truly exists (prevents P2003)

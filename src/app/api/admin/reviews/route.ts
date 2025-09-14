@@ -112,14 +112,17 @@ export async function POST(request: NextRequest) {
       }, { status: 400 });
     }
 
+    const now = new Date();
     const review = await prisma.review.create({
       data: {
+        id: randomUUID(), // ✅ Required by production DB
         whopId: whop.id,
         rating: ratingNum,
         author: author || 'Anonymous',
         content: content || '',
         verified: verified || false,
-        // id, createdAt, updatedAt are now handled by schema defaults
+        createdAt: now,
+        updatedAt: now, // ✅ Required by production DB
       },
       select: {
         id: true,
