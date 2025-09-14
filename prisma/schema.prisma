@@ -8,7 +8,7 @@ datasource db {
 }
 
 model BlogPost {
-  id           String    @id @default(cuid())
+  id           String    @id
   title        String
   slug         String    @unique
   content      String
@@ -18,7 +18,7 @@ model BlogPost {
   pinned       Boolean   @default(false)
   pinnedAt     DateTime?
   createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
+  updatedAt    DateTime
   authorId     String?
   authorName   String?
   content_text String?
@@ -45,14 +45,14 @@ model BulkImport {
 }
 
 model Comment {
-  id            String        @id @default(cuid())
+  id            String        @id
   content       String
   authorName    String
   authorEmail   String
   status        CommentStatus @default(PENDING)
   flaggedReason String?
   createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
+  updatedAt     DateTime
   blogPostId    String
   parentId      String?
   upvotes       Int           @default(0)
@@ -69,7 +69,7 @@ model Comment {
 }
 
 model CommentVote {
-  id        String   @id @default(cuid())
+  id        String   @id
   commentId String
   voterIP   String
   voteType  VoteType
@@ -81,14 +81,14 @@ model CommentVote {
 }
 
 model ContactSubmission {
-  id        String        @id @default(cuid())
+  id        String        @id
   name      String
   email     String
   subject   String
   message   String
   status    ContactStatus @default(UNREAD)
   createdAt DateTime      @default(now())
-  updatedAt DateTime      @updatedAt
+  updatedAt DateTime
 }
 
 model LegalPage {
@@ -101,7 +101,7 @@ model LegalPage {
 }
 
 model MailingList {
-  id              String            @id @default(cuid())
+  id              String            @id
   email           String            @unique
   name            String?
   status          MailingListStatus @default(ACTIVE)
@@ -109,14 +109,14 @@ model MailingList {
   subscribedAt    DateTime          @default(now())
   unsubscribedAt  DateTime?
   createdAt       DateTime          @default(now())
-  updatedAt       DateTime          @updatedAt
+  updatedAt       DateTime
   reoptinToken    String?
   statusChangedAt DateTime          @default(now())
 
   @@index([email])
+  @@index([statusChangedAt])
   @@index([status])
   @@index([subscribedAt])
-  @@index([statusChangedAt])
 }
 
 model OfferTracking {
@@ -154,7 +154,7 @@ model PromoCode {
 }
 
 model PromoCodeSubmission {
-  id               String           @id @default(cuid())
+  id               String           @id
   title            String
   description      String
   code             String?
@@ -170,7 +170,7 @@ model PromoCodeSubmission {
   reviewedBy       String?
   adminNotes       String?
   createdAt        DateTime         @default(now())
-  updatedAt        DateTime         @updatedAt
+  updatedAt        DateTime
   ipAddress        String?
   userAgent        String?
   Whop             Whop?            @relation(fields: [whopId], references: [id], onDelete: Cascade)
@@ -183,12 +183,12 @@ model PromoCodeSubmission {
 }
 
 model Review {
-  id        String   @id @default(cuid())
+  id        String   @id
   author    String
   content   String
   rating    Float    @default(0)
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime
   verified  Boolean  @default(false)
   whopId    String
   Whop      Whop     @relation(fields: [whopId], references: [id], onDelete: Cascade)
@@ -217,7 +217,6 @@ model User {
   BlogPost  BlogPost[]
 }
 
-/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model Whop {
   id                  String                @id
   name                String
@@ -242,10 +241,10 @@ model Whop {
   faqContent          String?
   whopCategory        WhopCategory          @default(OTHER)
   locale              String?               @default("en")
-  indexingStatus      String?               @default("INDEX")
   retired             Boolean?              @default(false)
   retirement          RetirementMode?       @default(NONE)
   redirectToPath      String?
+  indexingStatus      String?               @default("INDEX")
   indexing            IndexingStatus        @default(AUTO)
   OfferTracking       OfferTracking[]
   PromoCode           PromoCode[]
@@ -288,6 +287,12 @@ enum ImportStatus {
   PROCESSING
   COMPLETED
   FAILED
+}
+
+enum IndexingStatus {
+  INDEX
+  NOINDEX
+  AUTO
 }
 
 enum MailingListStatus {
@@ -348,10 +353,4 @@ enum WhopCategory {
   COMPUTER_SCIENCE
   PERSONAL_FINANCE
   OTHER
-}
-
-enum IndexingStatus {
-  INDEX
-  NOINDEX
-  AUTO
 }

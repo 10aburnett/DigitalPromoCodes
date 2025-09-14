@@ -31,6 +31,34 @@
 
 const { PrismaClient } = require('@prisma/client');
 
+// 🛡️ SAFETY FRAMEWORK - GPT RECOMMENDED
+// =====================================
+const DRY_RUN = process.env.DRY_RUN === '1';          // log, don't write
+const WRAP_IN_TX_AND_ROLLBACK = process.env.ROLLBACK === '1'; // do writes, then rollback
+
+async function runWithSafety(client, fn) {
+  if (DRY_RUN) {
+    console.log('🧪 DRY_RUN=1 — no writes will be committed.');
+    return fn({ prisma: client, write: async (desc, cb) => console.log(`   (write skipped: ${desc})`) });
+  }
+  if (WRAP_IN_TX_AND_ROLLBACK) {
+    console.log('🧪 ROLLBACK=1 — running in a transaction and rolling back at the end.');
+    return await client.$transaction(async (tx) => {
+      await fn({ prisma: tx, write: async (desc, cb) => cb(tx) });
+      // force rollback
+      throw new Error('ROLLBACK_MARKER');
+    }).catch(e => {
+      if (e.message === 'ROLLBACK_MARKER') {
+        console.log('↩︎ Transaction rolled back as planned.');
+        return;
+      }
+      throw e;
+    });
+  }
+  // normal mode — real writes
+  return fn({ prisma: client, write: async (desc, cb) => cb(client) });
+}
+
 // Database connections (same as original golden script)
 const backupDb = new PrismaClient({
   datasources: {
