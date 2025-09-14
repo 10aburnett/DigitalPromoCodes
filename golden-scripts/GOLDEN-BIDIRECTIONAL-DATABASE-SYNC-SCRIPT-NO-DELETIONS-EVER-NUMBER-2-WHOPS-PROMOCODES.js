@@ -63,7 +63,7 @@ async function runWithSafety(client, fn) {
 const backupDb = new PrismaClient({
   datasources: {
     db: {
-      url: "postgresql://neondb_owner:npg_TKWsI2cv3zki@ep-rough-rain-ab2qairk-pooler.eu-west-2.aws.neon.tech/neondb?sslmode=require"
+      url: process.env.BACKUP_DATABASE_URL
     }
   }
 });
@@ -71,7 +71,7 @@ const backupDb = new PrismaClient({
 const productionDb = new PrismaClient({
   datasources: {
     db: {
-      url: "postgresql://neondb_owner:npg_HrV2CqlDGv4t@ep-noisy-hat-abxp8ysf-pooler.eu-west-2.aws.neon.tech/neondb?sslmode=require"
+      url: process.env.PRODUCTION_DATABASE_URL
     }
   }
 });
