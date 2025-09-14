@@ -44,11 +44,13 @@ export async function POST(request: NextRequest) {
     }
 
     // Unsubscribe user
+    const now = new Date();
     await prisma.mailingList.update({
       where: { email: email.toLowerCase().trim() },
       data: {
         status: 'UNSUBSCRIBED',
-        unsubscribedAt: new Date(),
+        unsubscribedAt: now,
+        updatedAt: now,
       }
     })
 

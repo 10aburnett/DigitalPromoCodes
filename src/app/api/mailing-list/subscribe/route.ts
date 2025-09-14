@@ -45,24 +45,28 @@ export async function POST(req: Request) {
 
     // Generate UUID for belt-and-braces compatibility
     const id = randomUUID();
+    const now = new Date();
 
     // Use upsert to handle both new subscriptions and reactivations
     const subscriber = await prisma.mailingList.upsert({
       where: { email },
-      update: { 
+      update: {
         name: name || undefined,
         source: source,
         status: 'ACTIVE',
-        subscribedAt: new Date(),
+        subscribedAt: now,
         unsubscribedAt: null,
+        updatedAt: now,
       },
-      create: { 
+      create: {
         id, // Explicit ID for compatibility
-        email, 
-        name: name || null, 
-        source: source, 
+        email,
+        name: name || null,
+        source: source,
         status: 'ACTIVE',
-        subscribedAt: new Date() 
+        subscribedAt: now,
+        createdAt: now,
+        updatedAt: now,
       },
       select: {
         id: true,

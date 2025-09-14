@@ -93,7 +93,8 @@ export async function POST(req: Request) {
     
     // Generate UUID for belt-and-braces compatibility
     const id = randomUUID();
-    
+    const now = new Date();
+
     // Save to database with explicit ID
     const submission = await prisma.contactSubmission.create({
       data: {
@@ -102,7 +103,9 @@ export async function POST(req: Request) {
         email,
         subject,
         message,
-        status: 'UNREAD'
+        status: 'UNREAD',
+        createdAt: now,
+        updatedAt: now,
       },
       select: {
         id: true,
