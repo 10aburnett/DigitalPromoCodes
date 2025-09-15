@@ -31,12 +31,13 @@
  */
 
 const { PrismaClient } = require('@prisma/client');
+const { randomUUID } = require('crypto');
 
-// Database connections (hardcoded for safety)
+// Database connections (using environment variables)
 const backupDb = new PrismaClient({
   datasources: {
     db: {
-      url: "postgresql://neondb_owner:npg_TKWsI2cv3zki@ep-rough-rain-ab2qairk-pooler.eu-west-2.aws.neon.tech/neondb?sslmode=require"
+      url: process.env.BACKUP_DATABASE_URL
     }
   }
 });
@@ -44,22 +45,30 @@ const backupDb = new PrismaClient({
 const productionDb = new PrismaClient({
   datasources: {
     db: {
-      url: "postgresql://neondb_owner:npg_HrV2CqlDGv4t@ep-noisy-hat-abxp8ysf-pooler.eu-west-2.aws.neon.tech/neondb?sslmode=require"
+      url: process.env.PRODUCTION_DATABASE_URL
     }
   }
 });
 
+function withIdAndTimestamps(row) {
+  const copy = { ...row };
+  copy.id = copy.id || randomUUID();
+  copy.createdAt = copy.createdAt || new Date();
+  copy.updatedAt = copy.updatedAt || new Date();
+  return copy;
+}
+
 async function analyzeDataDifferences() {
   console.log('🔍 ANALYZING REMAINING TABLES DIFFERENCES BETWEEN DATABASES');
   console.log('==========================================================');
-  
+
   try {
     const backupCounts = {
       bulkImports: await backupDb.bulkImport.count(),
       contactSubmissions: await backupDb.contactSubmission.count(),
       legalPages: await backupDb.legalPage.count(),
       offerTrackings: await backupDb.offerTracking.count(),
-      playingWithNeon: await backupDb.playing_with_neon.count(),
+      // playingWithNeon: await backupDb.playingWithNeon.count(), // Skip - delegate name issue
       reviews: await backupDb.review.count(),
       settings: await backupDb.settings.count()
     };
@@ -69,7 +78,7 @@ async function analyzeDataDifferences() {
       contactSubmissions: await productionDb.contactSubmission.count(),
       legalPages: await productionDb.legalPage.count(),
       offerTrackings: await productionDb.offerTracking.count(),
-      playingWithNeon: await productionDb.playing_with_neon.count(),
+      // playingWithNeon: await productionDb.playingWithNeon.count(), // Skip - delegate name issue
       reviews: await productionDb.review.count(),
       settings: await productionDb.settings.count()
     };
@@ -107,7 +116,7 @@ async function syncBulkImports() {
     if (importsToAddToBackup.length > 0) {
       console.log(`🔹 Adding ${importsToAddToBackup.length} bulk imports to BACKUP...`);
       for (const importRecord of importsToAddToBackup) {
-        await backupDb.bulkImport.create({ data: importRecord });
+        await backupDb.bulkImport.create({ data: withIdAndTimestamps(importRecord) });
         console.log(`   ✅ Added import: ${importRecord.filename}`);
       }
     }
@@ -117,7 +126,7 @@ async function syncBulkImports() {
     if (importsToAddToProduction.length > 0) {
       console.log(`🔹 Adding ${importsToAddToProduction.length} bulk imports to PRODUCTION...`);
       for (const importRecord of importsToAddToProduction) {
-        await productionDb.bulkImport.create({ data: importRecord });
+        await productionDb.bulkImport.create({ data: withIdAndTimestamps(importRecord) });
         console.log(`   ✅ Added import: ${importRecord.filename}`);
       }
     }
@@ -146,7 +155,7 @@ async function syncContactSubmissions() {
     if (contactsToAddToBackup.length > 0) {
       console.log(`🔹 Adding ${contactsToAddToBackup.length} contact submissions to BACKUP...`);
       for (const contact of contactsToAddToBackup) {
-        await backupDb.contactSubmission.create({ data: contact });
+        await backupDb.contactSubmission.create({ data: withIdAndTimestamps(contact) });
         console.log(`   ✅ Added contact: ${contact.subject} from ${contact.email}`);
       }
     }
@@ -156,7 +165,7 @@ async function syncContactSubmissions() {
     if (contactsToAddToProduction.length > 0) {
       console.log(`🔹 Adding ${contactsToAddToProduction.length} contact submissions to PRODUCTION...`);
       for (const contact of contactsToAddToProduction) {
-        await productionDb.contactSubmission.create({ data: contact });
+        await productionDb.contactSubmission.create({ data: withIdAndTimestamps(contact) });
         console.log(`   ✅ Added contact: ${contact.subject} from ${contact.email}`);
       }
     }
@@ -186,7 +195,7 @@ async function syncLegalPages() {
       console.log(`🔹 Adding ${pagesToAddToBackup.length} legal pages to BACKUP...`);
       for (const page of pagesToAddToBackup) {
         const { id, ...pageData } = page;
-        await backupDb.legalPage.create({ data: pageData });
+        await backupDb.legalPage.create({ data: withIdAndTimestamps(pageData) });
         console.log(`   ✅ Added page: ${page.title} (/${page.slug})`);
       }
     }
@@ -197,7 +206,7 @@ async function syncLegalPages() {
       console.log(`🔹 Adding ${pagesToAddToProduction.length} legal pages to PRODUCTION...`);
       for (const page of pagesToAddToProduction) {
         const { id, ...pageData } = page;
-        await productionDb.legalPage.create({ data: pageData });
+        await productionDb.legalPage.create({ data: withIdAndTimestamps(pageData) });
         console.log(`   ✅ Added page: ${page.title} (/${page.slug})`);
       }
     }
@@ -210,51 +219,89 @@ async function syncLegalPages() {
   }
 }
 
-async function syncOfferTrackings() {
-  console.log('\n🎯 SYNCING OFFER TRACKINGS');
-  console.log('==========================');
+// --- OfferTracking sync (raw SQL, bulletproof, no deletions) ---
+async function fetchOfferTrackingsRaw(db) {
+  // Use actual columns from OfferTracking table
+  return db.$queryRawUnsafe(`
+    SELECT
+      "id",
+      "actionType",
+      "whopId",
+      "promoCodeId",
+      "createdAt",
+      "path"
+    FROM "OfferTracking"
+  `);
+}
 
-  try {
-    const backupTrackings = await backupDb.offerTracking.findMany();
-    const productionTrackings = await productionDb.offerTracking.findMany();
+async function idsExistInTarget(db, whopId, promoCodeId) {
+  // Both whop and promo must exist; if one is null, relax the check for that side.
+  const [whopExists] = await db.$queryRawUnsafe(
+    `SELECT EXISTS (SELECT 1 FROM "Whop" WHERE "id" = $1) AS ok`,
+    whopId ?? ''
+  );
+  const [promoExists] = await db.$queryRawUnsafe(
+    `SELECT EXISTS (SELECT 1 FROM "PromoCode" WHERE "id" = $1) AS ok`,
+    promoCodeId ?? ''
+  );
+  const whopOK = whopId ? !!whopExists?.ok : true;
+  const promoOK = promoCodeId ? !!promoExists?.ok : true;
+  return whopOK && promoOK;
+}
 
-    const backupIds = new Set(backupTrackings.map(t => t.id));
-    const productionIds = new Set(productionTrackings.map(t => t.id));
+async function insertOfferTrackingRaw(db, row) {
+  // Only inserts if not present; never updates/deletes
+  const sql = `
+    INSERT INTO "OfferTracking" (
+      "id","actionType","whopId","promoCodeId","createdAt","path"
+    )
+    VALUES ($1,$2,$3,$4,$5,$6)
+    ON CONFLICT ("id") DO NOTHING
+  `;
+  await db.$executeRawUnsafe(sql,
+    row.id,
+    row.actionType,
+    row.whopId,
+    row.promoCodeId,
+    row.createdAt,
+    row.path ?? null
+  );
+}
 
-    // Add production trackings to backup
-    const trackingsToAddToBackup = productionTrackings.filter(t => !backupIds.has(t.id));
-    if (trackingsToAddToBackup.length > 0) {
-      console.log(`🔹 Adding ${trackingsToAddToBackup.length} offer trackings to BACKUP...`);
-      for (const tracking of trackingsToAddToBackup) {
-        try {
-          await backupDb.offerTracking.create({ data: tracking });
-          console.log(`   ✅ Added tracking: ${tracking.actionType} (${tracking.createdAt.toISOString().split('T')[0]})`);
-        } catch (error) {
-          console.log(`   ⚠️  Skipped tracking (missing reference): ${error.message}`);
-        }
-      }
+async function syncOfferTrackingsRawDirection(sourceDb, targetDb, label) {
+  console.log(`\n🔹 Syncing OfferTracking ${label}...`);
+  const rows = await fetchOfferTrackingsRaw(sourceDb);
+
+  let added = 0, skippedRefs = 0, already = 0, errors = 0;
+
+  // Build a target id set to skip duplicates quickly
+  const existing = await targetDb.$queryRawUnsafe(`SELECT "id" FROM "OfferTracking"`);
+  const existingIds = new Set(existing.map(r => r.id));
+
+  for (const r of rows) {
+    if (existingIds.has(r.id)) { already++; continue; }
+    // Ensure referenced rows exist (safe mode)
+    const ok = await idsExistInTarget(targetDb, r.whopId, r.promoCodeId);
+    if (!ok) { skippedRefs++; continue; }
+
+    try {
+      await insertOfferTrackingRaw(targetDb, r);
+      added++;
+    } catch (e) {
+      errors++;
+      console.log(`   ⚠️  OfferTracking ${r.id} failed: ${e.message}`);
     }
-
-    // Add backup trackings to production
-    const trackingsToAddToProduction = backupTrackings.filter(t => !productionIds.has(t.id));
-    if (trackingsToAddToProduction.length > 0) {
-      console.log(`🔹 Adding ${trackingsToAddToProduction.length} offer trackings to PRODUCTION...`);
-      for (const tracking of trackingsToAddToProduction) {
-        try {
-          await productionDb.offerTracking.create({ data: tracking });
-          console.log(`   ✅ Added tracking: ${tracking.actionType} (${tracking.createdAt.toISOString().split('T')[0]})`);
-        } catch (error) {
-          console.log(`   ⚠️  Skipped tracking (missing reference): ${error.message}`);
-        }
-      }
-    }
-
-    console.log('✅ Offer trackings sync completed');
-
-  } catch (error) {
-    console.error('❌ Error syncing offer trackings:', error);
-    throw error;
   }
+
+  console.log(`   📊 Results: ➕${added} inserted, ↩️${already} already, 🚫${skippedRefs} skipped (missing refs), ❌${errors} errors`);
+}
+
+async function syncOfferTrackings() {
+  console.log('\n🎯 SYNCING OFFER TRACKINGS (raw, FK-safe, no deletions)');
+  console.log('======================================================');
+  await syncOfferTrackingsRawDirection(backupDb,     productionDb, 'backup → production');
+  await syncOfferTrackingsRawDirection(productionDb, backupDb,     'production → backup');
+  console.log('✅ Offer trackings sync completed');
 }
 
 async function syncPlayingWithNeon() {
@@ -262,8 +309,8 @@ async function syncPlayingWithNeon() {
   console.log('=============================');
 
   try {
-    const backupNeon = await backupDb.playing_with_neon.findMany();
-    const productionNeon = await productionDb.playing_with_neon.findMany();
+    const backupNeon = await backupDb.playingWithNeon.findMany();
+    const productionNeon = await productionDb.playingWithNeon.findMany();
 
     const backupIds = new Set(backupNeon.map(n => n.id));
     const productionIds = new Set(productionNeon.map(n => n.id));
@@ -274,7 +321,7 @@ async function syncPlayingWithNeon() {
       console.log(`🔹 Adding ${neonToAddToBackup.length} playing_with_neon records to BACKUP...`);
       for (const neon of neonToAddToBackup) {
         const { id, ...neonData } = neon;
-        await backupDb.playing_with_neon.create({ data: neonData });
+        await backupDb.playingWithNeon.create({ data: withIdAndTimestamps(neonData) });
         console.log(`   ✅ Added neon record: ${neon.name} (${neon.value})`);
       }
     }
@@ -285,7 +332,7 @@ async function syncPlayingWithNeon() {
       console.log(`🔹 Adding ${neonToAddToProduction.length} playing_with_neon records to PRODUCTION...`);
       for (const neon of neonToAddToProduction) {
         const { id, ...neonData } = neon;
-        await productionDb.playing_with_neon.create({ data: neonData });
+        await productionDb.playingWithNeon.create({ data: withIdAndTimestamps(neonData) });
         console.log(`   ✅ Added neon record: ${neon.name} (${neon.value})`);
       }
     }
@@ -315,7 +362,7 @@ async function syncReviews() {
       console.log(`🔹 Adding ${reviewsToAddToBackup.length} reviews to BACKUP...`);
       for (const review of reviewsToAddToBackup) {
         try {
-          await backupDb.review.create({ data: review });
+          await backupDb.review.create({ data: withIdAndTimestamps(review) });
           console.log(`   ✅ Added review: ${review.author} (${review.rating}⭐) for whopId:${review.whopId}`);
         } catch (error) {
           console.log(`   ⚠️  Skipped review (missing whop): ${error.message}`);
@@ -329,7 +376,7 @@ async function syncReviews() {
       console.log(`🔹 Adding ${reviewsToAddToProduction.length} reviews to PRODUCTION...`);
       for (const review of reviewsToAddToProduction) {
         try {
-          await productionDb.review.create({ data: review });
+          await productionDb.review.create({ data: withIdAndTimestamps(review) });
           console.log(`   ✅ Added review: ${review.author} (${review.rating}⭐) for whopId:${review.whopId}`);
         } catch (error) {
           console.log(`   ⚠️  Skipped review (missing whop): ${error.message}`);
@@ -361,7 +408,7 @@ async function syncSettings() {
     if (settingsToAddToBackup.length > 0) {
       console.log(`🔹 Adding ${settingsToAddToBackup.length} settings to BACKUP...`);
       for (const setting of settingsToAddToBackup) {
-        await backupDb.settings.create({ data: setting });
+        await backupDb.settings.create({ data: withIdAndTimestamps(setting) });
         console.log(`   ✅ Added setting: ${setting.id} (favicon: ${setting.faviconUrl || 'none'})`);
       }
     }
@@ -371,7 +418,7 @@ async function syncSettings() {
     if (settingsToAddToProduction.length > 0) {
       console.log(`🔹 Adding ${settingsToAddToProduction.length} settings to PRODUCTION...`);
       for (const setting of settingsToAddToProduction) {
-        await productionDb.settings.create({ data: setting });
+        await productionDb.settings.create({ data: withIdAndTimestamps(setting) });
         console.log(`   ✅ Added setting: ${setting.id} (favicon: ${setting.faviconUrl || 'none'})`);
       }
     }
@@ -449,7 +496,7 @@ async function main() {
     await syncContactSubmissions();
     await syncLegalPages();
     await syncOfferTrackings();
-    await syncPlayingWithNeon();
+    // await syncPlayingWithNeon(); // Skip - delegate name issue
     await syncReviews();
     await syncSettings();
     

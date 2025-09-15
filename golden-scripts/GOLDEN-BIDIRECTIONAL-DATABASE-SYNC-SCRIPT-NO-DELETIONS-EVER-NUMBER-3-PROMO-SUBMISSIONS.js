@@ -1,12 +1,13 @@
 #!/usr/bin/env node
 
 const { PrismaClient } = require('@prisma/client')
+const { randomUUID } = require('crypto')
 
-// Initialize Prisma clients for both databases with hardcoded URLs
+// Initialize Prisma clients for both databases with environment URLs
 const backupPrisma = new PrismaClient({
   datasources: {
     db: {
-      url: "postgresql://neondb_owner:npg_TKWsI2cv3zki@ep-rough-rain-ab2qairk-pooler.eu-west-2.aws.neon.tech/neondb?sslmode=require"
+      url: process.env.BACKUP_DATABASE_URL
     }
   }
 })
@@ -14,10 +15,52 @@ const backupPrisma = new PrismaClient({
 const productionPrisma = new PrismaClient({
   datasources: {
     db: {
-      url: "postgresql://neondb_owner:npg_HrV2CqlDGv4t@ep-noisy-hat-abxp8ysf-pooler.eu-west-2.aws.neon.tech/neondb?sslmode=require"
+      url: process.env.PRODUCTION_DATABASE_URL
     }
   }
 })
+
+function sanitizeSubmissionForCreate(src) {
+  // Drop nested relation object (capital W) if present
+  // and prepare a DB-compliant payload.
+  const {
+    Whop,   // <-- REMOVE nested object so Prisma doesn't see it
+    whopId, // keep as scalar (nullable allowed for "general" submissions)
+    id,
+    title,
+    description,
+    code,
+    value,
+    submitterName,
+    submitterEmail,
+    submitterMessage,
+    isGeneral,
+    customCourseName,
+    ipAddress,
+    userAgent,
+    createdAt, // optional
+    updatedAt, // optional
+    ...rest // ignore any unknown props
+  } = src;
+
+  return {
+    id: id || randomUUID(),
+    title: title || 'Untitled submission',
+    description: description || 'Generic promo description',
+    code: code || '',
+    value: value ?? '0',                 // your DB stores value as text in some places
+    submitterName: submitterName || 'Anonymous',
+    submitterEmail: submitterEmail || 'unknown@example.com',
+    submitterMessage: submitterMessage ?? null,
+    isGeneral: Boolean(isGeneral),
+    whopId: isGeneral ? null : (whopId || null),
+    customCourseName: customCourseName ?? null,
+    ipAddress: ipAddress || '',
+    userAgent: userAgent || '',
+    createdAt: createdAt ?? new Date(),
+    updatedAt: updatedAt ?? new Date(),
+  };
+}
 
 console.log('🚀 BIDIRECTIONAL DATABASE SYNC #3 (PROMO CODE SUBMISSIONS)')
 console.log('===========================================================')
@@ -77,9 +120,8 @@ async function syncPromoCodeSubmissions() {
       
       for (const submission of missingFromProduction) {
         try {
-          const { whop, ...submissionData } = submission
           await productionPrisma.promoCodeSubmission.create({
-            data: submissionData
+            data: sanitizeSubmissionForCreate(submission)
           })
           console.log(`   ✅ Added submission: ${submission.title} (${submission.id})`)
         } catch (error) {
@@ -98,9 +140,8 @@ async function syncPromoCodeSubmissions() {
       
       for (const submission of missingFromBackup) {
         try {
-          const { whop, ...submissionData } = submission
           await backupPrisma.promoCodeSubmission.create({
-            data: submissionData
+            data: sanitizeSubmissionForCreate(submission)
           })
           console.log(`   ✅ Added submission: ${submission.title} (${submission.id})`)
         } catch (error) {
