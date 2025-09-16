@@ -3,7 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "node scripts/set-env-from-branch.js && next dev",
+    "start:local-prod": "node scripts/set-env-from-branch.js --force-production && next dev",
+    "start:local-backup": "node scripts/set-env-from-branch.js --force-backup && next dev",
     "dev:seo": "ts-node --transpile-only scripts/build-seo-indexes.ts && next dev",
     "prebuild": "ts-node --transpile-only scripts/build-seo-indexes.ts && ts-node --transpile-only scripts/build-sitemaps.ts",
     "build": "next build",
