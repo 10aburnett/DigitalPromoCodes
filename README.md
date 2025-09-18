@@ -115,8 +115,62 @@ To manually verify a promo code actually works at checkout:
 
 This provides maximum trust signals for SEO while maintaining honest verification status.
 
+### Comprehensive Discount Pricing & SEO Integration
+
+The system now provides **complete before/after pricing** for all promo codes with automatic sitemap updates:
+
+#### 📊 **Update Discount Pricing**
+
+```bash
+# Update ALL whops with comprehensive discount pricing
+npm run freshness:real
+
+# Update single whop (for testing)
+WHOP_SLUG=premium npm run freshness:real
+
+# Test without writing files
+npm run freshness:real --dry-run
+WHOP_SLUG=premium npm run freshness:real --dry-run
+```
+
+#### 🗺️ **Regenerate Sitemaps with Fresh Lastmod**
+
+```bash
+# Rebuild sitemaps with freshness-aware lastmod timestamps
+npm run sitemap:build
+
+# Combined: Update pricing + regenerate sitemaps (RECOMMENDED)
+npm run freshness:real+site
+
+# Combined for single whop
+WHOP_SLUG=premium npm run freshness:real+site
+```
+
+#### ✨ **What These Commands Do:**
+
+**`npm run freshness:real`:**
+- Processes ALL promo codes (not just "promo-" prefix)
+- Calculates real before/after pricing with pattern matching ("HALFOFF", "FREE", "$29.00 off")
+- Stores numeric data (beforeCents/afterCents) + formatted display strings
+- Adds "best discount" summary blocks for fast above-the-fold rendering
+- Uses atomic writes and triggers Next.js page revalidation
+- Updates 51+ JSON files with complete pricing data
+
+**`npm run sitemap:build`:**
+- Reads freshness JSON files to get the latest verification timestamps
+- Computes `lastmod = max(file.lastUpdated, ledger[].verifiedAt/checkedAt)`
+- Updates sitemaps with accurate freshness-aware lastmod dates
+- Tells search engines exactly when content was last verified
+
+**`npm run freshness:real+site`:**
+- **One command pipeline** that updates pricing AND sitemaps
+- Perfect for production deployments
+- Ensures search engines see accurate lastmod reflecting actual content freshness
+
 ### Freshness Scripts & Workflows
 - `scripts/freshness-sync.ts` - Database-based freshness sync (main method)
+- `scripts/add-real-discount-data.ts` - **Comprehensive discount pricing** with all promo codes
+- `scripts/build-sitemaps.ts` - **Freshness-aware sitemap generation** with accurate lastmod
 - `scripts/auto-check-whops.mjs` - Legacy automatic code checking
 - `scripts/normalize-freshness.mjs` - Clean up existing JSON files
 - `.github/workflows/refresh-freshness-db.yml` - **Primary automation** (every 6 hours)

@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client'
-import { writeFileSync, mkdirSync, existsSync } from 'fs'
+import { writeFileSync, mkdirSync, existsSync, readFileSync } from 'fs'
 import { join } from 'path'
 
 const prisma = new PrismaClient()
@@ -10,9 +10,50 @@ interface WhopData {
   updatedAt: Date
 }
 
+interface FreshnessEntry {
+  checkedAt?: string
+  verifiedAt?: string
+}
+
+interface FreshnessFile {
+  lastUpdated: string
+  ledger: FreshnessEntry[]
+}
+
 const SITE_URL = process.env.SITE_URL?.replace(/\/$/, '') || 'https://whpcodes.com'
 const INCLUDE_TEMP_SITEMAPS = process.env.INCLUDE_TEMP_SITEMAPS === '1'
 const MAX_URLS_PER_FILE = 45000
+
+function getLastModFromFreshness(slug: string, dbUpdatedAt: Date): string {
+  try {
+    const freshnessPath = join(process.cwd(), 'data', 'pages', `${slug}.json`)
+    if (!existsSync(freshnessPath)) {
+      return dbUpdatedAt.toISOString()
+    }
+
+    const freshnessData: FreshnessFile = JSON.parse(readFileSync(freshnessPath, 'utf8'))
+
+    // Collect all timestamps: file lastUpdated + all ledger timestamps
+    const timestamps = [freshnessData.lastUpdated]
+
+    for (const entry of freshnessData.ledger) {
+      if (entry.verifiedAt) timestamps.push(entry.verifiedAt)
+      if (entry.checkedAt) timestamps.push(entry.checkedAt)
+    }
+
+    // Find the most recent timestamp
+    const latestFreshness = timestamps
+      .map(ts => new Date(ts))
+      .reduce((latest, current) => current > latest ? current : latest, new Date(0))
+
+    // Return the most recent between freshness data and DB
+    return latestFreshness > dbUpdatedAt ? latestFreshness.toISOString() : dbUpdatedAt.toISOString()
+
+  } catch (error) {
+    // Fallback to DB timestamp if anything goes wrong
+    return dbUpdatedAt.toISOString()
+  }
+}
 
 function buildUrl(slug: string, locale: string | null): string {
   const localePath = locale === 'en' || !locale ? '' : `${locale}/`
@@ -35,6 +76,23 @@ function generateUrlsetXml(urls: string[]): string {
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>`).join('\n')
+
+  return `${generateXmlHeader()}<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${urlEntries}
+</urlset>`
+}
+
+function generateWhopUrlsetXml(whops: WhopData[]): string {
+  const urlEntries = whops.map(whop => {
+    const url = buildUrl(whop.slug, whop.locale)
+    const lastmod = getLastModFromFreshness(whop.slug, whop.updatedAt)
+    return `  <url>
+    <loc>${url}</loc>
+    <lastmod>${lastmod}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>`
+  }).join('\n')
 
   return `${generateXmlHeader()}<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${urlEntries}
@@ -152,36 +210,31 @@ ${blogUrls}
     console.log(`📝 Created blog.xml with ${blogPosts.length} URLs`)
   }
 
-  // Generate indexable URLs
-  const indexableUrls = cleanIndex.map(whop => buildUrl(whop.slug, whop.locale))
-  
-  // Chunk indexable URLs into multiple files
-  const indexChunks = chunkArray(indexableUrls, MAX_URLS_PER_FILE)
+  // Generate indexable URLs with freshness-aware lastmod
+  const indexChunks = chunkArray(cleanIndex, MAX_URLS_PER_FILE)
   const indexFilenames: string[] = []
 
   indexChunks.forEach((chunk, i) => {
     const filename = `index-${i + 1}.xml`
     const filepath = join(sitemapsDir, filename)
-    const xml = generateUrlsetXml(chunk)
+    const xml = generateWhopUrlsetXml(chunk)
     writeFileSync(filepath, xml)
     indexFilenames.push(filename)
-    console.log(`✅ Created ${filename} with ${chunk.length} URLs`)
+    console.log(`✅ Created ${filename} with ${chunk.length} URLs (freshness-aware lastmod)`)
   })
 
   // Generate temporary sitemaps if requested
   if (INCLUDE_TEMP_SITEMAPS) {
     if (cleanNoindex.length > 0) {
-      const noindexUrls = cleanNoindex.map(whop => buildUrl(whop.slug, whop.locale))
-      const noindexXml = generateUrlsetXml(noindexUrls)
+      const noindexXml = generateWhopUrlsetXml(cleanNoindex)
       writeFileSync(join(sitemapsDir, 'noindex.xml'), noindexXml)
-      console.log(`🚫 Created noindex.xml with ${noindexUrls.length} URLs`)
+      console.log(`🚫 Created noindex.xml with ${cleanNoindex.length} URLs (freshness-aware lastmod)`)
     }
 
     if (gone.length > 0) {
-      const goneUrls = gone.map(whop => buildUrl(whop.slug, whop.locale))
-      const goneXml = generateUrlsetXml(goneUrls)
+      const goneXml = generateWhopUrlsetXml(gone)
       writeFileSync(join(sitemapsDir, 'gone.xml'), goneXml)
-      console.log(`💀 Created gone.xml with ${goneUrls.length} URLs`)
+      console.log(`💀 Created gone.xml with ${gone.length} URLs (freshness-aware lastmod)`)
     }
   }
 

@@ -46,6 +46,8 @@
     "freshness:sync": "ts-node --transpile-only scripts/freshness-sync.ts",
     "verify:promo-codes": "ts-node --transpile-only scripts/verify-promo-codes.ts",
     "freshness:real": "ts-node --transpile-only scripts/add-real-discount-data.ts",
+    "sitemap:build": "ts-node --transpile-only scripts/build-sitemaps.ts",
+    "freshness:real+site": "npm run freshness:real && npm run sitemap:build",
     "sync:whpcodes": "node src/sync-ledgers-from-whpcodes.mjs"
   },
   "prisma": {
