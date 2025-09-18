@@ -104,7 +104,8 @@ export function middleware(request: NextRequest) {
         status: 410,
         headers: {
           ...(process.env.NODE_ENV !== 'production' ? {'x-mw-hit':'1'} : {}),
-          'Cache-Control': 's-maxage=300, stale-while-revalidate=60'
+          'Cache-Control': 's-maxage=300, stale-while-revalidate=60',
+          'X-Robots-Tag': 'noindex'
         }
       });
     }
