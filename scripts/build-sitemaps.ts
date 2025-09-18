@@ -223,19 +223,18 @@ ${blogUrls}
     console.log(`✅ Created ${filename} with ${chunk.length} URLs (freshness-aware lastmod)`)
   })
 
-  // Generate temporary sitemaps if requested
-  if (INCLUDE_TEMP_SITEMAPS) {
-    if (cleanNoindex.length > 0) {
-      const noindexXml = generateWhopUrlsetXml(cleanNoindex)
-      writeFileSync(join(sitemapsDir, 'noindex.xml'), noindexXml)
-      console.log(`🚫 Created noindex.xml with ${cleanNoindex.length} URLs (freshness-aware lastmod)`)
-    }
+  // Always generate noindex sitemap (live but noindex pages)
+  if (cleanNoindex.length > 0) {
+    const noindexXml = generateWhopUrlsetXml(cleanNoindex)
+    writeFileSync(join(sitemapsDir, 'noindex.xml'), noindexXml)
+    console.log(`🚫 Created noindex.xml with ${cleanNoindex.length} URLs (freshness-aware lastmod)`)
+  }
 
-    if (gone.length > 0) {
-      const goneXml = generateWhopUrlsetXml(gone)
-      writeFileSync(join(sitemapsDir, 'gone.xml'), goneXml)
-      console.log(`💀 Created gone.xml with ${gone.length} URLs (freshness-aware lastmod)`)
-    }
+  // Only generate gone sitemap if temp sitemaps are requested (excluded from sitemap index)
+  if (INCLUDE_TEMP_SITEMAPS && gone.length > 0) {
+    const goneXml = generateWhopUrlsetXml(gone)
+    writeFileSync(join(sitemapsDir, 'gone.xml'), goneXml)
+    console.log(`💀 Created gone.xml with ${gone.length} URLs (NOT in sitemap index - temp only)`)
   }
 
   // --- write /public/sitemap.xml as a sitemapindex ---
@@ -246,9 +245,9 @@ ${blogUrls}
     `${base}/sitemaps/index-1.xml`,
     `${base}/sitemaps/static.xml`,
     `${base}/sitemaps/blog.xml`,
-    ...(process.env.INCLUDE_TEMP_SITEMAPS === '1'
-        ? [`${base}/sitemaps/noindex.xml`, `${base}/sitemaps/gone.xml`]
-        : []),
+    // Always include noindex.xml (live but noindex pages)
+    // Only exclude gone.xml to avoid confusing Google with 410 pages
+    ...(cleanNoindex.length > 0 ? [`${base}/sitemaps/noindex.xml`] : [])
   ]
 
   const sitemapIndexXml =

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <sitemap><loc>https://whpcodes.com/sitemaps/index-1.xml</loc><lastmod>2025-09-18T15:48:17.171Z</lastmod></sitemap>
-  <sitemap><loc>https://whpcodes.com/sitemaps/static.xml</loc><lastmod>2025-09-18T15:48:17.171Z</lastmod></sitemap>
-  <sitemap><loc>https://whpcodes.com/sitemaps/blog.xml</loc><lastmod>2025-09-18T15:48:17.171Z</lastmod></sitemap>
+  <sitemap><loc>https://whpcodes.com/sitemaps/index-1.xml</loc><lastmod>2025-09-18T16:30:54.800Z</lastmod></sitemap>
+  <sitemap><loc>https://whpcodes.com/sitemaps/static.xml</loc><lastmod>2025-09-18T16:30:54.800Z</lastmod></sitemap>
+  <sitemap><loc>https://whpcodes.com/sitemaps/blog.xml</loc><lastmod>2025-09-18T16:30:54.800Z</lastmod></sitemap>
+  <sitemap><loc>https://whpcodes.com/sitemaps/noindex.xml</loc><lastmod>2025-09-18T16:30:54.800Z</lastmod></sitemap>
 </sitemapindex>
