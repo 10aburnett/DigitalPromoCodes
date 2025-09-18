@@ -16,7 +16,9 @@ const MAX_URLS_PER_FILE = 45000
 
 function buildUrl(slug: string, locale: string | null): string {
   const localePath = locale === 'en' || !locale ? '' : `${locale}/`
-  const url = `${SITE_URL}/${localePath}whop/${slug}`
+  // Canonicalize slug: lowercase + encode colons
+  const canonicalSlug = slug.toLowerCase().replace(/:/g, '%3a').replace(/%3a/gi, '%3a')
+  const url = `${SITE_URL}/${localePath}whop/${canonicalSlug}`
   // Fix double slashes but preserve the protocol://
   return url.replace(/([^:]\/)\/+/g, '$1')
 }

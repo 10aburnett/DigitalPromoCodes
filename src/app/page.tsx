@@ -198,7 +198,7 @@ export default function Home() {
             '@type': 'Product',
             'name': whop.name,
             'description': whop.description,
-            'url': `https://whpcodes.com/whop/${whop.slug}`,
+            'url': `https://whpcodes.com/whop/${whop.slug.toLowerCase()}`,
             'image': whop.logo,
             'aggregateRating': {
               '@type': 'AggregateRating',
@@ -210,7 +210,7 @@ export default function Home() {
               '@type': 'Offer',
               'name': promo.title,
               'description': promo.description,
-              'url': `https://whpcodes.com/whop/${whop.slug}`,
+              'url': `https://whpcodes.com/whop/${whop.slug.toLowerCase()}`,
               'availability': 'https://schema.org/InStock',
               'validFrom': new Date().toISOString(),
               'priceSpecification': {

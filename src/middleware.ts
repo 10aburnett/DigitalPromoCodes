@@ -65,21 +65,43 @@ export function middleware(request: NextRequest) {
     const res = NextResponse.next();
     if (process.env.NODE_ENV !== 'production') res.headers.set('x-mw-hit', '1');
 
-    // 1) normalize legacy locale URLs → /whop/:slug
+    // 1) CASE + COLON NORMALIZATION: Canonicalize /whop/* paths
+    if (path.startsWith('/whop/')) {
+      let target = path.toLowerCase();
+
+      // Canonicalize colon variants:
+      // - literal ":" → "%3a"
+      // - "%3A" → "%3a"
+      if (target.includes(':')) {
+        target = target.replace(/:/g, '%3a');
+      }
+      if (/%3a/i.test(target)) {
+        target = target.replace(/%3a/gi, '%3a');
+      }
+
+      if (target !== path) {
+        // Create new URL with canonical path while preserving query params and hash
+        const newUrl = url.clone();
+        newUrl.pathname = target;
+        return NextResponse.redirect(newUrl, 301);
+      }
+    }
+
+    // 2) normalize legacy locale URLs → /whop/:slug
     const m = path.match(/^\/([a-z]{2}(?:-[A-Z]{2})?)\/whop\/(.+)$/);
     if (m) {
       return NextResponse.redirect(new URL(`/whop/${m[2]}`, url), 308);
     }
 
-    // 2) handle specific redirects (preserve existing)
+    // 3) handle specific redirects (preserve existing)
     if (path === '/whop/monthly-mentorship') {
       return NextResponse.redirect(new URL('/whop/ayecon-academy-monthly-mentorship', url));
     }
 
-    // 3) exact 410 for retired
+    // 4) exact 410 for retired
     if (RETIRED_PATHS.has(path)) {
-      return new NextResponse('Gone', { 
-        status: 410, 
+      return new NextResponse('Gone', {
+        status: 410,
         headers: {
           ...(process.env.NODE_ENV !== 'production' ? {'x-mw-hit':'1'} : {}),
           'Cache-Control': 's-maxage=300, stale-while-revalidate=60'
@@ -87,12 +109,12 @@ export function middleware(request: NextRequest) {
       });
     }
 
-    // 4) X-Robots-Tag for NOINDEX
+    // 5) X-Robots-Tag for NOINDEX
     if (NOINDEX_PATHS.has(path)) {
       res.headers.set('X-Robots-Tag', 'noindex, follow');
     }
 
-    // 5) fall through to admin/API logic if needed, or return
+    // 6) fall through to admin/API logic if needed, or return
     if (!path.startsWith('/admin') && !path.startsWith('/api')) {
       return res;
     }

@@ -260,7 +260,7 @@ export default function RecommendedWhops({ currentWhopId }: RecommendedWhopsProp
         {recommendations.map((whop, index) => (
           <Link 
             key={whop.id} 
-            href={`/whop/${whop.slug}`}
+            href={`/whop/${whop.slug.toLowerCase()}`}
             className="group block"
             prefetch={index < 2} // Prefetch first 2 for better SEO and performance
           >

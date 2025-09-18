@@ -6,6 +6,7 @@ import { unstable_noStore as noStore } from 'next/cache';
 import { getWhopBySlug } from '@/lib/data';
 import { prisma } from '@/lib/prisma';
 import { Suspense } from 'react';
+import { canonicalSlugForDB, canonicalSlugForPath } from '@/lib/slug-utils';
 
 // Force dynamic rendering for content management testing
 export const dynamic = 'force-dynamic';
@@ -109,7 +110,9 @@ async function ReviewsSection({ whopId, whopName, reviews }: { whopId: string; w
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   noStore();
-  const whopData = await getWhopBySlug(params.slug, 'en');
+  const canon = canonicalSlugForPath(params.slug ?? '');
+  const dbSlug = canonicalSlugForDB(params.slug ?? '');
+  const whopData = await getWhopBySlug(dbSlug, 'en');
   
   if (!whopData) {
     return {
@@ -218,7 +221,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 
   // DB-driven robots flags (do not remove any existing metadata fields)
   const flags = await prisma.whop.findFirst({
-    where: { slug: params.slug }, // If you also have locale, add: , locale: params.locale
+    where: { slug: dbSlug }, // If you also have locale, add: , locale: params.locale
     select: { indexingStatus: true, retirement: true },
   });
   const shouldIndex =
@@ -243,8 +246,8 @@ export async function generateMetadata({ params }: { params: { slug: string } })
       currentMonth,
       currentYear.toString()
     ].filter(Boolean).join(', '),
-    alternates: { 
-      canonical: `https://whpcodes.com/whop/${params.slug}` 
+    alternates: {
+      canonical: `https://whpcodes.com/whop/${canon}`
     },
     robots: {
       index: shouldIndex,
@@ -280,37 +283,53 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 }
 
 export default async function WhopPage({ params }: { params: { slug: string } }) {
-  const { slug } = params;
+  const raw = params.slug || '';
+  const dbSlug = canonicalSlugForDB(raw);
 
-  // 1) Your existing lookup (keep exactly as-is)
-  const dealData = await getDeal(slug);
-  
+  // Debug logging to verify slug normalization
+  console.log('whop slug raw/db:', raw, dbSlug);
+
+  // 1) Try lookup with normalized slug for DB
+  const dealData = await getDeal(dbSlug);
+
   let whopData;
   if (dealData && dealData.id) {
-    whopData = await getWhopBySlug(slug, 'en');
+    whopData = await getWhopBySlug(dbSlug, 'en');
   } else {
-    whopData = await getWhopBySlug(slug, 'en');
+    whopData = await getWhopBySlug(dbSlug, 'en');
   }
 
-  // 2) If helper returned nothing, try a direct Prisma lookup (slug-only; no locale)
-  let flags: 
-    | { indexingStatus: 'INDEX' | 'NOINDEX'; retirement: 'NONE' | 'REDIRECT' | 'GONE'; redirectToPath: string | null }
-    | null = null;
+  // 1) Fallback fetch (unified shape) — still from `whop`
+  const whopDbRecord =
+    !whopData
+      ? await prisma.whop.findUnique({
+          where: { slug: dbSlug },
+          include: { PromoCode: true, Review: true },
+        })
+      : null;
 
-  if (!whopData) {
-    flags = await prisma.whop.findFirst({
-      where: { slug },
-      select: { indexingStatus: true, retirement: true, redirectToPath: true },
-    });
-  } else {
-    // Fetch flags for existing whop data
-    flags = await prisma.whop.findFirst({
-      where: { slug },
-      select: { indexingStatus: true, retirement: true, redirectToPath: true },
-    });
+  // 2) Choose final data (helper result or fallback)
+  const finalWhopData = whopData || whopDbRecord;
+
+  // 3) If nothing, debug or 404 (prevents blank page)
+  if (!finalWhopData) {
+    if (process.env.SEO_DEBUG === '1') {
+      return (
+        <pre style={{ padding: 16 }}>
+          {JSON.stringify({ raw, dbSlug, flags: null }, null, 2)}
+        </pre>
+      );
+    }
+    return notFound();
   }
 
-  // 3) Retirement guards (respect enum)
+  // 4) Fetch DB-driven flags ONCE (canonical table)
+  const flags = await prisma.whop.findFirst({
+    where: { slug: dbSlug },
+    select: { indexingStatus: true, retirement: true, redirectToPath: true },
+  });
+
+  // 5) Respect retirements
   if (flags?.retirement === 'REDIRECT' && flags.redirectToPath) {
     return permanentRedirect(flags.redirectToPath); // 308
   }
@@ -318,41 +337,24 @@ export default async function WhopPage({ params }: { params: { slug: string } })
     return notFound(); // middleware serves exact 410
   }
 
-  // 4) TEMP DEBUG: only when explicitly enabled
-  if (!whopData && process.env.SEO_DEBUG === '1') {
-    return (
-      <pre style={{ padding: 16 }}>
-        {'DEBUG: whop not found\n'}
-        {JSON.stringify({ slug, flags }, null, 2)}
-      </pre>
-    );
-  }
-
-  // 5) Original behaviour if still nothing and not debugging
-  if (!whopData) return notFound();
-
-  // If page is retired, don't render - let route handler return 410
-  if (whopData.retired) {
-    return null;
-  }
 
   // Transform raw Prisma data to match expected format
-  const whop = {
-    id: whopData.id,
-    name: whopData.name,
-    description: whopData.description,
-    logo: whopData.logo,
-    affiliateLink: whopData.affiliateLink,
-    website: whopData.website || null,
-    price: whopData.price,
-    category: whopData.category || null,
-    aboutContent: whopData.aboutContent,
-    howToRedeemContent: whopData.howToRedeemContent,
-    promoDetailsContent: whopData.promoDetailsContent,
-    featuresContent: whopData.featuresContent,
-    termsContent: whopData.termsContent,
-    faqContent: whopData.faqContent,
-    promoCodes: whopData.PromoCode.map(code => ({
+  const whopFormatted = {
+    id: finalWhopData.id,
+    name: finalWhopData.name,
+    description: finalWhopData.description,
+    logo: finalWhopData.logo,
+    affiliateLink: finalWhopData.affiliateLink,
+    website: finalWhopData.website || null,
+    price: finalWhopData.price,
+    category: finalWhopData.category || null,
+    aboutContent: finalWhopData.aboutContent,
+    howToRedeemContent: finalWhopData.howToRedeemContent,
+    promoDetailsContent: finalWhopData.promoDetailsContent,
+    featuresContent: finalWhopData.featuresContent,
+    termsContent: finalWhopData.termsContent,
+    faqContent: finalWhopData.faqContent,
+    promoCodes: (finalWhopData.PromoCode ?? []).map(code => ({
       id: code.id,
       title: code.title,
       description: code.description,
@@ -361,7 +363,7 @@ export default async function WhopPage({ params }: { params: { slug: string } })
       value: code.value,
       createdAt: code.createdAt
     })),
-    reviews: whopData.Review.map(review => ({
+    reviews: (finalWhopData.Review ?? []).map(review => ({
       id: review.id,
       author: review.author,
       content: review.content,
@@ -372,7 +374,7 @@ export default async function WhopPage({ params }: { params: { slug: string } })
   };
 
   
-  const firstPromo = whop.promoCodes[0] || null;
+  const firstPromo = whopFormatted.promoCodes[0] || null;
   const promoCode = firstPromo?.code || null;
   const promoTitle = "Exclusive Access"; // Always show "Exclusive Access" on detail pages
 
@@ -394,16 +396,16 @@ export default async function WhopPage({ params }: { params: { slug: string } })
   // Prepare fallback FAQ data for the collapsible component (used only if no database FAQ content)
   const fallbackFaqData = [
     {
-      question: `How do I use the ${whop.name} promo code?`,
-      answer: `To use the ${promoTitle} for ${whop.name}, simply click "Reveal Code" above to visit their website.${hasPromoCode(whop.name) ? ' Copy the promo code and enter it during checkout.' : ' The discount will be automatically applied when you purchase through our link.'}`
+      question: `How do I use the ${whopFormatted.name} promo code?`,
+      answer: `To use the ${promoTitle} for ${whopFormatted.name}, simply click "Reveal Code" above to visit their website.${hasPromoCode(whopFormatted.name) ? ' Copy the promo code and enter it during checkout.' : ' The discount will be automatically applied when you purchase through our link.'}`
     },
     {
-      question: `What type of product is ${whop.name}?`,
-      answer: `${whop.name} is ${whop.category ? `in the ${whop.category.toLowerCase()} category and provides` : 'an exclusive platform that provides'} premium content and resources for its members. It's designed to help users achieve their goals through expert guidance and community support.`
+      question: `What type of product is ${whopFormatted.name}?`,
+      answer: `${whopFormatted.name} is ${whopFormatted.category ? `in the ${whopFormatted.category.toLowerCase()} category and provides` : 'an exclusive platform that provides'} premium content and resources for its members. It's designed to help users achieve their goals through expert guidance and community support.`
     },
     {
       question: 'How long is this offer valid?',
-      answer: `This exclusive offer for ${whop.name} is available for a limited time. We recommend claiming it as soon as possible as these deals can expire or change without notice.`
+      answer: `This exclusive offer for ${whopFormatted.name} is available for a limited time. We recommend claiming it as soon as possible as these deals can expire or change without notice.`
     }
   ];
 
@@ -419,14 +421,14 @@ export default async function WhopPage({ params }: { params: { slug: string } })
               {/* Whop Info */}
               <div className="flex items-center gap-4 sm:gap-6">
                 <div className="relative w-16 sm:w-20 h-16 sm:h-20 rounded-lg overflow-hidden flex-shrink-0" style={{ backgroundColor: 'var(--background-color)' }}>
-                  <WhopLogo whop={whop} />
+                  <WhopLogo whop={whopFormatted} />
                 </div>
                 <div className="min-w-0">
-                  <h1 className="text-2xl sm:text-3xl font-bold mb-2">{whop.name} Promo Code</h1>
+                  <h1 className="text-2xl sm:text-3xl font-bold mb-2">{whopFormatted.name} Promo Code</h1>
                   <p className="text-base sm:text-lg" style={{ color: 'var(--accent-color)' }}>
                     {promoTitle}
                   </p>
-                  {whop.price && (
+                  {whopFormatted.price && (
                     <div className="mt-3 flex flex-col md:flex-row md:items-center md:gap-3">
                       {/* Label */}
                       <span className="text-base font-medium text-gray-600 md:mr-2">
@@ -436,21 +438,21 @@ export default async function WhopPage({ params }: { params: { slug: string } })
                       {/* Pill */}
                       <div className="mt-2 md:mt-0">
                         <div className="inline-flex items-center rounded-full bg-emerald-600 text-white px-4 py-2 md:px-3 md:py-1.5 shadow-sm">
-                          {whop.price.includes('/') ? (
+                          {whopFormatted.price.includes('/') ? (
                             <>
                               {/* Amount */}
                               <span className="font-extrabold text-xl leading-none md:text-lg">
-                                {whop.price.split('/')[0].trim()}
+                                {whopFormatted.price.split('/')[0].trim()}
                               </span>
                               {/* Interval */}
                               <span className="ml-2 text-[15px] md:text-sm leading-none whitespace-nowrap opacity-95 font-medium">
-                                / {whop.price.split('/')[1].trim()}
+                                / {whopFormatted.price.split('/')[1].trim()}
                               </span>
                             </>
                           ) : (
                             /* Single value like "Free" or "N/A" */
                             <span className="font-extrabold text-xl leading-none md:text-lg">
-                              {whop.price}
+                              {whopFormatted.price}
                             </span>
                           )}
                         </div>
@@ -463,23 +465,23 @@ export default async function WhopPage({ params }: { params: { slug: string } })
               {/* Community Promo Codes Section */}
               <div className="mt-1">
                 <hr className="mb-4" style={{ borderColor: 'var(--border-color)', borderWidth: '1px', opacity: 0.3 }} />
-                <CommunityPromoSection 
-                  key={`community-${whop.id}-${whop.promoCodes?.length || 0}-${Date.now()}`}
+                <CommunityPromoSection
+                  key={`community-${whopFormatted.id}-${whopFormatted.promoCodes?.length || 0}-${Date.now()}`}
                   whop={{
-                    id: whop.id,
-                    name: whop.name,
-                    affiliateLink: whop.affiliateLink
+                    id: whopFormatted.id,
+                    name: whopFormatted.name,
+                    affiliateLink: whopFormatted.affiliateLink
                   }}
-                  promoCodes={whop.promoCodes || []}
+                  promoCodes={whopFormatted.promoCodes || []}
                   slug={params.slug}
                 />
               </div>
 
               {/* Promo Code Submission Button */}
               <div className="mt-6">
-                <PromoCodeSubmissionButton 
-                  whopId={whop.id}
-                  whopName={whop.name}
+                <PromoCodeSubmissionButton
+                  whopId={whopFormatted.id}
+                  whopName={whopFormatted.name}
                 />
               </div>
             </div>
@@ -488,24 +490,24 @@ export default async function WhopPage({ params }: { params: { slug: string } })
           {/* How to Redeem Section */}
           <section className="rounded-xl px-7 py-6 sm:p-8 border transition-theme" style={{ backgroundColor: 'var(--background-secondary)', borderColor: 'var(--border-color)' }}>
             <h2 className="text-xl sm:text-2xl font-bold mb-4">How to Redeem</h2>
-            {isMeaningful(whop.howToRedeemContent) ? (
+            {isMeaningful(whopFormatted.howToRedeemContent) ? (
               <div className="text-base sm:text-lg leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
-                {looksLikeHtml(whop.howToRedeemContent!) ? (
+                {looksLikeHtml(whopFormatted.howToRedeemContent!) ? (
                   <div 
                     className="prose prose-sm max-w-none whitespace-break-spaces prose-headings:text-current prose-p:text-current prose-ul:text-current prose-ol:text-current prose-li:text-current prose-strong:text-current prose-em:text-current prose-a:text-blue-600 hover:prose-a:text-blue-700"
-                    dangerouslySetInnerHTML={{ __html: whop.howToRedeemContent! }}
+                    dangerouslySetInnerHTML={{ __html: whopFormatted.howToRedeemContent! }}
                   />
                 ) : (
-                  <RenderPlain text={whop.howToRedeemContent!} />
+                  <RenderPlain text={whopFormatted.howToRedeemContent!} />
                 )}
               </div>
             ) : (
               <ol className="space-y-2 text-base sm:text-lg" style={{ color: 'var(--text-secondary)' }}>
                 <li className="flex items-start">
                   <span className="mr-2 font-semibold">1.</span>
-                  <span>Click "Reveal Code" above to visit {whop.name} and get your exclusive offer</span>
+                  <span>Click "Reveal Code" above to visit {whopFormatted.name} and get your exclusive offer</span>
                 </li>
-                {hasPromoCode(whop.name) ? (
+                {hasPromoCode(whopFormatted.name) ? (
                   <li className="flex items-start">
                     <span className="mr-2 font-semibold">2.</span>
                     <span>Copy the revealed promo code and enter it during checkout</span>
@@ -529,19 +531,19 @@ export default async function WhopPage({ params }: { params: { slug: string } })
           </section>
 
           {/* Product Details for Each Promo Code */}
-          {whop.promoCodes.map((promo, globalIndex) => {
+          {whopFormatted.promoCodes.map((promo, globalIndex) => {
             // Calculate the promo number based on whether it's community or original
             const isCommunity = promo.id.startsWith('community_');
-            const communityCount = whop.promoCodes.filter(p => p.id.startsWith('community_')).length;
+            const communityCount = whopFormatted.promoCodes.filter(p => p.id.startsWith('community_')).length;
             
             let promoNumber;
             if (isCommunity) {
               // Community codes get numbers 1, 2, 3... based on their position in community codes
-              const communityIndex = whop.promoCodes.filter(p => p.id.startsWith('community_')).indexOf(promo);
+              const communityIndex = whopFormatted.promoCodes.filter(p => p.id.startsWith('community_')).indexOf(promo);
               promoNumber = communityIndex + 1;
             } else {
               // Original codes continue numbering after community codes
-              const originalIndex = whop.promoCodes.filter(p => !p.id.startsWith('community_')).indexOf(promo);
+              const originalIndex = whopFormatted.promoCodes.filter(p => !p.id.startsWith('community_')).indexOf(promo);
               promoNumber = communityCount + originalIndex + 1;
             }
             
@@ -577,24 +579,24 @@ export default async function WhopPage({ params }: { params: { slug: string } })
                           </td>
                         </tr>
                       )}
-                      {whop.price && (
+                      {whopFormatted.price && (
                         <tr className="border-b" style={{ borderColor: 'var(--border-color)' }}>
                           <td className="py-3 pl-4 pr-2 font-medium w-1/3" style={{ backgroundColor: 'var(--background-color)' }}>Price</td>
                           <td className="py-3 px-4" style={{ backgroundColor: 'var(--background-secondary)' }}>
                             <span style={{ 
-                              color: whop.price === 'Free' ? 'var(--success-color)' : 
-                                     whop.price === 'N/A' ? 'var(--text-secondary)' : 'var(--text-color)',
-                              fontWeight: whop.price === 'Free' ? 'bold' : 'normal'
+                              color: whopFormatted.price === 'Free' ? 'var(--success-color)' : 
+                                     whopFormatted.price === 'N/A' ? 'var(--text-secondary)' : 'var(--text-color)',
+                              fontWeight: whopFormatted.price === 'Free' ? 'bold' : 'normal'
                             }}>
-                              {whop.price}
+                              {whopFormatted.price}
                             </span>
                           </td>
                         </tr>
                       )}
-                      {whop.category && (
+                      {whopFormatted.category && (
                         <tr className="border-b" style={{ borderColor: 'var(--border-color)' }}>
                           <td className="py-3 pl-4 pr-2 font-medium w-1/3" style={{ backgroundColor: 'var(--background-color)' }}>Category</td>
-                          <td className="py-3 px-4" style={{ backgroundColor: 'var(--background-secondary)' }}>{whop.category}</td>
+                          <td className="py-3 px-4" style={{ backgroundColor: 'var(--background-secondary)' }}>{whopFormatted.category}</td>
                         </tr>
                       )}
                     </tbody>
@@ -607,12 +609,12 @@ export default async function WhopPage({ params }: { params: { slug: string } })
           {/* About Section - Smart fallback: aboutContent first, then description */}
           {(() => {
             const aboutVal =
-              isMeaningful(whop.aboutContent) ? whop.aboutContent
-              : (isMeaningful(whop.description) ? whop.description : null);
+              isMeaningful(whopFormatted.aboutContent) ? whopFormatted.aboutContent
+              : (isMeaningful(whopFormatted.description) ? whopFormatted.description : null);
             
             return aboutVal && (
               <section className="rounded-xl px-7 py-6 sm:p-8 border transition-theme" style={{ backgroundColor: 'var(--background-secondary)', borderColor: 'var(--border-color)' }}>
-                <h2 className="text-xl sm:text-2xl font-bold mb-4">About {whop.name}</h2>
+                <h2 className="text-xl sm:text-2xl font-bold mb-4">About {whopFormatted.name}</h2>
                 <div className="text-base sm:text-lg leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
                   {looksLikeHtml(aboutVal) ? (
                     <div 
@@ -630,15 +632,15 @@ export default async function WhopPage({ params }: { params: { slug: string } })
           {/* Promo Details Section */}
           <section className="rounded-xl px-7 py-6 sm:p-8 border transition-theme" style={{ backgroundColor: 'var(--background-secondary)', borderColor: 'var(--border-color)' }}>
             <h2 className="text-xl sm:text-2xl font-bold mb-4">Promo Details</h2>
-            {isMeaningful(whop.promoDetailsContent) ? (
+            {isMeaningful(whopFormatted.promoDetailsContent) ? (
               <div className="text-base sm:text-lg leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
-                {looksLikeHtml(whop.promoDetailsContent!) ? (
+                {looksLikeHtml(whopFormatted.promoDetailsContent!) ? (
                   <div 
                     className="prose prose-sm max-w-none whitespace-break-spaces prose-headings:text-current prose-p:text-current prose-ul:text-current prose-ol:text-current prose-li:text-current prose-strong:text-current prose-em:text-current prose-a:text-blue-600 hover:prose-a:text-blue-700"
-                    dangerouslySetInnerHTML={{ __html: whop.promoDetailsContent! }}
+                    dangerouslySetInnerHTML={{ __html: whopFormatted.promoDetailsContent! }}
                   />
                 ) : (
-                  <RenderPlain text={whop.promoDetailsContent!} />
+                  <RenderPlain text={whopFormatted.promoDetailsContent!} />
                 )}
               </div>
             ) : (
@@ -653,7 +655,7 @@ export default async function WhopPage({ params }: { params: { slug: string } })
                   {firstPromo && (
                     <div className="mt-3 pt-3 border-t" style={{ borderColor: 'var(--border-color)' }}>
                       <WhopPageCompactStats 
-                        whopId={whop.id}
+                        whopId={whopFormatted.id}
                         promoCodeId={firstPromo.id}
                         slug={params.slug}
                       />
@@ -674,45 +676,45 @@ export default async function WhopPage({ params }: { params: { slug: string } })
           {/* Terms & Conditions */}
           <section className="rounded-xl px-7 py-6 sm:p-8 border transition-theme" style={{ backgroundColor: 'var(--background-secondary)', borderColor: 'var(--border-color)' }}>
             <h2 className="text-xl sm:text-2xl font-bold mb-4">Terms & Conditions</h2>
-            {isMeaningful(whop.termsContent) ? (
+            {isMeaningful(whopFormatted.termsContent) ? (
               <div className="text-base sm:text-lg leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
-                {looksLikeHtml(whop.termsContent!) ? (
+                {looksLikeHtml(whopFormatted.termsContent!) ? (
                   <div 
                     className="prose prose-sm max-w-none whitespace-break-spaces prose-headings:text-current prose-p:text-current prose-ul:text-current prose-ol:text-current prose-li:text-current prose-strong:text-current prose-em:text-current prose-a:text-blue-600 hover:prose-a:text-blue-700"
-                    dangerouslySetInnerHTML={{ __html: whop.termsContent! }}
+                    dangerouslySetInnerHTML={{ __html: whopFormatted.termsContent! }}
                   />
                 ) : (
-                  <RenderPlain text={whop.termsContent!} />
+                  <RenderPlain text={whopFormatted.termsContent!} />
                 )}
               </div>
             ) : (
               <p className="text-base sm:text-lg leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
-                This exclusive offer for {whop.name} is available through our partnership.
-                {hasPromoCode(whop.name) ? ' Use the promo code during checkout to get your discount.' : ' The discount will be automatically applied when you click through our link.'}
-                {' '}Terms and conditions apply as set by {whop.name}. Offer subject to availability and may be modified or discontinued at any time.
+                This exclusive offer for {whopFormatted.name} is available through our partnership.
+                {hasPromoCode(whopFormatted.name) ? ' Use the promo code during checkout to get your discount.' : ' The discount will be automatically applied when you click through our link.'}
+                {' '}Terms and conditions apply as set by {whopFormatted.name}. Offer subject to availability and may be modified or discontinued at any time.
               </p>
             )}
           </section>
 
           {/* FAQ Section - Enhanced with structured FAQ support */}
           <FAQSection 
-            faqContent={whop.faqContent}
+            faqContent={whopFormatted.faqContent}
             faqs={fallbackFaqData}
-            whopName={whop.name}
+            whopName={whopFormatted.name}
           />
 
           {/* Features Section - Only render if database content exists */}
-          {isMeaningful(whop.featuresContent) && (
+          {isMeaningful(whopFormatted.featuresContent) && (
             <section className="rounded-xl px-7 py-6 sm:p-8 border transition-theme" style={{ backgroundColor: 'var(--background-secondary)', borderColor: 'var(--border-color)' }}>
               <h2 className="text-xl sm:text-2xl font-bold mb-4">Features</h2>
               <div className="text-base sm:text-lg leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
-                {looksLikeHtml(whop.featuresContent!) ? (
+                {looksLikeHtml(whopFormatted.featuresContent!) ? (
                   <div 
                     className="prose prose-sm max-w-none whitespace-break-spaces prose-headings:text-current prose-p:text-current prose-ul:text-current prose-ol:text-current prose-li:text-current prose-strong:text-current prose-em:text-current prose-a:text-blue-600 hover:prose-a:text-blue-700"
-                    dangerouslySetInnerHTML={{ __html: whop.featuresContent! }}
+                    dangerouslySetInnerHTML={{ __html: whopFormatted.featuresContent! }}
                   />
                 ) : (
-                  <RenderPlain text={whop.featuresContent!} />
+                  <RenderPlain text={whopFormatted.featuresContent!} />
                 )}
               </div>
             </section>
@@ -724,7 +726,7 @@ export default async function WhopPage({ params }: { params: { slug: string } })
           {/* Recommended Whops Section - Streamed for better performance */}
           <div className="max-w-2xl mx-auto">
             <Suspense fallback={<SectionSkeleton />}>
-              <RecommendedSection currentWhopId={whop.id} />
+              <RecommendedSection currentWhopId={whopFormatted.id} />
             </Suspense>
           </div>
 
@@ -732,9 +734,9 @@ export default async function WhopPage({ params }: { params: { slug: string } })
           <div className="max-w-2xl mx-auto">
             <Suspense fallback={<SectionSkeleton />}>
               <ReviewsSection 
-                whopId={whop.id}
-                whopName={whop.name}
-                reviews={whop.reviews || []}
+                whopId={whopFormatted.id}
+                whopName={whopFormatted.name}
+                reviews={whopFormatted.reviews || []}
               />
             </Suspense>
           </div>

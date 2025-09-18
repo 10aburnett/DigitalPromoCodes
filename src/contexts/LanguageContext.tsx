@@ -4,6 +4,7 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import { useRouter } from 'next/navigation';
 import { usePathname } from 'next/navigation';
 import { Language, defaultLanguage, getTranslation, languageKeys } from '@/lib/i18n';
+import { canonicalSlugForPath } from '@/lib/slug-utils';
 
 interface LanguageContextType {
   language: Language;
@@ -153,11 +154,11 @@ export function LanguageProvider({ children, locale }: LanguageProviderProps) {
     if (whopPageInfo) {
       // Handle whop detail page language switching
       if (newLanguage === 'en') {
-        // Switching to English: use /whop/[slug] format
-        newPath = `/whop/${whopPageInfo.slug}`;
+        // Switching to English: use /whop/[slug] format (canonical slug)
+        newPath = `/whop/${canonicalSlugForPath(whopPageInfo.slug)}`;
       } else {
-        // Switching to other language: use /[locale]/[slug] format
-        newPath = `/${newLanguage}/${whopPageInfo.slug}`;
+        // Switching to other language: use /[locale]/[slug] format (canonical slug)
+        newPath = `/${newLanguage}/${canonicalSlugForPath(whopPageInfo.slug)}`;
       }
     } else if (legalPageInfo) {
       // Handle legal page language switching

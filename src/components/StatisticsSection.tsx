@@ -245,7 +245,7 @@ export default function StatisticsSection() {
             title={t('stats.popular')}
             value={stats?.mostClaimedOffer?.name || 'N/A'}
             icon="⭐"
-            link={stats?.mostClaimedOffer?.slug ? `/whop/${stats.mostClaimedOffer.slug}` : undefined}
+            link={stats?.mostClaimedOffer?.slug ? `/whop/${stats.mostClaimedOffer.slug.toLowerCase()}` : undefined}
             logoUrl={stats?.mostClaimedOffer?.logoUrl}
             showLogo={true}
           />

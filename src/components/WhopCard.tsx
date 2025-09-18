@@ -70,9 +70,9 @@ export default function WhopCard({ promo, priority = false }: WhopCardProps) {
     }
     
     if (currentLanguage === 'en') {
-      return `/whop/${identifier}`; // English uses /whop/{slug}
+      return `/whop/${identifier.toLowerCase()}`; // English uses /whop/{slug}
     }
-    return `/${currentLanguage}/${identifier}`; // Other languages use direct language prefix with whop pages under locale
+    return `/${currentLanguage}/${identifier.toLowerCase()}`; // Other languages use direct language prefix with whop pages under locale
   };
 
   const handleGetPromoClick = (e: React.MouseEvent) => {
