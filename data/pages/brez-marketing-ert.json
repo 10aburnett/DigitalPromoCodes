@@ -1,0 +1,20 @@
+{
+  "whopUrl": "https://whop.com/brez-marketing-ert-ad/",
+  "lastUpdated": "2025-09-18T13:23:07.075Z",
+  "ledger": [
+    {
+      "code": "DEAL35",
+      "maskInLedger": true,
+      "status": "unknown",
+      "notes": "",
+      "checkedAt": "2025-09-18T13:23:07.075Z"
+    },
+    {
+      "code": "DISCOUNT30",
+      "maskInLedger": true,
+      "status": "unknown",
+      "notes": "",
+      "checkedAt": "2025-09-18T13:23:07.075Z"
+    }
+  ]
+}

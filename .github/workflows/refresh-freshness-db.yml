@@ -1,0 +1,62 @@
+name: Refresh Freshness from Database
+
+on:
+  # schedule:
+  #   # Run every 6 hours (disabled)
+  #   - cron: '0 */6 * * *'
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  refresh-freshness:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate Prisma Client
+        run: npx prisma generate
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
+      - name: Run freshness sync
+        run: npm run freshness:sync
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
+      - name: Check for changes
+        id: verify-changed-files
+        run: |
+          if [ -n "$(git status --porcelain data/pages/)" ]; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Commit and push changes
+        if: steps.verify-changed-files.outputs.changed == 'true'
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add data/pages/
+          git commit -m "🔄 Auto-refresh freshness data from database
+
+          Updated freshness JSON files for whops with promo codes
+
+          🤖 Generated with GitHub Actions"
+          git push
+
+      - name: No changes detected
+        if: steps.verify-changed-files.outputs.changed == 'false'
+        run: echo "✅ No freshness data changes detected"

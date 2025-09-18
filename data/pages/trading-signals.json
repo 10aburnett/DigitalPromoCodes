@@ -1,0 +1,24 @@
+{
+  "whopUrl": "https://whop.com/ayecon-lifetime-membership/",
+  "lastUpdated": "2025-09-18T10:50:30.140Z",
+  "ledger": [
+    {
+      "code": "promo-022d1f18",
+      "status": "working",
+      "before": "$5,000.00",
+      "after": "$4,500.00",
+      "notes": "",
+      "checkedAt": "2025-09-15T10:32:00Z",
+      "maskInLedger": true
+    },
+    {
+      "code": "SAVE20",
+      "status": "working",
+      "before": "$29.99",
+      "after": "$23.99",
+      "notes": "20% discount verified at checkout",
+      "verifiedAt": "2025-09-15T09:15:00Z",
+      "maskInLedger": true
+    }
+  ]
+}

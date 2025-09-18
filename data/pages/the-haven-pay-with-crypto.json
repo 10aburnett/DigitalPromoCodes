@@ -1,0 +1,16 @@
+{
+  "whopUrl": "https://whop.com/the-haven-membership-crypto-payment/",
+  "lastUpdated": "2025-09-18T14:09:10.403Z",
+  "ledger": [
+    {
+      "code": "PROMO-45EF5D24",
+      "maskInLedger": true,
+      "status": "working",
+      "notes": "",
+      "checkedAt": "2025-09-18T14:09:10.403Z",
+      "verifiedAt": "2025-09-18T14:09:10.403Z",
+      "before": "$250.00",
+      "after": "$225.00"
+    }
+  ]
+}

@@ -24,6 +24,7 @@ import CommunityPromoSection from '@/components/CommunityPromoSection';
 import { parseFaqContent } from '@/lib/faq-types';
 import RenderPlain from '@/components/RenderPlain';
 import { looksLikeHtml, isMeaningful, escapeHtml, toPlainText } from '@/lib/textRender';
+import WhopFreshness from '@/components/WhopFreshness';
 
 
 
@@ -486,6 +487,9 @@ export default async function WhopPage({ params }: { params: { slug: string } })
               </div>
             </div>
           </div>
+
+          {/* Freshness/Verification Section */}
+          <WhopFreshness slug={params.slug} />
 
           {/* How to Redeem Section */}
           <section className="rounded-xl px-7 py-6 sm:p-8 border transition-theme" style={{ backgroundColor: 'var(--background-secondary)', borderColor: 'var(--border-color)' }}>

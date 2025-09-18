@@ -41,7 +41,12 @@
     "import-csv": "node scripts/import-and-fix-csv.js",
     "publish-whops": "ts-node scripts/manual-publish-whops.ts",
     "check-whop-status": "ts-node scripts/check-whop-status.ts",
-    "publish-custom": "ts-node scripts/publish-custom-whops.ts"
+    "publish-custom": "ts-node scripts/publish-custom-whops.ts",
+    "freshness:check": "node scripts/auto-check-whops.mjs",
+    "freshness:sync": "ts-node --transpile-only scripts/freshness-sync.ts",
+    "verify:promo-codes": "ts-node --transpile-only scripts/verify-promo-codes.ts",
+    "freshness:real": "ts-node --transpile-only scripts/add-real-discount-data.ts",
+    "sync:whpcodes": "node src/sync-ledgers-from-whpcodes.mjs"
   },
   "prisma": {
     "schema": "prisma/schema.prisma",
@@ -63,6 +68,7 @@
     "next-auth": "^4.24.11",
     "node-fetch": "^3.3.2",
     "nodemailer": "^6.10.1",
+    "playwright": "^1.55.0",
     "react": "^18.2.0",
     "react-beautiful-dnd": "^13.1.1",
     "react-dom": "^18.2.0",

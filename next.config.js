@@ -73,6 +73,22 @@ const nextConfig = {
           { key: 'Cache-Control', value: 'max-age=0, s-maxage=0, must-revalidate' },
         ],
       },
+      {
+        source: '/data/:path*',
+        headers: [
+          { key: 'Content-Type', value: 'application/json; charset=utf-8' },
+          { key: 'Cache-Control', value: 'max-age=300, s-maxage=300' }, // 5 minutes
+        ],
+      },
+    ];
+  },
+  // Rewrites for data directory
+  async rewrites() {
+    return [
+      {
+        source: '/data/:path*',
+        destination: '/api/data/:path*',
+      },
     ];
   },
   // Temporarily disable custom webpack config to fix chunk loading issues
