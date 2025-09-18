@@ -5,8 +5,10 @@ import { useState, useEffect } from 'react';
 interface LedgerEntry {
   code: string;
   status: 'working' | 'expired' | 'unknown';
-  before?: string;
-  after?: string;
+  beforeCents?: number;
+  afterCents?: number;
+  currency?: string;
+  display?: string;
   notes?: string;
   checkedAt?: string;
   verifiedAt?: string;
@@ -139,7 +141,7 @@ export default function WhopFreshness({ slug }: WhopFreshnessProps) {
                     </span>
                   </td>
                   <td className="py-2 px-2 text-sm">
-                    {row.before && row.after ? `${row.before} → ${row.after}` : '—'}
+                    {row.display || '—'}
                   </td>
                   <td className="py-2 px-2 text-sm">
                     {row.verifiedAt ? (

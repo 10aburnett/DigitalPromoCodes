@@ -1,16 +1,27 @@
 {
   "whopUrl": "https://whop.com/bfitraders/",
-  "lastUpdated": "2025-09-18T14:09:10.403Z",
+  "lastUpdated": "2025-09-18T14:52:37.708Z",
   "ledger": [
     {
       "code": "PROMO-58B279FF",
       "maskInLedger": true,
       "status": "working",
       "notes": "",
-      "checkedAt": "2025-09-18T14:09:10.403Z",
+      "checkedAt": "2025-09-18T14:52:37.708Z",
       "verifiedAt": "2025-09-18T14:09:10.403Z",
       "before": "$99.00",
-      "after": "$84.15"
+      "after": "$84.15",
+      "beforeCents": 99,
+      "afterCents": 8415,
+      "currency": "USD",
+      "display": "$99.00 → $84.15"
     }
-  ]
+  ],
+  "best": {
+    "code": "PROMO-58B279FF",
+    "beforeCents": 99,
+    "afterCents": 8415,
+    "currency": "USD",
+    "computedAt": "2025-09-18T14:52:37.708Z"
+  }
 }

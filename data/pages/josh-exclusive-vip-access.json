@@ -1,13 +1,24 @@
 {
   "whopUrl": "https://whop.com/exclusive-vip-access/",
-  "lastUpdated": "2025-09-18T13:23:07.075Z",
+  "lastUpdated": "2025-09-18T14:52:37.708Z",
   "ledger": [
     {
       "code": "JOSH",
       "maskInLedger": true,
       "status": "unknown",
       "notes": "",
-      "checkedAt": "2025-09-18T13:23:07.075Z"
+      "checkedAt": "2025-09-18T14:52:37.708Z",
+      "beforeCents": 100,
+      "afterCents": 8000,
+      "currency": "USD",
+      "display": "$100.00 → $80.00"
     }
-  ]
+  ],
+  "best": {
+    "code": "JOSH",
+    "beforeCents": 100,
+    "afterCents": 8000,
+    "currency": "USD",
+    "computedAt": "2025-09-18T14:52:37.708Z"
+  }
 }

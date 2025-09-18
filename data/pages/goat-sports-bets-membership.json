@@ -1,16 +1,27 @@
 {
   "whopUrl": "https://whop.com/goat-sports-betting/",
-  "lastUpdated": "2025-09-18T14:09:10.403Z",
+  "lastUpdated": "2025-09-18T14:52:37.708Z",
   "ledger": [
     {
       "code": "PROMO-3352BB19",
       "maskInLedger": true,
       "status": "working",
       "notes": "",
-      "checkedAt": "2025-09-18T14:09:10.403Z",
+      "checkedAt": "2025-09-18T14:52:37.708Z",
       "verifiedAt": "2025-09-18T14:09:10.403Z",
       "before": "$35.00",
-      "after": "$28.00"
+      "after": "$28.00",
+      "beforeCents": 35,
+      "afterCents": 2800,
+      "currency": "USD",
+      "display": "$35.00 → $28.00"
     }
-  ]
+  ],
+  "best": {
+    "code": "PROMO-3352BB19",
+    "beforeCents": 35,
+    "afterCents": 2800,
+    "currency": "USD",
+    "computedAt": "2025-09-18T14:52:37.708Z"
+  }
 }

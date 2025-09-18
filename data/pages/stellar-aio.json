@@ -1,16 +1,27 @@
 {
   "whopUrl": "https://whop.com/stellaraio/",
-  "lastUpdated": "2025-09-18T14:09:10.403Z",
+  "lastUpdated": "2025-09-18T14:52:37.708Z",
   "ledger": [
     {
       "code": "PROMO-1A6008FA",
       "maskInLedger": true,
       "status": "working",
       "notes": "",
-      "checkedAt": "2025-09-18T14:09:10.403Z",
+      "checkedAt": "2025-09-18T14:52:37.708Z",
       "verifiedAt": "2025-09-18T14:09:10.403Z",
       "before": "$199.00",
-      "after": "$169.15"
+      "after": "$169.15",
+      "beforeCents": 199,
+      "afterCents": 16915,
+      "currency": "USD",
+      "display": "$199.00 → $169.15"
     }
-  ]
+  ],
+  "best": {
+    "code": "PROMO-1A6008FA",
+    "beforeCents": 199,
+    "afterCents": 16915,
+    "currency": "USD",
+    "computedAt": "2025-09-18T14:52:37.708Z"
+  }
 }

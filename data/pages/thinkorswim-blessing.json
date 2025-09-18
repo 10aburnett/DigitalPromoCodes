@@ -1,20 +1,35 @@
 {
   "whopUrl": "https://whop.com/thinkorswim-trading/",
-  "lastUpdated": "2025-09-18T13:23:07.075Z",
+  "lastUpdated": "2025-09-18T14:52:37.708Z",
   "ledger": [
     {
       "code": "DISCOUNT30",
       "maskInLedger": true,
       "status": "unknown",
       "notes": "",
-      "checkedAt": "2025-09-18T13:23:07.075Z"
+      "checkedAt": "2025-09-18T14:52:37.708Z",
+      "beforeCents": 99.95,
+      "afterCents": 6997,
+      "currency": "USD",
+      "display": "$99.95 → $69.97"
     },
     {
       "code": "QUICK10",
       "maskInLedger": true,
       "status": "unknown",
       "notes": "",
-      "checkedAt": "2025-09-18T13:23:07.075Z"
+      "checkedAt": "2025-09-18T14:52:37.708Z",
+      "beforeCents": 99.95,
+      "afterCents": 7696,
+      "currency": "USD",
+      "display": "$99.95 → $76.96"
     }
-  ]
+  ],
+  "best": {
+    "code": "DISCOUNT30",
+    "beforeCents": 99.95,
+    "afterCents": 6997,
+    "currency": "USD",
+    "computedAt": "2025-09-18T14:52:37.708Z"
+  }
 }

@@ -1,16 +1,27 @@
 {
   "whopUrl": "https://whop.com/tradewithinsight/",
-  "lastUpdated": "2025-09-18T14:09:10.403Z",
+  "lastUpdated": "2025-09-18T14:52:37.708Z",
   "ledger": [
     {
       "code": "PROMO-624C9EA4",
       "maskInLedger": true,
       "status": "working",
       "notes": "",
-      "checkedAt": "2025-09-18T14:09:10.403Z",
+      "checkedAt": "2025-09-18T14:52:37.708Z",
       "verifiedAt": "2025-09-18T14:09:10.403Z",
       "before": "$169.00",
-      "after": "$143.65"
+      "after": "$143.65",
+      "beforeCents": 169,
+      "afterCents": 14365,
+      "currency": "USD",
+      "display": "$169.00 → $143.65"
     }
-  ]
+  ],
+  "best": {
+    "code": "PROMO-624C9EA4",
+    "beforeCents": 169,
+    "afterCents": 14365,
+    "currency": "USD",
+    "computedAt": "2025-09-18T14:52:37.708Z"
+  }
 }

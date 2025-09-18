@@ -1,16 +1,27 @@
 {
   "whopUrl": "https://whop.com/joinmomentum/",
-  "lastUpdated": "2025-09-18T14:09:10.403Z",
+  "lastUpdated": "2025-09-18T14:52:37.708Z",
   "ledger": [
     {
       "code": "PROMO-1A92969C",
       "maskInLedger": true,
       "status": "working",
       "notes": "",
-      "checkedAt": "2025-09-18T14:09:10.403Z",
+      "checkedAt": "2025-09-18T14:52:37.708Z",
       "verifiedAt": "2025-09-18T14:09:10.403Z",
       "before": "$147.00",
-      "after": "$117.60"
+      "after": "$117.60",
+      "beforeCents": 147,
+      "afterCents": 11760,
+      "currency": "USD",
+      "display": "$147.00 → $117.60"
     }
-  ]
+  ],
+  "best": {
+    "code": "PROMO-1A92969C",
+    "beforeCents": 147,
+    "afterCents": 11760,
+    "currency": "USD",
+    "computedAt": "2025-09-18T14:52:37.708Z"
+  }
 }

@@ -1,20 +1,35 @@
 {
   "whopUrl": "https://whop.com/master-scalper/",
-  "lastUpdated": "2025-09-18T13:23:07.075Z",
+  "lastUpdated": "2025-09-18T14:52:37.708Z",
   "ledger": [
     {
       "code": "LIMITED30",
       "maskInLedger": true,
       "status": "unknown",
       "notes": "",
-      "checkedAt": "2025-09-18T13:23:07.075Z"
+      "checkedAt": "2025-09-18T14:52:37.708Z",
+      "beforeCents": 99.95,
+      "afterCents": 7196,
+      "currency": "USD",
+      "display": "$99.95 → $71.96"
     },
     {
       "code": "FLASH20",
       "maskInLedger": true,
       "status": "unknown",
       "notes": "",
-      "checkedAt": "2025-09-18T13:23:07.075Z"
+      "checkedAt": "2025-09-18T14:52:37.708Z",
+      "beforeCents": 99.95,
+      "afterCents": 8796,
+      "currency": "USD",
+      "display": "$99.95 → $87.96"
     }
-  ]
+  ],
+  "best": {
+    "code": "LIMITED30",
+    "beforeCents": 99.95,
+    "afterCents": 7196,
+    "currency": "USD",
+    "computedAt": "2025-09-18T14:52:37.708Z"
+  }
 }

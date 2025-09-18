@@ -1,13 +1,24 @@
 {
   "whopUrl": "https://whop.com/starter-package-launch-essentials/",
-  "lastUpdated": "2025-09-18T13:23:07.075Z",
+  "lastUpdated": "2025-09-18T14:52:37.708Z",
   "ledger": [
     {
       "code": "SAVE20",
       "maskInLedger": true,
       "status": "unknown",
       "notes": "",
-      "checkedAt": "2025-09-18T13:23:07.075Z"
+      "checkedAt": "2025-09-18T14:52:37.708Z",
+      "beforeCents": 999.98,
+      "afterCents": 80998,
+      "currency": "USD",
+      "display": "$999.98 → $809.98"
     }
-  ]
+  ],
+  "best": {
+    "code": "SAVE20",
+    "beforeCents": 999.98,
+    "afterCents": 80998,
+    "currency": "USD",
+    "computedAt": "2025-09-18T14:52:37.708Z"
+  }
 }
