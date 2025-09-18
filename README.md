@@ -176,6 +176,63 @@ WHOP_SLUG=premium npm run freshness:real+site
 - `.github/workflows/refresh-freshness-db.yml` - **Primary automation** (every 6 hours)
 - `.github/workflows/refresh-freshness.yml` - Legacy workflow
 
+## Managing Gone/Retired URLs for Future Affiliate Access
+
+**Background:** 2,354 whop URLs are currently retired (410 status) but preserved in the database for future affiliate partnership opportunities.
+
+### Accessing Gone URLs
+
+**1. Generate gone.xml sitemap:**
+```bash
+INCLUDE_TEMP_SITEMAPS=1 npm run sitemap:build
+# Creates: public/sitemaps/gone.xml (444KB with all 2,354 URLs)
+```
+
+**2. Extract URL lists:**
+```bash
+# Extract slug names only
+grep -o "/whop/[^<]*" public/sitemaps/gone.xml | sed 's|/whop/||' > gone_slugs.txt
+
+# Extract full URLs
+grep -o "https://whpcodes.com/whop/[^<]*" public/sitemaps/gone.xml > gone_urls.txt
+```
+
+**3. Database query:**
+```sql
+SELECT slug, name FROM "Whop" WHERE retired = true OR retirement = 'GONE';
+```
+
+### Making Gone URLs Live Again
+
+**When affiliate access is granted, follow these steps:**
+
+**1. Update database status:**
+```sql
+-- For specific whops:
+UPDATE "Whop" SET retired = false, retirement = 'NONE' WHERE slug IN ('whop-slug-1', 'whop-slug-2');
+
+-- For all retired whops (use with caution):
+UPDATE "Whop" SET retired = false, retirement = 'NONE' WHERE retired = true;
+```
+
+**2. Regenerate SEO indexes:**
+```bash
+npm run seo:build-indexes
+```
+
+**3. Update sitemaps:**
+```bash
+npm run sitemap:build
+```
+
+**4. Optional - Add freshness data:**
+```bash
+npm run freshness:real
+npm run freshness:real+site
+```
+
+**Note:** Gone URLs automatically get `410 status` + `X-Robots-Tag: noindex` until reactivated.
+
 ## Contributing
 
 1. Fork the repository
