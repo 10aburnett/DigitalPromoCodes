@@ -1,13 +1,13 @@
 {
   "whopUrl": "https://whop.com/royalty-hero-premium/",
-  "lastUpdated": "2025-09-18T18:26:42.828Z",
+  "lastUpdated": "2025-09-19T10:55:49.666Z",
   "ledger": [
     {
       "code": "PROMO40",
       "maskInLedger": true,
       "status": "unknown",
-      "notes": "",
-      "checkedAt": "2025-09-18T14:52:37.708Z",
+      "notes": "excluding VAT",
+      "checkedAt": "2025-09-19T10:55:49.666Z",
       "beforeCents": 3990,
       "afterCents": 255360,
       "currency": "USD",
@@ -17,8 +17,8 @@
       "code": "LIMITED30",
       "maskInLedger": true,
       "status": "unknown",
-      "notes": "",
-      "checkedAt": "2025-09-18T14:52:37.708Z",
+      "notes": "excluding VAT",
+      "checkedAt": "2025-09-19T10:55:49.666Z",
       "beforeCents": 3990,
       "afterCents": 351120,
       "currency": "USD",
@@ -30,6 +30,6 @@
     "beforeCents": 3990,
     "afterCents": 255360,
     "currency": "USD",
-    "computedAt": "2025-09-18T14:52:37.708Z"
+    "computedAt": "2025-09-19T10:55:49.666Z"
   }
 }

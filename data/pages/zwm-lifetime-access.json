@@ -1,13 +1,13 @@
 {
   "whopUrl": "https://whop.com/lifetime-access-e2/",
-  "lastUpdated": "2025-09-18T18:26:42.828Z",
+  "lastUpdated": "2025-09-19T10:55:49.666Z",
   "ledger": [
     {
       "code": "PROMO-4E6D572F",
       "maskInLedger": true,
       "status": "working",
-      "notes": "",
-      "checkedAt": "2025-09-18T14:52:37.708Z",
+      "notes": "excluding VAT",
+      "checkedAt": "2025-09-19T10:55:49.666Z",
       "verifiedAt": "2025-09-18T14:09:10.403Z",
       "before": "$5,000.00",
       "after": "$3,000.00",
@@ -22,6 +22,6 @@
     "beforeCents": 5000,
     "afterCents": 300000,
     "currency": "USD",
-    "computedAt": "2025-09-18T14:52:37.708Z"
+    "computedAt": "2025-09-19T10:55:49.666Z"
   }
 }

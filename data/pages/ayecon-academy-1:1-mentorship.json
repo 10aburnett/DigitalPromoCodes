@@ -1,13 +1,13 @@
 {
   "whopUrl": "https://whop.com/ayecon-1-1-mentorship/",
-  "lastUpdated": "2025-09-18T18:26:42.828Z",
+  "lastUpdated": "2025-09-19T10:55:49.666Z",
   "ledger": [
     {
       "code": "summertime",
       "maskInLedger": true,
       "status": "unknown",
-      "notes": "",
-      "checkedAt": "2025-09-18T14:52:37.708Z",
+      "notes": "excluding VAT",
+      "checkedAt": "2025-09-19T10:55:49.666Z",
       "beforeCents": 1500,
       "afterCents": 97500,
       "currency": "USD",
@@ -19,6 +19,6 @@
     "beforeCents": 1500,
     "afterCents": 97500,
     "currency": "USD",
-    "computedAt": "2025-09-18T14:52:37.708Z"
+    "computedAt": "2025-09-19T10:55:49.666Z"
   }
 }

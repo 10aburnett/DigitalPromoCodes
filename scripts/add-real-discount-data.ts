@@ -269,8 +269,14 @@ async function updateWithRealDiscounts() {
           // Update existing entry
           const entry = existingData.ledger[entryIndex];
 
-          // Only update if values actually changed (idempotence)
-          if (entry.beforeCents !== result.beforeCents || entry.afterCents !== result.afterCents) {
+          // Update if values changed OR if notes need updating (for excluding VAT)
+          const expectedNotes = result.appliesTo !== 'unknown'
+            ? `Applies to ${result.appliesTo.replace('_', ' ')} • excluding VAT`
+            : 'excluding VAT';
+
+          if (entry.beforeCents !== result.beforeCents ||
+              entry.afterCents !== result.afterCents ||
+              entry.notes !== expectedNotes) {
             existingData.ledger[entryIndex] = {
               ...entry,
               status: entry.status || 'unknown', // Preserve existing status, default to unknown
@@ -279,8 +285,8 @@ async function updateWithRealDiscounts() {
               currency: result.currency,
               display: result.display,
               notes: result.appliesTo !== 'unknown'
-                ? `Applies to ${result.appliesTo.replace('_', ' ')}`
-                : (entry.notes || ''),
+                ? `Applies to ${result.appliesTo.replace('_', ' ')} • excluding VAT`
+                : 'excluding VAT',
               checkedAt: timestamp,
               // Preserve verifiedAt if it exists
             };
@@ -299,8 +305,8 @@ async function updateWithRealDiscounts() {
             currency: result.currency,
             display: result.display,
             notes: result.appliesTo !== 'unknown'
-              ? `Applies to ${result.appliesTo.replace('_', ' ')}`
-              : (result.parseable ? '' : 'Unpriced code'),
+              ? `Applies to ${result.appliesTo.replace('_', ' ')} • excluding VAT`
+              : (result.parseable ? 'excluding VAT' : 'Unpriced code • excluding VAT'),
             checkedAt: timestamp,
           });
           fileChanged = true;
