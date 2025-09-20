@@ -80,6 +80,12 @@ const nextConfig = {
           { key: 'Cache-Control', value: 'max-age=300, s-maxage=300' }, // 5 minutes
         ],
       },
+      {
+        source: '/images/:path*',
+        headers: [
+          { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' },
+        ],
+      },
     ];
   },
   // Rewrites for data directory

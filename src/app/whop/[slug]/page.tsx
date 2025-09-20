@@ -25,6 +25,8 @@ import { parseFaqContent } from '@/lib/faq-types';
 import RenderPlain from '@/components/RenderPlain';
 import { looksLikeHtml, isMeaningful, escapeHtml, toPlainText } from '@/lib/textRender';
 import WhopFreshness from '@/components/WhopFreshness';
+import HowToSection from '@/components/whop/HowToSection';
+import HowToSchema from '@/components/whop/HowToSchema';
 
 
 
@@ -86,6 +88,28 @@ function SectionSkeleton() {
   return (
     <div className="h-48 w-full rounded animate-pulse bg-gray-200/40 dark:bg-white/10"></div>
   );
+}
+
+// Helper function to extract currency from price string
+function extractCurrency(price: string | null): string {
+  if (!price) return 'USD';
+
+  // Check for common currency symbols and patterns
+  if (price.includes('$')) return 'USD';
+  if (price.includes('£')) return 'GBP';
+  if (price.includes('€')) return 'EUR';
+  if (price.toLowerCase().includes('usd')) return 'USD';
+  if (price.toLowerCase().includes('gbp')) return 'GBP';
+  if (price.toLowerCase().includes('eur')) return 'EUR';
+
+  return 'USD'; // Default fallback
+}
+
+// Helper function to detect if product has trial
+function hasTrial(price: string | null): boolean {
+  if (!price) return false;
+  const lowerPrice = price.toLowerCase();
+  return lowerPrice.includes('trial') || lowerPrice.includes('free trial') || lowerPrice.includes('7 days') || lowerPrice.includes('14 days');
 }
 
 // Async component for heavy sections that can be streamed
@@ -413,6 +437,15 @@ export default async function WhopPage({ params }: { params: { slug: string } })
 
   return (
     <main key={pageKey} className="min-h-screen py-12 pt-24 transition-theme" style={{ backgroundColor: 'var(--background-color)', color: 'var(--text-color)' }}>
+      {/* HowTo Schema for SEO */}
+      <HowToSchema
+        slug={params.slug}
+        brand={whopFormatted.name}
+        currency={extractCurrency(whopFormatted.price)}
+        hasTrial={hasTrial(whopFormatted.price)}
+        siteOrigin="https://whpcodes.com"
+      />
+
       <div className="mx-auto w-[90%] md:w-[95%] max-w-6xl">
         {/* Main Content Container */}
         <div className="max-w-2xl mx-auto space-y-6 mb-8">
@@ -532,6 +565,16 @@ export default async function WhopPage({ params }: { params: { slug: string } })
                 </li>
               </ol>
             )}
+          </section>
+
+          {/* How To Section - Screenshots and SEO */}
+          <section className="rounded-xl px-7 py-6 sm:p-8 border transition-theme" style={{ backgroundColor: 'var(--background-secondary)', borderColor: 'var(--border-color)' }}>
+            <HowToSection
+              slug={params.slug}
+              brand={whopFormatted.name}
+              currency={extractCurrency(whopFormatted.price)}
+              hasTrial={hasTrial(whopFormatted.price)}
+            />
           </section>
 
           {/* Product Details for Each Promo Code */}
