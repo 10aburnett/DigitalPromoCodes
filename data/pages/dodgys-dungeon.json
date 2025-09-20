@@ -11,7 +11,7 @@
       "verifiedAt": "2025-09-18T14:09:10.403Z",
       "before": "$100.00",
       "after": "$85.00",
-      "beforeCents": 100,
+      "beforeCents": 10000,
       "afterCents": 8500,
       "currency": "USD",
       "display": "$100.00 → $85.00"
@@ -19,7 +19,7 @@
   ],
   "best": {
     "code": "PROMO-565022F7",
-    "beforeCents": 100,
+    "beforeCents": 10000,
     "afterCents": 8500,
     "currency": "USD",
     "computedAt": "2025-09-19T10:55:49.666Z"

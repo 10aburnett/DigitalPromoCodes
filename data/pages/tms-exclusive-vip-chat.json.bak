@@ -1,0 +1,27 @@
+{
+  "whopUrl": "https://whop.com/tms-options/",
+  "lastUpdated": "2025-09-20T12:33:20.685Z",
+  "ledger": [
+    {
+      "code": "PROMO-327DB8FC",
+      "maskInLedger": true,
+      "status": "working",
+      "notes": "excluding VAT",
+      "checkedAt": "2025-09-19T10:55:49.666Z",
+      "verifiedAt": "2025-09-18T14:09:10.403Z",
+      "before": "$2,999.99",
+      "after": "$2,249.99",
+      "beforeCents": 2999.99,
+      "afterCents": 224999,
+      "currency": "USD",
+      "display": "$2,999.99 → $2,249.99"
+    }
+  ],
+  "best": {
+    "code": "PROMO-327DB8FC",
+    "beforeCents": 2999.99,
+    "afterCents": 224999,
+    "currency": "USD",
+    "computedAt": "2025-09-19T10:55:49.666Z"
+  }
+}

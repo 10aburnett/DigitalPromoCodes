@@ -11,7 +11,7 @@
       "verifiedAt": "2025-09-18T14:09:10.403Z",
       "before": "$35.00",
       "after": "$26.25",
-      "beforeCents": 35,
+      "beforeCents": 3500,
       "afterCents": 2625,
       "currency": "USD",
       "display": "$35.00 → $26.25"
@@ -19,7 +19,7 @@
   ],
   "best": {
     "code": "PROMO-BF9EF1CC",
-    "beforeCents": 35,
+    "beforeCents": 3500,
     "afterCents": 2625,
     "currency": "USD",
     "computedAt": "2025-09-19T10:55:49.666Z"

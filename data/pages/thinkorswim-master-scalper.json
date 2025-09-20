@@ -8,7 +8,7 @@
       "status": "unknown",
       "notes": "excluding VAT",
       "checkedAt": "2025-09-19T10:55:49.666Z",
-      "beforeCents": 99.95,
+      "beforeCents": 9995,
       "afterCents": 7196,
       "currency": "USD",
       "display": "$99.95 → $71.96"
@@ -19,7 +19,7 @@
       "status": "unknown",
       "notes": "excluding VAT",
       "checkedAt": "2025-09-19T10:55:49.666Z",
-      "beforeCents": 99.95,
+      "beforeCents": 9995,
       "afterCents": 8796,
       "currency": "USD",
       "display": "$99.95 → $87.96"
@@ -27,7 +27,7 @@
   ],
   "best": {
     "code": "LIMITED30",
-    "beforeCents": 99.95,
+    "beforeCents": 9995,
     "afterCents": 7196,
     "currency": "USD",
     "computedAt": "2025-09-19T10:55:49.666Z"

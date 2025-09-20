@@ -167,11 +167,46 @@ WHOP_SLUG=premium npm run freshness:real+site
 - Perfect for production deployments
 - Ensures search engines see accurate lastmod reflecting actual content freshness
 
+### Auto Bot System (Monitoring vs Verification)
+
+The system includes two different automated scripts with distinct purposes:
+
+#### 🤖 **Auto-Check Bot** (`scripts/auto-check-whops.mjs`)
+**Purpose:** Lightweight monitoring to check if codes are still present on whop pages
+```bash
+npm run freshness:check
+```
+
+**What it does:**
+- Visits each whop URL and scans page source for popup promo codes
+- **Only updates:** `checkedAt` timestamp when codes are found
+- **Does NOT update:** verification status, pricing data, or "Last tested" timestamps
+- **Use case:** Monitoring code presence without actual verification
+
+#### ✅ **Verification Bot** (`scripts/verify-promo-codes.ts`)
+**Purpose:** Mark known good codes as verified working
+```bash
+npm run verify:promo-codes
+```
+
+**What it does:**
+- Finds codes starting with "promo-" and marks them as verified
+- **Updates:** `status: 'working'`, `checkedAt`, and `verifiedAt` timestamps
+- **Use case:** Bulk verify codes you know are working
+
+#### 📝 **"Last tested" vs Auto Bot**
+**Important:** The "Last tested" line in HowTo sections uses `data.best?.computedAt` which is **separate** from auto-check:
+
+- ✅ **Auto-check updates:** Only `checkedAt` (monitoring)
+- ❌ **Auto-check does NOT update:** `computedAt`, pricing data, or verification status
+- 🔧 **To update "Last tested":** Manually edit JSON files with actual test results
+
 ### Freshness Scripts & Workflows
 - `scripts/freshness-sync.ts` - Database-based freshness sync (main method)
 - `scripts/add-real-discount-data.ts` - **Comprehensive discount pricing** with all promo codes
 - `scripts/build-sitemaps.ts` - **Freshness-aware sitemap generation** with accurate lastmod
-- `scripts/auto-check-whops.mjs` - Legacy automatic code checking
+- `scripts/auto-check-whops.mjs` - **Auto monitoring bot** (checks code presence only)
+- `scripts/verify-promo-codes.ts` - **Verification bot** (marks promo- codes as working)
 - `scripts/normalize-freshness.mjs` - Clean up existing JSON files
 - `.github/workflows/refresh-freshness-db.yml` - **Primary automation** (every 6 hours)
 - `.github/workflows/refresh-freshness.yml` - Legacy workflow

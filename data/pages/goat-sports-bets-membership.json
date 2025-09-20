@@ -11,7 +11,7 @@
       "verifiedAt": "2025-09-18T14:09:10.403Z",
       "before": "$35.00",
       "after": "$28.00",
-      "beforeCents": 35,
+      "beforeCents": 3500,
       "afterCents": 2800,
       "currency": "USD",
       "display": "$35.00 → $28.00"
@@ -19,7 +19,7 @@
   ],
   "best": {
     "code": "PROMO-3352BB19",
-    "beforeCents": 35,
+    "beforeCents": 3500,
     "afterCents": 2800,
     "currency": "USD",
     "computedAt": "2025-09-19T10:55:49.666Z"

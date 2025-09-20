@@ -8,7 +8,7 @@
       "status": "unknown",
       "notes": "excluding VAT",
       "checkedAt": "2025-09-19T10:55:49.666Z",
-      "beforeCents": 999.98,
+      "beforeCents": 99998,
       "afterCents": 80998,
       "currency": "USD",
       "display": "$999.98 → $809.98"
@@ -16,7 +16,7 @@
   ],
   "best": {
     "code": "SAVE20",
-    "beforeCents": 999.98,
+    "beforeCents": 99998,
     "afterCents": 80998,
     "currency": "USD",
     "computedAt": "2025-09-19T10:55:49.666Z"

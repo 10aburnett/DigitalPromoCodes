@@ -11,7 +11,7 @@
       "verifiedAt": "2025-09-18T14:09:10.403Z",
       "before": "$7,499.99",
       "after": "$5,624.99",
-      "beforeCents": 7499.99,
+      "beforeCents": 749999,
       "afterCents": 562499,
       "currency": "USD",
       "display": "$7,499.99 → $5,624.99"
@@ -19,7 +19,7 @@
   ],
   "best": {
     "code": "PROMO-327DB8FC",
-    "beforeCents": 7499.99,
+    "beforeCents": 749999,
     "afterCents": 562499,
     "currency": "USD",
     "computedAt": "2025-09-19T10:55:49.666Z"

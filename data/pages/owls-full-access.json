@@ -11,7 +11,7 @@
       "verifiedAt": "2025-09-18T14:09:10.403Z",
       "before": "$50.00",
       "after": "$40.00",
-      "beforeCents": 50,
+      "beforeCents": 5000,
       "afterCents": 4000,
       "currency": "USD",
       "display": "$50.00 → $40.00"
@@ -19,7 +19,7 @@
   ],
   "best": {
     "code": "PROMO-7136BFC8",
-    "beforeCents": 50,
+    "beforeCents": 5000,
     "afterCents": 4000,
     "currency": "USD",
     "computedAt": "2025-09-19T10:55:49.666Z"

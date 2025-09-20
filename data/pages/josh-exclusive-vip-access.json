@@ -8,7 +8,7 @@
       "status": "unknown",
       "notes": "excluding VAT",
       "checkedAt": "2025-09-19T10:55:49.666Z",
-      "beforeCents": 100,
+      "beforeCents": 10000,
       "afterCents": 8000,
       "currency": "USD",
       "display": "$100.00 → $80.00"
@@ -16,7 +16,7 @@
   ],
   "best": {
     "code": "JOSH",
-    "beforeCents": 100,
+    "beforeCents": 10000,
     "afterCents": 8000,
     "currency": "USD",
     "computedAt": "2025-09-19T10:55:49.666Z"

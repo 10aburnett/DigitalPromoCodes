@@ -11,7 +11,7 @@
       "verifiedAt": "2025-09-18T14:09:10.403Z",
       "before": "$1,099.00",
       "after": "$989.10",
-      "beforeCents": 1099,
+      "beforeCents": 109900,
       "afterCents": 98910,
       "currency": "USD",
       "display": "$1,099.00 → $989.10"
@@ -19,7 +19,7 @@
   ],
   "best": {
     "code": "PROMO-7DBFEB18",
-    "beforeCents": 1099,
+    "beforeCents": 109900,
     "afterCents": 98910,
     "currency": "USD",
     "computedAt": "2025-09-19T10:55:49.666Z"

@@ -1,0 +1,24 @@
+{
+  "whopUrl": "https://whop.com/30-days-premium-picks-best-seller/",
+  "lastUpdated": "2025-09-20T12:33:20.685Z",
+  "ledger": [
+    {
+      "code": "7DAYSFOR1",
+      "maskInLedger": true,
+      "status": "unknown",
+      "notes": "excluding VAT",
+      "checkedAt": "2025-09-19T10:55:49.666Z",
+      "beforeCents": 9999,
+      "afterCents": 7099,
+      "currency": "USD",
+      "display": "$99.99 → $70.99"
+    }
+  ],
+  "best": {
+    "code": "7DAYSFOR1",
+    "beforeCents": 99.99,
+    "afterCents": 7099,
+    "currency": "USD",
+    "computedAt": "2025-09-19T10:55:49.666Z"
+  }
+}

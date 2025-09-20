@@ -11,7 +11,7 @@
       "verifiedAt": "2025-09-18T14:09:10.403Z",
       "before": "$147.00",
       "after": "$117.60",
-      "beforeCents": 147,
+      "beforeCents": 14700,
       "afterCents": 11760,
       "currency": "USD",
       "display": "$147.00 → $117.60"
@@ -19,7 +19,7 @@
   ],
   "best": {
     "code": "PROMO-1A92969C",
-    "beforeCents": 147,
+    "beforeCents": 14700,
     "afterCents": 11760,
     "currency": "USD",
     "computedAt": "2025-09-19T10:55:49.666Z"

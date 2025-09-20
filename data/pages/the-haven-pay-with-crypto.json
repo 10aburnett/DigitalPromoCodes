@@ -11,7 +11,7 @@
       "verifiedAt": "2025-09-18T14:09:10.403Z",
       "before": "$250.00",
       "after": "$225.00",
-      "beforeCents": 250,
+      "beforeCents": 25000,
       "afterCents": 22500,
       "currency": "USD",
       "display": "$250.00 → $225.00"
@@ -19,7 +19,7 @@
   ],
   "best": {
     "code": "PROMO-45EF5D24",
-    "beforeCents": 250,
+    "beforeCents": 25000,
     "afterCents": 22500,
     "currency": "USD",
     "computedAt": "2025-09-19T10:55:49.666Z"

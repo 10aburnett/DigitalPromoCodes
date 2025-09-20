@@ -11,7 +11,7 @@
       "notes": "excluding VAT",
       "checkedAt": "2025-09-19T10:55:49.666Z",
       "verifiedAt": "2025-09-18T14:09:10.403Z",
-      "beforeCents": 5000,
+      "beforeCents": 500000,
       "afterCents": 450000,
       "currency": "USD",
       "display": "$5,000.00 → $4,500.00"
@@ -19,7 +19,7 @@
   ],
   "best": {
     "code": "PROMO-022D1F18",
-    "beforeCents": 5000,
+    "beforeCents": 500000,
     "afterCents": 450000,
     "currency": "USD",
     "computedAt": "2025-09-19T10:55:49.666Z"

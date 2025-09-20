@@ -11,7 +11,7 @@
       "verifiedAt": "2025-09-18T14:09:10.403Z",
       "before": "$2,497.00",
       "after": "$1,997.60",
-      "beforeCents": 2497,
+      "beforeCents": 249700,
       "afterCents": 199760,
       "currency": "USD",
       "display": "$2,497.00 → $1,997.60"
@@ -19,7 +19,7 @@
   ],
   "best": {
     "code": "PROMO-5E906FAB",
-    "beforeCents": 2497,
+    "beforeCents": 249700,
     "afterCents": 199760,
     "currency": "USD",
     "computedAt": "2025-09-19T10:55:49.666Z"

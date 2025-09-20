@@ -8,7 +8,7 @@
       "status": "unknown",
       "notes": "excluding VAT",
       "checkedAt": "2025-09-19T10:55:49.666Z",
-      "beforeCents": 3990,
+      "beforeCents": 399000,
       "afterCents": 255360,
       "currency": "USD",
       "display": "$3,990.00 → $2,553.60"
@@ -19,7 +19,7 @@
       "status": "unknown",
       "notes": "excluding VAT",
       "checkedAt": "2025-09-19T10:55:49.666Z",
-      "beforeCents": 3990,
+      "beforeCents": 399000,
       "afterCents": 351120,
       "currency": "USD",
       "display": "$3,990.00 → $3,511.20"
@@ -27,7 +27,7 @@
   ],
   "best": {
     "code": "PROMO40",
-    "beforeCents": 3990,
+    "beforeCents": 399000,
     "afterCents": 255360,
     "currency": "USD",
     "computedAt": "2025-09-19T10:55:49.666Z"

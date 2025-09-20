@@ -8,7 +8,7 @@
       "status": "unknown",
       "notes": "excluding VAT",
       "checkedAt": "2025-09-19T10:55:49.666Z",
-      "beforeCents": 60,
+      "beforeCents": 6000,
       "afterCents": 5100,
       "currency": "USD",
       "display": "$60.00 → $51.00"
@@ -19,7 +19,7 @@
       "status": "unknown",
       "notes": "excluding VAT",
       "checkedAt": "2025-09-19T10:55:49.666Z",
-      "beforeCents": 60,
+      "beforeCents": 6000,
       "afterCents": 5280,
       "currency": "USD",
       "display": "$60.00 → $52.80"
@@ -27,7 +27,7 @@
   ],
   "best": {
     "code": "EXCLUSIVE25",
-    "beforeCents": 60,
+    "beforeCents": 6000,
     "afterCents": 5100,
     "currency": "USD",
     "computedAt": "2025-09-19T10:55:49.666Z"

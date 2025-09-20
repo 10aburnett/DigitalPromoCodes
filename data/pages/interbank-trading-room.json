@@ -8,7 +8,7 @@
       "status": "unknown",
       "notes": "excluding VAT",
       "checkedAt": "2025-09-19T10:55:49.666Z",
-      "beforeCents": 35,
+      "beforeCents": 3500,
       "afterCents": 2905,
       "currency": "USD",
       "display": "$35.00 → $29.05"
@@ -19,7 +19,7 @@
       "status": "unknown",
       "notes": "excluding VAT",
       "checkedAt": "2025-09-19T10:55:49.666Z",
-      "beforeCents": 35,
+      "beforeCents": 3500,
       "afterCents": 2835,
       "currency": "USD",
       "display": "$35.00 → $28.35"
@@ -27,7 +27,7 @@
   ],
   "best": {
     "code": "VIP15",
-    "beforeCents": 35,
+    "beforeCents": 3500,
     "afterCents": 2835,
     "currency": "USD",
     "computedAt": "2025-09-19T10:55:49.666Z"

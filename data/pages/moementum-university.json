@@ -11,7 +11,7 @@
       "verifiedAt": "2025-09-18T14:09:10.403Z",
       "before": "$3,997.00",
       "after": "$3,597.30",
-      "beforeCents": 3997,
+      "beforeCents": 399700,
       "afterCents": 359730,
       "currency": "USD",
       "display": "$3,997.00 → $3,597.30"
@@ -19,7 +19,7 @@
   ],
   "best": {
     "code": "PROMO-23AB3618",
-    "beforeCents": 3997,
+    "beforeCents": 399700,
     "afterCents": 359730,
     "currency": "USD",
     "computedAt": "2025-09-19T10:55:49.666Z"

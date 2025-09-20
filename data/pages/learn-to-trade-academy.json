@@ -8,7 +8,7 @@
       "status": "unknown",
       "notes": "excluding VAT",
       "checkedAt": "2025-09-19T10:55:49.666Z",
-      "beforeCents": 299,
+      "beforeCents": 29900,
       "afterCents": 22724,
       "currency": "USD",
       "display": "$299.00 → $227.24"
@@ -19,7 +19,7 @@
       "status": "unknown",
       "notes": "excluding VAT",
       "checkedAt": "2025-09-19T10:55:49.666Z",
-      "beforeCents": 299,
+      "beforeCents": 29900,
       "afterCents": 24518,
       "currency": "USD",
       "display": "$299.00 → $245.18"
@@ -27,7 +27,7 @@
   ],
   "best": {
     "code": "OFF20",
-    "beforeCents": 299,
+    "beforeCents": 29900,
     "afterCents": 22724,
     "currency": "USD",
     "computedAt": "2025-09-19T10:55:49.666Z"

@@ -1,14 +1,14 @@
-import path from "path";
-import fs from "fs";
+import proofManifest from "@data/proof-manifest.json";
 
-// Util: returns true if the public file exists
-function publicFileExists(relPath: string) {
-  try {
-    fs.accessSync(path.join(process.cwd(), "public", relPath));
-    return true;
-  } catch {
-    return false;
-  }
+// Check if proof exists for a slug using the manifest
+function proofExists(slug: string) {
+  return (proofManifest.slugs || []).includes(slug);
+}
+
+// Generate proof path for a given slug
+function proofPathForSlug(slug: string) {
+  const PROOF_VERSION = proofManifest.version || "2025-09";
+  return `/images/howto/${slug}-proof-${PROOF_VERSION}.webp`;
 }
 
 type Props = {
@@ -23,11 +23,12 @@ export default function HowToSchema({
   slug, brand, currency, hasTrial, siteOrigin
 }: Props) {
   const a = `${siteOrigin}/images/howto/whop-ui-map-2025-09.png`;
-  const b = `${siteOrigin}/images/howto/${slug}-proof-2025-09.webp`;
+  const bPath = proofPathForSlug(slug);
+  const b = `${siteOrigin}${bPath}`;
 
   const images = [a];
   // Check if B exists and include it
-  const hasB = publicFileExists(`/images/howto/${slug}-proof-2025-09.webp`);
+  const hasB = proofExists(slug);
   if (hasB) {
     images.push(b);
   }

@@ -11,7 +11,7 @@
       "verifiedAt": "2025-09-18T14:09:10.403Z",
       "before": "$25.00",
       "after": "$20.00",
-      "beforeCents": 25,
+      "beforeCents": 2500,
       "afterCents": 2000,
       "currency": "USD",
       "display": "$25.00 → $20.00"
@@ -19,7 +19,7 @@
   ],
   "best": {
     "code": "PROMO-C0047AFA",
-    "beforeCents": 25,
+    "beforeCents": 2500,
     "afterCents": 2000,
     "currency": "USD",
     "computedAt": "2025-09-19T10:55:49.666Z"

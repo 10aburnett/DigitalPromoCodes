@@ -11,7 +11,7 @@
       "verifiedAt": "2025-09-18T14:09:10.403Z",
       "before": "$169.00",
       "after": "$143.65",
-      "beforeCents": 169,
+      "beforeCents": 16900,
       "afterCents": 14365,
       "currency": "USD",
       "display": "$169.00 → $143.65"
@@ -19,7 +19,7 @@
   ],
   "best": {
     "code": "PROMO-624C9EA4",
-    "beforeCents": 169,
+    "beforeCents": 16900,
     "afterCents": 14365,
     "currency": "USD",
     "computedAt": "2025-09-19T10:55:49.666Z"

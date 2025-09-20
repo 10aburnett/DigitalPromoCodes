@@ -8,7 +8,7 @@
       "status": "unknown",
       "notes": "excluding VAT",
       "checkedAt": "2025-09-19T10:55:49.666Z",
-      "beforeCents": 297,
+      "beforeCents": 29700,
       "afterCents": 23760,
       "currency": "USD",
       "display": "$297.00 → $237.60"
@@ -19,7 +19,7 @@
       "status": "unknown",
       "notes": "excluding VAT",
       "checkedAt": "2025-09-19T10:55:49.666Z",
-      "beforeCents": 297,
+      "beforeCents": 29700,
       "afterCents": 22869,
       "currency": "USD",
       "display": "$297.00 → $228.69"
@@ -27,7 +27,7 @@
   ],
   "best": {
     "code": "DEAL35",
-    "beforeCents": 297,
+    "beforeCents": 29700,
     "afterCents": 22869,
     "currency": "USD",
     "computedAt": "2025-09-19T10:55:49.666Z"

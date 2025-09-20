@@ -11,7 +11,7 @@
       "verifiedAt": "2025-09-18T14:09:10.403Z",
       "before": "$100.00",
       "after": "$90.00",
-      "beforeCents": 100,
+      "beforeCents": 10000,
       "afterCents": 9000,
       "currency": "USD",
       "display": "$100.00 → $90.00"
@@ -19,7 +19,7 @@
   ],
   "best": {
     "code": "PROMO-1EDC4580",
-    "beforeCents": 100,
+    "beforeCents": 10000,
     "afterCents": 9000,
     "currency": "USD",
     "computedAt": "2025-09-19T10:55:49.666Z"

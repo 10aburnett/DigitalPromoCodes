@@ -1,0 +1,35 @@
+{
+  "whopUrl": "https://whop.com/interbank/",
+  "lastUpdated": "2025-09-20T12:33:20.685Z",
+  "ledger": [
+    {
+      "code": "SAVE20",
+      "maskInLedger": true,
+      "status": "unknown",
+      "notes": "excluding VAT",
+      "checkedAt": "2025-09-19T10:55:49.666Z",
+      "beforeCents": 3500,
+      "afterCents": 2905,
+      "currency": "USD",
+      "display": "$35.00 → $29.05"
+    },
+    {
+      "code": "VIP15",
+      "maskInLedger": true,
+      "status": "unknown",
+      "notes": "excluding VAT",
+      "checkedAt": "2025-09-19T10:55:49.666Z",
+      "beforeCents": 3500,
+      "afterCents": 2835,
+      "currency": "USD",
+      "display": "$35.00 → $28.35"
+    }
+  ],
+  "best": {
+    "code": "VIP15",
+    "beforeCents": 35,
+    "afterCents": 2835,
+    "currency": "USD",
+    "computedAt": "2025-09-19T10:55:49.666Z"
+  }
+}

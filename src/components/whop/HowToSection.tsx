@@ -1,15 +1,21 @@
 import Image from "next/image";
-import path from "path";
-import fs from "fs";
+import proofManifest from "@data/proof-manifest.json";
 
-// Util: returns true if the public file exists
-function publicFileExists(relPath: string) {
-  try {
-    fs.accessSync(path.join(process.cwd(), "public", relPath));
-    return true;
-  } catch {
-    return false;
-  }
+// Check if proof exists for a slug using the manifest
+function proofExists(slug: string) {
+  return (proofManifest.slugs || []).includes(slug);
+}
+
+// Generate proof path for a given slug
+function proofPathForSlug(slug: string) {
+  const PROOF_VERSION = proofManifest.version || "2025-09";
+  return `/images/howto/${slug}-proof-${PROOF_VERSION}.webp`;
+}
+
+// Format currency from cents
+function fmt(cents?: number, cur?: string) {
+  if (cents == null || !cur) return null;
+  return new Intl.NumberFormat("en", { style: "currency", currency: cur }).format(cents / 100);
 }
 
 type Props = {
@@ -17,12 +23,17 @@ type Props = {
   brand: string;
   currency: string; // e.g., "USD"
   hasTrial?: boolean;
+  lastTestedISO?: string; // e.g. "2025-09-19T10:55:00Z"
+  beforeCents?: number;    // numbers from verification ledger
+  afterCents?: number;
 };
 
-export default function HowToSection({ slug, brand, currency, hasTrial }: Props) {
+export default function HowToSection({ slug, brand, currency, hasTrial, lastTestedISO, beforeCents, afterCents }: Props) {
   const A = "/images/howto/whop-ui-map-2025-09.png";
-  const B = `/images/howto/${slug}-proof-2025-09.webp`;
-  const hasB = publicFileExists(B);
+  const B = proofPathForSlug(slug);
+  const hasB = proofExists(slug);
+  const before = fmt(beforeCents, currency);
+  const after = fmt(afterCents, currency);
 
   return (
     <section aria-labelledby="howto-title" className="mt-3">
@@ -80,17 +91,23 @@ export default function HowToSection({ slug, brand, currency, hasTrial }: Props)
         <figure>
           <Image
             src={B}
-            alt={`${brand} on Whop: coupon applied showing discounted total (ex-VAT) and ${currency}.`}
+            alt={`${brand} on Whop: coupon applied showing discounted total (including VAT) for our test region; ex-VAT amounts are listed above.`}
             width={1200}
             height={750}
             sizes="(max-width: 768px) 100vw, 900px"
             loading="lazy"
           />
           <figcaption className="text-sm text-muted-foreground mt-2">
-            Discount applied: shows {brand} plan after code (ex-VAT) with {currency} total
-            {hasTrial && " and trial → first billing details"}.
+            Example checkout total includes VAT for our test region; your VAT may differ. Ex-VAT before → after: {before} → {after}.
           </figcaption>
         </figure>
+      )}
+
+      {/* Last tested verification line */}
+      {(lastTestedISO && before && after) && (
+        <p className="mt-3 text-sm">
+          <strong>Last tested:</strong> {new Date(lastTestedISO).toLocaleString("en-GB", { hour12: false })} — {before} → <strong>{after}</strong> (ex-VAT).
+        </p>
       )}
     </section>
   );

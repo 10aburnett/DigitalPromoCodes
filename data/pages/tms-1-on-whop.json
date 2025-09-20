@@ -8,7 +8,7 @@
       "status": "unknown",
       "notes": "excluding VAT",
       "checkedAt": "2025-09-19T10:55:49.666Z",
-      "beforeCents": 99.99,
+      "beforeCents": 9999,
       "afterCents": 7099,
       "currency": "USD",
       "display": "$99.99 → $70.99"
@@ -16,7 +16,7 @@
   ],
   "best": {
     "code": "7DAYSFOR1",
-    "beforeCents": 99.99,
+    "beforeCents": 9999,
     "afterCents": 7099,
     "currency": "USD",
     "computedAt": "2025-09-19T10:55:49.666Z"

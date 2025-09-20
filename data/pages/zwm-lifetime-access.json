@@ -11,7 +11,7 @@
       "verifiedAt": "2025-09-18T14:09:10.403Z",
       "before": "$5,000.00",
       "after": "$3,000.00",
-      "beforeCents": 5000,
+      "beforeCents": 500000,
       "afterCents": 300000,
       "currency": "USD",
       "display": "$5,000.00 → $3,000.00"
@@ -19,7 +19,7 @@
   ],
   "best": {
     "code": "PROMO-4E6D572F",
-    "beforeCents": 5000,
+    "beforeCents": 500000,
     "afterCents": 300000,
     "currency": "USD",
     "computedAt": "2025-09-19T10:55:49.666Z"

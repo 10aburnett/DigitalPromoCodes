@@ -8,7 +8,7 @@
       "status": "unknown",
       "notes": "excluding VAT",
       "checkedAt": "2025-09-19T10:55:49.666Z",
-      "beforeCents": 20000,
+      "beforeCents": 2000000,
       "afterCents": 1320000,
       "currency": "USD",
       "display": "$20,000.00 → $13,200.00"
@@ -19,7 +19,7 @@
       "status": "unknown",
       "notes": "excluding VAT",
       "checkedAt": "2025-09-19T10:55:49.666Z",
-      "beforeCents": 20000,
+      "beforeCents": 2000000,
       "afterCents": 1240000,
       "currency": "USD",
       "display": "$20,000.00 → $12,400.00"
@@ -27,7 +27,7 @@
   ],
   "best": {
     "code": "DISCOUNT30",
-    "beforeCents": 20000,
+    "beforeCents": 2000000,
     "afterCents": 1240000,
     "currency": "USD",
     "computedAt": "2025-09-19T10:55:49.666Z"

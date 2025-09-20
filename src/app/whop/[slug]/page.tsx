@@ -83,6 +83,33 @@ async function getDeal(slug: string) {
   }
 }
 
+// Helper function to load verification data from JSON files
+async function getVerificationData(slug: string) {
+  try {
+    const fs = await import('fs');
+    const path = await import('path');
+
+    const filePath = path.join(process.cwd(), 'data', 'pages', `${slug}.json`);
+
+    if (!fs.existsSync(filePath)) {
+      return null;
+    }
+
+    const fileContent = fs.readFileSync(filePath, 'utf8');
+    const data = JSON.parse(fileContent);
+
+    return {
+      lastTestedISO: data.best?.computedAt,
+      beforeCents: data.best?.beforeCents,
+      afterCents: data.best?.afterCents,
+      currency: data.best?.currency
+    };
+  } catch (error) {
+    console.warn('Failed to load verification data:', error);
+    return null;
+  }
+}
+
 // Skeleton component for streaming sections
 function SectionSkeleton() {
   return (
@@ -336,6 +363,9 @@ export default async function WhopPage({ params }: { params: { slug: string } })
   // 2) Choose final data (helper result or fallback)
   const finalWhopData = whopData || whopDbRecord;
 
+  // Load verification data for Screenshot B
+  const verificationData = await getVerificationData(dbSlug);
+
   // 3) If nothing, debug or 404 (prevents blank page)
   if (!finalWhopData) {
     if (process.env.SEO_DEBUG === '1') {
@@ -574,6 +604,9 @@ export default async function WhopPage({ params }: { params: { slug: string } })
               brand={whopFormatted.name}
               currency={extractCurrency(whopFormatted.price)}
               hasTrial={hasTrial(whopFormatted.price)}
+              lastTestedISO={verificationData?.lastTestedISO}
+              beforeCents={verificationData?.beforeCents}
+              afterCents={verificationData?.afterCents}
             />
           </section>
 
