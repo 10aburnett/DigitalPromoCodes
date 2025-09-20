@@ -12,6 +12,7 @@ import { canonicalSlugForDB, canonicalSlugForPath } from '@/lib/slug-utils';
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 export const dynamicParams = true;
+export const runtime = 'nodejs'; // required because we read from the filesystem
 
 import InitialsAvatar from '@/components/InitialsAvatar';
 import WhopLogo from '@/components/WhopLogo';
@@ -97,6 +98,14 @@ async function getVerificationData(slug: string) {
 
     const fileContent = fs.readFileSync(filePath, 'utf8');
     const data = JSON.parse(fileContent);
+
+    // Debug logging for production troubleshooting
+    console.log('VERIFICATION_DATA', {
+      slug,
+      before: data?.best?.beforeCents,
+      after: data?.best?.afterCents,
+      computedAt: data?.best?.computedAt
+    });
 
     return {
       lastTestedISO: data.best?.computedAt,
