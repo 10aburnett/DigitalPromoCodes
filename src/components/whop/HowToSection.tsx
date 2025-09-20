@@ -64,7 +64,7 @@ export default function HowToSection({ slug, brand, currency, hasTrial }: Props)
       <figure className="mb-6">
         <Image
           src={A}
-          alt="Whop checkout: where to add a coupon, see totals, VAT, and currency."
+          alt="Whop checkout: where to enter a coupon and where totals, VAT and currency appear."
           width={1200}
           height={750}
           sizes="(max-width: 768px) 100vw, 900px"
