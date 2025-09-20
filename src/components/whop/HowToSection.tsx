@@ -29,11 +29,16 @@ type Props = {
 };
 
 export default function HowToSection({ slug, brand, currency, hasTrial, lastTestedISO, beforeCents, afterCents }: Props) {
+  // Debug logging for production troubleshooting
+  console.log('HowToSection props:', { slug, brand, currency, lastTestedISO, beforeCents, afterCents });
+
   const A = "/images/howto/whop-ui-map-2025-09.png";
   const B = proofPathForSlug(slug);
   const hasB = proofExists(slug);
   const before = fmt(beforeCents, currency);
   const after = fmt(afterCents, currency);
+
+  console.log('HowToSection formatted:', { before, after, hasB });
 
   return (
     <section aria-labelledby="howto-title" className="mt-3">
@@ -98,7 +103,12 @@ export default function HowToSection({ slug, brand, currency, hasTrial, lastTest
             loading="lazy"
           />
           <figcaption className="text-sm text-muted-foreground mt-2">
-            Example checkout total includes VAT for our test region; your VAT may differ. Ex-VAT before → after: {before} → {after}.
+            Example checkout total includes VAT for our test region; your VAT may differ.
+            {before && after ? (
+              <> Ex-VAT before → after: {before} → {after}.</>
+            ) : (
+              <> Ex-VAT pricing verification in progress.</>
+            )}
           </figcaption>
         </figure>
       )}

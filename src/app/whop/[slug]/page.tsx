@@ -366,6 +366,9 @@ export default async function WhopPage({ params }: { params: { slug: string } })
   // Load verification data for Screenshot B
   const verificationData = await getVerificationData(dbSlug);
 
+  // Debug logging for production troubleshooting
+  console.log('Verification data loaded for', dbSlug, ':', verificationData);
+
   // 3) If nothing, debug or 404 (prevents blank page)
   if (!finalWhopData) {
     if (process.env.SEO_DEBUG === '1') {
