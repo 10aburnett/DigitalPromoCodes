@@ -12,7 +12,7 @@ import { canonicalSlugForDB, canonicalSlugForPath } from '@/lib/slug-utils';
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 export const dynamicParams = true;
-export const runtime = 'nodejs'; // required because we read from the filesystem
+export const runtime = 'nodejs'; // required for Prisma database access
 
 import InitialsAvatar from '@/components/InitialsAvatar';
 import WhopLogo from '@/components/WhopLogo';
@@ -84,25 +84,28 @@ async function getDeal(slug: string) {
   }
 }
 
-// Helper: load verification data (SSG/SSR-safe)
-import fs from "fs/promises";
-import path from "path";
-
+// Helper: load verification data (fetch-only, edge-safe)
 async function getVerificationData(slug: string) {
-  // 1) Try reading the JSON we copy to /public/data/pages at build time
-  const filePath = path.join(process.cwd(), "public", "data", "pages", `${slug}.json`);
   try {
-    const raw = await fs.readFile(filePath, "utf8");
-    return JSON.parse(raw);
-  } catch {
-    // 2) Fallback: absolute fetch (works on localhost and prod)
     const base =
-      process.env.NEXT_PUBLIC_SITE_ORIGIN ||
-      `http://localhost:${process.env.PORT || 3000}`;
-    const url = new URL(`/data/pages/${slug}.json`, base).toString();
-    const res = await fetch(url, { next: { revalidate: 60 } });
+      process.env.NEXT_PUBLIC_SITE_ORIGIN?.replace(/\/+$/, '') ||
+      'https://whpcodes.com'; // <-- your production origin
+
+    const url = `${base}/data/pages/${slug}.json`;
+    const res = await fetch(url, { next: { revalidate: 60 } }); // safe on edge/ssr
+
     if (!res.ok) return null;
-    return res.json();
+    const data = await res.json();
+
+    return {
+      lastTestedISO: data.best?.computedAt ?? data.best?.lastUpdated ?? null,
+      beforeCents: typeof data.best?.beforeCents === 'number' ? data.best.beforeCents : null,
+      afterCents: typeof data.best?.afterCents === 'number' ? data.best.afterCents : null,
+      currency: data.best?.currency ?? null,
+    };
+  } catch (err) {
+    console.error('VERIFICATION_FETCH_FAIL', slug, err);
+    return null; // NEVER throw
   }
 }
 
@@ -603,9 +606,9 @@ export default async function WhopPage({ params }: { params: { slug: string } })
               brand={whopFormatted.name}
               currency={extractCurrency(whopFormatted.price)}
               hasTrial={hasTrial(whopFormatted.price)}
-              lastTestedISO={verificationData?.best?.computedAt ?? verificationData?.lastUpdated}
-              beforeCents={verificationData?.best?.beforeCents}
-              afterCents={verificationData?.best?.afterCents}
+              lastTestedISO={verificationData?.lastTestedISO ?? null}
+              beforeCents={verificationData?.beforeCents ?? null}
+              afterCents={verificationData?.afterCents ?? null}
             />
           </section>
 

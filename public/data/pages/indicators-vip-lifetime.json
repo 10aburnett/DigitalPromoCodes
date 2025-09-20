@@ -1,0 +1,27 @@
+{
+  "whopUrl": "https://whop.com/thedeltavaderlifetime/",
+  "lastUpdated": "2025-09-20T12:33:20.685Z",
+  "ledger": [
+    {
+      "code": "PROMO-7DBFEB18",
+      "maskInLedger": true,
+      "status": "working",
+      "notes": "excluding VAT",
+      "checkedAt": "2025-09-19T10:55:49.666Z",
+      "verifiedAt": "2025-09-18T14:09:10.403Z",
+      "before": "$1,999.00",
+      "after": "$1,799.10",
+      "beforeCents": 199900,
+      "afterCents": 179910,
+      "currency": "USD",
+      "display": "$1,999.00 → $1,799.10"
+    }
+  ],
+  "best": {
+    "code": "PROMO-7DBFEB18",
+    "beforeCents": 199900,
+    "afterCents": 179910,
+    "currency": "USD",
+    "computedAt": "2025-09-19T10:55:49.666Z"
+  }
+}

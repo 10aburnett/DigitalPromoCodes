@@ -1,0 +1,27 @@
+{
+  "whopUrl": "https://whop.com/elite-coaching-academy/",
+  "lastUpdated": "2025-09-20T12:33:20.685Z",
+  "ledger": [
+    {
+      "code": "PROMO-EB5DC175",
+      "maskInLedger": true,
+      "status": "working",
+      "notes": "excluding VAT",
+      "checkedAt": "2025-09-19T10:55:49.666Z",
+      "verifiedAt": "2025-09-18T14:09:10.403Z",
+      "before": "$8,500.00",
+      "after": "$7,650.00",
+      "beforeCents": 850000,
+      "afterCents": 765000,
+      "currency": "USD",
+      "display": "$8,500.00 → $7,650.00"
+    }
+  ],
+  "best": {
+    "code": "PROMO-EB5DC175",
+    "beforeCents": 850000,
+    "afterCents": 765000,
+    "currency": "USD",
+    "computedAt": "2025-09-19T10:55:49.666Z"
+  }
+}

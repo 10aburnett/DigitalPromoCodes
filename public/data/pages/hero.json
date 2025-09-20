@@ -1,0 +1,24 @@
+{
+  "whopUrl": "https://whop.com/hero-pif/",
+  "lastUpdated": "2025-09-20T12:33:20.685Z",
+  "ledger": [
+    {
+      "code": "PROMO40",
+      "maskInLedger": true,
+      "status": "unknown",
+      "notes": "excluding VAT",
+      "checkedAt": "2025-09-19T10:55:49.666Z",
+      "beforeCents": 3000,
+      "afterCents": 2190,
+      "currency": "USD",
+      "display": "$30.00 → $21.90"
+    }
+  ],
+  "best": {
+    "code": "PROMO40",
+    "beforeCents": 3000,
+    "afterCents": 2190,
+    "currency": "USD",
+    "computedAt": "2025-09-19T10:55:49.666Z"
+  }
+}

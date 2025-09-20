@@ -1,0 +1,27 @@
+{
+  "whopUrl": "https://whop.com/mogul-stock-class/",
+  "lastUpdated": "2025-09-20T12:33:20.685Z",
+  "ledger": [
+    {
+      "code": "PROMO-336B4ACD",
+      "maskInLedger": true,
+      "status": "working",
+      "notes": "excluding VAT",
+      "checkedAt": "2025-09-19T10:55:49.666Z",
+      "verifiedAt": "2025-09-18T14:09:10.403Z",
+      "before": "$2,500.00",
+      "after": "$2,375.00",
+      "beforeCents": 250000,
+      "afterCents": 237500,
+      "currency": "USD",
+      "display": "$2,500.00 → $2,375.00"
+    }
+  ],
+  "best": {
+    "code": "PROMO-336B4ACD",
+    "beforeCents": 250000,
+    "afterCents": 237500,
+    "currency": "USD",
+    "computedAt": "2025-09-19T10:55:49.666Z"
+  }
+}
