@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { fileSlug } from '@/lib/slug-utils';
 
 interface LedgerEntry {
   code: string;
@@ -59,7 +60,9 @@ export default function WhopFreshness({ slug }: WhopFreshnessProps) {
     async function loadFreshnessData() {
       try {
         console.log('Fetching freshness data for:', slug);
-        const response = await fetch(`/api/data/pages/${slug}.json`);
+        // Use fileSlug to get proper encoding for the JSON file
+        const encodedSlug = fileSlug(slug);
+        const response = await fetch(`/api/data/pages/${encodedSlug}.json`);
         console.log('API response status:', response.status);
         if (response.ok) {
           const data = await response.json();

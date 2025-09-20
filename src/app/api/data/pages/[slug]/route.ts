@@ -1,35 +1,47 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { readFile } from 'fs/promises';
-import { join } from 'path';
+import { join } from "path";
+import { NextResponse, type NextRequest } from "next/server";
+import { readFile } from "fs/promises";
 
 export async function GET(
-  request: NextRequest,
+  _req: NextRequest,
   { params }: { params: { slug: string } }
 ) {
   try {
-    // Decode URL-encoded slug (e.g., %3A becomes :)
-    const decodedSlug = decodeURIComponent(params.slug);
+    // The route param already includes ".json" and is URL-encoded by the client.
+    const filename = params.slug;
 
-    // Security check: only allow .json files and valid slug characters (including colons)
-    if (!decodedSlug.match(/^[a-zA-Z0-9-:]+\.json$/)) {
-      return NextResponse.json({ error: 'Invalid file name' }, { status: 400 });
+    // 1) Security: only allow safe filename chars and percent-escapes, plus the .json suffix.
+    //    Allow A–Z in percent-hex; we'll normalize to lowercase before reading.
+    if (!/^[a-z0-9._\-:%]+\.json$/i.test(filename)) {
+      console.log("Invalid filename rejected:", filename);
+      return NextResponse.json({ error: "Invalid file name" }, { status: 400 });
     }
 
-    const filePath = join(process.cwd(), 'data', 'pages', decodedSlug);
-    const fileContent = await readFile(filePath, 'utf8');
-    const data = JSON.parse(fileContent);
+    // 2) Prepare candidates: (a) normalized %XX => lowercase; (b) original as fallback
+    const base = join(process.cwd(), "public", "data", "pages");
+    const normalized = filename.replace(/%[0-9A-F]{2}/g, (m) => m.toLowerCase());
+    const candidates = [normalized, filename];
 
-    return NextResponse.json(data, {
-      headers: {
-        'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=300',
-      },
-    });
-  } catch (error) {
-    if ((error as any)?.code === 'ENOENT') {
-      return NextResponse.json({ error: 'File not found' }, { status: 404 });
+    // 3) Try candidates in order
+    for (const name of candidates) {
+      try {
+        const filePath = join(base, name);
+        const json = await readFile(filePath, "utf8");
+        return new NextResponse(json, {
+          headers: {
+            "content-type": "application/json; charset=utf-8",
+            "Cache-Control": "public, s-maxage=300, stale-while-revalidate=300",
+          },
+        });
+      } catch {
+        // keep trying next candidate
+      }
     }
 
-    console.error('Error serving freshness data:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    // 4) Not found
+    return NextResponse.json({ error: "File not found" }, { status: 404 });
+  } catch (err) {
+    console.error("Error serving verification data:", err);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

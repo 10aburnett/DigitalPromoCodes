@@ -43,3 +43,23 @@ export function slugNeedsNormalization(slug: string): boolean {
   const canonical = canonicalSlugForPath(slug);
   return slug !== canonical;
 }
+
+/**
+ * Normalize slug for consistent use (GPT recommended functions)
+ * Returns decoded and lowercased slug for DB lookups
+ */
+export function normalizeSlug(input: string): string {
+  return decodeURIComponent(input).toLowerCase();
+}
+
+/**
+ * Get encoded slug for file paths under /data/pages
+ * Ensures consistent encoding for verification JSON files
+ * Forces lowercase percent-hex to match filesystem files
+ */
+export function fileSlug(input: string): string {
+  // 1) encode URI component
+  const encoded = encodeURIComponent(normalizeSlug(input));
+  // 2) force lowercase %XX hex (handles %3A vs %3a)
+  return encoded.replace(/%[0-9A-F]{2}/g, m => m.toLowerCase());
+}

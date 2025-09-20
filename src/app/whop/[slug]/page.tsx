@@ -91,8 +91,9 @@ async function getVerificationData(slug: string) {
       process.env.NEXT_PUBLIC_SITE_ORIGIN?.replace(/\/+$/, '') ||
       'https://whpcodes.com'; // <-- your production origin
 
-    // URL encode the slug to match how files are saved (e.g., ayecon-academy-1%3A1-mentorship.json)
-    const encodedSlug = encodeURIComponent(slug);
+    // Use fileSlug to get consistent encoding for verification JSON files
+    const { fileSlug } = await import('@/lib/slug-utils');
+    const encodedSlug = fileSlug(slug);
     let url = `${base}/data/pages/${encodedSlug}.json`;
     let res = await fetch(url, { next: { revalidate: 60 } }); // safe on edge/ssr
 
