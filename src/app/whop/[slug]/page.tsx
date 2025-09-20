@@ -84,38 +84,25 @@ async function getDeal(slug: string) {
   }
 }
 
-// Helper function to load verification data from JSON files
+// Helper: load verification data (SSG/SSR-safe)
+import fs from "fs/promises";
+import path from "path";
+
 async function getVerificationData(slug: string) {
+  // 1) Try reading the JSON we copy to /public/data/pages at build time
+  const filePath = path.join(process.cwd(), "public", "data", "pages", `${slug}.json`);
   try {
-    const fs = await import('fs');
-    const path = await import('path');
-
-    const filePath = path.join(process.cwd(), 'data', 'pages', `${slug}.json`);
-
-    if (!fs.existsSync(filePath)) {
-      return null;
-    }
-
-    const fileContent = fs.readFileSync(filePath, 'utf8');
-    const data = JSON.parse(fileContent);
-
-    // Debug logging for production troubleshooting
-    console.log('VERIFICATION_DATA', {
-      slug,
-      before: data?.best?.beforeCents,
-      after: data?.best?.afterCents,
-      computedAt: data?.best?.computedAt
-    });
-
-    return {
-      lastTestedISO: data.best?.computedAt,
-      beforeCents: data.best?.beforeCents,
-      afterCents: data.best?.afterCents,
-      currency: data.best?.currency
-    };
-  } catch (error) {
-    console.warn('Failed to load verification data:', error);
-    return null;
+    const raw = await fs.readFile(filePath, "utf8");
+    return JSON.parse(raw);
+  } catch {
+    // 2) Fallback: absolute fetch (works on localhost and prod)
+    const base =
+      process.env.NEXT_PUBLIC_SITE_ORIGIN ||
+      `http://localhost:${process.env.PORT || 3000}`;
+    const url = new URL(`/data/pages/${slug}.json`, base).toString();
+    const res = await fetch(url, { next: { revalidate: 60 } });
+    if (!res.ok) return null;
+    return res.json();
   }
 }
 
@@ -616,9 +603,9 @@ export default async function WhopPage({ params }: { params: { slug: string } })
               brand={whopFormatted.name}
               currency={extractCurrency(whopFormatted.price)}
               hasTrial={hasTrial(whopFormatted.price)}
-              lastTestedISO={verificationData?.lastTestedISO}
-              beforeCents={verificationData?.beforeCents}
-              afterCents={verificationData?.afterCents}
+              lastTestedISO={verificationData?.best?.computedAt ?? verificationData?.lastUpdated}
+              beforeCents={verificationData?.best?.beforeCents}
+              afterCents={verificationData?.best?.afterCents}
             />
           </section>
 
