@@ -91,10 +91,17 @@ async function getVerificationData(slug: string) {
       process.env.NEXT_PUBLIC_SITE_ORIGIN?.replace(/\/+$/, '') ||
       'https://whpcodes.com'; // <-- your production origin
 
-    // URL encode the slug to match how files are saved (e.g., ayecon-academy-1%3a1-mentorship.json)
+    // URL encode the slug to match how files are saved (e.g., ayecon-academy-1%3A1-mentorship.json)
     const encodedSlug = encodeURIComponent(slug);
-    const url = `${base}/data/pages/${encodedSlug}.json`;
-    const res = await fetch(url, { next: { revalidate: 60 } }); // safe on edge/ssr
+    let url = `${base}/data/pages/${encodedSlug}.json`;
+    let res = await fetch(url, { next: { revalidate: 60 } }); // safe on edge/ssr
+
+    // Fallback: try lowercase variant for legacy files (e.g., %3a instead of %3A)
+    if (!res.ok) {
+      const lowercaseEncoded = encodedSlug.replace(/%[0-9A-F]{2}/g, m => m.toLowerCase());
+      url = `${base}/data/pages/${lowercaseEncoded}.json`;
+      res = await fetch(url, { next: { revalidate: 60 } });
+    }
 
     if (!res.ok) return null;
     const data = await res.json();
