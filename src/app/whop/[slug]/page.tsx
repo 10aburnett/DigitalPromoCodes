@@ -91,7 +91,9 @@ async function getVerificationData(slug: string) {
       process.env.NEXT_PUBLIC_SITE_ORIGIN?.replace(/\/+$/, '') ||
       'https://whpcodes.com'; // <-- your production origin
 
-    const url = `${base}/data/pages/${slug}.json`;
+    // URL encode the slug to match how files are saved (e.g., ayecon-academy-1%3a1-mentorship.json)
+    const encodedSlug = encodeURIComponent(slug);
+    const url = `${base}/data/pages/${encodedSlug}.json`;
     const res = await fetch(url, { next: { revalidate: 60 } }); // safe on edge/ssr
 
     if (!res.ok) return null;
