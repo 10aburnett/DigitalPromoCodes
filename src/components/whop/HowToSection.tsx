@@ -104,6 +104,7 @@ export default function HowToSection({ slug, brand, currency, hasTrial, lastTest
             height={750}
             sizes="(max-width: 768px) 100vw, 900px"
             loading="lazy"
+            unoptimized
           />
           <figcaption className="text-sm text-muted-foreground mt-2">
             Example checkout total includes VAT for our test region; your VAT may differ.
