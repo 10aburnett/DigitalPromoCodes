@@ -115,6 +115,21 @@ To manually verify a promo code actually works at checkout:
 
 This provides maximum trust signals for SEO while maintaining honest verification status.
 
+### Screenshot Proof Upload Process
+To add visual verification screenshots (Figure B) to whop pages:
+
+1. **Save screenshot**: Name it `{slug}-proof-2025-09.png` (lowercase slug, PNG format)
+2. **Upload to**: `/public/images/howto/` directory
+3. **Update manifest**: Add the slug to `/data/proof-manifest.json` in the `slugs` array
+4. **Component configuration**: Ensure `HowToSection.tsx` uses `.png` extension in `proofPathForSlug` function
+
+**Example for "best-of-both-worlds" whop:**
+- Screenshot file: `best-of-both-worlds-proof-2025-09.png`
+- Manifest entry: `"best-of-both-worlds"` (in slugs array)
+- Displays as "Figure B" with discount verification
+
+**Important**: Slug names must match exactly between the whop page slug and the manifest entry for the screenshot to display.
+
 ### Comprehensive Discount Pricing & SEO Integration
 
 The system now provides **complete before/after pricing** for all promo codes with automatic sitemap updates:
