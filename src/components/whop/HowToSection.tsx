@@ -9,7 +9,7 @@ function proofExists(slug: string) {
 // Generate proof path for a given slug
 function proofPathForSlug(slug: string) {
   const PROOF_VERSION = proofManifest.version || "2025-09";
-  return `/images/howto/${slug}-proof-${PROOF_VERSION}.webp`;
+  return `/images/howto/${slug}-proof-${PROOF_VERSION}.png`;
 }
 
 // Format currency from cents
