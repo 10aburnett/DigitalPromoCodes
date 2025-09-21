@@ -27,10 +27,12 @@ export async function GET(
       try {
         const filePath = join(base, name);
         const json = await readFile(filePath, "utf8");
+        console.log('[API] serving file', name, 'size=', json.length);
         return new NextResponse(json, {
           headers: {
             "content-type": "application/json; charset=utf-8",
-            "Cache-Control": "public, s-maxage=300, stale-while-revalidate=300",
+            // Kill all caching at the edge and browser to fix stale data issue
+            "Cache-Control": "no-store",
           },
         });
       } catch {

@@ -1,15 +1,18 @@
 import Image from "next/image";
 import proofManifest from "@data/proof-manifest.json";
+import { fileSlug } from "@/lib/slug-utils";
 
 // Check if proof exists for a slug using the manifest
 function proofExists(slug: string) {
-  return (proofManifest.slugs || []).includes(slug);
+  const normalizedSlug = fileSlug(slug);
+  return (proofManifest.slugs || []).includes(normalizedSlug);
 }
 
 // Generate proof path for a given slug
 function proofPathForSlug(slug: string) {
   const PROOF_VERSION = proofManifest.version || "2025-09";
-  return `/images/howto/${slug}-proof-${PROOF_VERSION}.png`;
+  const normalizedSlug = fileSlug(slug);
+  return `/images/howto/${normalizedSlug}-proof-${PROOF_VERSION}.png`;
 }
 
 // Format currency from cents

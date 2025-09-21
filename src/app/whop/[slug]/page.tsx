@@ -7,6 +7,7 @@ import { getWhopBySlug } from '@/lib/data';
 import { prisma } from '@/lib/prisma';
 import { Suspense } from 'react';
 import { canonicalSlugForDB, canonicalSlugForPath } from '@/lib/slug-utils';
+import { headers } from "next/headers";
 
 // Force dynamic rendering for content management testing
 export const dynamic = 'force-dynamic';
@@ -65,6 +66,21 @@ interface Whop {
   reviews?: Review[];
 }
 
+function resolveBaseUrl(): string {
+  // Prefer explicit env if you've set it (e.g. https://whpcodes.com)
+  const explicit = process.env.NEXT_PUBLIC_SITE_ORIGIN || process.env.NEXT_PUBLIC_BASE_URL;
+  if (explicit) return explicit.replace(/\/+$/, "");
+
+  // Derive from the incoming request (SSR-safe)
+  const h = headers();
+  const proto = h.get("x-forwarded-proto") || "http";
+  const host  = h.get("x-forwarded-host") || h.get("host");
+  if (host) return `${proto}://${host}`;
+
+  // Dev fallback
+  return `http://localhost:${process.env.PORT ?? 3000}`;
+}
+
 // Helper function for fetching deal data with Next.js caching
 async function getDeal(slug: string) {
   // Use Next.js fetch with ISR caching
@@ -87,35 +103,40 @@ async function getDeal(slug: string) {
 // Helper: load verification data (fetch-only, edge-safe)
 async function getVerificationData(slug: string) {
   try {
-    const base =
-      process.env.NEXT_PUBLIC_SITE_ORIGIN?.replace(/\/+$/, '') ||
-      'https://whpcodes.com'; // <-- your production origin
+    const { fileSlug } = await import("@/lib/slug-utils");
+    const encoded = fileSlug(slug);
+    const base = resolveBaseUrl();
 
-    // Use fileSlug to get consistent encoding for verification JSON files
-    const { fileSlug } = await import('@/lib/slug-utils');
-    const encodedSlug = fileSlug(slug);
-    let url = `${base}/data/pages/${encodedSlug}.json`;
-    let res = await fetch(url, { next: { revalidate: 60 } }); // safe on edge/ssr
+    // main
+    let res = await fetch(`${base}/api/data/pages/${encoded}.json`, {
+      cache: "no-store",           // or: next: { revalidate: 0 }
+    });
 
-    // Fallback: try lowercase variant for legacy files (e.g., %3a instead of %3A)
+    // fallback: legacy lowercase %XX if needed
     if (!res.ok) {
-      const lowercaseEncoded = encodedSlug.replace(/%[0-9A-F]{2}/g, m => m.toLowerCase());
-      url = `${base}/data/pages/${lowercaseEncoded}.json`;
-      res = await fetch(url, { next: { revalidate: 60 } });
+      const lower = encoded.replace(/%[0-9A-F]{2}/g, m => m.toLowerCase());
+      res = await fetch(`${base}/api/data/pages/${lower}.json`, {
+        cache: "no-store",
+      });
     }
 
     if (!res.ok) return null;
-    const data = await res.json();
 
-    return {
-      lastTestedISO: data.best?.computedAt ?? data.best?.lastUpdated ?? null,
-      beforeCents: typeof data.best?.beforeCents === 'number' ? data.best.beforeCents : null,
-      afterCents: typeof data.best?.afterCents === 'number' ? data.best.afterCents : null,
-      currency: data.best?.currency ?? null,
+    const raw = await res.json();
+
+    // normalize to { best: { beforeCents, afterCents, computedAt, currency } }
+    const candidate = raw?.best ?? {
+      beforeCents: raw?.beforeCents ?? null,
+      afterCents:  raw?.afterCents  ?? null,
+      computedAt:  raw?.computedAt ?? raw?.lastUpdated ?? null,
+      currency:    raw?.currency ?? null,
     };
+
+    if (candidate.beforeCents == null && candidate.afterCents == null) return null;
+    return { best: candidate };
   } catch (err) {
     console.error('VERIFICATION_FETCH_FAIL', slug, err);
-    return null; // NEVER throw
+    return null; // never throw
   }
 }
 
@@ -616,9 +637,9 @@ export default async function WhopPage({ params }: { params: { slug: string } })
               brand={whopFormatted.name}
               currency={extractCurrency(whopFormatted.price)}
               hasTrial={hasTrial(whopFormatted.price)}
-              lastTestedISO={verificationData?.lastTestedISO ?? null}
-              beforeCents={verificationData?.beforeCents ?? null}
-              afterCents={verificationData?.afterCents ?? null}
+              lastTestedISO={verificationData?.best?.computedAt ?? null}
+              beforeCents={verificationData?.best?.beforeCents ?? null}
+              afterCents={verificationData?.best?.afterCents ?? null}
             />
           </section>
 
