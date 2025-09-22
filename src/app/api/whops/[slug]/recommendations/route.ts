@@ -4,6 +4,15 @@ import { prisma } from '@/lib/prisma';
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
+// Helpers
+function looksLikeCuid(s: string) {
+  // cuid2 from Prisma typically starts with a letter, length ~ 24–32
+  return /^[a-z][a-z0-9]{20,}$/i.test(s);
+}
+function normSlug(s: string) {
+  return decodeURIComponent(s || '').trim();
+}
+
 interface RecommendedWhop {
   id: string;
   name: string;
@@ -191,30 +200,28 @@ function extractDomainKeywords(text: string, name: string = ''): string[] {
   return Array.from(keywords);
 }
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function GET(req: Request, { params }: { params: { slug: string } }) {
   try {
-    const whopId = params.id;
-    
-    // Get the current whop with full data
-    const currentWhop = await prisma.whop.findUnique({
-      where: { id: whopId },
-      select: {
-        id: true,
-        name: true,
-        description: true,
-        category: true,
-        price: true,
-      }
+    const key = normSlug(params.slug);
+    if (!key) {
+      return new Response(JSON.stringify({ error: 'Missing slug or id' }), { status: 400 });
+    }
+
+    // Try slug first; if not found and it looks like an id, try id.
+    let currentWhop = await prisma.whop.findUnique({
+      where: { slug: key },
+      select: { id: true, slug: true, name: true, description: true, category: true, price: true },
     });
 
+    if (!currentWhop && looksLikeCuid(key)) {
+      currentWhop = await prisma.whop.findUnique({
+        where: { id: key },
+        select: { id: true, slug: true, name: true, description: true, category: true, price: true },
+      });
+    }
+
     if (!currentWhop) {
-      return NextResponse.json(
-        { error: 'Whop not found' },
-        { status: 404 }
-      );
+      return new Response(JSON.stringify({ error: 'Whop not found' }), { status: 404 });
     }
 
     // Get current whop's primary topics
@@ -223,7 +230,7 @@ export async function GET(
     // Get all potential candidate whops
     const candidateWhops = await prisma.whop.findMany({
       where: {
-        id: { not: whopId }
+        id: { not: currentWhop.id }
       },
       include: {
         PromoCode: {
@@ -261,38 +268,36 @@ export async function GET(
     // Take top 4 recommendations
     const recommendations = sortedCandidates.slice(0, 4);
 
-    // Add cache headers for better SEO performance
-    const headers = {
-      'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=7200',
-      'Content-Type': 'application/json',
-    };
-
-    return NextResponse.json({
+    return new Response(JSON.stringify({
+      whop: currentWhop,
       recommendations,
       total: recommendations.length,
       debug: process.env.NODE_ENV === 'development' ? {
         currentWhopName: currentWhop.name,
         currentWhopCategory: currentWhop.category,
         currentWhopTopics: currentTopics,
-        topScores: recommendations.map(r => ({ 
-          name: r.name, 
+        topScores: recommendations.map(r => ({
+          name: r.name,
           score: r.similarityScore,
           category: r.category,
           topics: getTopicCategories(r.description || '', r.name || ''),
-          matchedTopics: currentTopics.filter(topic => 
+          matchedTopics: currentTopics.filter(topic =>
             getTopicCategories(r.description || '', r.name || '').includes(topic)
           )
         })),
         totalCandidates: candidateWhops.length,
         relevantCandidates: scoredCandidates.length
       } : undefined
-    }, { headers });
-
-  } catch (error) {
-    console.error('Error fetching recommendations:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch recommendations' },
-      { status: 500 }
-    );
+    }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' },
+    });
+  } catch (err: any) {
+    console.error('recommendations API error:', err);
+    // Surface a non-500 when cause is Prisma validation
+    if (String(err?.name).includes('PrismaClientValidationError')) {
+      return new Response(JSON.stringify({ error: 'Invalid where clause' }), { status: 400 });
+    }
+    return new Response(JSON.stringify({ error: 'Internal error' }), { status: 500 });
   }
 } 

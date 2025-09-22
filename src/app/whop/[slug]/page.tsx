@@ -170,11 +170,11 @@ function hasTrial(price: string | null): boolean {
 }
 
 // Async component for heavy sections that can be streamed
-async function RecommendedSection({ currentWhopId }: { currentWhopId: string }) {
+async function RecommendedSection({ currentWhopSlug }: { currentWhopSlug: string }) {
   // Simulate a small delay to show streaming effect in development
   await new Promise(resolve => setTimeout(resolve, 100));
-  
-  return <RecommendedWhops currentWhopId={currentWhopId} />;
+
+  return <RecommendedWhops currentWhopSlug={currentWhopSlug} />;
 }
 
 async function ReviewsSection({ whopId, whopName, reviews }: { whopId: string; whopName: string; reviews: any[] }) {
@@ -840,7 +840,7 @@ export default async function WhopPage({ params }: { params: { slug: string } })
           {/* Recommended Whops Section - Streamed for better performance */}
           <div className="max-w-2xl mx-auto">
             <Suspense fallback={<SectionSkeleton />}>
-              <RecommendedSection currentWhopId={whopFormatted.id} />
+              <RecommendedSection currentWhopSlug={params.slug} />
             </Suspense>
           </div>
 

@@ -28,26 +28,36 @@ interface RecommendedWhop {
 }
 
 interface RecommendedWhopsProps {
-  currentWhopId: string;
+  currentWhopSlug: string;
 }
 
-export default function RecommendedWhops({ currentWhopId }: RecommendedWhopsProps) {
+// Base URL helper for SSR compatibility
+function getBaseUrl() {
+  // Prefer explicit env, fallback to window in CSR, finally to localhost for dev
+  if (process.env.NEXT_PUBLIC_BASE_URL) return process.env.NEXT_PUBLIC_BASE_URL;
+  if (typeof window !== 'undefined') return window.location.origin;
+  return 'http://localhost:3000';
+}
+
+async function fetchRecommendations(slug: string) {
+  const base = getBaseUrl();
+  const url = `${base}/api/whops/${encodeURIComponent(slug)}/recommendations`;
+  const res = await fetch(url, { cache: 'no-store' });
+  if (!res.ok) throw new Error(`Failed to fetch recommendations: ${res.status}`);
+  return res.json();
+}
+
+export default function RecommendedWhops({ currentWhopSlug }: RecommendedWhopsProps) {
   const [recommendations, setRecommendations] = useState<RecommendedWhop[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [imageStates, setImageStates] = useState<{[key: string]: { imagePath: string; imageError: boolean }}>({});
 
   useEffect(() => {
-    const fetchRecommendations = async () => {
+    const fetchRecommendationsData = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`/api/whops/${currentWhopId}/recommendations`);
-        
-        if (!response.ok) {
-          throw new Error('Failed to fetch recommendations');
-        }
-        
-        const data = await response.json();
+        const data = await fetchRecommendations(currentWhopSlug);
         
         // Clean up the recommendations data to match our interface
         const cleanedRecommendations = (data.recommendations || []).map((rec: any) => {
@@ -103,15 +113,16 @@ export default function RecommendedWhops({ currentWhopId }: RecommendedWhopsProp
       } catch (err) {
         console.error('Error fetching recommendations:', err);
         setError('Failed to load recommendations');
+        setRecommendations([]); // Graceful fallback with empty array
       } finally {
         setLoading(false);
       }
     };
 
-    if (currentWhopId) {
-      fetchRecommendations();
+    if (currentWhopSlug) {
+      fetchRecommendationsData();
     }
-  }, [currentWhopId]);
+  }, [currentWhopSlug]);
 
   if (loading) {
     return (
