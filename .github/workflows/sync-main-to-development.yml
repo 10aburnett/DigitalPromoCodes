@@ -1,9 +1,9 @@
-name: Sync development with main
+name: Sync development with main (freshness-only)
 
 on:
   push:
     branches: [ main ]
-  workflow_dispatch:
+  workflow_dispatch:   # lets you run a manual sync any time
 
 permissions:
   contents: write
@@ -11,7 +11,14 @@ permissions:
 
 jobs:
   sync:
+    # Auto-run ONLY when the freshness bot pushes to main
+    # 1) If your bot is a GitHub Action: actor == github-actions[bot]
+    # 2) OR tag your bot commits with [freshness] to match the message
+    if: |
+      github.actor == 'github-actions[bot]' ||
+      contains(github.event.head_commit.message, '[freshness]')
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout full history
         uses: actions/checkout@v4
@@ -31,33 +38,36 @@ jobs:
             git push -u origin development
           fi
 
-      - name: Create local tracking branch
+      - name: Fetch branches
         run: |
           git fetch origin main development
           git checkout development
-          # Make sure we're up to date
           git reset --hard origin/development
 
-      - name: Merge main → development (fast-forward if possible)
-        id: merge
+      # Prefer fast-forward; if not possible, open a PR instead of pushing
+      - name: Fast-forward development to main if possible
+        id: ff
         run: |
           set -e
-          git merge --no-edit origin/main || echo "merge_conflict" > /tmp/conflict.flag
+          if git merge-base --is-ancestor origin/development origin/main; then
+            git reset --hard origin/main
+            echo "ff_ok=true" >> $GITHUB_OUTPUT
+          else
+            echo "ff_ok=false" >> $GITHUB_OUTPUT
+          fi
 
-      - name: Push if merge succeeded
-        if: ${{ steps.merge.outcome == 'success' && !hashFiles('/tmp/conflict.flag') }}
-        run: |
-          git push origin development
+      - name: Push fast-forward
+        if: steps.ff.outputs.ff_ok == 'true'
+        run: git push origin development
 
-      # If there's a conflict, open a PR so a human can resolve it
-      - name: Open PR when merge conflicts occur
-        if: ${{ hashFiles('/tmp/conflict.flag') != '' }}
+      - name: Open PR when fast-forward not possible
+        if: steps.ff.outputs.ff_ok != 'true'
         uses: peter-evans/create-pull-request@v6
         with:
           branch: sync/main-to-development
-          title: "Sync main → development (manual conflict resolution required)"
+          title: "Sync main → development (freshness update; needs review)"
           body: |
-            This PR was opened automatically because syncing **main** to **development** hit merge conflicts.
-            Resolve the conflicts here, then merge to bring `development` back in sync.
+            Auto-sync triggered by freshness update on `main`.
+            Fast-forward not possible; please resolve and merge.
           base: development
           labels: sync, automated
