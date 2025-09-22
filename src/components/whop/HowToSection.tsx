@@ -83,38 +83,55 @@ export default function HowToSection({ slug, brand, currency, hasTrial, lastTest
       <figure className="mb-6">
         <Image
           src={A}
-          alt="Whop checkout: where to enter a coupon and where totals, VAT and currency appear."
+          alt="Whop checkout template showing where promo codes are applied"
           width={1200}
           height={750}
           sizes="(max-width: 768px) 100vw, 900px"
           loading="lazy"
         />
         <figcaption className="text-sm text-muted-foreground mt-2">
-          Coupon field and total/VAT/currency areas on Whop checkout.
+          Figure A — Whop checkout template.
         </figcaption>
       </figure>
 
       {/* Figure B: Merchant-specific proof (optional) */}
       {hasB && (
-        <figure>
-          <Image
-            src={B}
-            alt={`${brand} on Whop: coupon applied showing discounted total (including VAT) for our test region; ex-VAT amounts are listed above.`}
-            width={1200}
-            height={750}
-            sizes="(max-width: 768px) 100vw, 900px"
-            loading="lazy"
-            unoptimized
-          />
-          <figcaption className="text-sm text-muted-foreground mt-2">
-            Example checkout total includes VAT for our test region; your VAT may differ.
-            {before && after ? (
-              <> Ex-VAT before → after: {before} → {after}.</>
-            ) : (
-              <> Ex-VAT pricing verification in progress.</>
-            )}
-          </figcaption>
-        </figure>
+        <>
+          <figure>
+            <Image
+              src={B}
+              alt={
+                before && after && lastTestedISO
+                  ? `${brand} on Whop with promo applied — ${before} → ${after} (ex-VAT), verified ${new Date(lastTestedISO).toISOString().split('T')[0]}`
+                  : `${brand} on Whop promo code proof screenshot`
+              }
+              width={1200}
+              height={750}
+              sizes="(max-width: 768px) 100vw, 900px"
+              loading="lazy"
+              unoptimized
+            />
+            <figcaption className="text-sm text-muted-foreground mt-2">
+              Figure B — Promo code applied on Whop: ex-VAT before → after {before && after ? `${before} → ${after}` : 'verification in progress'}. {lastTestedISO && `Last tested ${new Date(lastTestedISO).toLocaleDateString('en-GB')}.`}
+            </figcaption>
+          </figure>
+
+          {before && after && lastTestedISO && (
+            <script
+              type="application/ld+json"
+              dangerouslySetInnerHTML={{
+                __html: JSON.stringify({
+                  "@context": "https://schema.org",
+                  "@type": "ImageObject",
+                  contentUrl: `https://whpcodes.com${B}`,
+                  caption: `Promo code proof on Whop — ${before} → ${after} (ex-VAT), verified ${new Date(lastTestedISO).toLocaleDateString('en-GB')}`,
+                  author: "WHPCODES",
+                  datePublished: lastTestedISO,
+                }),
+              }}
+            />
+          )}
+        </>
       )}
 
       {/* Last tested verification line */}
