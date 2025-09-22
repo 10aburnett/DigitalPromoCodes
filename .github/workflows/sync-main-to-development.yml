@@ -1,0 +1,63 @@
+name: Sync development with main
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout full history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure git
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Ensure remote branch exists (create if missing)
+        run: |
+          if ! git ls-remote --exit-code origin development >/dev/null 2>&1; then
+            echo "development doesn't exist on origin; creating from main"
+            git checkout -b development origin/main
+            git push -u origin development
+          fi
+
+      - name: Create local tracking branch
+        run: |
+          git fetch origin main development
+          git checkout development
+          # Make sure we're up to date
+          git reset --hard origin/development
+
+      - name: Merge main → development (fast-forward if possible)
+        id: merge
+        run: |
+          set -e
+          git merge --no-edit origin/main || echo "merge_conflict" > /tmp/conflict.flag
+
+      - name: Push if merge succeeded
+        if: ${{ steps.merge.outcome == 'success' && !hashFiles('/tmp/conflict.flag') }}
+        run: |
+          git push origin development
+
+      # If there's a conflict, open a PR so a human can resolve it
+      - name: Open PR when merge conflicts occur
+        if: ${{ hashFiles('/tmp/conflict.flag') != '' }}
+        uses: peter-evans/create-pull-request@v6
+        with:
+          branch: sync/main-to-development
+          title: "Sync main → development (manual conflict resolution required)"
+          body: |
+            This PR was opened automatically because syncing **main** to **development** hit merge conflicts.
+            Resolve the conflicts here, then merge to bring `development` back in sync.
+          base: development
+          labels: sync, automated
