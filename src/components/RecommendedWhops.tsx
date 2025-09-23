@@ -6,6 +6,7 @@ import WhopCardLink from './WhopCardLink';
 import SectionPanel from './SectionPanel';
 import { loadNeighbors, getNeighborSlugsFor } from '@/lib/graph';
 import { getBaseUrl } from '@/lib/base-url';
+import { normalizeSlug, encodeSlugForAPI } from '@/lib/slug-normalize';
 
 interface PromoCode {
   id: string;
@@ -32,9 +33,9 @@ interface RecommendedWhopsProps {
   currentWhopSlug: string;
 }
 
-async function fetchRecommendations(slug: string) {
+async function fetchRecommendations(encodedSlug: string) {
   const base = getBaseUrl();
-  const url = `${base}/api/whops/${encodeURIComponent(slug)}/recommendations`;
+  const url = `${base}/api/whops/${encodedSlug}/recommendations`;
   const res = await fetch(url, { cache: 'no-store' });
   if (!res.ok) throw new Error(`Failed to fetch recommendations: ${res.status}`);
   return res.json();
@@ -42,18 +43,59 @@ async function fetchRecommendations(slug: string) {
 
 async function fetchWhopDetails(slugs: string[]) {
   const base = getBaseUrl();
-  if (!slugs.length) return [];
+  const unique = Array.from(new Set(slugs.filter(Boolean)));
+  if (!unique.length) return [];
 
   try {
-    const res = await fetch(
-      `${base}/api/whops/batch?slugs=${encodeURIComponent(slugs.join(','))}`,
-      { cache: 'no-store' }
-    );
+    const qs = unique.map(s => encodeURIComponent(s)).join(',');
+    const res = await fetch(`${base}/api/whops/batch?slugs=${qs}`, { cache: 'no-store' });
     if (!res.ok) return [];
     const json = await res.json();
-    return json.whops ?? [];
+    return Array.isArray(json.whops) ? json.whops : [];
   } catch {
     return [];
+  }
+}
+
+async function hydrateViaGraph(currentWhopSlug: string) {
+  const reasons: string[] = [];
+  try {
+    const neighbors = await loadNeighbors();
+    const raw = getNeighborSlugsFor(neighbors, currentWhopSlug, 'recommendations');
+    const slugs = Array.from(new Set(raw.filter(Boolean))).slice(0, 12);
+    if (slugs.length === 0) {
+      reasons.push('graph: no slugs');
+      return { items: [], reasons };
+    }
+
+    // batch hydrate
+    const batched = await fetchWhopDetails(slugs);
+    if (Array.isArray(batched) && batched.length > 0) {
+      return { items: batched.slice(0, 4), reasons };
+    }
+    reasons.push('graph batch empty');
+
+    // salvage: try per-slug (best effort)
+    const base = getBaseUrl();
+    const singleFetches = await Promise.allSettled(
+      slugs.map(s => fetch(`${base}/api/whops/${encodeURIComponent(s)}`, { cache: 'no-store' })
+        .then(r => r.ok ? r.json() : null)
+        .catch(() => null))
+    );
+    const salvaged = singleFetches
+      .map(r => (r.status === 'fulfilled' ? (r.value?.whop || r.value) : null))
+      .filter(Boolean);
+
+    if (salvaged.length > 0) {
+      reasons.push(`graph salvage per-slug: ${salvaged.length}`);
+      return { items: salvaged.slice(0, 4), reasons };
+    }
+
+    reasons.push('graph salvage empty');
+    return { items: [], reasons };
+  } catch (e) {
+    reasons.push(`graph error: ${String(e)}`);
+    return { items: [], reasons };
   }
 }
 
@@ -66,69 +108,93 @@ export default function RecommendedWhops({ currentWhopSlug }: RecommendedWhopsPr
     const fetchRecommendationsData = async () => {
       const DEBUG = process.env.NODE_ENV === 'development' || process.env.NEXT_PUBLIC_DEBUG === 'true';
       const t0 = performance.now();
+      let dataSource = 'none';          // <- never "unknown"
+      let data: any | undefined = undefined;
 
       try {
         setLoading(true);
-        const useGraph = process.env.NEXT_PUBLIC_USE_GRAPH_LINKS === 'true' || process.env.USE_GRAPH_LINKS === 'true';
 
+        // Fix double encoding: decode once, normalize, then encode once for API
+        const raw = currentWhopSlug || '';
+        const canonicalSlug = normalizeSlug(raw);  // This handles decoding + normalization
+        const apiSlug = encodeSlugForAPI(canonicalSlug);
+
+        if (DEBUG) console.log('slug check', { currentWhopSlug, canonicalSlug, apiSlug });
+
+        // 1) Graph-first (if flag on)
+        const useGraph = process.env.NEXT_PUBLIC_USE_GRAPH_LINKS === 'true' || process.env.USE_GRAPH_LINKS === 'true';
         let cleanedRecommendations: RecommendedWhop[] = [];
 
-        // 1) Try neighbors.json (deterministic, orphan-safe)
         if (useGraph) {
-          try {
-            const neighbors = await loadNeighbors();
-            const slugs = getNeighborSlugsFor(neighbors, currentWhopSlug, 'recommendations').slice(0, 4);
-            if (slugs.length) {
-              // Hydrate with full whop details
-              const whopDetails = await fetchWhopDetails(slugs);
-              cleanedRecommendations = whopDetails.map((whop: any) => {
-                const { similarityScore, ...cleanRec } = whop;
-                return cleanRec;
-              });
-            }
-          } catch { /* fall back silently */ }
+          // Add decisive runtime check for graph presence
+          const neighbors = await loadNeighbors();
+          if (DEBUG) {
+            const exists = !!neighbors[canonicalSlug];
+            const lenRec = neighbors[canonicalSlug]?.recommendations?.length ?? 0;
+            const lenAlt = neighbors[canonicalSlug]?.alternatives?.length ?? 0;
+            console.log('graph presence', { canonicalSlug, exists, lenRec, lenAlt });
+          }
+
+          const { items, reasons } = await hydrateViaGraph(canonicalSlug);
+          if (items.length > 0) {
+            cleanedRecommendations = items.map(({ similarityScore, ...rest }: any) => rest);
+            dataSource = 'graph+batch';
+          } else {
+            // keep the reasons so we can log them later
+            dataSource = 'graph-empty';
+            if (DEBUG) console.warn('Graph-first empty:', reasons);
+          }
         }
 
-        // 2) Fallback to API (dynamic) if graph didn't work or returned empty
+        // 2) API fallback
         if (cleanedRecommendations.length === 0) {
-          const data = await fetchRecommendations(currentWhopSlug);
-          cleanedRecommendations = (data.recommendations || []).map((rec: any) => {
-            const { similarityScore, ...cleanRec } = rec;
-            return cleanRec;
-          });
+          try {
+            data = await fetchRecommendations(apiSlug);
+            const apiRecs = (data?.recommendations || []).map(({ similarityScore, ...r }: any) => r);
+            if (apiRecs.length > 0) {
+              cleanedRecommendations = apiRecs;
+              dataSource = 'api';
+            } else {
+              dataSource = dataSource === 'none' ? 'api-empty' : `${dataSource}+api-empty`;
+            }
+          } catch (e) {
+            dataSource = dataSource === 'none' ? 'api-error' : `${dataSource}+api-error`;
+            if (DEBUG) console.warn('API error:', e);
+          }
+        }
+
+        // 3) Final fallback to graph regardless of flag
+        if (cleanedRecommendations.length === 0) {
+          const { items, reasons } = await hydrateViaGraph(canonicalSlug);
+          if (items.length > 0) {
+            cleanedRecommendations = items.map(({ similarityScore, ...rest }: any) => rest);
+            dataSource = dataSource.includes('graph') ? `${dataSource}` : 'graph-fallback';
+            if (DEBUG) console.log('♻️ Used graph fallback for recommendations.');
+          } else {
+            if (DEBUG) console.warn('Graph fallback empty:', reasons);
+            dataSource = dataSource.includes('graph') ? `${dataSource}+fallback-empty` : 'graph-fallback-empty';
+          }
         }
 
         setRecommendations(cleanedRecommendations);
 
-        // Enhanced dev logging and error tracking
+        // --- DEBUG (always derives graphUsed from dataSource)
         if (DEBUG) {
-          const graphUsed = useGraph && cleanedRecommendations.length > 0;
           const loadTime = (performance.now() - t0).toFixed(1);
-
-          console.log(`🎯 RecommendedWhops for "${currentWhopSlug}": ${loadTime}ms`, {
+          const graphUsed = dataSource.includes('graph');
+          console.log('slug check', { currentWhopSlug, canonicalSlug, apiSlug });
+          console.log(`🎯 RecommendedWhops for "${canonicalSlug}": ${loadTime}ms`, {
             useGraph,
             graphUsed,
             count: cleanedRecommendations.length,
-            source: graphUsed ? 'graph+batch' : 'api'
+            source: dataSource,
           });
 
-          // Log missing hydration (graph had slugs but batch API failed)
-          if (useGraph && cleanedRecommendations.length === 0) {
-            console.warn('⚠️ Graph hydration failed - falling back to API');
-          }
-
-          // API fallback debug info (trim noisy payloads)
-          if (!graphUsed && typeof data !== 'undefined' && data?.debug) {
+          if (!graphUsed && data?.debug) {
             console.log('📊 API Debug:', {
               total: data.debug.totalCandidates,
-              filtered: data.debug.filteredCount
+              filtered: data.debug.filteredCount,
             });
-          }
-
-          // Log potential 404s/missing data
-          const invalidItems = cleanedRecommendations.filter(whop => !whop.name || !whop.slug);
-          if (invalidItems.length > 0) {
-            console.error(`❌ Invalid recommendations: ${invalidItems.length}/${cleanedRecommendations.length}`);
           }
         }
       } catch (err) {

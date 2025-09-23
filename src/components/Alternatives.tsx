@@ -4,6 +4,7 @@ import WhopCardLink from './WhopCardLink';
 import SectionPanel from './SectionPanel';
 import { getBaseUrl } from '@/lib/base-url';
 import { loadNeighbors, getNeighborSlugsFor } from '@/lib/graph';
+import { normalizeSlug, encodeSlugForAPI } from '@/lib/slug-normalize';
 
 interface PromoCode {
   id: string;
@@ -41,18 +42,59 @@ export default function Alternatives({ currentWhopSlug }: { currentWhopSlug: str
   // Base URL helper for SSR compatibility
   async function fetchWhopDetails(slugs: string[]) {
     const base = getBaseUrl();
-    if (!slugs.length) return [];
+    const unique = Array.from(new Set(slugs.filter(Boolean)));
+    if (!unique.length) return [];
 
     try {
-      const res = await fetch(
-        `${base}/api/whops/batch?slugs=${encodeURIComponent(slugs.join(','))}`,
-        { cache: 'no-store' }
-      );
+      const qs = unique.map(s => encodeURIComponent(s)).join(',');
+      const res = await fetch(`${base}/api/whops/batch?slugs=${qs}`, { cache: 'no-store' });
       if (!res.ok) return [];
       const json = await res.json();
-      return json.whops ?? [];
+      return Array.isArray(json.whops) ? json.whops : [];
     } catch {
       return [];
+    }
+  }
+
+  async function hydrateViaGraph(currentWhopSlug: string) {
+    const reasons: string[] = [];
+    try {
+      const neighbors = await loadNeighbors();
+      const raw = getNeighborSlugsFor(neighbors, currentWhopSlug, 'alternatives');
+      const slugs = Array.from(new Set(raw.filter(Boolean))).slice(0, 12);
+      if (slugs.length === 0) {
+        reasons.push('graph: no slugs');
+        return { items: [], reasons };
+      }
+
+      // batch hydrate
+      const batched = await fetchWhopDetails(slugs);
+      if (Array.isArray(batched) && batched.length > 0) {
+        return { items: batched.slice(0, 5), reasons };
+      }
+      reasons.push('graph batch empty');
+
+      // salvage: try per-slug (best effort)
+      const base = getBaseUrl();
+      const singleFetches = await Promise.allSettled(
+        slugs.map(s => fetch(`${base}/api/whops/${encodeURIComponent(s)}`, { cache: 'no-store' })
+          .then(r => r.ok ? r.json() : null)
+          .catch(() => null))
+      );
+      const salvaged = singleFetches
+        .map(r => (r.status === 'fulfilled' ? (r.value?.whop || r.value) : null))
+        .filter(Boolean);
+
+      if (salvaged.length > 0) {
+        reasons.push(`graph salvage per-slug: ${salvaged.length}`);
+        return { items: salvaged.slice(0, 5), reasons };
+      }
+
+      reasons.push('graph salvage empty');
+      return { items: [], reasons };
+    } catch (e) {
+      reasons.push(`graph error: ${String(e)}`);
+      return { items: [], reasons };
     }
   }
 
@@ -84,6 +126,13 @@ export default function Alternatives({ currentWhopSlug }: { currentWhopSlug: str
         setDesc('');
         setLoading(true);
 
+        // Fix double encoding: decode once, normalize, then encode once for API
+        const raw = currentWhopSlug || '';
+        const canonicalSlug = normalizeSlug(raw);  // This handles decoding + normalization
+        const apiSlug = encodeSlugForAPI(canonicalSlug);
+
+        if (DEBUG) console.log('slug check (Alternatives)', { currentWhopSlug, canonicalSlug, apiSlug });
+
         const base = getBaseUrl();
         const useGraph =
           process.env.NEXT_PUBLIC_USE_GRAPH_LINKS === 'true' ||
@@ -97,7 +146,14 @@ export default function Alternatives({ currentWhopSlug }: { currentWhopSlug: str
         if (useGraph) {
           try {
             const neighbors = await loadNeighbors();
-            const slugs = getNeighborSlugsFor(neighbors, currentWhopSlug, 'alternatives').slice(0, 5);
+            const rawAltSlugs = getNeighborSlugsFor(neighbors, canonicalSlug, 'alternatives');
+
+            // Get recommended slugs to exclude them from alternatives (keep sections distinct)
+            const recSlugs = getNeighborSlugsFor(neighbors, canonicalSlug, 'recommendations');
+            const recSet = new Set(recSlugs);
+
+            // Filter out any alternatives that appear in recommendations and take wider net
+            const slugs = Array.from(new Set(rawAltSlugs.filter(Boolean).filter(slug => !recSet.has(slug)))).slice(0, 15);
 
             if (slugs.length) {
               // Hydrate with batch API to get full whop details
@@ -107,7 +163,7 @@ export default function Alternatives({ currentWhopSlug }: { currentWhopSlug: str
                 // Also try to get editorial descriptions and anchor texts from API
                 try {
                   const res = await fetch(
-                    `${base}/api/whops/${encodeURIComponent(currentWhopSlug)}/alternatives`,
+                    `${base}/api/whops/${apiSlug}/alternatives`,
                     { cache: 'no-store' }
                   );
                   const data = res.ok ? await res.json() : { alternatives: [], editorialDescription: '' };
@@ -122,8 +178,8 @@ export default function Alternatives({ currentWhopSlug }: { currentWhopSlug: str
                   // Fall through - use default anchor texts
                 }
 
-                // Transform whop details to alternatives format
-                hydratedAlternatives = whopDetails.map((whop: any) => ({
+                // Transform whop details to alternatives format (slice to 5 after hydration)
+                hydratedAlternatives = whopDetails.slice(0, 5).map((whop: any) => ({
                   id: whop.id,
                   name: whop.name,
                   slug: whop.slug,
@@ -147,18 +203,31 @@ export default function Alternatives({ currentWhopSlug }: { currentWhopSlug: str
           }
         }
 
-        // Fallback: use API's computed list directly (no rich cards, just links)
+        // Fallback: use API's computed list directly
         const res = await fetch(
-          `${base}/api/whops/${encodeURIComponent(currentWhopSlug)}/alternatives`,
+          `${base}/api/whops/${apiSlug}/alternatives`,
           { cache: 'no-store' }
         );
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
 
+        // Get recommended slugs to exclude them from alternatives (keep sections distinct)
+        let recSlugs: string[] = [];
+        try {
+          const neighbors = await loadNeighbors();
+          if (neighbors) {
+            recSlugs = getNeighborSlugsFor(neighbors, canonicalSlug, 'recommendations');
+          }
+        } catch {
+          // Continue without deduplication if graph loading fails
+        }
+        const recSet = new Set(recSlugs);
+
         const altSlugs = (data?.alternatives ?? [])
-          .slice(0, 5)
           .map((a: any) => a.slug)
-          .filter(Boolean);
+          .filter(Boolean)
+          .filter((slug: string) => !recSet.has(slug)) // Exclude recommended slugs
+          .slice(0, 5);
 
         if (altSlugs.length > 0) {
           // Try to hydrate these with batch API too
@@ -188,10 +257,73 @@ export default function Alternatives({ currentWhopSlug }: { currentWhopSlug: str
           }
         }
 
+        // Final fallback: if API also returned nothing, try graph anyway (regardless of env flag)
+        if (hydratedAlternatives.length === 0) {
+          try {
+            const neighbors = await loadNeighbors();
+            const rawAltSlugs = getNeighborSlugsFor(neighbors, canonicalSlug, 'alternatives');
+
+            // Still need to exclude recommendations to maintain disjointness
+            let fallbackRecSlugs: string[] = [];
+            try {
+              fallbackRecSlugs = getNeighborSlugsFor(neighbors, canonicalSlug, 'recommendations');
+            } catch {
+              // Continue without deduplication if needed
+            }
+            const fallbackRecSet = new Set(fallbackRecSlugs);
+
+            const slugs = Array.from(new Set(rawAltSlugs.filter(Boolean).filter(slug => !fallbackRecSet.has(slug)))).slice(0, 15);
+
+            if (slugs.length) {
+              const whopDetails = await fetchWhopDetails(slugs);
+              hydratedAlternatives = whopDetails.slice(0, 5).map((whop: any) => ({
+                id: whop.id,
+                name: whop.name,
+                slug: whop.slug,
+                logo: whop.logo,
+                description: whop.description,
+                category: whop.category,
+                price: whop.price,
+                rating: whop.rating || 0,
+                promoCodes: whop.promoCodes || []
+              }));
+
+              // Set fallback anchor texts using pretty names
+              for (const whop of hydratedAlternatives) {
+                if (!anchorBySlug.has(whop.slug)) {
+                  anchorBySlug.set(whop.slug, whop.name || pretty(whop.slug));
+                }
+              }
+
+              setAlternatives(hydratedAlternatives);
+              setAnchorTexts(anchorBySlug);
+              setDesc('Alternative offers that might interest you');
+
+              if (DEBUG && hydratedAlternatives.length > 0) {
+                console.log('♻️ API empty; used graph fallback for alternatives.');
+              }
+            }
+          } catch (e) {
+            if (DEBUG) console.warn('Graph fallback (alternatives) failed:', e);
+          }
+        }
+
         // Enhanced dev logging and error tracking
         if (DEBUG) {
           const graphUsed = useGraph && hydratedAlternatives.length > 0;
           const loadTime = (performance.now() - t0).toFixed(1);
+
+          // Get recommendations for logging overlap info
+          let recSlugsForLog: string[] = [];
+          try {
+            const neighbors = await loadNeighbors();
+            if (neighbors) {
+              recSlugsForLog = getNeighborSlugsFor(neighbors, canonicalSlug, 'recommendations');
+            }
+          } catch { /* ignore */ }
+
+          const altSlugsForLog = hydratedAlternatives.map(a => a.slug);
+          const overlap = altSlugsForLog.filter(slug => recSlugsForLog.includes(slug));
 
           console.log(`🔄 Alternatives for "${currentWhopSlug}": ${loadTime}ms`, {
             useGraph,
@@ -199,7 +331,12 @@ export default function Alternatives({ currentWhopSlug }: { currentWhopSlug: str
             count: hydratedAlternatives.length,
             anchors: anchorBySlug.size,
             editorialDesc: !!editorialDescription,
-            source: graphUsed ? 'graph+batch' : 'api+batch'
+            source: graphUsed ? 'graph+batch' : 'api+batch',
+            deduplication: {
+              recCount: recSlugsForLog.length,
+              overlap: overlap.length,
+              overlapping: overlap
+            }
           });
 
           // Log missing hydration

@@ -1,25 +1,29 @@
 // src/lib/graph.ts
+import { normalizeSlug } from './slug-normalize';
+
 export type NeighborData = { recommendations: string[]; alternatives: string[] };
 export type NeighborsMap = Record<string, NeighborData>;
 
 let cache: { neighbors?: NeighborsMap } = {};
 
 export async function loadNeighbors(): Promise<NeighborsMap> {
-  if (cache.neighbors) return cache.neighbors;
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL ?? ''}/data/graph/neighbors.json`, {
-    cache: 'force-cache',
-  });
-  if (!res.ok) throw new Error(`neighbors.json HTTP ${res.status}`);
-  const json = (await res.json()) as NeighborsMap;
-  cache.neighbors = json;
-  return json;
+  const res = await fetch('/data/graph/neighbors.json', { cache: 'no-store' });
+  if (!res.ok) throw new Error(`neighbors.json ${res.status}`);
+  const data = await res.json();  // flat: { [slug]: { recommendations, alternatives } }
+  if (process.env.NEXT_PUBLIC_DEBUG === 'true') {
+    console.log('[graph] keys:', Object.keys(data).length);
+  }
+  return data;
 }
 
 export function getNeighborSlugsFor(
-  map: NeighborsMap,
+  neighbors: Record<string, { recommendations?: string[]; alternatives?: string[] }>,
   slug: string,
-  kind: 'recommendations' | 'alternatives'
+  kind: 'recommendations'|'alternatives'
 ): string[] {
-  const entry = map[slug.toLowerCase()];
-  return entry?.[kind] ?? [];
+  const s = normalizeSlug(slug);
+  const entry = neighbors[s] || neighbors[decodeURIComponent(s)] || neighbors[s.replace(/\s+/g,'-')];
+  if (!entry) return [];
+  const arr = (entry[kind] || []).filter(Boolean);
+  return Array.from(new Set(arr)); // de-dup
 }
