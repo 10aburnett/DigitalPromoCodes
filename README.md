@@ -283,6 +283,221 @@ npm run freshness:real+site
 
 **Note:** Gone URLs automatically get `410 status` + `X-Robots-Tag: noindex` until reactivated.
 
+## Deterministic Site Graph & Internal Linking System
+
+### Overview
+
+The application uses a deterministic site graph system to eliminate orphan pages and provide stable internal linking for SEO. This system pre-calculates all internal relationships and stores them as JSON artifacts, ensuring every whop page has guaranteed inbound links.
+
+### Key Benefits
+
+- **Zero Orphan Pages**: Every whop is guaranteed minimum 3 inbound links
+- **Deterministic Links**: Internal links never change between page refreshes
+- **SEO Safety**: Gone/404 URLs are completely excluded from internal linking
+- **Performance**: Pre-calculated relationships served from static JSON
+- **Instant Rollback**: Feature flag allows immediate switching between graph and live API
+
+### System Architecture
+
+#### 1. Graph Generation (`scripts/build-graph.ts`)
+
+**Purpose:** Builds the complete site graph by analyzing all active whops and computing similarity relationships.
+
+```bash
+# Generate the site graph (runs automatically in prebuild)
+npm run build:graph
+```
+
+**Process:**
+1. Loads all whops from database
+2. Excludes gone/retired whops using `gone.xml` sitemap
+3. Extracts topics using regex patterns (`src/lib/topics.ts`)
+4. Calculates recommendation scores (category match + topic similarity + price + quality)
+5. Calculates alternative scores (Jaccard similarity + price affinity)
+6. Guarantees minimum 3 inbound links per whop (eliminates orphans)
+7. Generates deterministic JSON artifacts
+
+**Output Files:**
+- `public/data/graph/neighbors.json` - Recommendations and alternatives for each whop
+- `public/data/graph/topics.json` - Whops grouped by topic
+- `public/data/graph/inbound-counts.json` - Inbound link counts per whop
+- `public/data/graph/stats.json` - Statistics and validation metrics
+
+#### 2. Graph Loader (`src/lib/graph.ts`)
+
+**Purpose:** Cached loader for accessing graph data with TypeScript types.
+
+```typescript
+import { loadNeighbors, getNeighborSlugsFor } from '@/lib/graph';
+
+// Load complete neighbors map
+const neighbors = await loadNeighbors();
+
+// Get recommendations for a specific whop
+const recommendations = getNeighborSlugsFor(neighbors, 'whop-slug', 'recommendations');
+
+// Get alternatives for a specific whop
+const alternatives = getNeighborSlugsFor(neighbors, 'whop-slug', 'alternatives');
+```
+
+#### 3. Component Integration
+
+**RecommendedWhops Component (`src/components/RecommendedWhops.tsx`):**
+- Graph-first: Loads slugs from `neighbors.json`, then fetches full details
+- API fallback: Falls back to live API if graph unavailable
+- Preserves all rich functionality (images, ratings, promo codes)
+
+**Alternatives Component (`src/components/Alternatives.tsx`):**
+- Graph-first: Gets slugs from `neighbors.json`
+- Enrichment: Calls API to get SEO-friendly anchor text for graph slugs
+- Editorial descriptions: Preserves editorial descriptions from API
+- Fallback: Complete API fallback if graph fails
+
+### Configuration
+
+#### Environment Variables
+
+```bash
+# Enable/disable graph system (instant toggle)
+NEXT_PUBLIC_USE_GRAPH_LINKS=true
+
+# Base URL for graph JSON fetching
+NEXT_PUBLIC_BASE_URL=https://whpcodes.com
+```
+
+#### Build Integration
+
+The graph is automatically built during production builds:
+
+```json
+// package.json
+"prebuild": "ts-node --transpile-only scripts/build-seo-indexes.ts && ts-node --transpile-only scripts/build-sitemaps.ts && npm run build:graph"
+```
+
+For CI environments without database access:
+```bash
+# Skip graph generation if no database
+BUILD_GRAPH=1 npm run build  # Only runs when BUILD_GRAPH=1 is set
+```
+
+### Monitoring & Validation
+
+#### Statistics Verification
+
+Check `public/data/graph/stats.json` after each build:
+
+```json
+{
+  "totalWhops": 5865,
+  "totalGoneWhops": 2354,
+  "totalTopics": 12,
+  "inboundStats": {
+    "min": 3,           // Should be >= 3 (guaranteed minimum)
+    "max": 717,
+    "avg": 8.29
+  },
+  "orphansEliminated": 2746,  // Number of orphans fixed
+  "guaranteedMinimum": 3      // Minimum inbound links per whop
+}
+```
+
+**Key Metrics:**
+- `orphansEliminated` > 0 = System is working
+- `inboundStats.min` >= 3 = No orphans remain
+- `totalWhops` - `totalGoneWhops` = Active whops processed
+
+#### Testing Procedures
+
+**1. Test Graph Loading:**
+```bash
+curl http://localhost:3000/data/graph/neighbors.json | head -c 200
+curl http://localhost:3000/data/graph/stats.json
+```
+
+**2. Test Feature Flag:**
+```bash
+# Enable graph
+echo "NEXT_PUBLIC_USE_GRAPH_LINKS=true" >> .env.local
+
+# Disable graph (fallback to API)
+echo "NEXT_PUBLIC_USE_GRAPH_LINKS=false" >> .env.local
+```
+
+**3. Validate Build:**
+```bash
+npm run build:dev  # Should complete without TypeScript errors
+```
+
+### Troubleshooting
+
+#### Common Issues
+
+**1. Graph files not found (404):**
+- Ensure `npm run build:graph` completed successfully
+- Check files exist in `public/data/graph/`
+- Verify `NEXT_PUBLIC_BASE_URL` is set correctly
+
+**2. Components showing no recommendations:**
+- Check browser console for fetch errors
+- Verify whop slug exists in `neighbors.json`
+- Test API fallback by setting `NEXT_PUBLIC_USE_GRAPH_LINKS=false`
+
+**3. Build failures:**
+- Ensure database is accessible during build
+- Check `scripts/build-graph.ts` for error messages
+- Verify Prisma client is properly configured
+
+#### Rollback Procedure
+
+To immediately revert to the old API-based system:
+
+```bash
+# 1. Disable graph feature
+echo "NEXT_PUBLIC_USE_GRAPH_LINKS=false" >> .env.local
+
+# 2. Restart application (components will use live APIs)
+npm run dev
+```
+
+The system will instantly fall back to the original API behavior with no other changes required.
+
+### Maintenance
+
+#### Regular Tasks
+
+**1. Regenerate graph after content changes:**
+```bash
+npm run build:graph  # After adding/removing whops
+```
+
+**2. Update CI/production environment:**
+```bash
+# Set in production environment
+USE_GRAPH_LINKS=true
+NEXT_PUBLIC_BASE_URL=https://whpcodes.com
+BUILD_GRAPH=1  # For CI builds with database access
+```
+
+**3. Monitor orphan metrics:**
+Check `stats.json` after each deployment to ensure `orphansEliminated` count and minimum inbound links.
+
+### Technical Details
+
+**Similarity Algorithms:**
+- **Recommendations**: Category match (100pt) + topic similarity (80pt primary, 25pt secondary) + price match (10pt) + quality bonus (rating * 2pt)
+- **Alternatives**: Jaccard similarity on topics (80% weight) + price affinity (20% weight)
+
+**Orphan Elimination:**
+- Identifies whops with < 3 inbound links
+- Finds topically similar whops not already linking to the orphan
+- Adds orphan to their alternatives lists until minimum threshold reached
+- Deterministically sorts all relationships for stability
+
+**Gone URL Safety:**
+- `scripts/build-graph.ts` excludes gone slugs using `src/lib/gone.ts`
+- API routes filter gone slugs using `isGoneSlug()` function
+- Double protection ensures no 404 links in internal navigation
+
 ## Contributing
 
 1. Fork the repository

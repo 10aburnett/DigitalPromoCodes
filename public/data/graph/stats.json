@@ -1,0 +1,12 @@
+{
+  "totalWhops": 5865,
+  "totalGoneWhops": 2354,
+  "totalTopics": 12,
+  "inboundStats": {
+    "min": 0,
+    "max": 717,
+    "avg": 8.29
+  },
+  "orphansEliminated": 2746,
+  "guaranteedMinimum": 3
+}

@@ -1,0 +1,13 @@
+{
+  "_comment": "Editorial overrides for alternative descriptions in SEO internal linking. Maps whop slug to custom description for alternatives sections.",
+  "_examples": {
+    "example-slug": "Browse premium trading tools and educational resources similar to this offering",
+    "another-example": "Discover other cryptocurrency trading courses and mentorship programs"
+  },
+  "_instructions": [
+    "Add slug-based overrides here to customize alternative section descriptions",
+    "Use reasoned, editorial language that explains WHY alternatives are relevant",
+    "Focus on topical relevance, not just generic 'similar products'",
+    "Keep descriptions under 120 characters for better UX"
+  ]
+}

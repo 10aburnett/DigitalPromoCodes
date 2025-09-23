@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { normalizeImagePath } from '@/lib/image-utils';
 import InitialsAvatar from './InitialsAvatar';
+import { loadNeighbors, getNeighborSlugsFor } from '@/lib/graph';
 
 interface PromoCode {
   id: string;
@@ -47,6 +48,23 @@ async function fetchRecommendations(slug: string) {
   return res.json();
 }
 
+async function fetchWhopDetails(slugs: string[]) {
+  const base = getBaseUrl();
+  if (!slugs.length) return [];
+
+  try {
+    const res = await fetch(
+      `${base}/api/whops/batch?slugs=${encodeURIComponent(slugs.join(','))}`,
+      { cache: 'no-store' }
+    );
+    if (!res.ok) return [];
+    const json = await res.json();
+    return json.whops ?? [];
+  } catch {
+    return [];
+  }
+}
+
 export default function RecommendedWhops({ currentWhopSlug }: RecommendedWhopsProps) {
   const [recommendations, setRecommendations] = useState<RecommendedWhop[]>([]);
   const [loading, setLoading] = useState(true);
@@ -57,15 +75,35 @@ export default function RecommendedWhops({ currentWhopSlug }: RecommendedWhopsPr
     const fetchRecommendationsData = async () => {
       try {
         setLoading(true);
-        const data = await fetchRecommendations(currentWhopSlug);
-        
-        // Clean up the recommendations data to match our interface
-        const cleanedRecommendations = (data.recommendations || []).map((rec: any) => {
-          // Remove the similarityScore property for clean display
-          const { similarityScore, ...cleanRec } = rec;
-          return cleanRec;
-        });
-        
+        const useGraph = process.env.NEXT_PUBLIC_USE_GRAPH_LINKS === 'true' || process.env.USE_GRAPH_LINKS === 'true';
+
+        let cleanedRecommendations: RecommendedWhop[] = [];
+
+        // 1) Try neighbors.json (deterministic, orphan-safe)
+        if (useGraph) {
+          try {
+            const neighbors = await loadNeighbors();
+            const slugs = getNeighborSlugsFor(neighbors, currentWhopSlug, 'recommendations').slice(0, 4);
+            if (slugs.length) {
+              // Hydrate with full whop details
+              const whopDetails = await fetchWhopDetails(slugs);
+              cleanedRecommendations = whopDetails.map((whop: any) => {
+                const { similarityScore, ...cleanRec } = whop;
+                return cleanRec;
+              });
+            }
+          } catch { /* fall back silently */ }
+        }
+
+        // 2) Fallback to API (dynamic) if graph didn't work or returned empty
+        if (cleanedRecommendations.length === 0) {
+          const data = await fetchRecommendations(currentWhopSlug);
+          cleanedRecommendations = (data.recommendations || []).map((rec: any) => {
+            const { similarityScore, ...cleanRec } = rec;
+            return cleanRec;
+          });
+        }
+
         setRecommendations(cleanedRecommendations);
         
         // Initialize image states for all recommendations
@@ -105,9 +143,9 @@ export default function RecommendedWhops({ currentWhopSlug }: RecommendedWhopsPr
         });
         
         setImageStates(newImageStates);
-        
-        // Log debug info in development
-        if (process.env.NODE_ENV === 'development' && data.debug) {
+
+        // Log debug info in development (only for API fallback path where data exists)
+        if (process.env.NODE_ENV === 'development' && typeof data !== 'undefined' && data?.debug) {
           console.log('🎯 Recommendation Debug:', data.debug);
         }
       } catch (err) {
