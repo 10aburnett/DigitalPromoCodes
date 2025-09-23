@@ -19,6 +19,7 @@ import InitialsAvatar from '@/components/InitialsAvatar';
 import WhopLogo from '@/components/WhopLogo';
 import WhopReviewSection from '@/components/WhopReviewSection';
 import RecommendedWhops from '@/components/RecommendedWhops';
+import Alternatives from '@/components/Alternatives';
 import FAQSection from '@/components/FAQSection';
 import WhopPageInteractive, { WhopPageCompactStats } from '@/components/WhopPageInteractive';
 import PromoCodeSubmissionButton from '@/components/PromoCodeSubmissionButton';
@@ -175,6 +176,10 @@ async function RecommendedSection({ currentWhopSlug }: { currentWhopSlug: string
   await new Promise(resolve => setTimeout(resolve, 100));
 
   return <RecommendedWhops currentWhopSlug={currentWhopSlug} />;
+}
+
+async function AlternativesSection({ currentWhopSlug }: { currentWhopSlug: string }) {
+  return <Alternatives currentWhopSlug={currentWhopSlug} />;
 }
 
 async function ReviewsSection({ whopId, whopName, reviews }: { whopId: string; whopName: string; reviews: any[] }) {
@@ -841,6 +846,14 @@ export default async function WhopPage({ params }: { params: { slug: string } })
           <div className="max-w-2xl mx-auto">
             <Suspense fallback={<SectionSkeleton />}>
               <RecommendedSection currentWhopSlug={params.slug} />
+            </Suspense>
+          </div>
+
+          {/* Alternatives Section - Topical clustering for SEO */}
+          <div className="max-w-2xl mx-auto">
+            <Suspense fallback={null}>
+              {/* @ts-expect-error Async Server Component */}
+              <AlternativesSection currentWhopSlug={params.slug} />
             </Suspense>
           </div>
 

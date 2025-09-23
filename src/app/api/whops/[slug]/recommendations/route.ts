@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { isGoneSlug } from '@/lib/gone';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -246,8 +247,17 @@ export async function GET(req: Request, { params }: { params: { slug: string } }
       take: 200 // Increased to get more candidates for better filtering
     });
 
+    // Filter out gone slugs to prevent 404 links in internal linking
+    const filteredCandidates = [];
+    for (const c of candidateWhops) {
+      const slug = (c.slug || '').toLowerCase();
+      if (!slug) continue;
+      if (await isGoneSlug(slug)) continue;
+      filteredCandidates.push(c);
+    }
+
     // Calculate similarity scores and filter for relevance
-    const scoredCandidates = candidateWhops
+    const scoredCandidates = filteredCandidates
       .map(candidate => ({
         ...candidate,
         similarityScore: calculateSimilarityScore(currentWhop, candidate)
@@ -286,6 +296,7 @@ export async function GET(req: Request, { params }: { params: { slug: string } }
           )
         })),
         totalCandidates: candidateWhops.length,
+        filteredCandidates: filteredCandidates.length,
         relevantCandidates: scoredCandidates.length
       } : undefined
     }), {
