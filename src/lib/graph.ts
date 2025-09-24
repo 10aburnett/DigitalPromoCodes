@@ -7,29 +7,23 @@ export type NeighborsMap = Record<string, NeighborData>;
 let cache: { neighbors?: NeighborsMap } = {};
 
 const GRAPH_URL =
-  process.env.NEXT_PUBLIC_GRAPH_URL || '/data/graph/neighbors.json';
+  (process.env.NEXT_PUBLIC_GRAPH_URL && process.env.NEXT_PUBLIC_GRAPH_URL.trim()) ||
+  '/data/graph/neighbors.json';
 
-const GRAPH_VERSION =
-  process.env.NEXT_PUBLIC_GRAPH_VERSION ||
-  process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA ||
-  'v0';
+const GRAPH_VER = process.env.NEXT_PUBLIC_GRAPH_VERSION || '';
 
 export async function loadNeighbors(): Promise<NeighborsMap> {
-  // Always build versioned URL to bust caches
-  const url = `${GRAPH_URL}${GRAPH_URL.includes('?') ? '&' : '?'}v=${GRAPH_VERSION}`;
+  const url = GRAPH_VER
+    ? `${GRAPH_URL}${GRAPH_URL.includes('?') ? '&' : '?'}v=${encodeURIComponent(GRAPH_VER)}`
+    : GRAPH_URL;
 
-  // Force fresh fetch to avoid cache issues
-  const res = await fetch(url, {
-    cache: 'no-store',
-    headers: {
-      'Cache-Control': 'no-cache',
-      'Pragma': 'no-cache'
-    }
-  });
-
-  if (!res.ok) {
-    throw new Error(`Failed to load graph: ${res.status} from ${url}`);
+  if (typeof window !== 'undefined') {
+    console.debug('[graph] url in browser:', url);
+    (window as any).__WHOP_GRAPH_URL = url;
   }
+
+  const res = await fetch(url, { cache: 'no-store' });
+  if (!res.ok) throw new Error(`Graph fetch failed ${res.status}`);
 
   const data = await res.json();
   const keys = Object.keys(data).length;
@@ -42,7 +36,7 @@ export async function loadNeighbors(): Promise<NeighborsMap> {
     console.log('[graph] Loaded:', {
       url,
       keys,
-      version: GRAPH_VERSION,
+      version: GRAPH_VER,
       sampleKeys: Object.keys(data).slice(0, 3),
       env: process.env.NODE_ENV
     });
@@ -53,7 +47,7 @@ export async function loadNeighbors(): Promise<NeighborsMap> {
     (window as any).__graphDebug = {
       url,
       keys,
-      version: GRAPH_VERSION,
+      version: GRAPH_VER,
       timestamp: new Date().toISOString()
     };
   }

@@ -113,6 +113,53 @@ The ChatGPT algorithm implements a sophisticated SEO optimization strategy:
    npx ts-node scripts/build-and-publish-graph-optimized.ts
    ```
 
+### ⚠️ CRITICAL: Update Version After Rebuild
+
+**Every time you rebuild the graph, you MUST:**
+
+1. **Commit the new graph file:**
+   ```bash
+   git add public/data/graph/neighbors.json
+   git commit -m "chore: update graph with new whops/algorithm"
+   git push
+   ```
+
+2. **Update Vercel environment variable:**
+   - Go to Vercel Dashboard → Your Project → Settings → Environment Variables
+   - Update `NEXT_PUBLIC_GRAPH_VERSION` to new value (e.g., `2024-09-24-abc1234`)
+   - Use format: `YYYY-MM-DD-<git-commit-sha>`
+
+3. **Redeploy production:**
+   - Vercel will auto-deploy when you push, OR
+   - Manually trigger deployment in Vercel dashboard
+
+**Why this is required:**
+- `NEXT_PUBLIC_GRAPH_VERSION` is your **cache buster**
+- Without bumping it, browsers/CDNs serve old cached graph data
+- Production will show outdated recommendations/alternatives
+- **Rule: New graph data = Bump version string**
+
+### Quick Reference Commands
+
+```bash
+# 1. Rebuild graph
+npx ts-node scripts/build-graph-chatgpt.ts
+
+# 2. Get commit SHA for version
+git log --oneline -1
+
+# 3. Commit new graph
+git add public/data/graph/neighbors.json
+git commit -m "chore: rebuild graph $(date +%Y-%m-%d)"
+git push
+
+# 4. Update Vercel env var
+# NEXT_PUBLIC_GRAPH_VERSION=2024-09-24-<new-commit-sha>
+
+# 5. Verify on production
+# Check window.__graphDebug.version in browser DevTools
+```
+
 ### Environment Variables
 
 **For Graph Building:**
@@ -123,6 +170,63 @@ The ChatGPT algorithm implements a sophisticated SEO optimization strategy:
 - `NEXT_PUBLIC_USE_GRAPH_LINKS=true` - Enable graph-based links over API
 - `NEXT_PUBLIC_GRAPH_URL` - Custom graph file location (optional)
 - `NEXT_PUBLIC_GRAPH_VERSION` - Cache busting version (optional)
+
+## Production/Localhost Parity Configuration
+
+To ensure production and localhost show identical recommendations and alternatives, set these Vercel environment variables:
+
+### Required Production Environment Variables
+
+```bash
+# Lock prod to graph-only mode (no API divergence)
+NEXT_PUBLIC_USE_GRAPH_LINKS=true
+
+# Point to canonical graph URL (update when publishing new graph)
+NEXT_PUBLIC_GRAPH_URL=/data/graph/neighbors.json
+# OR for external CDN: https://your-cdn.com/graph/neighbors-latest.json
+
+# Cache busting version (update whenever you publish new graph)
+NEXT_PUBLIC_GRAPH_VERSION=2024-01-15-abc123f
+
+# Optional: Disable API fallback for perfect parity testing
+NEXT_PUBLIC_DISABLE_API_FALLBACK=true
+```
+
+### How It Works
+
+1. **Canonical URL**: `NEXT_PUBLIC_GRAPH_URL` forces prod to use exact same graph file as local
+2. **Cache Busting**: `NEXT_PUBLIC_GRAPH_VERSION` prevents CDN/Vercel edge caching old graph
+3. **Graph Priority**: `NEXT_PUBLIC_USE_GRAPH_LINKS=true` ensures graph is tried first
+4. **API Disable**: `NEXT_PUBLIC_DISABLE_API_FALLBACK=true` prevents fallback to different DB
+
+### Verification Steps
+
+**Check graph URL in production:**
+```javascript
+// In browser DevTools on prod page
+console.log('Graph URL:', window.__WHOP_GRAPH_URL);
+console.log('Graph debug:', window.__graphDebug);
+```
+
+**Verify data source:**
+```javascript
+// Check what source was used for recommendations
+console.log('Rec debug:', window.__whpRecDebug);
+console.log('Alt debug:', window.__whpAltDebug);
+
+// Should show source: "graph+batch" on both prod and local
+```
+
+**Hash comparison (bulletproof verification):**
+```bash
+# Local hash
+shasum -a 256 public/data/graph/neighbors.json
+
+# Production hash (replace with your actual env vars)
+curl -sL "$NEXT_PUBLIC_GRAPH_URL?v=$NEXT_PUBLIC_GRAPH_VERSION" | shasum -a 256
+
+# Hashes should match exactly
+```
 
 ## Quality Assurance
 

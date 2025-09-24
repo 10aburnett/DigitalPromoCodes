@@ -119,6 +119,7 @@ export default function Alternatives({ currentWhopSlug }: { currentWhopSlug: str
   useEffect(() => {
     (async () => {
       const DEBUG = process.env.NODE_ENV === 'development' || process.env.NEXT_PUBLIC_DEBUG === 'true';
+      const disableApi = process.env.NEXT_PUBLIC_DISABLE_API_FALLBACK === 'true';
       const t0 = performance.now();
 
       try {
@@ -209,59 +210,61 @@ export default function Alternatives({ currentWhopSlug }: { currentWhopSlug: str
         }
 
         // Fallback: use API's computed list directly
-        const res = await fetch(
-          `${base}/api/whops/${apiSlug}/alternatives`,
-          { cache: 'no-store' }
-        );
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const data = await res.json();
+        if (!disableApi) {
+          const res = await fetch(
+            `${base}/api/whops/${apiSlug}/alternatives`,
+            { cache: 'no-store' }
+          );
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          const data = await res.json();
 
-        // Get recommended slugs to exclude them from alternatives (keep sections distinct)
-        let recSlugs: string[] = [];
-        try {
-          const neighbors = await loadNeighbors();
-          if (neighbors) {
-            recSlugs = getNeighborSlugsFor(neighbors, canonicalSlug, 'recommendations');
-          }
-        } catch {
-          // Continue without deduplication if graph loading fails
-        }
-        const recSet = new Set(recSlugs);
-
-        const altSlugs = (data?.alternatives ?? [])
-          .map((a: any) => a.slug)
-          .filter(Boolean)
-          .filter((slug: string) => !recSet.has(slug)) // Exclude recommended slugs
-          .slice(0, 5);
-
-        if (altSlugs.length > 0) {
-          // Try to hydrate these with batch API too
-          const whopDetails = await fetchWhopDetails(altSlugs);
-
-          if (whopDetails.length > 0) {
-            // Map anchor texts from API data
-            for (const a of data?.alternatives ?? []) {
-              if (a?.slug) anchorBySlug.set(a.slug, a.anchorText || a.name || pretty(a.slug));
+          // Get recommended slugs to exclude them from alternatives (keep sections distinct)
+          let recSlugs: string[] = [];
+          try {
+            const neighbors = await loadNeighbors();
+            if (neighbors) {
+              recSlugs = getNeighborSlugsFor(neighbors, canonicalSlug, 'recommendations');
             }
+          } catch {
+            // Continue without deduplication if graph loading fails
+          }
+          const recSet = new Set(recSlugs);
 
-            hydratedAlternatives = whopDetails.map((whop: any) => {
-              const r = Number(whop.rating ?? whop.averageRating);
-              return {
-                id: whop.id,
-                name: whop.name,
-                slug: whop.slug,
-                logo: whop.logo,
-                description: whop.description,
-                category: whop.category,
-                price: whop.price,
-                rating: Number.isFinite(r) && r > 0 ? r : undefined,
-                promoCodes: whop.promoCodes || []
-              };
-            });
+          const altSlugs = (data?.alternatives ?? [])
+            .map((a: any) => a.slug)
+            .filter(Boolean)
+            .filter((slug: string) => !recSet.has(slug)) // Exclude recommended slugs
+            .slice(0, 5);
 
-            setAlternatives(hydratedAlternatives);
-            setAnchorTexts(anchorBySlug);
-            setDesc(data?.editorialDescription || '');
+          if (altSlugs.length > 0) {
+            // Try to hydrate these with batch API too
+            const whopDetails = await fetchWhopDetails(altSlugs);
+
+            if (whopDetails.length > 0) {
+              // Map anchor texts from API data
+              for (const a of data?.alternatives ?? []) {
+                if (a?.slug) anchorBySlug.set(a.slug, a.anchorText || a.name || pretty(a.slug));
+              }
+
+              hydratedAlternatives = whopDetails.map((whop: any) => {
+                const r = Number(whop.rating ?? whop.averageRating);
+                return {
+                  id: whop.id,
+                  name: whop.name,
+                  slug: whop.slug,
+                  logo: whop.logo,
+                  description: whop.description,
+                  category: whop.category,
+                  price: whop.price,
+                  rating: Number.isFinite(r) && r > 0 ? r : undefined,
+                  promoCodes: whop.promoCodes || []
+                };
+              });
+
+              setAlternatives(hydratedAlternatives);
+              setAnchorTexts(anchorBySlug);
+              setDesc(data?.editorialDescription || '');
+            }
           }
         }
 

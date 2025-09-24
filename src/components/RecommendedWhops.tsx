@@ -108,6 +108,7 @@ export default function RecommendedWhops({ currentWhopSlug }: RecommendedWhopsPr
   useEffect(() => {
     const fetchRecommendationsData = async () => {
       const DEBUG = process.env.NODE_ENV === 'development' || process.env.NEXT_PUBLIC_DEBUG === 'true';
+      const disableApi = process.env.NEXT_PUBLIC_DISABLE_API_FALLBACK === 'true';
       const t0 = performance.now();
       let dataSource = 'none';          // <- never "unknown"
       let data: any | undefined = undefined;
@@ -156,7 +157,7 @@ export default function RecommendedWhops({ currentWhopSlug }: RecommendedWhopsPr
         }
 
         // 2) API fallback
-        if (cleanedRecommendations.length === 0) {
+        if (!disableApi && cleanedRecommendations.length === 0) {
           try {
             data = await fetchRecommendations(apiSlug);
             const apiRecs = (data?.recommendations || []).map(({ similarityScore, rating, reviewsCount, ...rest }: any) => {

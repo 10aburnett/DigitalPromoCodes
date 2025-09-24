@@ -33,10 +33,11 @@ interface SiteGraph {
 
 const prisma = new PrismaClient();
 
-// Constants matching current API behavior
-const MAX_RECOMMENDATIONS = 4;
-const MAX_ALTERNATIVES = 6;
-const MIN_INBOUND_LINKS = 3; // Guarantee minimum inbound links per whop
+// Constants for ChatGPT 5-pass SEO graph optimization
+const MAX_RECOMMENDATIONS = 4; // RECS_PER_PAGE
+const MAX_ALTERNATIVES = 5; // ALTS_PER_PAGE
+const K_MAX_INBOUND = 200; // Global hub cap - hard limit
+const M_MIN_INBOUND = 3; // Minimum to avoid orphans
 const MIN_RECOMMENDATIONS = 3; // Ensure sections always show
 const RECOMMENDATION_THRESHOLD = 20; // Same as current API
 const ALTERNATIVES_THRESHOLD = 0.1; // Same as current API
@@ -90,8 +91,18 @@ async function buildSiteGraph(): Promise<void> {
     inboundCounts: {},
   };
 
-  // Build neighbors for each whop
-  console.log('🔗 Computing similarity scores and building neighbor lists...');
+  // ChatGPT 5-Pass SEO Graph Optimization Algorithm
+  console.log('🚀 Starting ChatGPT 5-Pass SEO Graph Optimization...');
+
+  // Initialize tracking maps
+  const inboundCounts = new Map<string, number>();
+  for (const whop of activeWhops) {
+    inboundCounts.set(whop.slug, 0);
+  }
+
+  // PASS A: Build Candidate Pools
+  console.log('📋 Pass A: Building candidate pools...');
+  const candidatePools = new Map<string, { recommendations: any[], alternatives: any[] }>();
 
   for (let i = 0; i < activeWhops.length; i++) {
     const currentWhop = activeWhops[i];
@@ -101,7 +112,7 @@ async function buildSiteGraph(): Promise<void> {
       console.log(`  Progress: ${i}/${activeWhops.length} (${Math.round(i/activeWhops.length*100)}%)`);
     }
 
-    // Calculate recommendations (using same algorithm as current API)
+    // Calculate recommendation scores
     const recommendationScores = candidates.map(candidate => {
       let score = 0;
 
@@ -143,7 +154,7 @@ async function buildSiteGraph(): Promise<void> {
       return { candidate, score };
     });
 
-    // Calculate alternatives (using same algorithm as current API)
+    // Calculate alternative scores
     const alternativeScores = candidates.map(candidate => {
       const topicSimilarity = jaccard(currentWhop.topics, candidate.topics);
       const priceSimilarity = priceAffinity(currentWhop.price, candidate.price);
@@ -152,66 +163,225 @@ async function buildSiteGraph(): Promise<void> {
       return { candidate, score: combinedScore };
     });
 
-    // Select top recommendations and alternatives (with validation)
-    const recommendations = recommendationScores
+    // Build candidate pools (larger than final selection for diversity)
+    const recCandidates = recommendationScores
       .filter(item => item.score >= RECOMMENDATION_THRESHOLD)
-      .filter(item => isValidSlug(item.candidate.slug)) // Filter out invalid slugs
+      .filter(item => isValidSlug(item.candidate.slug))
       .sort((a, b) => {
         if (b.score !== a.score) return b.score - a.score;
         if ((b.candidate.rating ?? 0) !== (a.candidate.rating ?? 0)) {
           return (b.candidate.rating ?? 0) - (a.candidate.rating ?? 0);
         }
-        return a.candidate.slug.localeCompare(b.candidate.slug); // Deterministic fallback
+        return a.candidate.slug.localeCompare(b.candidate.slug);
       })
-      .slice(0, MAX_RECOMMENDATIONS)
-      .map(item => item.candidate.slug);
+      .slice(0, MAX_RECOMMENDATIONS * 3); // 3x pool size for diversity
 
-    const rawAlternatives = alternativeScores
+    const altCandidates = alternativeScores
       .filter(item => item.score > ALTERNATIVES_THRESHOLD)
-      .filter(item => isValidSlug(item.candidate.slug)) // Filter out invalid slugs
+      .filter(item => isValidSlug(item.candidate.slug))
       .sort((a, b) => {
         if (b.score !== a.score) return b.score - a.score;
         if ((b.candidate.rating ?? 0) !== (a.candidate.rating ?? 0)) {
           return (b.candidate.rating ?? 0) - (a.candidate.rating ?? 0);
         }
-        return a.candidate.slug.localeCompare(b.candidate.slug); // Deterministic fallback
+        return a.candidate.slug.localeCompare(b.candidate.slug);
       })
-      .map(item => item.candidate.slug);
+      .slice(0, MAX_ALTERNATIVES * 3); // 3x pool size for diversity
 
-    // Make alternatives disjoint from recommendations (keep sections distinct)
-    const recSet = new Set(recommendations);
-    let alternatives = rawAlternatives
-      .filter(slug => !recSet.has(slug))
-      .slice(0, MAX_ALTERNATIVES);
+    candidatePools.set(currentWhop.slug, {
+      recommendations: recCandidates,
+      alternatives: altCandidates
+    });
+  }
 
-    // Backfill alternatives if deduplication made the list too short
-    if (alternatives.length < Math.min(3, MAX_ALTERNATIVES)) {
-      const usedSet = new Set([...recommendations, ...alternatives, currentWhop.slug]);
+  // PASS B: Re-rank Recommendations with Diversity and Hub Cap Enforcement
+  console.log('🎯 Pass B: Re-ranking with diversity and hub cap enforcement...');
 
-      // Find candidates by topic similarity, excluding already used slugs
-      const backfillCandidates = candidates
-        .filter(item => !usedSet.has(item.slug))
-        .filter(item => isValidSlug(item.slug)) // Filter out invalid slugs
-        .map(item => ({
-          slug: item.slug,
-          score: jaccard(currentWhop.topics, item.topics),
-          rating: item.rating ?? 0,
-        }))
-        .sort((a, b) => {
-          if (b.score !== a.score) return b.score - a.score;
-          if (b.rating !== a.rating) return b.rating - a.rating;
-          return a.slug.localeCompare(b.slug); // Deterministic fallback
-        })
-        .slice(0, MAX_ALTERNATIVES - alternatives.length)
-        .map(item => item.slug);
+  for (const whop of activeWhops) {
+    const pool = candidatePools.get(whop.slug)!;
+    const recommendations: string[] = [];
 
-      alternatives = [...alternatives, ...backfillCandidates];
+    for (const candidate of pool.recommendations) {
+      if (recommendations.length >= MAX_RECOMMENDATIONS) break;
+
+      // Hub cap check - skip if target already at cap
+      if ((inboundCounts.get(candidate.candidate.slug) || 0) >= K_MAX_INBOUND) {
+        continue;
+      }
+
+      recommendations.push(candidate.candidate.slug);
+      inboundCounts.set(candidate.candidate.slug, (inboundCounts.get(candidate.candidate.slug) || 0) + 1);
     }
 
-    siteGraph.neighbors[currentWhop.slug] = {
+    siteGraph.neighbors[whop.slug] = {
       recommendations,
-      alternatives,
+      alternatives: [] // Will be filled in Pass E
     };
+  }
+
+  console.log(`  Pass B complete: ${Object.keys(siteGraph.neighbors).length} whops have recommendations`);
+
+  // PASS D: Rotation to Avoid Duplicates (ensure disjoint sets)
+  console.log('🔄 Pass D: Rotating to avoid recommendation/alternative duplicates...');
+  // This is implemented inherently by building alternatives separately from recommendations
+
+  // PASS E: Build Alternatives with Hub Cap Enforcement
+  console.log('🔗 Pass E: Building alternatives with hub cap enforcement...');
+
+  const currentInbound = new Map(inboundCounts); // Copy for alternatives tracking
+
+  for (const whop of activeWhops) {
+    const pool = candidatePools.get(whop.slug)!;
+    const existingRecs = new Set(siteGraph.neighbors[whop.slug].recommendations);
+    const alternatives: string[] = [];
+
+    for (const candidate of pool.alternatives) {
+      if (alternatives.length >= MAX_ALTERNATIVES) break;
+
+      // Skip if already in recommendations (maintain disjoint sets)
+      if (existingRecs.has(candidate.candidate.slug)) continue;
+
+      // Hub cap check - skip if target already at cap
+      if ((currentInbound.get(candidate.candidate.slug) || 0) >= K_MAX_INBOUND) {
+        continue;
+      }
+
+      alternatives.push(candidate.candidate.slug);
+      currentInbound.set(candidate.candidate.slug, (currentInbound.get(candidate.candidate.slug) || 0) + 1);
+    }
+
+    siteGraph.neighbors[whop.slug].alternatives = alternatives;
+  }
+
+  console.log(`  Pass E complete: alternatives added with hub cap enforcement`);
+
+  // Update inbound counts with alternatives
+  for (const [slug, count] of currentInbound) {
+    inboundCounts.set(slug, count);
+  }
+
+  // PASS C: Orphan Rescue with Strict Hub Cap Enforcement
+  console.log('🚑 Pass C: Orphan rescue with strict hub cap enforcement...');
+
+  let round = 1;
+  let totalOrphansRescued = 0;
+
+  while (round <= 5) { // Max 5 rounds to prevent infinite loops
+    const orphans = activeWhops.filter(whop =>
+      (inboundCounts.get(whop.slug) || 0) < M_MIN_INBOUND
+    );
+
+    if (orphans.length === 0) {
+      console.log(`  All orphans rescued after ${round - 1} rounds!`);
+      break;
+    }
+
+    console.log(`  Round ${round}: Rescuing ${orphans.length} orphans...`);
+    let rescuedThisRound = 0;
+
+    for (const orphan of orphans) {
+      const needed = M_MIN_INBOUND - (inboundCounts.get(orphan.slug) || 0);
+      if (needed <= 0) continue;
+
+      // Skip if orphan itself is at hub cap (shouldn't happen but safety check)
+      if ((inboundCounts.get(orphan.slug) || 0) >= K_MAX_INBOUND) {
+        console.log(`  Warning: Orphan ${orphan.slug} is at hub cap - skipping`);
+        continue;
+      }
+
+      // Find potential linkers sorted by similarity
+      const potentialLinkers = activeWhops
+        .filter(other => other.slug !== orphan.slug)
+        .filter(other => isValidSlug(other.slug))
+        .filter(other => {
+          const neighbors = siteGraph.neighbors[other.slug];
+          return !neighbors.alternatives.includes(orphan.slug) &&
+                 !neighbors.recommendations.includes(orphan.slug);
+        })
+        .filter(other => {
+          // Only use linkers that have room in their alternatives
+          return siteGraph.neighbors[other.slug].alternatives.length < MAX_ALTERNATIVES;
+        })
+        .map(other => ({
+          slug: other.slug,
+          similarity: jaccard(orphan.topics, other.topics),
+        }))
+        .sort((a, b) => {
+          if (b.similarity !== a.similarity) return b.similarity - a.similarity;
+          return a.slug.localeCompare(b.slug); // Deterministic
+        });
+
+      let linksAdded = 0;
+      for (const linker of potentialLinkers) {
+        if (linksAdded >= needed) break;
+
+        // Final hub cap check before adding link
+        if ((inboundCounts.get(orphan.slug) || 0) >= K_MAX_INBOUND) {
+          console.log(`  Orphan ${orphan.slug} reached hub cap during rescue`);
+          break;
+        }
+
+        // Add to alternatives
+        siteGraph.neighbors[linker.slug].alternatives.push(orphan.slug);
+        inboundCounts.set(orphan.slug, (inboundCounts.get(orphan.slug) || 0) + 1);
+        linksAdded++;
+        rescuedThisRound++;
+      }
+
+      // If we're in a desperate round (3+), try adding to recommendations too
+      if (round >= 3 && linksAdded < needed) {
+        const desperateLinkers = activeWhops
+          .filter(other => other.slug !== orphan.slug)
+          .filter(other => isValidSlug(other.slug))
+          .filter(other => {
+            const neighbors = siteGraph.neighbors[other.slug];
+            return !neighbors.alternatives.includes(orphan.slug) &&
+                   !neighbors.recommendations.includes(orphan.slug);
+          })
+          .filter(other => {
+            return siteGraph.neighbors[other.slug].recommendations.length < MAX_RECOMMENDATIONS;
+          })
+          .map(other => ({
+            slug: other.slug,
+            similarity: jaccard(orphan.topics, other.topics),
+          }))
+          .sort((a, b) => {
+            if (b.similarity !== a.similarity) return b.similarity - a.similarity;
+            return a.slug.localeCompare(b.slug);
+          });
+
+        for (const linker of desperateLinkers) {
+          if (linksAdded >= needed) break;
+
+          // Final hub cap check
+          if ((inboundCounts.get(orphan.slug) || 0) >= K_MAX_INBOUND) {
+            break;
+          }
+
+          siteGraph.neighbors[linker.slug].recommendations.push(orphan.slug);
+          inboundCounts.set(orphan.slug, (inboundCounts.get(orphan.slug) || 0) + 1);
+          linksAdded++;
+          rescuedThisRound++;
+        }
+      }
+    }
+
+    console.log(`  Round ${round} rescued ${rescuedThisRound} orphan links`);
+    totalOrphansRescued += rescuedThisRound;
+
+    if (rescuedThisRound === 0) {
+      console.log(`  No progress in round ${round} - stopping orphan rescue`);
+      break;
+    }
+
+    round++;
+  }
+
+  console.log(`✅ Orphan rescue complete: ${totalOrphansRescued} links added`);
+
+  // Convert inboundCounts Map to siteGraph object
+  for (const [slug, count] of inboundCounts) {
+    siteGraph.inboundCounts[slug] = count;
   }
 
   // Build topics map
@@ -244,49 +414,7 @@ async function buildSiteGraph(): Promise<void> {
     }
   }
 
-  // Guarantee minimum inbound links (eliminate orphans)
-  console.log(`🔒 Ensuring minimum ${MIN_INBOUND_LINKS} inbound links per whop...`);
-
-  let orphansFixed = 0;
-  for (const whop of activeWhops) {
-    const currentCount = siteGraph.inboundCounts[whop.slug] || 0;
-
-    if (currentCount < MIN_INBOUND_LINKS) {
-      const needed = MIN_INBOUND_LINKS - currentCount;
-
-      // Find closest peers not already linking to this whop
-      const potentialLinkers = activeWhops
-        .filter(other => other.slug !== whop.slug)
-        .filter(other => isValidSlug(other.slug)) // Filter out invalid slugs
-        .filter(other => {
-          const neighbors = siteGraph.neighbors[other.slug];
-          return !neighbors.alternatives.includes(whop.slug) &&
-                 !neighbors.recommendations.includes(whop.slug);
-        })
-        .map(other => ({
-          slug: other.slug,
-          similarity: jaccard(whop.topics, other.topics),
-        }))
-        .sort((a, b) => b.similarity - a.similarity)
-        .slice(0, needed);
-
-      // Add this whop to their alternatives lists
-      for (const linker of potentialLinkers) {
-        const neighbors = siteGraph.neighbors[linker.slug];
-        if (neighbors.alternatives.length < MAX_ALTERNATIVES) {
-          neighbors.alternatives.push(whop.slug);
-          siteGraph.inboundCounts[whop.slug]++;
-        }
-      }
-
-      if (potentialLinkers.length > 0) {
-        orphansFixed++;
-        console.log(`  Fixed orphan: ${whop.slug} (was ${currentCount}, now ${siteGraph.inboundCounts[whop.slug]} inbound)`);
-      }
-    }
-  }
-
-  console.log(`✅ Fixed ${orphansFixed} orphan pages`);
+  // Orphan fixing is now handled by Pass C above
 
   // Guarantee minimum recommendations (ensure sections always show)
   console.log(`🔒 Ensuring minimum ${MIN_RECOMMENDATIONS} recommendations per whop...`);
@@ -389,8 +517,9 @@ async function buildSiteGraph(): Promise<void> {
       max: Math.max(...Object.values(siteGraph.inboundCounts)),
       avg: Math.round(Object.values(siteGraph.inboundCounts).reduce((a, b) => a + b, 0) / activeWhops.length * 100) / 100,
     },
-    orphansEliminated: orphansFixed,
-    guaranteedMinimum: MIN_INBOUND_LINKS,
+    orphansEliminated: totalOrphansRescued,
+    guaranteedMinimum: M_MIN_INBOUND,
+    hubCapLimit: K_MAX_INBOUND,
   };
 
   await fs.writeFile(
@@ -402,8 +531,35 @@ async function buildSiteGraph(): Promise<void> {
   console.log(`  Total active whops: ${stats.totalWhops}`);
   console.log(`  Total topics: ${stats.totalTopics}`);
   console.log(`  Inbound links - Min: ${stats.inboundStats.min}, Max: ${stats.inboundStats.max}, Avg: ${stats.inboundStats.avg}`);
-  console.log(`  Orphans eliminated: ${stats.orphansEliminated}`);
+  console.log(`  Orphan links added: ${stats.orphansEliminated}`);
   console.log(`  Guaranteed minimum links per whop: ${stats.guaranteedMinimum}`);
+  console.log(`  Hub cap limit: ${stats.hubCapLimit}`);
+
+  // QA Gates: Validate hub cap compliance
+  const finalOrphans = Object.values(siteGraph.inboundCounts).filter(count => count < M_MIN_INBOUND).length;
+  const maxInbound = Math.max(...Object.values(siteGraph.inboundCounts));
+  const hubCapViolations = Object.values(siteGraph.inboundCounts).filter(count => count > K_MAX_INBOUND).length;
+
+  console.log('\n🔍 QA Gates:');
+  console.log(`  Orphans remaining: ${finalOrphans}`);
+  console.log(`  Max inbound links: ${maxInbound}`);
+  console.log(`  Hub cap violations: ${hubCapViolations}`);
+
+  if (finalOrphans > 0) {
+    console.warn(`⚠️  Warning: ${finalOrphans} orphans remain`);
+  }
+
+  if (maxInbound > K_MAX_INBOUND) {
+    console.warn(`⚠️  Warning: Max inbound (${maxInbound}) exceeds hub cap limit (${K_MAX_INBOUND})`);
+  }
+
+  if (hubCapViolations > 0) {
+    console.warn(`⚠️  Warning: ${hubCapViolations} pages exceed hub cap limit`);
+  }
+
+  if (finalOrphans === 0 && hubCapViolations === 0) {
+    console.log('✅ All QA gates passed!');
+  }
 
   console.log('\n✅ Site graph generation complete!');
   console.log('📁 Generated files:');
