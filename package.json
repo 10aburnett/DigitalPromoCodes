@@ -10,6 +10,7 @@
     "build:proofs": "ts-node scripts/build-proof-manifest.ts",
     "build:verifyjson": "ts-node scripts/copy-verification-to-public.ts",
     "build:graph": "ts-node --transpile-only scripts/build-graph.ts",
+    "graph:publish": "ts-node --transpile-only scripts/build-and-publish-graph.ts",
     "fix:beforecents": "ts-node scripts/fix-beforecents.ts --write",
     "prebuild": "ts-node --transpile-only scripts/build-seo-indexes.ts && ts-node --transpile-only scripts/build-sitemaps.ts",
     "prebuild:with-graph": "ts-node --transpile-only scripts/build-seo-indexes.ts && ts-node --transpile-only scripts/build-sitemaps.ts && npm run build:graph",
