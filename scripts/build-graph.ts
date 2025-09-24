@@ -37,8 +37,20 @@ const prisma = new PrismaClient();
 const MAX_RECOMMENDATIONS = 4;
 const MAX_ALTERNATIVES = 6;
 const MIN_INBOUND_LINKS = 3; // Guarantee minimum inbound links per whop
+const MIN_RECOMMENDATIONS = 3; // Ensure sections always show
 const RECOMMENDATION_THRESHOLD = 20; // Same as current API
 const ALTERNATIVES_THRESHOLD = 0.1; // Same as current API
+
+// Validation function to filter out invalid slugs
+function isValidSlug(slug: string): boolean {
+  return slug &&
+         typeof slug === 'string' &&
+         slug.length >= 2 &&
+         slug.trim() !== '' &&
+         slug !== '-' &&
+         !slug.startsWith('-') &&
+         slug.match(/^[a-z0-9-]+$/i);
+}
 
 async function buildSiteGraph(): Promise<void> {
   console.log('🔍 Loading all whops from database...');
@@ -140,9 +152,10 @@ async function buildSiteGraph(): Promise<void> {
       return { candidate, score: combinedScore };
     });
 
-    // Select top recommendations and alternatives
+    // Select top recommendations and alternatives (with validation)
     const recommendations = recommendationScores
       .filter(item => item.score >= RECOMMENDATION_THRESHOLD)
+      .filter(item => isValidSlug(item.candidate.slug)) // Filter out invalid slugs
       .sort((a, b) => {
         if (b.score !== a.score) return b.score - a.score;
         if ((b.candidate.rating ?? 0) !== (a.candidate.rating ?? 0)) {
@@ -153,8 +166,9 @@ async function buildSiteGraph(): Promise<void> {
       .slice(0, MAX_RECOMMENDATIONS)
       .map(item => item.candidate.slug);
 
-    const alternatives = alternativeScores
+    const rawAlternatives = alternativeScores
       .filter(item => item.score > ALTERNATIVES_THRESHOLD)
+      .filter(item => isValidSlug(item.candidate.slug)) // Filter out invalid slugs
       .sort((a, b) => {
         if (b.score !== a.score) return b.score - a.score;
         if ((b.candidate.rating ?? 0) !== (a.candidate.rating ?? 0)) {
@@ -162,8 +176,37 @@ async function buildSiteGraph(): Promise<void> {
         }
         return a.candidate.slug.localeCompare(b.candidate.slug); // Deterministic fallback
       })
-      .slice(0, MAX_ALTERNATIVES)
       .map(item => item.candidate.slug);
+
+    // Make alternatives disjoint from recommendations (keep sections distinct)
+    const recSet = new Set(recommendations);
+    let alternatives = rawAlternatives
+      .filter(slug => !recSet.has(slug))
+      .slice(0, MAX_ALTERNATIVES);
+
+    // Backfill alternatives if deduplication made the list too short
+    if (alternatives.length < Math.min(3, MAX_ALTERNATIVES)) {
+      const usedSet = new Set([...recommendations, ...alternatives, currentWhop.slug]);
+
+      // Find candidates by topic similarity, excluding already used slugs
+      const backfillCandidates = candidates
+        .filter(item => !usedSet.has(item.slug))
+        .filter(item => isValidSlug(item.slug)) // Filter out invalid slugs
+        .map(item => ({
+          slug: item.slug,
+          score: jaccard(currentWhop.topics, item.topics),
+          rating: item.rating ?? 0,
+        }))
+        .sort((a, b) => {
+          if (b.score !== a.score) return b.score - a.score;
+          if (b.rating !== a.rating) return b.rating - a.rating;
+          return a.slug.localeCompare(b.slug); // Deterministic fallback
+        })
+        .slice(0, MAX_ALTERNATIVES - alternatives.length)
+        .map(item => item.slug);
+
+      alternatives = [...alternatives, ...backfillCandidates];
+    }
 
     siteGraph.neighbors[currentWhop.slug] = {
       recommendations,
@@ -214,6 +257,7 @@ async function buildSiteGraph(): Promise<void> {
       // Find closest peers not already linking to this whop
       const potentialLinkers = activeWhops
         .filter(other => other.slug !== whop.slug)
+        .filter(other => isValidSlug(other.slug)) // Filter out invalid slugs
         .filter(other => {
           const neighbors = siteGraph.neighbors[other.slug];
           return !neighbors.alternatives.includes(whop.slug) &&
@@ -243,6 +287,76 @@ async function buildSiteGraph(): Promise<void> {
   }
 
   console.log(`✅ Fixed ${orphansFixed} orphan pages`);
+
+  // Guarantee minimum recommendations (ensure sections always show)
+  console.log(`🔒 Ensuring minimum ${MIN_RECOMMENDATIONS} recommendations per whop...`);
+
+  let recsFixed = 0;
+  for (const whop of activeWhops) {
+    const currentRecs = siteGraph.neighbors[whop.slug]?.recommendations || [];
+
+    if (currentRecs.length < MIN_RECOMMENDATIONS) {
+      const needed = MIN_RECOMMENDATIONS - currentRecs.length;
+
+      // Find closest peers not already in recommendations or alternatives
+      const usedSet = new Set([
+        ...currentRecs,
+        ...(siteGraph.neighbors[whop.slug]?.alternatives || []),
+        whop.slug
+      ]);
+
+      const potentialRecs = activeWhops
+        .filter(other => !usedSet.has(other.slug))
+        .filter(other => isValidSlug(other.slug)) // Filter out invalid slugs
+        .map(other => ({
+          slug: other.slug,
+          similarity: jaccard(whop.topics, other.topics),
+          rating: other.rating ?? 0,
+        }))
+        .sort((a, b) => {
+          if (b.similarity !== a.similarity) return b.similarity - a.similarity;
+          if (b.rating !== a.rating) return b.rating - a.rating;
+          return a.slug.localeCompare(b.slug); // Deterministic fallback
+        })
+        .slice(0, needed)
+        .map(item => item.slug);
+
+      // Add to recommendations list
+      if (potentialRecs.length > 0) {
+        const newRecs = [...currentRecs, ...potentialRecs];
+        siteGraph.neighbors[whop.slug] = {
+          ...siteGraph.neighbors[whop.slug],
+          recommendations: newRecs
+        };
+        recsFixed++;
+        console.log(`  Fixed recommendations: ${whop.slug} (was ${currentRecs.length}, now ${newRecs.length})`);
+      }
+    }
+  }
+
+  console.log(`✅ Fixed ${recsFixed} whops with insufficient recommendations`);
+
+  // Validate recommendations and alternatives are disjoint
+  console.log('🔍 Validating disjoint recommendations and alternatives...');
+  let duplicates = 0;
+  let totalWhops = 0;
+  for (const [slug, neighbors] of Object.entries(siteGraph.neighbors)) {
+    totalWhops++;
+    const recSet = new Set(neighbors.recommendations);
+    const overlaps = neighbors.alternatives.filter(altSlug => recSet.has(altSlug));
+    if (overlaps.length > 0) {
+      duplicates += overlaps.length;
+      console.error(`❌ ${slug}: overlaps found -`, overlaps);
+    }
+  }
+
+  if (duplicates > 0) {
+    console.error(`❌ Found ${duplicates} recommendation/alternative overlaps across ${totalWhops} whops`);
+    console.error('Graph validation failed - recommendations and alternatives must be disjoint');
+    process.exit(1);
+  }
+
+  console.log(`✅ Validated ${totalWhops} whops - no overlaps between recommendations and alternatives`);
 
   // Write output files
   console.log('💾 Writing graph files...');

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { normalizeImagePath } from '@/lib/image-utils';
@@ -34,90 +34,64 @@ export default function WhopCardLink({
     imageError: false
   });
 
+  // Precompute candidate alt paths ONCE per (title, imageUrl)
+  const altPaths = useMemo(() => {
+    const name = title?.trim() || '';
+    const clean = name.replace(/[^a-zA-Z0-9]/g, '');
+    return [
+      `/images/${name} Logo.png`,
+      `/images/${name.replace(/\s+/g, '')} Logo.png`,
+      `/images/${clean} Logo.png`,
+      `/images/${clean}Logo.png`,
+    ];
+  }, [title, imageUrl]);
+
+  // Track position in altPaths and whether we've already stripped @avif
+  const altIdxRef = useRef(0);
+  const strippedRef = useRef(false);
+
   useEffect(() => {
-    // Initialize image state
-    if (!imageUrl ||
-        imageUrl.trim() === '' ||
-        imageUrl === 'null' ||
-        imageUrl === 'undefined' ||
-        imageUrl === 'NULL' ||
-        imageUrl === 'UNDEFINED') {
+    // Initialize from imageUrl (your normalizeImagePath logic is fine)
+    // If invalid → go straight to initials (no attempts)
+    const url = (imageUrl || '').trim();
+    const normalized = url ? normalizeImagePath(url) : '';
+    if (
+      !normalized ||
+      normalized === '/images/.png' ||
+      normalized.endsWith('/.png') ||
+      normalized.includes('/images/undefined') ||
+      normalized.includes('/images/null') ||
+      normalized.includes('Simplified Logo')
+    ) {
       setImageState({ imagePath: '', imageError: true });
       return;
     }
-
-    let normalizedPath = normalizeImagePath(imageUrl);
-
-    // If the path is empty or clearly invalid, go straight to InitialsAvatar
-    if (!normalizedPath ||
-        normalizedPath.trim() === '' ||
-        normalizedPath === '/images/.png' ||
-        normalizedPath === '/images/undefined.png' ||
-        normalizedPath === '/images/Simplified Logo.png' ||
-        normalizedPath === '/images/null.png' ||
-        normalizedPath === '/images/NULL.png' ||
-        normalizedPath === '/images/UNDEFINED.png' ||
-        normalizedPath.endsWith('/.png') ||
-        normalizedPath.includes('/images/undefined') ||
-        normalizedPath.includes('/images/null') ||
-        normalizedPath.includes('Simplified Logo')) {
-      setImageState({ imagePath: '', imageError: true });
-      return;
-    }
-
-    setImageState({ imagePath: normalizedPath, imageError: false });
+    setImageState({ imagePath: normalized, imageError: false });
+    altIdxRef.current = 0;       // reset attempts when source changes
+    strippedRef.current = false;
   }, [imageUrl]);
 
-  // Load alternative logo paths to try
-  const getAlternativeLogoPaths = (whopName: string, originalPath: string) => {
-    const cleanName = whopName.replace(/[^a-zA-Z0-9]/g, '');
-    return [
-      `/images/${whopName} Logo.png`,
-      `/images/${whopName.replace(/\s+/g, '')} Logo.png`,
-      `/images/${cleanName} Logo.png`,
-      `/images/${cleanName}Logo.png`,
-      '/images/Simplified Logo.png'
-    ];
-  };
 
-  // Try next image in case of error
+  // Single-shot handler: at most two attempts → initials
   const handleImageError = () => {
-    const { imagePath } = imageState;
-    console.error(`Image failed to load: ${imagePath} for ${title}`);
+    const src = imageState.imagePath || '';
 
-    // If the current path has @avif, try without it first
-    if (imagePath.includes('@avif')) {
-      const pathWithoutAvif = imagePath.replace('@avif', '');
-      console.log(`Trying without @avif: ${pathWithoutAvif}`);
-      setImageState({ ...imageState, imagePath: pathWithoutAvif });
+    // First: if the current path had @avif, try once without it
+    if (src.includes('@avif') && !strippedRef.current) {
+      strippedRef.current = true;
+      setImageState(s => ({ ...s, imagePath: src.replace('@avif', '') }));
       return;
     }
 
-    // If the path looks like a placeholder or default image, go straight to InitialsAvatar
-    if (imagePath.includes('Simplified Logo') ||
-        imagePath.includes('default') ||
-        imagePath.includes('placeholder') ||
-        imagePath.includes('no-image') ||
-        imagePath.includes('missing')) {
-      console.log(`Placeholder detected, showing initials for ${title}`);
-      setImageState({ ...imageState, imageError: true });
+    // Second: try ONE alternative path from the memoized list
+    if (altIdxRef.current < altPaths.length) {
+      const next = altPaths[altIdxRef.current++];
+      setImageState(s => ({ ...s, imagePath: next }));
       return;
     }
 
-    // Get alternative paths
-    const alternativePaths = getAlternativeLogoPaths(title, imagePath);
-    const currentIndex = alternativePaths.indexOf(imagePath);
-
-    if (currentIndex < alternativePaths.length - 1) {
-      // Try next alternative
-      const nextPath = alternativePaths[currentIndex + 1];
-      console.log(`Trying alternative path: ${nextPath}`);
-      setImageState({ ...imageState, imagePath: nextPath });
-    } else {
-      // All alternatives failed, show initials
-      console.log(`All image paths failed for ${title}, showing initials`);
-      setImageState({ ...imageState, imageError: true });
-    }
+    // Done: render initials and never attempt again
+    setImageState(s => ({ ...s, imageError: true }));
   };
 
   const truncateDescription = (text: string | undefined, maxLength: number = 100) => {
@@ -156,7 +130,7 @@ export default function WhopCardLink({
           {/* Logo Section - Fixed 64px width/height to prevent CLS */}
           <div className="w-16 h-16 rounded-md overflow-hidden flex-shrink-0 bg-gray-800 flex items-center justify-center">
             {(() => {
-              if (imageState.imageError || !imageState.imagePath || imageState.imagePath.trim() === '') {
+              if (imageState.imageError || !imageState.imagePath?.trim()) {
                 return (
                   <InitialsAvatar
                     name={title}
@@ -166,6 +140,10 @@ export default function WhopCardLink({
                   />
                 );
               }
+
+              const isLocal = imageState.imagePath.startsWith('/');
+              const unoptimized = isLocal || imageState.imagePath.includes('@avif');
+
               return (
                 <Image
                   src={imageState.imagePath}
@@ -175,11 +153,11 @@ export default function WhopCardLink({
                   className="w-full h-full object-contain"
                   style={{ maxWidth: '100%', maxHeight: '100%' }}
                   onError={handleImageError}
-                  unoptimized={imageState.imagePath.includes('@avif')}
+                  unoptimized={unoptimized}
                   sizes="64px"
                   placeholder="blur"
                   blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAEAAQDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyytN5cFrKDsRXSJfAhvT7WinYGCvchOjJAMfNIXGiULZQ8qEzJQdEKKRjFiYqKJKEJxZJXiEH0RRN6mJzN5hJ8tP/Z"
-                  loading={priority ? "eager" : "lazy"}
+                  loading={priority ? 'eager' : 'lazy'}
                 />
               );
             })()}
