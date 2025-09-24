@@ -29,6 +29,11 @@ export default function WhopCardLink({
   rating,
   priority = false
 }: WhopCardLinkProps) {
+
+  // Debug logging to find the mystery "0"
+  if (process.env.NODE_ENV === 'development' && rating === 0) {
+    console.log('WhopCardLink received rating=0 for:', title, { rating, slug });
+  }
   const [imageState, setImageState] = useState<{ imagePath: string; imageError: boolean }>({
     imagePath: '',
     imageError: false
@@ -174,7 +179,7 @@ export default function WhopCardLink({
                   style={{ color: 'var(--text-color)' }}>
                 {title}
               </h3>
-              {rating && rating > 0 && (
+              {rating > 0 && (
                 <div className="flex items-center gap-1 flex-shrink-0">
                   <span className="text-yellow-400 text-xs">★</span>
                   <span className="text-xs" style={{ color: 'var(--text-secondary)' }}>

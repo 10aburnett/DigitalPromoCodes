@@ -179,17 +179,20 @@ export default function Alternatives({ currentWhopSlug }: { currentWhopSlug: str
                 }
 
                 // Transform whop details to alternatives format (slice to 5 after hydration)
-                hydratedAlternatives = whopDetails.slice(0, 5).map((whop: any) => ({
-                  id: whop.id,
-                  name: whop.name,
-                  slug: whop.slug,
-                  logo: whop.logo,
-                  description: whop.description,
-                  category: whop.category,
-                  price: whop.price,
-                  rating: whop.rating || 0,
-                  promoCodes: whop.promoCodes || []
-                }));
+                hydratedAlternatives = whopDetails.slice(0, 5).map((whop: any) => {
+                  const r = Number(whop.rating ?? whop.averageRating);
+                  return {
+                    id: whop.id,
+                    name: whop.name,
+                    slug: whop.slug,
+                    logo: whop.logo,
+                    description: whop.description,
+                    category: whop.category,
+                    price: whop.price,
+                    rating: Number.isFinite(r) && r > 0 ? r : undefined,
+                    promoCodes: whop.promoCodes || []
+                  };
+                });
 
                 setAlternatives(hydratedAlternatives);
                 setAnchorTexts(anchorBySlug);
@@ -239,17 +242,20 @@ export default function Alternatives({ currentWhopSlug }: { currentWhopSlug: str
               if (a?.slug) anchorBySlug.set(a.slug, a.anchorText || a.name || pretty(a.slug));
             }
 
-            hydratedAlternatives = whopDetails.map((whop: any) => ({
-              id: whop.id,
-              name: whop.name,
-              slug: whop.slug,
-              logo: whop.logo,
-              description: whop.description,
-              category: whop.category,
-              price: whop.price,
-              rating: whop.rating || 0,
-              promoCodes: whop.promoCodes || []
-            }));
+            hydratedAlternatives = whopDetails.map((whop: any) => {
+              const r = Number(whop.rating ?? whop.averageRating);
+              return {
+                id: whop.id,
+                name: whop.name,
+                slug: whop.slug,
+                logo: whop.logo,
+                description: whop.description,
+                category: whop.category,
+                price: whop.price,
+                rating: Number.isFinite(r) && r > 0 ? r : undefined,
+                promoCodes: whop.promoCodes || []
+              };
+            });
 
             setAlternatives(hydratedAlternatives);
             setAnchorTexts(anchorBySlug);
@@ -276,17 +282,20 @@ export default function Alternatives({ currentWhopSlug }: { currentWhopSlug: str
 
             if (slugs.length) {
               const whopDetails = await fetchWhopDetails(slugs);
-              hydratedAlternatives = whopDetails.slice(0, 5).map((whop: any) => ({
-                id: whop.id,
-                name: whop.name,
-                slug: whop.slug,
-                logo: whop.logo,
-                description: whop.description,
-                category: whop.category,
-                price: whop.price,
-                rating: whop.rating || 0,
-                promoCodes: whop.promoCodes || []
-              }));
+              hydratedAlternatives = whopDetails.slice(0, 5).map((whop: any) => {
+                const r = Number(whop.rating ?? whop.averageRating);
+                return {
+                  id: whop.id,
+                  name: whop.name,
+                  slug: whop.slug,
+                  logo: whop.logo,
+                  description: whop.description,
+                  category: whop.category,
+                  price: whop.price,
+                  rating: Number.isFinite(r) && r > 0 ? r : undefined,
+                  promoCodes: whop.promoCodes || []
+                };
+              });
 
               // Set fallback anchor texts using pretty names
               for (const whop of hydratedAlternatives) {
