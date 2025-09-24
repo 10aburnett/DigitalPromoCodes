@@ -74,6 +74,13 @@ const nextConfig = {
         ],
       },
       {
+        source: '/data/graph/:path*',
+        headers: [
+          { key: 'Content-Type', value: 'application/json; charset=utf-8' },
+          { key: 'Cache-Control', value: 'public, max-age=60, s-maxage=60' }, // 1 minute for graph files
+        ],
+      },
+      {
         source: '/data/:path*',
         headers: [
           { key: 'Content-Type', value: 'application/json; charset=utf-8' },

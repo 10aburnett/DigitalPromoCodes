@@ -31,15 +31,17 @@ export async function GET(req: Request) {
     // Map PromoCode -> promoCodes and calculate average rating
     const payload = whops.map(w => {
       const ratings = w.Review?.map(r => r.rating).filter(Boolean) || [];
-      const averageRating = ratings.length > 0
-        ? ratings.reduce((sum, rating) => sum + rating, 0) / ratings.length
-        : 0;
+      const reviewsCount = ratings.length;
+      const averageRating = reviewsCount > 0
+        ? ratings.reduce((sum, rating) => sum + rating, 0) / reviewsCount
+        : undefined; // Don't coalesce to 0
 
       return {
         ...w,
         promoCodes: w.PromoCode || [],
-        rating: averageRating,
-        reviewsCount: ratings.length
+        // Important: only include rating when there are actual reviews
+        rating: reviewsCount > 0 ? Number(averageRating) : undefined,
+        reviewsCount
       };
     });
 

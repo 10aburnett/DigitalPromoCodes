@@ -365,6 +365,19 @@ export default function Alternatives({ currentWhopSlug }: { currentWhopSlug: str
           }
         }
 
+        // Debug hook for troubleshooting
+        if (typeof window !== 'undefined') {
+          (window as any).__whpAltDebug = {
+            slug: currentWhopSlug,
+            canonicalSlug,
+            count: hydratedAlternatives.length,
+            hydrated: hydratedAlternatives.map(w => w.slug),
+            useGraph,
+            graphUsed: useGraph && hydratedAlternatives.length > 0,
+            editorialDesc: !!editorialDescription
+          };
+        }
+
         setLoading(false);
       } catch (e: any) {
         console.error('Error fetching alternatives:', e);

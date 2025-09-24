@@ -137,11 +137,13 @@ export default function RecommendedWhops({ currentWhopSlug }: RecommendedWhopsPr
 
           const { items, reasons } = await hydrateViaGraph(canonicalSlug);
           if (items.length > 0) {
-            cleanedRecommendations = items.map(({ similarityScore, ...item }: any) => {
-              const r = Number(item.rating ?? item.averageRating);
+            cleanedRecommendations = items.map(({ similarityScore, rating, reviewsCount, ...rest }: any) => {
+              const safeRating = reviewsCount && reviewsCount > 0 ? rating : undefined;
               return {
-                ...item,
-                rating: Number.isFinite(r) && r > 0 ? r : undefined
+                ...rest,
+                rating: safeRating,
+                reviewsCount,
+                promoCodes: rest.promoCodes || []
               };
             });
             dataSource = 'graph+batch';
@@ -156,11 +158,13 @@ export default function RecommendedWhops({ currentWhopSlug }: RecommendedWhopsPr
         if (cleanedRecommendations.length === 0) {
           try {
             data = await fetchRecommendations(apiSlug);
-            const apiRecs = (data?.recommendations || []).map(({ similarityScore, ...item }: any) => {
-              const r = Number(item.rating ?? item.averageRating);
+            const apiRecs = (data?.recommendations || []).map(({ similarityScore, rating, reviewsCount, ...rest }: any) => {
+              const safeRating = reviewsCount && reviewsCount > 0 ? rating : undefined;
               return {
-                ...item,
-                rating: Number.isFinite(r) && r > 0 ? r : undefined
+                ...rest,
+                rating: safeRating,
+                reviewsCount,
+                promoCodes: rest.promoCodes || []
               };
             });
             if (apiRecs.length > 0) {
@@ -179,11 +183,13 @@ export default function RecommendedWhops({ currentWhopSlug }: RecommendedWhopsPr
         if (cleanedRecommendations.length === 0) {
           const { items, reasons } = await hydrateViaGraph(canonicalSlug);
           if (items.length > 0) {
-            cleanedRecommendations = items.map(({ similarityScore, ...item }: any) => {
-              const r = Number(item.rating ?? item.averageRating);
+            cleanedRecommendations = items.map(({ similarityScore, rating, reviewsCount, ...rest }: any) => {
+              const safeRating = reviewsCount && reviewsCount > 0 ? rating : undefined;
               return {
-                ...item,
-                rating: Number.isFinite(r) && r > 0 ? r : undefined
+                ...rest,
+                rating: safeRating,
+                reviewsCount,
+                promoCodes: rest.promoCodes || []
               };
             });
             dataSource = dataSource.includes('graph') ? `${dataSource}` : 'graph-fallback';
@@ -223,6 +229,18 @@ export default function RecommendedWhops({ currentWhopSlug }: RecommendedWhopsPr
         }
 
         setRecommendations(cleanedRecommendations);
+
+        // Debug hook for troubleshooting
+        if (typeof window !== 'undefined') {
+          (window as any).__whpRecDebug = {
+            slug: currentWhopSlug,
+            dataSource,
+            hydrated: cleanedRecommendations.map(w => w.slug),
+            count: cleanedRecommendations.length,
+            useGraph,
+            graphUsed: dataSource.includes('graph')
+          };
+        }
 
         // --- DEBUG (always derives graphUsed from dataSource)
         if (DEBUG) {
