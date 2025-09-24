@@ -176,6 +176,34 @@ export default function RecommendedWhops({ currentWhopSlug }: RecommendedWhopsPr
           }
         }
 
+        // 4) Safety net: graph-only cards (even if batch API fails)
+        if (cleanedRecommendations.length === 0) {
+          try {
+            const neighbors = await loadNeighbors();
+            const rawRecSlugs = getNeighborSlugsFor(neighbors, canonicalSlug, 'recommendations');
+            const slugs = Array.from(new Set(rawRecSlugs.filter(Boolean))).slice(0, 4);
+
+            if (slugs.length > 0) {
+              // Graph-only fallback: render link-only cards (SEO-safe anchors) so the section always shows
+              cleanedRecommendations = slugs.map((slug: string) => ({
+                id: slug,
+                name: slug.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
+                slug,
+                logo: null,
+                description: null,
+                category: null,
+                price: null,
+                rating: 0,
+                promoCodes: []
+              }));
+              dataSource = 'graph-slugs-only'; // for logging
+              if (DEBUG) console.log('🔗 Using graph-only safety net with', slugs.length, 'slugs');
+            }
+          } catch (e) {
+            if (DEBUG) console.warn('Graph safety net failed:', e);
+          }
+        }
+
         setRecommendations(cleanedRecommendations);
 
         // --- DEBUG (always derives graphUsed from dataSource)
