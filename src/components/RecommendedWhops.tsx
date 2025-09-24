@@ -137,7 +137,13 @@ export default function RecommendedWhops({ currentWhopSlug }: RecommendedWhopsPr
 
           const { items, reasons } = await hydrateViaGraph(canonicalSlug);
           if (items.length > 0) {
-            cleanedRecommendations = items.map(({ similarityScore, ...rest }: any) => rest);
+            cleanedRecommendations = items.map(({ similarityScore, ...item }: any) => {
+              const r = Number(item.rating ?? item.averageRating);
+              return {
+                ...item,
+                rating: Number.isFinite(r) && r > 0 ? r : undefined
+              };
+            });
             dataSource = 'graph+batch';
           } else {
             // keep the reasons so we can log them later
@@ -150,7 +156,13 @@ export default function RecommendedWhops({ currentWhopSlug }: RecommendedWhopsPr
         if (cleanedRecommendations.length === 0) {
           try {
             data = await fetchRecommendations(apiSlug);
-            const apiRecs = (data?.recommendations || []).map(({ similarityScore, ...r }: any) => r);
+            const apiRecs = (data?.recommendations || []).map(({ similarityScore, ...item }: any) => {
+              const r = Number(item.rating ?? item.averageRating);
+              return {
+                ...item,
+                rating: Number.isFinite(r) && r > 0 ? r : undefined
+              };
+            });
             if (apiRecs.length > 0) {
               cleanedRecommendations = apiRecs;
               dataSource = 'api';
@@ -167,7 +179,13 @@ export default function RecommendedWhops({ currentWhopSlug }: RecommendedWhopsPr
         if (cleanedRecommendations.length === 0) {
           const { items, reasons } = await hydrateViaGraph(canonicalSlug);
           if (items.length > 0) {
-            cleanedRecommendations = items.map(({ similarityScore, ...rest }: any) => rest);
+            cleanedRecommendations = items.map(({ similarityScore, ...item }: any) => {
+              const r = Number(item.rating ?? item.averageRating);
+              return {
+                ...item,
+                rating: Number.isFinite(r) && r > 0 ? r : undefined
+              };
+            });
             dataSource = dataSource.includes('graph') ? `${dataSource}` : 'graph-fallback';
             if (DEBUG) console.log('♻️ Used graph fallback for recommendations.');
           } else {
@@ -193,7 +211,7 @@ export default function RecommendedWhops({ currentWhopSlug }: RecommendedWhopsPr
                 description: null,
                 category: null,
                 price: null,
-                rating: 0,
+                rating: undefined,
                 promoCodes: []
               }));
               dataSource = 'graph-slugs-only'; // for logging

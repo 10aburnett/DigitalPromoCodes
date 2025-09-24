@@ -21,16 +21,34 @@ export async function GET(req: Request) {
       include: {
         PromoCode: {
           select: { id: true, title: true, type: true, value: true, code: true }
+        },
+        Review: {
+          select: { rating: true }
         }
       }
     });
 
-    // Map PromoCode -> promoCodes to match your card component props
-    const payload = whops.map(w => ({ ...w, promoCodes: w.PromoCode || [] }));
+    // Map PromoCode -> promoCodes and calculate average rating
+    const payload = whops.map(w => {
+      const ratings = w.Review?.map(r => r.rating).filter(Boolean) || [];
+      const averageRating = ratings.length > 0
+        ? ratings.reduce((sum, rating) => sum + rating, 0) / ratings.length
+        : 0;
+
+      return {
+        ...w,
+        promoCodes: w.PromoCode || [],
+        rating: averageRating,
+        reviewsCount: ratings.length
+      };
+    });
 
     return new Response(JSON.stringify({ whops: payload }), {
       status: 200,
-      headers: { 'Content-Type': 'application/json' }
+      headers: {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'no-store, no-cache, max-age=0, must-revalidate'
+      }
     });
   } catch (err) {
     console.error('batch whops error', err);
