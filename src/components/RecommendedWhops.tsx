@@ -197,6 +197,17 @@ export default function RecommendedWhops({ currentWhopSlug }: RecommendedWhopsPr
             });
           }
         }
+
+        // --- PRODUCTION GUARD (temporary logging for Vercel debugging)
+        if (process.env.NODE_ENV === 'production' && cleanedRecommendations.length < 3) {
+          console.warn('[rec-guard] under-minimum', {
+            slug: currentWhopSlug,
+            canonicalSlug,
+            source: dataSource,
+            graphUrl: '/data/graph/neighbors.json',
+            count: cleanedRecommendations.length
+          });
+        }
       } catch (err) {
         console.error('Error fetching recommendations:', err);
         setError('Failed to load recommendations');
