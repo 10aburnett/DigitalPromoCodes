@@ -179,7 +179,7 @@ export default function WhopCardLink({
                   style={{ color: 'var(--text-color)' }}>
                 {title}
               </h3>
-              {rating > 0 && (
+              {typeof rating === 'number' && rating > 0 && (
                 <div className="flex items-center gap-1 flex-shrink-0">
                   <span className="text-yellow-400 text-xs">★</span>
                   <span className="text-xs" style={{ color: 'var(--text-secondary)' }}>

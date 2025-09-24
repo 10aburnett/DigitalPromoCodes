@@ -6,12 +6,18 @@ export type NeighborsMap = Record<string, NeighborData>;
 
 let cache: { neighbors?: NeighborsMap } = {};
 
+const GRAPH_VERSION =
+  process.env.NEXT_PUBLIC_GRAPH_VERSION ||
+  process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA ||
+  '';
+
 export async function loadNeighbors(): Promise<NeighborsMap> {
-  const res = await fetch('/data/graph/neighbors.json', { cache: 'no-store' });
+  const url = `/data/graph/neighbors.json${GRAPH_VERSION ? `?v=${GRAPH_VERSION}` : ''}`;
+  const res = await fetch(url, { cache: 'no-store' });
   if (!res.ok) throw new Error(`neighbors.json ${res.status}`);
   const data = await res.json();  // flat: { [slug]: { recommendations, alternatives } }
   if (process.env.NEXT_PUBLIC_DEBUG === 'true') {
-    console.log('[graph] keys:', Object.keys(data).length);
+    console.log('[graph] keys:', Object.keys(data).length, 'version:', GRAPH_VERSION);
   }
   return data;
 }
