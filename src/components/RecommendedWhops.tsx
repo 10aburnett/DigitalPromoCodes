@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import WhopCardLink from './WhopCardLink';
 import SectionPanel from './SectionPanel';
-import { loadNeighbors, getNeighborSlugsFor } from '@/lib/graph';
+import { loadNeighbors, getNeighborSlugsFor, getExploreFor } from '@/lib/graph';
 import { getBaseUrl } from '@/lib/base-url';
 import { normalizeSlug, encodeSlugForAPI } from '@/lib/slug-normalize';
 
@@ -103,6 +103,7 @@ export default function RecommendedWhops({ currentWhopSlug }: RecommendedWhopsPr
   const [recommendations, setRecommendations] = useState<RecommendedWhop[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [explore, setExplore] = useState<{ slug: string; name: string; category?: string } | null>(null);
 
   useEffect(() => {
     const fetchRecommendationsData = async () => {
@@ -229,6 +230,28 @@ export default function RecommendedWhops({ currentWhopSlug }: RecommendedWhopsPr
         }
 
         setRecommendations(cleanedRecommendations);
+
+        // Fetch explore link
+        try {
+          const neighbors = await loadNeighbors();
+          const exploreSlug = getExploreFor(neighbors as any, canonicalSlug);
+
+          // Avoid duplicates: if explore equals a shown recommendation, skip
+          const shownSlugs = new Set(cleanedRecommendations.map(r => r.slug));
+          if (exploreSlug && !shownSlugs.has(exploreSlug)) {
+            const details = await fetchWhopDetails([exploreSlug]);
+            if (details && details.length > 0) {
+              const item = details[0];
+              setExplore({
+                slug: item.slug,
+                name: item.name,
+                category: item.category ?? undefined
+              });
+            }
+          }
+        } catch {
+          // Silent fail for explore link
+        }
 
         // Debug hook for troubleshooting
         if (typeof window !== 'undefined') {
@@ -358,6 +381,30 @@ export default function RecommendedWhops({ currentWhopSlug }: RecommendedWhopsPr
           />
         ))}
       </div>
+
+      {/* Explore link (optional, small + unobtrusive) */}
+      {explore && (
+        <div
+          className="mt-6 rounded-lg border p-4"
+          style={{ borderColor: 'var(--border-color)', backgroundColor: 'var(--background-color)' }}
+        >
+          <div className="flex flex-wrap items-center gap-2 text-sm">
+            <span style={{ color: 'var(--text-secondary)' }}>
+              Explore another{explore.category ? ` in ${explore.category}` : ''}:
+            </span>
+            <Link
+              href={`/whop/${explore.slug}`}
+              className="inline-flex items-center font-medium hover:opacity-80 transition-opacity"
+              style={{ color: 'var(--accent-color)' }}
+            >
+              {explore.name}
+              <svg xmlns="http://www.w3.org/2000/svg" className="ml-1 h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </Link>
+          </div>
+        </div>
+      )}
 
       {/* View More Link - SEO-friendly with consistent URL structure */}
       <div className="mt-8 text-center">

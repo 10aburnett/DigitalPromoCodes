@@ -1,9 +1,10 @@
 'use client';
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import WhopCardLink from './WhopCardLink';
 import SectionPanel from './SectionPanel';
 import { getBaseUrl } from '@/lib/base-url';
-import { loadNeighbors, getNeighborSlugsFor } from '@/lib/graph';
+import { loadNeighbors, getNeighborSlugsFor, getExploreFor } from '@/lib/graph';
 import { normalizeSlug, encodeSlugForAPI } from '@/lib/slug-normalize';
 
 interface PromoCode {
@@ -34,6 +35,7 @@ export default function Alternatives({ currentWhopSlug }: { currentWhopSlug: str
   const [desc, setDesc] = useState<string>('');
   const [err, setErr] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [explore, setExplore] = useState<{ slug: string; name: string; category?: string } | null>(null);
 
   // simple fallback title from slug
   const pretty = (s: string) =>
@@ -378,6 +380,28 @@ export default function Alternatives({ currentWhopSlug }: { currentWhopSlug: str
           };
         }
 
+        // Fetch explore link
+        try {
+          const neighbors = await loadNeighbors();
+          const exploreSlug = getExploreFor(neighbors as any, canonicalSlug);
+
+          // Avoid duplicates: if explore equals a shown alternative, skip
+          const shownSlugs = new Set(hydratedAlternatives.map(r => r.slug));
+          if (exploreSlug && !shownSlugs.has(exploreSlug)) {
+            const details = await fetchWhopDetails([exploreSlug]);
+            if (details && details.length > 0) {
+              const item = details[0];
+              setExplore({
+                slug: item.slug,
+                name: item.name,
+                category: item.category ?? undefined
+              });
+            }
+          }
+        } catch {
+          // Silent fail for explore link
+        }
+
         setLoading(false);
       } catch (e: any) {
         console.error('Error fetching alternatives:', e);
@@ -443,6 +467,30 @@ export default function Alternatives({ currentWhopSlug }: { currentWhopSlug: str
             );
           })}
         </div>
+
+        {/* Explore link (optional, small + unobtrusive) */}
+        {explore && (
+          <div
+            className="mt-6 rounded-lg border p-4"
+            style={{ borderColor: 'var(--border-color)', backgroundColor: 'var(--background-color)' }}
+          >
+            <div className="flex flex-wrap items-center gap-2 text-sm">
+              <span style={{ color: 'var(--text-secondary)' }}>
+                Explore another{explore.category ? ` in ${explore.category}` : ''}:
+              </span>
+              <Link
+                href={`/whop/${explore.slug}`}
+                className="inline-flex items-center font-medium hover:opacity-80 transition-opacity"
+                style={{ color: 'var(--accent-color)' }}
+              >
+                {explore.name}
+                <svg xmlns="http://www.w3.org/2000/svg" className="ml-1 h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </Link>
+            </div>
+          </div>
+        )}
 
         {/* JSON-LD Structured Data for SEO */}
         {alternatives.length > 0 && (
