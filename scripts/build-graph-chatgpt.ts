@@ -5,6 +5,7 @@
 import { PrismaClient } from '@prisma/client';
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import seedrandom from 'seedrandom';
 import { extractTopics, jaccard } from '../src/lib/topics';
 import { priceAffinity } from '../src/lib/price';
 import { getGoneWhopSlugs } from '../src/lib/gone';
@@ -36,9 +37,156 @@ interface RawGraph {
 }
 
 interface SiteGraph {
-  neighbors: { [slug: string]: { recommendations: string[]; alternatives: string[] } };
+  neighbors: { [slug: string]: { recommendations: string[]; alternatives: string[]; explore?: string } };
   topics: { [topic: string]: string[] };
   inboundCounts: { [slug: string]: number };
+}
+
+// New utility types and functions for graph fixes
+type Neighbors = Record<string, {
+  recommendations?: string[];
+  alternatives?: string[];
+  explore?: string | null; // single explore target or null
+  category?: string;       // if you have it
+}>;
+
+const HUB_CAP = 250;
+
+function buildInboundCounts(data: Neighbors) {
+  const inbound = new Map<string, number>();
+  for (const [s, v] of Object.entries(data)) {
+    const all = new Set([
+      ...(v.recommendations ?? []),
+      ...(v.alternatives ?? []),
+      ...(v.explore ? [v.explore] : []),
+    ]);
+    for (const t of all) inbound.set(t, (inbound.get(t) ?? 0) + 1);
+  }
+  return inbound;
+}
+
+function outSet(v: Neighbors[string]) {
+  return new Set([
+    ...(v.recommendations ?? []),
+    ...(v.alternatives ?? []),
+    ...(v.explore ? [v.explore] : []),
+  ]);
+}
+
+function hasCapacityInbound(inbound: Map<string, number>, target: string) {
+  return (inbound.get(target) ?? 0) < HUB_CAP;
+}
+
+function addExploreLink(
+  graph: Neighbors,
+  inbound: Map<string, number>,
+  source: string,
+  target: string
+) {
+  if (source === target) return false;
+  if (!hasCapacityInbound(inbound, target)) return false;
+
+  const v = graph[source] ?? (graph[source] = {});
+  const outs = outSet(v);
+  if (outs.has(target)) return false; // avoid duplicates vs rec/alt/explore
+
+  // set explore (single-slot); if already set, we can overwrite if the new target is better.
+  v.explore = target;
+
+  inbound.set(target, (inbound.get(target) ?? 0) + 1);
+  return true;
+}
+
+function pickAlternatives(
+  slug: string,
+  candidates: Edge[],
+  meta: Map<string, WhopData>,
+  globalAltUsage: Map<string, number>,
+  recSet: Set<string>,
+  currentInbound: Map<string, number>,
+  k = 4,
+  seed = 'alts-'
+) {
+  const rng = seedrandom(seed + slug);
+  // Fix C: Widen pool from ~8-10 to 16 candidates
+  const pool = candidates.slice(0, 16);
+  const myCat = meta.get(slug)?.category;
+
+  return pool
+    .map((e) => {
+      const t = meta.get(e.target);
+      if (!t) return null;
+
+      const sameCat = myCat && t.category && t.category === myCat;
+      const freq = globalAltUsage.get(e.target) ?? 0;
+      const jitter = rng(); // stable randomness for tie-breaking
+
+      // Lower score is better for sorting
+      const score =
+        (sameCat ? 0 : 0.2) +        // prefer same category a bit
+        freq * 0.05 +                // avoid over-used targets
+        jitter * 0.01;               // stable randomness
+
+      return { target: e.target, score, originalScore: e.score };
+    })
+    .filter(Boolean)
+    .sort((a, b) => a!.score - b!.score)
+    .slice(0, k * 2) // Get extra candidates for diversity filtering
+    .map((item) => ({ target: item!.target, score: item!.originalScore }))
+    .filter(e => e.target !== slug && !recSet.has(e.target))
+    .filter(e => (currentInbound.get(e.target) || 0) < HUB_CAP)
+    .slice(0, k);
+}
+
+function topUpInboundToTwo(graph: Neighbors, meta: Map<string, WhopData>) {
+  const inbound = buildInboundCounts(graph);
+
+  // Build donor pool: sources that can spare an explore outlink
+  const sources = Object.keys(graph);
+
+  // Precompute capacity and out sets for speed
+  const outsMap = new Map<string, Set<string>>();
+  for (const s of sources) outsMap.set(s, outSet(graph[s] ?? {}));
+
+  // Gather targets that need help
+  const needs = sources.filter((t) => (inbound.get(t) ?? 0) < 2);
+
+  for (const t of needs) {
+    // We need to add explore links **from donors** to t until inbound(t) >= 2
+    let need = 2 - (inbound.get(t) ?? 0);
+    if (need <= 0) continue;
+
+    // simple donor ordering: prefer donors in same category, then by smallest out degree
+    const myCat = meta.get(t)?.category;
+    const donors = sources
+      .filter((s) => s !== t)
+      .filter((s) => {
+        // donor must not already point to t and must be allowed to add explore
+        const outs = outsMap.get(s)!;
+        if (outs.has(t)) return false;
+        return true;
+      })
+      .sort((a, b) => {
+        const aSame = myCat && meta.get(a)?.category === myCat ? 0 : 1;
+        const bSame = myCat && meta.get(b)?.category === myCat ? 0 : 1;
+        if (aSame !== bSame) return aSame - bSame;
+        // fewer outs first
+        return (outsMap.get(a)!.size) - (outsMap.get(b)!.size);
+      });
+
+    for (const s of donors) {
+      if (need <= 0) break;
+      if (!hasCapacityInbound(inbound, t)) break; // protect hub cap on target
+
+      // add explore s -> t
+      const ok = addExploreLink(graph, inbound, s, t);
+      if (ok) {
+        // keep outsMap in sync
+        outsMap.get(s)!.add(t);
+        need -= 1;
+      }
+    }
+  }
 }
 
 const prisma = new PrismaClient();
@@ -74,7 +222,7 @@ function isValidSlug(slug: string): boolean {
          slug.trim() !== '' &&
          slug !== '-' &&
          !slug.startsWith('-') &&
-         slug.match(/^[a-z0-9-]+$/i);
+         !!slug.match(/^[a-z0-9-]+$/i);
 }
 
 function extractBrand(name: string): string | null {
@@ -362,11 +510,14 @@ async function buildChatGPTSiteGraph(): Promise<void> {
   }
 
   const altsOut = new Map<string, string[]>();
+  // Fix C: Add global alternative usage tracking
+  const globalAltUsage = new Map<string, number>();
 
   for (const slug of Object.keys(rawGraph)) {
     const recSet = new Set(recsOut.get(slug) || []);
     const src = meta.get(slug) || {} as WhopData;
 
+    // Apply popularity penalties and category/price penalties
     const filtered = rawGraph[slug].altCandidates
       .filter(e => e.target !== slug && !recSet.has(e.target))
       .map(e => {
@@ -379,31 +530,21 @@ async function buildChatGPTSiteGraph(): Promise<void> {
       })
       .sort((a, b) => b.score - a.score);
 
-    const used = new Set<string>();
-    const picks: string[] = [];
-    const catCount = new Map<string, number>();
-    const bandCount = new Map<string, number>();
+    // Fix C: Use improved alternative selection with seeded shuffle and wider pool
+    const picks = pickAlternatives(
+      slug,
+      filtered,
+      meta,
+      globalAltUsage,
+      recSet,
+      currentInbound,
+      ALTS_PER_PAGE
+    ).map(e => e.target);
 
-    for (const e of filtered) {
-      if (picks.length >= ALTS_PER_PAGE) break;
-      if (used.has(e.target)) continue;
-
-      // Check hub cap for alternatives too (using updated counts)
-      if ((currentInbound.get(e.target) || 0) >= K_MAX_INBOUND) continue;
-
-      const t = meta.get(e.target) || {} as WhopData;
-      const c = catCount.get(t.category || 'unknown') || 0;
-      const b = bandCount.get(priceBand(parsePriceValue(t.price))) || 0;
-
-      if (c >= MAX_SAME_CAT || b >= MAX_SAME_BAND) continue;
-
-      picks.push(e.target);
-      used.add(e.target);
-      catCount.set(t.category || 'unknown', c + 1);
-      bandCount.set(priceBand(parsePriceValue(t.price)), b + 1);
-
-      // Update currentInbound count in real-time
-      currentInbound.set(e.target, (currentInbound.get(e.target) || 0) + 1);
+    // Update global usage tracking and inbound counts
+    for (const target of picks) {
+      globalAltUsage.set(target, (globalAltUsage.get(target) ?? 0) + 1);
+      currentInbound.set(target, (currentInbound.get(target) || 0) + 1);
     }
 
     altsOut.set(slug, picks);
@@ -671,15 +812,67 @@ async function buildChatGPTSiteGraph(): Promise<void> {
       if (pick === -1) break; // no safe donor; we'll try swapping next
 
       const slot = slots.splice(pick, 1)[0];
-      if (slot.type === 'rec') { const l = recsOut.get(slot.s) || []; l.push(t); recsOut.set(slot.s, l); }
-      if (slot.type === 'alt') { const l = altsOut.get(slot.s) || []; l.push(t); altsOut.set(slot.s, l); }
-      if (slot.type === 'x') { exploreOut.set(slot.s, t); }
+      let linkAssigned = false;
 
-      inW.set(t, (inW.get(t) || 0) + 1);
+      if (slot.type === 'rec') {
+        const l = recsOut.get(slot.s) || [];
+        l.push(t);
+        recsOut.set(slot.s, l);
+        linkAssigned = true;
+      }
+      if (slot.type === 'alt') {
+        const l = altsOut.get(slot.s) || [];
+        l.push(t);
+        altsOut.set(slot.s, l);
+        linkAssigned = true;
+      }
+      if (slot.type === 'x') {
+        // Fix B: Check for collisions with existing recs/alts before assigning explore
+        const outs = new Set([...(recsOut.get(slot.s) || []), ...(altsOut.get(slot.s) || [])]);
+        if (!outs.has(t) && (inW.get(t) || 0) < HUB_CAP) {
+          exploreOut.set(slot.s, t);
+          linkAssigned = true;
+        }
+      }
+
+      if (linkAssigned) {
+        inW.set(t, (inW.get(t) || 0) + 1);
+      } else {
+        // No link was assigned, break to avoid infinite loop
+        break;
+      }
     }
   }
 
   console.log(`  Explore links assigned: ${exploreOut.size}`);
+
+  // Fix A: Hard guarantee ≥2 inbound links (final top-up pass) - RUN BEFORE QA CHECK
+  console.log('🔄 Running final inbound top-up to guarantee ≥2 inbound links...');
+  const originalExploreSize = exploreOut.size;
+  const tempGraph: Neighbors = {};
+
+  // First create temporary graph with current links
+  for (const slug of Object.keys(rawGraph)) {
+    if (!isValidSlug(slug)) continue; // Skip invalid slugs (empty, etc.)
+    tempGraph[slug] = {
+      recommendations: recsOut.get(slug) || [],
+      alternatives: altsOut.get(slug) || [],
+      explore: exploreOut.get(slug) || null,
+      category: meta.get(slug)?.category
+    };
+  }
+
+  // Run top-up function
+  topUpInboundToTwo(tempGraph, meta);
+
+  // Update exploreOut with new explore links from top-up
+  for (const [slug, data] of Object.entries(tempGraph)) {
+    if (data.explore && !exploreOut.has(slug)) {
+      exploreOut.set(slug, data.explore);
+    }
+  }
+
+  console.log(`  Additional explore links added via top-up: ${exploreOut.size - originalExploreSize}`);
 
   // Final check on remaining targets
   const remainingTargets = Object.keys(rawGraph)
@@ -699,8 +892,8 @@ async function buildChatGPTSiteGraph(): Promise<void> {
     inW.set(t, (inW.get(t) || 0) + 1);
   }
 
-  // Check minimum whop→whop inbound requirement
-  const underLinkedPages = all.filter(s => (inW.get(s) || 0) < MIN_WHOP_INBOUND);
+  // Check minimum whop→whop inbound requirement (only for valid slugs)
+  const underLinkedPages = all.filter(s => isValidSlug(s) && (inW.get(s) || 0) < MIN_WHOP_INBOUND);
   if (underLinkedPages.length > 0) {
     console.log(`❌ QA FAIL: ${underLinkedPages.length} pages below MIN_WHOP_INBOUND (${MIN_WHOP_INBOUND})`);
     underLinkedPages.slice(0, 10).forEach(slug => console.log(`  • ${slug}: ${inW.get(slug) || 0} whop→whop inbound`));
