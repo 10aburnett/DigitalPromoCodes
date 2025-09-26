@@ -1,7 +1,7 @@
 import { PrismaClient } from '@prisma/client'
 
 // TypeScript check: Ensure content_text field exists in generated client
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+// eslint-disable-next-line no-unused-vars
 type _Check = import('@prisma/client').Prisma.BlogPostSelect;
 
 declare global {

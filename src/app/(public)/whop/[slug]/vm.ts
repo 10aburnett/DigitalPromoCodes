@@ -14,7 +14,7 @@ export async function getWhopViewModel(slug: string): Promise<WhopViewModel> {
   const dbSlug = canonicalSlugForDB(slug);
 
   // Reuse the same data path as the existing page component
-  let whopData = await getWhopBySlug(dbSlug, 'en');
+  const whopData = await getWhopBySlug(dbSlug, 'en');
 
   // Fallback fetch (same as existing page logic)
   const whopDbRecord = !whopData

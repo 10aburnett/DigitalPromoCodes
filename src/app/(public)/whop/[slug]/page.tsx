@@ -729,7 +729,7 @@ export default async function WhopPage({ params }: { params: { slug: string } })
               <ol className="space-y-2 text-base sm:text-lg" style={{ color: 'var(--text-secondary)' }}>
                 <li className="flex items-start">
                   <span className="mr-2 font-semibold">1.</span>
-                  <span>Click "Reveal Code" above to visit {whopFormatted.name} and get your exclusive offer</span>
+                  <span>Click &quot;Reveal Code&quot; above to visit {whopFormatted.name} and get your exclusive offer</span>
                 </li>
                 {hasPromoCode(whopFormatted.name) ? (
                   <li className="flex items-start">

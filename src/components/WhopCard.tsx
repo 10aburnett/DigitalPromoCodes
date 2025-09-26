@@ -238,7 +238,7 @@ export default function WhopCard({ promo, priority = false }: WhopCardProps) {
         return;
       }
 
-      let normalizedPath = normalizeImagePath(promo.logoUrl);
+      const normalizedPath = normalizeImagePath(promo.logoUrl);
       
       // If the path is empty or clearly invalid, go straight to InitialsAvatar
       if (!normalizedPath || 

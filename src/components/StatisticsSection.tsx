@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 interface StatisticsData {
@@ -160,7 +161,9 @@ export default function StatisticsSection() {
     showLogo?: boolean;
     logoUrl?: string;
   }) => {
-    const animatedValue = typeof value === 'number' ? useCounter(value) : value;
+    // Always call useCounter - pass 0 for non-numbers and conditionally show result
+    const counterValue = useCounter(typeof value === 'number' ? value : 0);
+    const animatedValue = typeof value === 'number' ? counterValue : value;
     
     const content = (
       <div className="w-full h-[164px] md:h-auto rounded-2xl border p-4 md:p-6 flex flex-col items-center justify-center text-center overflow-hidden transition-all duration-300 hover:scale-[1.02] hover:shadow-lg" style={{ 
@@ -170,9 +173,11 @@ export default function StatisticsSection() {
       }}>
         {showLogo && logoUrl ? (
           <div className="w-8 h-8 mx-auto mb-1 rounded-md overflow-hidden flex items-center justify-center shrink-0" style={{ backgroundColor: 'var(--background-secondary)' }}>
-            <img 
-              src={logoUrl} 
+            <Image
+              src={logoUrl}
               alt={`${value} logo`}
+              width={32}
+              height={32}
               className="w-full h-full object-cover"
               onError={(e) => {
                 e.currentTarget.style.display = 'none';

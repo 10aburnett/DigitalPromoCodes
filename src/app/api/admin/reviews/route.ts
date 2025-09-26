@@ -74,7 +74,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     console.log('[admin/reviews POST] received body:', JSON.stringify(body, null, 2))
     
-    let { whopId, whopSlug, slug, rating, author, content, verified } = body
+    const { whopId, whopSlug, slug, rating, author, content, verified } = body
 
     // Normalize rating
     const ratingNum = Number(rating);

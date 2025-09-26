@@ -524,7 +524,7 @@ export default function EditBlogPostPage({ params }: EditBlogPostPageProps) {
               placeholder="e.g. Will Smith, Alex Burnett, etc."
             />
             <p className="text-xs text-gray-500 mt-1">
-              The name that will appear as "By [Author Name]" on the blog post
+              The name that will appear as &quot;By [Author Name]&quot; on the blog post
             </p>
           </div>
 

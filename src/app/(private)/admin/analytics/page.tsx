@@ -125,7 +125,7 @@ export default function AnalyticsPage() {
             return;
           }
 
-          let normalizedPath = normalizeImagePath(whop.logo);
+          const normalizedPath = normalizeImagePath(whop.logo);
           
           // If the path is empty or clearly invalid, go straight to InitialsAvatar
           if (!normalizedPath || 
@@ -161,7 +161,7 @@ export default function AnalyticsPage() {
               return;
             }
 
-            let normalizedPath = normalizeImagePath(activity.whopLogo);
+            const normalizedPath = normalizeImagePath(activity.whopLogo);
             
             if (!normalizedPath || 
                 normalizedPath.trim() === '' ||
@@ -252,7 +252,7 @@ export default function AnalyticsPage() {
             [whopKey]: { imagePath: '', imageError: true }
           }));
         } else {
-          let normalizedPath = normalizeImagePath(whopData.whopDetails.logo);
+          const normalizedPath = normalizeImagePath(whopData.whopDetails.logo);
           
           if (!normalizedPath || 
               normalizedPath.trim() === '' ||
@@ -809,9 +809,11 @@ export default function AnalyticsPage() {
               </svg>
             </button>
             <div className="bg-[#2b2d36] p-2 rounded-lg">
-              <img 
-                src={whopDetails.logo} 
-                alt={whopDetails.name} 
+              <Image
+                src={whopDetails.logo}
+                alt={whopDetails.name}
+                width={64}
+                height={64}
                 className="w-16 h-16 object-contain"
                 style={{ maxWidth: '100%', maxHeight: '100%' }}
               />

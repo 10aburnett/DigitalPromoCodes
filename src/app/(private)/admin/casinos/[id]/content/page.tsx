@@ -154,7 +154,7 @@ export default function CasinoContentEditor() {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.34 0-4.47-.881-6.08-2.33" />
           </svg>
           <h3 className="text-lg font-medium text-gray-900 mb-2">Casino Not Found</h3>
-          <p className="text-gray-500 mb-4">The casino you're looking for doesn't exist or has been removed.</p>
+          <p className="text-gray-500 mb-4">The casino you&apos;re looking for doesn&apos;t exist or has been removed.</p>
           <Link
             href="/admin/casinos"
             className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
@@ -209,7 +209,7 @@ export default function CasinoContentEditor() {
             className="w-full h-40 p-3 border border-gray-300 rounded-lg resize-vertical focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono text-sm"
           />
           <p className="text-sm text-gray-500 mt-2">
-            This content will appear in the "About {casino.name}" section. You can use HTML tags for formatting.
+            This content will appear in the &quot;About {casino.name}&quot; section. You can use HTML tags for formatting.
           </p>
         </div>
 
@@ -260,7 +260,7 @@ export default function CasinoContentEditor() {
             className="w-full h-40 p-3 border border-gray-300 rounded-lg resize-vertical focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono text-sm"
           />
           <p className="text-sm text-gray-500 mt-2">
-            Information about the whop's content, features, and offerings.
+            Information about the whop&apos;s content, features, and offerings.
           </p>
         </div>
 
@@ -277,7 +277,7 @@ export default function CasinoContentEditor() {
             className="w-full h-32 p-3 border border-gray-300 rounded-lg resize-vertical focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono text-sm"
           />
           <p className="text-sm text-gray-500 mt-2">
-            Terms and conditions specific to this casino's bonuses.
+            Terms and conditions specific to this casino&apos;s bonuses.
           </p>
         </div>
 
@@ -360,8 +360,8 @@ export default function CasinoContentEditor() {
           <div>
             <h4 className="font-medium mb-2">Special:</h4>
             <ul className="space-y-1 text-gray-600">
-              <li><code>&lt;span class="text-[#68D08B] font-bold"&gt;Green text&lt;/span&gt;</code></li>
-              <li><code>&lt;div class="bg-[#343541] p-4 rounded-lg"&gt;Box&lt;/div&gt;</code></li>
+              <li><code>&lt;span class=&quot;text-[#68D08B] font-bold&quot;&gt;Green text&lt;/span&gt;</code></li>
+              <li><code>&lt;div class=&quot;bg-[#343541] p-4 rounded-lg&quot;&gt;Box&lt;/div&gt;</code></li>
             </ul>
           </div>
         </div>
