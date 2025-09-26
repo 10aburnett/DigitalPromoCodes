@@ -40,7 +40,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
       // 2) Load existing vote by composite unique (commentId, voterIP).
       // If your Prisma model has @@unique([commentId, voterIP]) this will work.
       // (If not, the catch fallback uses findFirst.)
-      let existing = await tx.commentVote
+      const existing = await tx.commentVote
         .findUnique({
           where: { commentId_voterIP: { commentId: comment.id, voterIP: ip } },
         })

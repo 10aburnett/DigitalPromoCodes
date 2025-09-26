@@ -148,7 +148,7 @@ export async function GET(request: Request) {
         });
       } else {
         // Initialize with dates in the selected range for other timeframes
-        let currentDay = new Date(startDate);
+        const currentDay = new Date(startDate);
         while (currentDay <= currentDate) {
           const dateString = currentDay.toISOString().split('T')[0];
           dailyActivityMap.set(dateString, { date: dateString, copies: 0, clicks: 0, total: 0 });
@@ -316,7 +316,7 @@ export async function GET(request: Request) {
         });
       } else {
         // Initialize with dates in the selected range for other timeframes
-        let currentDay = new Date(startDate);
+        const currentDay = new Date(startDate);
         while (currentDay <= currentDate) {
           const dateString = currentDay.toISOString().split('T')[0];
           dailyActivityMap.set(dateString, { date: dateString, copies: 0, clicks: 0, total: 0 });

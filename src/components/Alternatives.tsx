@@ -142,7 +142,7 @@ export default function Alternatives({ currentWhopSlug }: { currentWhopSlug: str
           process.env.USE_GRAPH_LINKS === 'true';
 
         let hydratedAlternatives: AlternativeWhop[] = [];
-        let anchorBySlug = new Map<string, string>();
+        const anchorBySlug = new Map<string, string>();
         let editorialDescription = '';
 
         // Try deterministic neighbors.json first

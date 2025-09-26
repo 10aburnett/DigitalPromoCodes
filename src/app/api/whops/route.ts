@@ -939,7 +939,7 @@ export async function GET(request: Request) {
     
     // For any remaining sorting methods, use the original pagination approach
     // Build orderBy clause (fallback, should rarely be used now)
-    let orderBy: any = [
+    const orderBy: any = [
       { displayOrder: 'asc' },
       { rating: 'desc' },
       { createdAt: 'desc' }

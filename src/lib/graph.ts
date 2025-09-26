@@ -4,7 +4,7 @@ import { normalizeSlug } from './slug-normalize';
 export type NeighborData = { recommendations: string[]; alternatives: string[]; explore?: string };
 export type NeighborsMap = Record<string, NeighborData>;
 
-let cache: { neighbors?: NeighborsMap } = {};
+const cache: { neighbors?: NeighborsMap } = {};
 
 const GRAPH_URL =
   (process.env.NEXT_PUBLIC_GRAPH_URL && process.env.NEXT_PUBLIC_GRAPH_URL.trim()) ||
