@@ -2,7 +2,8 @@
 // IMPORTANT: This function reuses existing data paths and includes DB access for SSR.
 // This is acceptable since this is view-model mapping, not schema generation.
 import 'server-only';
-import { absoluteUrl } from '@/lib/urls';
+import { whopAbsoluteUrl } from '@/lib/urls';
+import { getSchemaLocale } from '@/lib/schema-locale';
 import type { WhopViewModel } from '@/lib/buildSchema';
 import { getWhopBySlug } from '@/lib/data';
 import { prisma } from '@/lib/prisma';
@@ -10,8 +11,9 @@ import { canonicalSlugForDB, canonicalSlugForPath } from '@/lib/slug-utils';
 import { parseFaqContent } from '@/lib/faq-types';
 import { loadNeighbors, getNeighborSlugsFor } from '@/lib/graph';
 
-// This should reuse your existing data loader.
-export async function getWhopViewModel(slug: string): Promise<WhopViewModel> {
+// Safe locale support - maintains existing behavior when feature flag is off
+export async function getWhopViewModel(slug: string, localeParam?: string): Promise<WhopViewModel> {
+  const locale = getSchemaLocale(localeParam); // Safe: returns 'en' when flag is off
   const dbSlug = canonicalSlugForDB(slug);
 
   // Reuse the same data path as the existing page component
@@ -71,7 +73,7 @@ export async function getWhopViewModel(slug: string): Promise<WhopViewModel> {
   const primaryType = determinePrimaryType(whopFormatted.category);
 
   const canonSlug = canonicalSlugForPath(slug);
-  const url = absoluteUrl(`/whop/${canonSlug}`);
+  const url = whopAbsoluteUrl(canonSlug, locale); // Safe: uses non-locale path when flag is off
 
   // Extract images from logo
   const images = [whopFormatted.logo].filter(Boolean).map(String);
@@ -205,7 +207,7 @@ export async function getWhopViewModel(slug: string): Promise<WhopViewModel> {
   return {
     slug: canonSlug,
     url,
-    inLanguage: 'en', // Currently single language
+    inLanguage: locale, // Safe: returns 'en' when feature flag is off
     name: whopFormatted.name,
     description: whopFormatted.description ?? null,
     images,

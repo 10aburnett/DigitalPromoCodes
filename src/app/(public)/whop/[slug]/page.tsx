@@ -35,6 +35,8 @@ import { jsonLdScript } from '@/lib/jsonld';
 import { buildPrimaryEntity, buildBreadcrumbList, buildOffers, buildFAQ, buildHowTo, buildItemList, buildReviews } from '@/lib/buildSchema';
 import type { WhopViewModel } from '@/lib/buildSchema';
 import { getWhopViewModel } from './vm';
+import { LOCALES, isLocaleEnabled, getSchemaLocale } from '@/lib/schema-locale';
+import { whopAbsoluteUrl } from '@/lib/urls';
 
 
 
@@ -339,7 +341,18 @@ export async function generateMetadata({ params }: { params: { slug: string } })
       currentYear.toString()
     ].filter(Boolean).join(', '),
     alternates: {
-      canonical: `https://whpcodes.com/whop/${canon}`
+      canonical: `https://whpcodes.com/whop/${canon}`,
+      ...(isLocaleEnabled() && {
+        languages: (() => {
+          const languages: Record<string, string> = {};
+          for (const locale of LOCALES) {
+            languages[locale] = whopAbsoluteUrl(canon, locale);
+          }
+          // x-default → default page for unmatched locales
+          languages['x-default'] = whopAbsoluteUrl(canon, 'en');
+          return languages;
+        })()
+      })
     },
     robots: {
       index: shouldIndex,
@@ -384,7 +397,8 @@ export default async function WhopPage({ params }: { params: { slug: string } })
   // Load view model for schema (reuse existing data path)
   let vm: WhopViewModel | null = null;
   try {
-    vm = await getWhopViewModel(raw);
+    // Safe: getWhopViewModel defaults to 'en' when feature flag is off
+    vm = await getWhopViewModel(raw, undefined);
   } catch (error) {
     console.warn('Failed to load view model for schema:', error);
   }

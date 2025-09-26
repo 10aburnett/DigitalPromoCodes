@@ -1,7 +1,23 @@
 // src/lib/urls.ts
+import 'server-only';
+import { isLocale, isLocaleEnabled, type Locale } from './schema-locale';
+
 const ORIGIN = process.env.NEXT_PUBLIC_SITE_URL || 'https://whpcodes.com';
 
 export function absoluteUrl(path = '/') {
   if (!path.startsWith('/')) return path; // already absolute
   return `${ORIGIN}${path}`;
+}
+
+// locale-aware canonical for whop pages (safe with feature flag)
+export function whopAbsoluteUrl(slug: string, locale?: string | null) {
+  const base = `/whop/${slug}`;
+
+  // Only apply locale logic if feature is enabled and locale is valid
+  if (isLocaleEnabled() && isLocale(locale) && locale !== 'en') {
+    return absoluteUrl(`/${locale}${base}`); // e.g., /de/whop/slug
+  }
+
+  // Default behavior (same as before when flag is off)
+  return absoluteUrl(base); // e.g., /whop/slug
 }
