@@ -245,9 +245,10 @@ ${blogUrls}
     `${base}/sitemaps/index-1.xml`,
     `${base}/sitemaps/static.xml`,
     `${base}/sitemaps/blog.xml`,
-    // Always include noindex.xml (live but noindex pages)
+    // Exclude noindex.xml from main sitemap for GSC submission
+    // Keep noindex.xml file locally but don't reference it in sitemap.xml
     // Only exclude gone.xml to avoid confusing Google with 410 pages
-    ...(cleanNoindex.length > 0 ? [`${base}/sitemaps/noindex.xml`] : [])
+    // ...(cleanNoindex.length > 0 ? [`${base}/sitemaps/noindex.xml`] : [])
   ]
 
   const sitemapIndexXml =
