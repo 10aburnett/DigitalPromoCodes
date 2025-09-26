@@ -556,6 +556,27 @@ export default async function WhopPage({ params }: { params: { slug: string } })
       const alternativesNode = buildItemList('alternatives', vm.alternativeUrls, vm.url);
 
       jsonLdSchemas = [primary, breadcrumbs, faqNode, howtoNode, recommendedNode, alternativesNode].filter(Boolean);
+
+      // Log schema emission (one-line, prod-only)
+      if (process.env.NODE_ENV === 'production' && process.env.LOG_SCHEMA === '1') {
+        const nodeLabels = jsonLdSchemas.map(n => {
+          const t = (n as any)['@type'];
+          if (t === 'ItemList') {
+            const id = String((n as any)['@id'] || '');
+            if (id.endsWith('#recommended')) return 'ItemList(reco)';
+            if (id.endsWith('#alternatives')) return 'ItemList(alt)';
+          }
+          return Array.isArray(t) ? t[0] : t; // handle array @type defensively
+        });
+
+        // Single log line—easy to grep in Vercel logs
+        console.log(JSON.stringify({
+          tag: 'schema',
+          slug: canonSlug,
+          nodes: nodeLabels,
+          ts: new Date().toISOString()
+        }));
+      }
     } catch (error) {
       console.warn('Failed to build JSON-LD schemas:', error);
     }
