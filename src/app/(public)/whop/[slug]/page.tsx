@@ -32,7 +32,7 @@ import HowToSection from '@/components/whop/HowToSection';
 import HowToSchema from '@/components/whop/HowToSchema';
 import 'server-only';
 import { jsonLdScript } from '@/lib/jsonld';
-import { buildPrimaryEntity, buildBreadcrumbList, buildOffers, buildFAQ, buildHowTo, buildItemList } from '@/lib/buildSchema';
+import { buildPrimaryEntity, buildBreadcrumbList, buildOffers, buildFAQ, buildHowTo, buildItemList, buildReviews } from '@/lib/buildSchema';
 import type { WhopViewModel } from '@/lib/buildSchema';
 import { getWhopViewModel } from './vm';
 
@@ -526,6 +526,12 @@ export default async function WhopPage({ params }: { params: { slug: string } })
       const offers = buildOffers(vm);
       if (offers) {
         (primary as any).offers = offers;
+      }
+
+      // Step 6: Attach reviews to primary entity if review data is available
+      const reviews = buildReviews(vm);
+      if (reviews) {
+        (primary as any).review = reviews;
       }
 
       // Step 4: Build FAQ and HowTo schemas (undefined if no data)

@@ -232,7 +232,16 @@ export async function getWhopViewModel(slug: string): Promise<WhopViewModel> {
 
     // Step 5: Internal linking (absolute URLs, ordered exactly like UI)
     recommendedUrls,
-    alternativeUrls
+    alternativeUrls,
+
+    // Step 6: Individual reviews (only when rendered on the page; mirror exactly)
+    reviews: reviews.length > 0 ? reviews.slice(0, 5).map((r: any) => ({
+      authorName: r.author,                         // exactly as shown
+      ratingValue: r.rating,                        // numeric value as shown
+      body: r.content,                              // visible review text (plain)
+      datePublishedISO: r.createdAt,                // ISO 8601 date
+      url: undefined                                // no permalink shown currently
+    })) : undefined
   };
 }
 

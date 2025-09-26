@@ -34,6 +34,15 @@ export type WhopViewModel = {
   ratingValue?: number | null;
   reviewCount?: number | null;
 
+  // Optional: individual reviews IF they are rendered on the page (mirror exactly)
+  reviews?: Array<{
+    authorName: string;          // visible author display name
+    ratingValue: number;         // 1..5 (or your scale)
+    body: string;                // visible review text (plain)
+    datePublishedISO?: string;   // ISO 8601 date if shown (e.g., '2025-07-14')
+    url?: string;                // absolute permalink if you link to it
+  }>;
+
   // IA
   category?: string | null;      // visible category name
   breadcrumbs?: Array<{ name: string; url: string }>; // absolute URLs in visible order
@@ -275,4 +284,37 @@ export function buildItemList(
       "url": u
     }))
   };
+}
+
+function clampRating(n: number) {
+  // If your UI uses 1..5, keep it; adjust only if needed
+  return Math.max(0, Math.min(5, n));
+}
+
+export function buildReviews(vm: WhopViewModel) {
+  const list = vm.reviews?.filter(r =>
+    r &&
+    typeof r.ratingValue === 'number' &&
+    r.authorName &&
+    r.body
+  );
+  if (!list || list.length === 0) return undefined;
+
+  return list.map((r) => {
+    const rev: any = {
+      "@type": "Review",
+      author: { "@type": "Person", name: r.authorName },
+      reviewBody: r.body,
+      reviewRating: {
+        "@type": "Rating",
+        ratingValue: clampRating(r.ratingValue),
+        bestRating: 5,
+        worstRating: 1
+      }
+    };
+    if (r.datePublishedISO) rev.datePublished = r.datePublishedISO;
+    if (r.url) rev.url = r.url;
+    if (vm.inLanguage) rev.inLanguage = vm.inLanguage;
+    return rev;
+  });
 }
