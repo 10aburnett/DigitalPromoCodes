@@ -9,9 +9,8 @@ import { Suspense } from 'react';
 import { canonicalSlugForDB, canonicalSlugForPath } from '@/lib/slug-utils';
 import { headers } from "next/headers";
 
-// Force dynamic rendering for content management testing
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+// Enable ISR for schema logging in production (1 hour revalidation)
+export const revalidate = 3600; // 1h ISR, no visual change, still static by default
 export const dynamicParams = true;
 export const runtime = 'nodejs'; // required for Prisma database access
 
@@ -558,6 +557,7 @@ export default async function WhopPage({ params }: { params: { slug: string } })
       jsonLdSchemas = [primary, breadcrumbs, faqNode, howtoNode, recommendedNode, alternativesNode].filter(Boolean);
 
       // Log schema emission (one-line, prod-only)
+      console.info('[schema-log-probe]', process.env.NODE_ENV, process.env.LOG_SCHEMA);
       if (process.env.NODE_ENV === 'production' && process.env.LOG_SCHEMA === '1') {
         const nodeLabels = jsonLdSchemas.map(n => {
           const t = (n as any)['@type'];
