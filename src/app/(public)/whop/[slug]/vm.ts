@@ -8,6 +8,7 @@ import { getWhopBySlug } from '@/lib/data';
 import { prisma } from '@/lib/prisma';
 import { canonicalSlugForDB, canonicalSlugForPath } from '@/lib/slug-utils';
 import { parseFaqContent } from '@/lib/faq-types';
+import { loadNeighbors, getNeighborSlugsFor } from '@/lib/graph';
 
 // This should reuse your existing data loader.
 export async function getWhopViewModel(slug: string): Promise<WhopViewModel> {
@@ -180,6 +181,27 @@ export async function getWhopViewModel(slug: string): Promise<WhopViewModel> {
     }
   }
 
+  // Step 5: Map recommendations and alternatives from graph data (no new DB queries)
+  const toAbs = (s: string) => absoluteUrl(`/whop/${s}`);
+  let recommendedUrls: string[] = [];
+  let alternativeUrls: string[] = [];
+
+  try {
+    const neighbors = await loadNeighbors();
+    const canonicalSlug = canonicalSlugForPath(slug);
+
+    // Get recommended slugs and convert to absolute URLs (order must match UI)
+    const rawRecSlugs = getNeighborSlugsFor(neighbors, canonicalSlug, 'recommendations');
+    recommendedUrls = rawRecSlugs.filter(Boolean).map(toAbs);
+
+    // Get alternative slugs and convert to absolute URLs (order must match UI)
+    const rawAltSlugs = getNeighborSlugsFor(neighbors, canonicalSlug, 'alternatives');
+    alternativeUrls = rawAltSlugs.filter(Boolean).map(toAbs);
+  } catch (error) {
+    // Graceful fallback - empty arrays if graph loading fails
+    console.warn('Failed to load graph data for recommendations/alternatives:', error);
+  }
+
   return {
     slug: canonSlug,
     url,
@@ -206,7 +228,11 @@ export async function getWhopViewModel(slug: string): Promise<WhopViewModel> {
 
     // Step 4: FAQ and HowTo (only if visible/structured data exists)
     faq: faqData,
-    steps: howToSteps
+    steps: howToSteps,
+
+    // Step 5: Internal linking (absolute URLs, ordered exactly like UI)
+    recommendedUrls,
+    alternativeUrls
   };
 }
 

@@ -46,6 +46,10 @@ export type WhopViewModel = {
 
   // HowTo: only if UI shows genuine steps (redemption flow etc.)
   steps?: Array<{ title: string; text: string }>;
+
+  // Internal linking (absolute URLs, ordered exactly like UI)
+  recommendedUrls?: string[];   // absolute URLs, ordered exactly like UI
+  alternativeUrls?: string[];   // absolute URLs, ordered exactly like UI
 };
 
 function brandNode(brand: WhopViewModel['brand']) {
@@ -230,4 +234,45 @@ export function buildHowTo(vm: WhopViewModel) {
   };
   if (vm.inLanguage) node.inLanguage = vm.inLanguage;
   return node;
+}
+
+function uniqPreserveOrder<T>(xs: T[]) {
+  const seen = new Set<string>();
+  return xs.filter((x: any) => {
+    const key = typeof x === 'string' ? x : JSON.stringify(x);
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
+function normalizeUrls(urls?: string[], selfUrl?: string) {
+  if (!urls) return [];
+  const cleaned = urls
+    .filter(Boolean)
+    .map(u => String(u).trim())
+    .filter(u => /^https?:\/\//i.test(u));        // absolute only
+  const deduped = uniqPreserveOrder(cleaned);
+  return selfUrl ? deduped.filter(u => u !== selfUrl) : deduped;
+}
+
+export function buildItemList(
+  idSuffix: 'recommended' | 'alternatives',
+  urls: string[] | undefined,
+  selfUrl: string
+) {
+  const list = normalizeUrls(urls, selfUrl);
+  if (!list.length) return undefined;
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "@id": `${selfUrl}#${idSuffix}`,
+    "name": idSuffix === 'recommended' ? "Recommended for You" : "You might also consider…",
+    "itemListElement": list.map((u, i) => ({
+      "@type": "ListItem",
+      "position": i + 1,
+      "url": u
+    }))
+  };
 }

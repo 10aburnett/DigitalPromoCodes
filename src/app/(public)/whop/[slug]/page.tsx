@@ -32,7 +32,7 @@ import HowToSection from '@/components/whop/HowToSection';
 import HowToSchema from '@/components/whop/HowToSchema';
 import 'server-only';
 import { jsonLdScript } from '@/lib/jsonld';
-import { buildPrimaryEntity, buildBreadcrumbList, buildOffers, buildFAQ, buildHowTo } from '@/lib/buildSchema';
+import { buildPrimaryEntity, buildBreadcrumbList, buildOffers, buildFAQ, buildHowTo, buildItemList } from '@/lib/buildSchema';
 import type { WhopViewModel } from '@/lib/buildSchema';
 import { getWhopViewModel } from './vm';
 
@@ -532,7 +532,11 @@ export default async function WhopPage({ params }: { params: { slug: string } })
       const faqNode = buildFAQ(vm);     // undefined if no visible FAQ
       const howtoNode = buildHowTo(vm); // undefined if no real steps
 
-      jsonLdSchemas = [primary, breadcrumbs, faqNode, howtoNode].filter(Boolean);
+      // Step 5: Build ItemList schemas for recommendations and alternatives
+      const recommendedNode  = buildItemList('recommended',  vm.recommendedUrls, vm.url);
+      const alternativesNode = buildItemList('alternatives', vm.alternativeUrls, vm.url);
+
+      jsonLdSchemas = [primary, breadcrumbs, faqNode, howtoNode, recommendedNode, alternativesNode].filter(Boolean);
     } catch (error) {
       console.warn('Failed to build JSON-LD schemas:', error);
     }
