@@ -24,6 +24,7 @@
     "test:local:prod": "rm -rf .next && NODE_ENV=production npm run build && NODE_ENV=production npm start",
     "smoke": "node scripts/smoke-test.mjs",
     "lint": "next lint",
+    "schema:guard": "node scripts/schema-protection-guard.js",
     "test": "playwright test",
     "test:headed": "playwright test --headed",
     "test:seo": "playwright test tests/seo.spec.ts",
