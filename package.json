@@ -17,14 +17,14 @@
     "fix:beforecents": "ts-node scripts/fix-beforecents.ts --write",
     "prebuild": "ts-node --transpile-only scripts/build-seo-indexes.ts && ts-node --transpile-only scripts/build-sitemaps.ts",
     "prebuild:with-graph": "ts-node --transpile-only scripts/build-seo-indexes.ts && ts-node --transpile-only scripts/build-sitemaps.ts && npm run build:graph",
-    "build": "npm run fix:beforecents && npm run build:proofs && npm run build:verifyjson && next build",
+    "build": "npm run fix:beforecents && npm run build:proofs && npm run build:verifyjson && npm run schema:guard && next build",
     "build:migrate": "prisma migrate deploy && npm run fix:beforecents && npm run build:proofs && npm run build:verifyjson && next build",
     "build:dev": "next build",
     "start": "next start",
     "test:local:prod": "rm -rf .next && NODE_ENV=production npm run build && NODE_ENV=production npm start",
     "smoke": "node scripts/smoke-test.mjs",
     "lint": "next lint",
-    "schema:guard": "node scripts/schema-protection-guard.js",
+    "schema:guard": "ts-node --transpile-only -r tsconfig-paths/register -r ./scripts/shims/next-build-shims.cjs scripts/schema-guard.ts",
     "test": "playwright test",
     "test:headed": "playwright test --headed",
     "test:seo": "playwright test tests/seo.spec.ts",
@@ -111,8 +111,10 @@
     "eslint-config-next": "14.2.3",
     "postcss": "^8",
     "prisma": "^5.10.0",
+    "server-only": "^0.0.1",
     "tailwindcss": "^3.3.0",
     "ts-node": "^10.9.1",
+    "tsconfig-paths": "^4.2.0",
     "typescript": "^5"
   }
 }

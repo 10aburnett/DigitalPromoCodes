@@ -2,7 +2,7 @@
 // IMPORTANT: This function reuses existing data paths and includes DB access for SSR.
 // This is acceptable since this is view-model mapping, not schema generation.
 import 'server-only';
-import { whopAbsoluteUrl } from '@/lib/urls';
+import { absoluteUrl, whopAbsoluteUrl } from '@/lib/urls';
 import { getSchemaLocale } from '@/lib/schema-locale';
 import type { WhopViewModel } from '@/lib/buildSchema';
 import { getWhopBySlug } from '@/lib/data';
