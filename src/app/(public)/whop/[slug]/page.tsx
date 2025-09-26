@@ -9,8 +9,9 @@ import { Suspense } from 'react';
 import { canonicalSlugForDB, canonicalSlugForPath } from '@/lib/slug-utils';
 import { headers } from "next/headers";
 
-// Enable ISR for schema logging in production (1 hour revalidation)
-export const revalidate = 3600; // 1h ISR, no visual change, still static by default
+// Gate rendering mode behind LOG_SCHEMA flag (ChatGPT's reversible approach)
+export const dynamic   = process.env.LOG_SCHEMA === '1' ? 'force-dynamic' : 'auto';
+export const revalidate = process.env.LOG_SCHEMA === '1' ? 0 : 3600;
 export const dynamicParams = true;
 export const runtime = 'nodejs'; // required for Prisma database access
 
