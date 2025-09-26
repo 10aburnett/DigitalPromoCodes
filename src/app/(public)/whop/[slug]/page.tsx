@@ -37,6 +37,7 @@ import type { WhopViewModel } from '@/lib/buildSchema';
 import { getWhopViewModel } from './vm';
 import { LOCALES, isLocaleEnabled, getSchemaLocale } from '@/lib/schema-locale';
 import { whopAbsoluteUrl } from '@/lib/urls';
+import { getPageClassification, getRobotsForClassification, shouldIncludeInHreflang } from '@/lib/seo-classification';
 
 
 
@@ -313,15 +314,9 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     }
   }
 
-  // DB-driven robots flags (do not remove any existing metadata fields)
-  const flags = await prisma.whop.findFirst({
-    where: { slug: dbSlug }, // If you also have locale, add: , locale: params.locale
-    select: { indexingStatus: true, retirement: true },
-  });
-  const shouldIndex =
-    !!flags &&
-    flags.indexingStatus === 'INDEX' &&
-    flags.retirement === 'NONE';
+  // Step 8: SEO classification-driven robots flags
+  const classification = getPageClassification(canon);
+  const robotsSettings = getRobotsForClassification(classification);
 
   return {
     title,
@@ -342,7 +337,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     ].filter(Boolean).join(', '),
     alternates: {
       canonical: `https://whpcodes.com/whop/${canon}`,
-      ...(isLocaleEnabled() && {
+      ...(isLocaleEnabled() && shouldIncludeInHreflang(classification) && {
         languages: (() => {
           const languages: Record<string, string> = {};
           for (const locale of LOCALES) {
@@ -355,11 +350,9 @@ export async function generateMetadata({ params }: { params: { slug: string } })
       })
     },
     robots: {
-      index: shouldIndex,
-      follow: true,
+      ...robotsSettings,
       googleBot: {
-        index: shouldIndex,
-        follow: true,
+        ...robotsSettings,
         'max-image-preview': 'large',
         'max-snippet': -1,
         'max-video-preview': -1,
@@ -390,9 +383,14 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 export default async function WhopPage({ params }: { params: { slug: string } }) {
   const raw = params.slug || '';
   const dbSlug = canonicalSlugForDB(raw);
+  const canonSlug = canonicalSlugForPath(raw);
+
+  // Step 8: Determine SEO classification for this page
+  const classification = getPageClassification(canonSlug);
+  const shouldEmitSchema = classification === 'indexable';
 
   // Debug logging to verify slug normalization
-  console.log('whop slug raw/db:', raw, dbSlug);
+  console.log('whop slug raw/db:', raw, dbSlug, 'classification:', classification);
 
   // Load view model for schema (reuse existing data path)
   let vm: WhopViewModel | null = null;
@@ -530,8 +528,9 @@ export default async function WhopPage({ params }: { params: { slug: string } })
   ];
 
   // Generate JSON-LD schema (Step 2: Primary entity + BreadcrumbList, Step 3: Offers, Step 4: FAQ + HowTo)
+  // Step 8: Only emit schemas for indexable pages
   let jsonLdSchemas = [];
-  if (vm) {
+  if (vm && shouldEmitSchema) {
     try {
       const primary = buildPrimaryEntity(vm);
       const breadcrumbs = buildBreadcrumbList(vm);
