@@ -145,28 +145,9 @@ export default async function RootLayout({
         <meta property="og:locale" content="en_US" />
         <meta name="geo.region" content="US" />
         <meta name="geo.placename" content="United States" />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://www.googletagmanager.com" />
         <link rel="dns-prefetch" href="//whpcodes.com" />
         <link rel="dns-prefetch" href="//www.googletagmanager.com" />
-        <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" as="style" />
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" media="print" onLoad="this.media='all'" />
-        <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" /></noscript>
-        <script dangerouslySetInnerHTML={{__html: `
-          (function() {
-            const savedTheme = localStorage.getItem('theme');
-            const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            let initialTheme = 'light'; // Default to light for faster rendering
-            
-            if (savedTheme === 'dark' || (savedTheme === 'system' && systemPrefersDark)) {
-              initialTheme = 'dark';
-            }
-            
-            document.documentElement.setAttribute('data-theme', initialTheme);
-            document.documentElement.classList.add(initialTheme);
-          })();
-        `}} />
         <style dangerouslySetInnerHTML={{__html: `
           :root {
             --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -278,30 +259,25 @@ export default async function RootLayout({
         <link rel="manifest" href="/site.webmanifest" />
       </head>
       <body className={`${inter.className} overflow-x-hidden`} style={{ backgroundColor: 'var(--background-color)', color: 'var(--text-color)' }}>
-        <AuthProvider>
-          <LanguageProvider>
-            <ThemeProvider>
-              <ConditionalLayout faviconUrl={faviconUrl}>
-                {children}
-              </ConditionalLayout>
-            </ThemeProvider>
-          </LanguageProvider>
-        </AuthProvider>
-        <Toaster position="top-right" />
-        
-        {/* Google Analytics - Deferred */}
-        <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-HK4S4718K1"
-          strategy="lazyOnload"
-        />
-        <Script id="google-analytics" strategy="lazyOnload">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-HK4S4718K1');
-          `}
-        </Script>
+        {children}
+
+        {/* Google Analytics – load once at root */}
+        {GA_TRACKING_ID ? (
+          <>
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`}
+              strategy="lazyOnload"
+            />
+            <Script id="ga-init" strategy="lazyOnload">
+              {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${GA_TRACKING_ID}');
+              `}
+            </Script>
+          </>
+        ) : null}
       </body>
     </html>
   );
