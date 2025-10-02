@@ -2,17 +2,17 @@ import { notFound, permanentRedirect } from 'next/navigation';
 import Link from 'next/link';
 import { Metadata } from 'next';
 import { normalizeImagePath } from '@/lib/image-utils';
-import { unstable_noStore as noStore } from 'next/cache';
 import { getWhopBySlug } from '@/lib/data';
 import { prisma } from '@/lib/prisma';
 import { Suspense } from 'react';
 import { canonicalSlugForDB, canonicalSlugForPath } from '@/lib/slug-utils';
-import { headers } from "next/headers";
+import { siteOrigin } from '@/lib/site-origin';
 
-// Gate rendering mode behind LOG_SCHEMA flag (ChatGPT's reversible approach)
-export const dynamic   = process.env.LOG_SCHEMA === '1' ? 'force-dynamic' : 'auto';
-export const revalidate = process.env.LOG_SCHEMA === '1' ? 0 : 3600;
-export const dynamicParams = true;
+// SSG + ISR configuration for SEO
+export const dynamic = 'force-static';
+export const revalidate = 86400; // 24 hours
+export const dynamicParams = true; // Enable ISR for non-prebuilt pages
+export const fetchCache = 'force-cache';
 export const runtime = 'nodejs'; // required for Prisma database access
 
 import InitialsAvatar from '@/components/InitialsAvatar';
@@ -39,7 +39,20 @@ import { LOCALES, isLocaleEnabled, getSchemaLocale } from '@/lib/schema-locale';
 import { whopAbsoluteUrl } from '@/lib/urls';
 import { getPageClassification, getRobotsForClassification, shouldIncludeInHreflang } from '@/lib/seo-classification';
 
+// Prebuild top 800 quality pages at build time, use ISR for long tail
+export async function generateStaticParams() {
+  const rows = await prisma.whop.findMany({
+    where: {
+      indexingStatus: 'INDEXED',
+      retirement: { not: 'GONE' }
+    },
+    select: { slug: true },
+    orderBy: { displayOrder: 'asc' },
+    take: 800 // Budget for top "money pages"
+  });
 
+  return rows.map(r => ({ slug: r.slug }));
+}
 
 interface PromoCode {
   id: string;
@@ -76,18 +89,8 @@ interface Whop {
 }
 
 function resolveBaseUrl(): string {
-  // Prefer explicit env if you've set it (e.g. https://whpcodes.com)
-  const explicit = process.env.NEXT_PUBLIC_SITE_ORIGIN || process.env.NEXT_PUBLIC_BASE_URL;
-  if (explicit) return explicit.replace(/\/+$/, "");
-
-  // Derive from the incoming request (SSR-safe)
-  const h = headers();
-  const proto = h.get("x-forwarded-proto") || "http";
-  const host  = h.get("x-forwarded-host") || h.get("host");
-  if (host) return `${proto}://${host}`;
-
-  // Dev fallback
-  return `http://localhost:${process.env.PORT ?? 3000}`;
+  // Use centralized siteOrigin helper (static-generation safe)
+  return siteOrigin();
 }
 
 // Helper function for fetching deal data with Next.js caching
@@ -204,20 +207,21 @@ async function ReviewsSection({ whopId, whopName, reviews }: { whopId: string; w
 }
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
-  noStore();
+  // Remove unstable_noStore() - rely on route-level revalidate
   const canon = canonicalSlugForPath(params.slug ?? '');
   const dbSlug = canonicalSlugForDB(params.slug ?? '');
   const whopData = await getWhopBySlug(dbSlug, 'en');
-  
+
   if (!whopData) {
     return {
       title: 'Whop Not Found',
-      description: 'The requested whop could not be found.'
+      description: 'The requested whop could not be found.',
+      robots: { index: false, follow: true }
     };
   }
 
-  // Check if whop is retired - return basic metadata for 410 pages
-  if (whopData.retired) {
+  // Check if whop is retired or not indexed - return noindex metadata
+  if (whopData.retired || whopData.indexingStatus !== 'INDEXED') {
     return {
       title: 'Content No Longer Available',
       description: 'This content has been retired and is no longer available.',
@@ -429,7 +433,7 @@ export default async function WhopPage({ params }: { params: { slug: string } })
   // Debug logging for production troubleshooting
   console.log('Verification data loaded for', dbSlug, ':', verificationData);
 
-  // 3) If nothing, debug or 404 (prevents blank page)
+  // 3) 404 handling: Not found, retired, or not indexed
   if (!finalWhopData) {
     if (process.env.SEO_DEBUG === '1') {
       return (
@@ -441,18 +445,14 @@ export default async function WhopPage({ params }: { params: { slug: string } })
     return notFound();
   }
 
-  // 4) Fetch DB-driven flags ONCE (canonical table)
-  const flags = await prisma.whop.findFirst({
-    where: { slug: dbSlug },
-    select: { indexingStatus: true, retirement: true, redirectToPath: true },
-  });
-
-  // 5) Respect retirements
-  if (flags?.retirement === 'REDIRECT' && flags.redirectToPath) {
-    return permanentRedirect(flags.redirectToPath); // 308
+  // 4) Early quality check: Only index INDEXED pages that aren't GONE
+  if (finalWhopData.retirement === 'GONE' || finalWhopData.indexingStatus !== 'INDEXED') {
+    return notFound(); // Serve 404 for non-indexed/dead pages
   }
-  if (flags?.retirement === 'GONE') {
-    return notFound(); // middleware serves exact 410
+
+  // 5) Handle redirects
+  if (finalWhopData.retirement === 'REDIRECT' && finalWhopData.redirectToPath) {
+    return permanentRedirect(finalWhopData.redirectToPath); // 308
   }
 
 

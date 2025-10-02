@@ -1,39 +1,66 @@
 import React from 'react';
-import { Metadata } from 'next';
+import type { Metadata } from 'next';
+import Link from 'next/link';
+import { siteOrigin } from '@/lib/site-origin';
+
+// SSG configuration
+export const dynamic = 'force-static'
+export const fetchCache = 'force-cache'
+export const revalidate = 86400 // 24h
 
 export const metadata: Metadata = {
   title: 'About WHPCodes - Best Whop Promo Codes & Digital Product Discounts',
   description: 'Learn about WHPCodes - your trusted source for verified Whop promo codes, discount codes, and exclusive digital product deals. We curate 8,000+ verified Whop listings with daily updates.',
   keywords: 'about whpcodes, whop promo codes, whop discount codes, digital course discounts, whop affiliate, course reviews, verified promo codes, whop coupons',
+  alternates: {
+    canonical: `${siteOrigin()}/about`,
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+      'max-video-preview': -1,
+    }
+  },
   openGraph: {
     title: 'About WHPCodes - Best Whop Promo Codes & Digital Product Discounts',
     description: 'Learn about WHPCodes - your trusted source for verified Whop promo codes, discount codes, and exclusive digital product deals. We curate 8,000+ verified Whop listings with daily updates.',
-    url: 'https://whpcodes.com/about',
+    url: `${siteOrigin()}/about`,
     type: 'website',
     siteName: 'WHPCodes',
-    images: [
-      {
-        url: '/logo.png',
-        width: 1200,
-        height: 630,
-        alt: 'WHPCodes - About Us'
-      }
-    ],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'About WHPCodes - Best Whop Promo Codes & Digital Product Discounts',
     description: 'Learn about WHPCodes - your trusted source for verified Whop promo codes, discount codes, and exclusive digital product deals. We curate 8,000+ verified Whop listings with daily updates.',
-    images: ['/logo.png'],
-  },
-  alternates: {
-    canonical: 'https://whpcodes.com/about',
   },
 };
 
 export default function AboutPage() {
+  const origin = siteOrigin();
+
   return (
-    <div className="min-h-screen py-12 transition-theme" style={{ backgroundColor: 'var(--background-color)', color: 'var(--text-color)' }}>
+    <>
+      {/* Organization Schema */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            name: "WHPCodes",
+            url: origin,
+            logo: `${origin}/logo.png`,
+            contactPoint: { "@type": "ContactPoint", contactType: "customer service", url: `${origin}/contact` }
+          })
+        }}
+      />
+
+      <div className="min-h-screen py-12 transition-theme" style={{ backgroundColor: 'var(--background-color)', color: 'var(--text-color)' }}>
       <div className="mx-auto w-[90%] md:w-[95%] max-w-[800px]">
         <div className="space-y-8">
           {/* Header */}
@@ -49,7 +76,7 @@ export default function AboutPage() {
           <div className="prose prose-lg max-w-none space-y-6" style={{ color: 'var(--text-color)' }}>
             <div className="text-center mb-8">
               <p className="text-xl leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
-                Welcome to <strong style={{ color: 'var(--accent-color)' }}>WHPCodes</strong> — your go-to hub for exclusive Whop promo codes, discounts, and course insights.
+                Welcome to <strong style={{ color: 'var(--accent-color)' }}>WHPCodes</strong> — your go-to hub for exclusive Whop promo codes, discounts, and course insights. Check out our <Link href="/blog" className="underline hover:opacity-80" style={{ color: 'var(--accent-color)' }}>latest blog posts</Link> or <Link href="/contact" className="underline hover:opacity-80" style={{ color: 'var(--accent-color)' }}>get in touch</Link>.
               </p>
             </div>
 
@@ -137,5 +164,6 @@ export default function AboutPage() {
         </div>
       </div>
     </div>
+    </>
   );
 }

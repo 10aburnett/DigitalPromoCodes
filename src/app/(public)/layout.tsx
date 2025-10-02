@@ -9,6 +9,7 @@ import { unstable_cache } from 'next/cache';
 import { absoluteUrl } from '@/lib/urls';
 import { buildOrgSite } from '@/lib/jsonld';
 import JsonLd from '@/components/JsonLd';
+import { siteOrigin } from '@/lib/site-origin';
 
 const currentYear = new Date().getFullYear();
 
@@ -50,7 +51,7 @@ export async function generateMetadata(): Promise<Metadata> {
     title: `WHPCodes - Best Whop Promo Codes & Discount Codes ${currentYear}`,
     description: `Find verified Whop promo codes, discount codes & coupons for ${currentYear}. Get exclusive access to premium digital products, courses, & communities at discounted prices. Each code updated daily!`,
     keywords: 'whop promo codes, whop discount codes, whop coupons, digital product discounts, community access codes, course promo codes, whop deals, exclusive discounts',
-    metadataBase: new URL('https://whpcodes.com'),
+    metadataBase: new URL(siteOrigin()),
     openGraph: {
       title: `WHPCodes - Best Whop Promo Codes & Discount Codes ${currentYear}`,
       description: `Find verified Whop promo codes, discount codes & coupons for ${currentYear}. Get exclusive access to premium digital products, courses, & communities at discounted prices. Each code updated daily!`,

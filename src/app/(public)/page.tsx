@@ -1,12 +1,14 @@
-'use client';
-
-import Script from 'next/script';
-import { useState, useEffect, Suspense } from 'react';
-import { useRouter } from 'next/navigation';
+import { Suspense } from 'react';
 import HomePage from '@/components/HomePage';
 import StatisticsSection from '@/components/StatisticsSection';
 import CallToAction from '@/components/CallToAction';
+import { prisma } from '@/lib/prisma';
+import type { Metadata } from 'next';
 
+// SSG + ISR configuration
+export const dynamic = 'force-static';
+export const revalidate = 86400; // 24 hours
+export const fetchCache = 'force-cache';
 
 // Define the types for our data
 interface PromoCode {
@@ -30,26 +32,11 @@ interface Whop {
   promoCodes: PromoCode[];
 }
 
-interface PaginationResponse {
-  data: any[];
-  pagination: {
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
-    hasMore: boolean;
-  };
-}
-
 interface InitialData {
   whops: Whop[];
   totalUsers: number;
   totalCount: number;
 }
-
-const SearchParamsWrapper = ({ children }: { children: React.ReactNode }) => (
-  <div>{children}</div>
-);
 
 // Loading component for Suspense
 const HomePageLoading = () => (
@@ -59,181 +46,209 @@ const HomePageLoading = () => (
   </div>
 );
 
-export default function Home() {
-  const router = useRouter();
-  const [data, setData] = useState<InitialData>({
-    whops: [],
-    totalUsers: 0,
-    totalCount: 0
-  });
-  const [loading, setLoading] = useState(true);
-  const [mountKey, setMountKey] = useState(0);
+// Server-side data fetching
+async function getInitialData(): Promise<InitialData> {
+  try {
+    // Fetch whops with default sorting (promo codes first)
+    const whops = await prisma.whop.findMany({
+      where: {
+        indexingStatus: 'INDEXED',
+        retirement: { not: 'GONE' }
+      },
+      include: {
+        PromoCode: {
+          select: {
+            id: true,
+            title: true,
+            description: true,
+            code: true,
+            type: true,
+            value: true
+          }
+        }
+      },
+      orderBy: { displayOrder: 'asc' },
+      take: 15
+    });
+
+    // Get total count
+    const totalCount = await prisma.whop.count({
+      where: {
+        indexingStatus: 'INDEXED',
+        retirement: { not: 'GONE' }
+      }
+    });
+
+    // Get user count
+    const totalUsers = await prisma.user.count();
+
+    // Transform data to match expected format
+    const formattedWhops = whops.map(whop => ({
+      id: whop.id,
+      name: whop.name,
+      slug: whop.slug,
+      logo: whop.logo,
+      description: whop.description,
+      rating: whop.rating,
+      displayOrder: whop.displayOrder,
+      affiliateLink: whop.affiliateLink,
+      promoCodes: whop.PromoCode.map(code => ({
+        id: code.id,
+        title: code.title,
+        description: code.description,
+        code: code.code,
+        type: code.type,
+        value: code.value
+      }))
+    }));
+
+    return {
+      whops: formattedWhops,
+      totalUsers,
+      totalCount
+    };
+  } catch (error) {
+    console.error('Error fetching initial data:', error);
+    return {
+      whops: [],
+      totalUsers: 0,
+      totalCount: 0
+    };
+  }
+}
+
+// Metadata for SEO
+export async function generateMetadata(): Promise<Metadata> {
   const currentYear = new Date().getFullYear();
 
-  // Force re-mount when navigating from admin to ensure clean state
-  useEffect(() => {
-    const handleNavigation = () => {
-      setMountKey(prev => prev + 1);
-    };
-
-    // Listen for page visibility changes which can indicate navigation from admin
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === 'visible') {
-        setMountKey(prev => prev + 1);
+  return {
+    title: `WHPCodes - Best Whop Promo Codes ${currentYear}`,
+    description: `Discover the best Whop promo codes and digital product discounts in ${currentYear}. Our expertly curated list includes trusted digital products offering exclusive access, courses, communities, and more.`,
+    alternates: {
+      canonical: 'https://whpcodes.com'
+    },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        'max-image-preview': 'large',
+        'max-snippet': -1,
+        'max-video-preview': -1,
       }
-    };
-
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-    window.addEventListener('focus', handleNavigation);
-
-    return () => {
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-      window.removeEventListener('focus', handleNavigation);
-    };
-  }, []);
-
-  useEffect(() => {
-    async function fetchInitialData() {
-      try {
-        // Fetch critical data in parallel for faster loading
-        // Use default sorting to ensure promo code whops appear first
-        const [whopsResponse, statsResponse] = await Promise.all([
-          fetch('/api/whops?page=1&limit=15&sortBy=default'),
-          fetch('/api/statistics')
-        ]);
-
-        if (!whopsResponse.ok) throw new Error('Failed to fetch whops');
-        const whopsResult = await whopsResponse.json();
-
-        let statsResult = { totalUsers: 0 };
-        if (statsResponse.ok) {
-          statsResult = await statsResponse.json();
-        }
-
-        // Removed unnecessary whop names query - was fetching 1000 records for unused filter
-
-        setData({
-          whops: whopsResult.data,
-          totalUsers: statsResult.totalUsers || 0,
-          totalCount: whopsResult.pagination.total
-        });
-      } catch (error) {
-        console.error('Error fetching initial data:', error);
-        // Set default values on error
-        setData({
-          whops: [],
-          totalUsers: 0,
-          totalCount: 0
-        });
-      } finally {
-        setLoading(false);
-      }
+    },
+    openGraph: {
+      title: `WHPCodes - Best Whop Promo Codes ${currentYear}`,
+      description: `Discover the best Whop promo codes and digital product discounts in ${currentYear}.`,
+      type: 'website',
+      url: 'https://whpcodes.com'
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `WHPCodes - Best Whop Promo Codes ${currentYear}`,
+      description: `Discover the best Whop promo codes and digital product discounts in ${currentYear}.`
     }
+  };
+}
 
-    fetchInitialData();
-  }, [mountKey]); // Re-fetch data when mount key changes
+export default async function Home() {
+  const data = await getInitialData();
+  const currentYear = new Date().getFullYear();
 
-  if (loading) {
-    return (
-      <main className="min-h-screen pt-0 mt-0 pb-12 md:py-12 transition-theme space-y-0 md:space-y-6" style={{ backgroundColor: 'var(--background-color)', color: 'var(--text-color)' }}>
-        <HomePageLoading />
-      </main>
-    );
-  }
+  // Build JSON-LD schemas for server HTML
+  const websiteSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    'name': `WHPCodes - Best Whop Promo Codes ${currentYear}`,
+    'description': `Discover the best Whop promo codes and digital product discounts in ${currentYear}. Our expertly curated list includes trusted digital products offering exclusive access, courses, communities, and more.`,
+    'url': 'https://whpcodes.com',
+    'potentialAction': {
+      '@type': 'SearchAction',
+      'target': {
+        '@type': 'EntryPoint',
+        'urlTemplate': 'https://whpcodes.com/?searchTerm={search_term_string}'
+      },
+      'query-input': 'required name=search_term_string'
+    }
+  };
+
+  const organizationSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    'name': 'WHPCodes',
+    'url': 'https://whpcodes.com',
+    'logo': {
+      '@type': 'ImageObject',
+      'url': 'https://whpcodes.com/logo.png',
+      'width': 400,
+      'height': 400
+    },
+    'description': `We review and compare the best Whop promo codes and digital product discounts in ${currentYear}.`,
+    'sameAs': [
+      'https://twitter.com/whpcodes',
+      'https://www.facebook.com/whpcodes'
+    ],
+    'contactPoint': {
+      '@type': 'ContactPoint',
+      'contactType': 'customer service',
+      'url': 'https://whpcodes.com/contact'
+    }
+  };
+
+  const offersSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    'name': `Best Whop Promo Codes ${currentYear}`,
+    'description': `Curated list of the best Whop promo codes and discount codes for ${currentYear}`,
+    'numberOfItems': data.totalCount,
+    'itemListElement': data.whops.slice(0, 10).map((whop, index) => ({
+      '@type': 'ListItem',
+      'position': index + 1,
+      'item': {
+        '@type': 'Product',
+        'name': whop.name,
+        'description': whop.description,
+        'url': `https://whpcodes.com/whop/${whop.slug.toLowerCase()}`,
+        'image': whop.logo,
+        'aggregateRating': {
+          '@type': 'AggregateRating',
+          'ratingValue': whop.rating,
+          'bestRating': 5,
+          'worstRating': 1
+        },
+        'offers': whop.promoCodes.map(promo => ({
+          '@type': 'Offer',
+          'name': promo.title,
+          'description': promo.description,
+          'url': `https://whpcodes.com/whop/${whop.slug.toLowerCase()}`,
+          'availability': 'https://schema.org/InStock',
+          'validFrom': new Date().toISOString(),
+          'priceSpecification': {
+            '@type': 'PriceSpecification',
+            'price': promo.value && promo.value !== '0' ?
+              (promo.value.includes('$') || promo.value.includes('%') || promo.value.includes('off') ? promo.value : `${promo.value}% off`)
+              : 'Exclusive Access'
+          }
+        }))
+      }
+    }))
+  };
 
   return (
     <main className="min-h-screen pt-0 mt-0 pb-12 md:py-12 transition-theme space-y-0 md:space-y-6" style={{ backgroundColor: 'var(--background-color)', color: 'var(--text-color)' }}>
-      {/* Schema.org JSON-LD structured data */}
-      <Script id="homepage-schema" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
-        '@context': 'https://schema.org',
-        '@type': 'WebSite',
-        'name': `WHPCodes - Best Whop Promo Codes ${currentYear}`,
-        'description': `Discover the best Whop promo codes and digital product discounts in ${currentYear}. Our expertly curated list includes trusted digital products offering exclusive access, courses, communities, and more.`,
-        'url': 'https://whpcodes.com',
-        'potentialAction': {
-          '@type': 'SearchAction',
-          'target': {
-            '@type': 'EntryPoint',
-            'urlTemplate': 'https://whpcodes.com/?searchTerm={search_term_string}'
-          },
-          'query-input': 'required name=search_term_string'
-        }
-      })}} />
+      {/* Server-rendered JSON-LD structured data */}
+      <script id="homepage-schema" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }} />
+      <script id="organization-schema" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }} />
+      <script id="offers-schema" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(offersSchema) }} />
 
-      {/* Schema.org JSON-LD structured data for organization */}
-      <Script id="organization-schema" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
-        '@context': 'https://schema.org',
-        '@type': 'Organization',
-        'name': 'WHPCodes',
-        'url': 'https://whpcodes.com',
-        'logo': {
-          '@type': 'ImageObject',
-          'url': 'https://whpcodes.com/logo.png',
-          'width': 400,
-          'height': 400
-        },
-        'description': `We review and compare the best Whop promo codes and digital product discounts in ${currentYear}.`,
-        'sameAs': [
-          'https://twitter.com/whpcodes',
-          'https://www.facebook.com/whpcodes'
-        ],
-        'contactPoint': {
-          '@type': 'ContactPoint',
-          'contactType': 'customer service',
-          'url': 'https://whpcodes.com/contact'
-        }
-      })}} />
-
-      {/* Schema.org JSON-LD structured data for offers */}
-      <Script id="offers-schema" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
-        '@context': 'https://schema.org',
-        '@type': 'ItemList',
-        'name': `Best Whop Promo Codes ${currentYear}`,
-        'description': `Curated list of the best Whop promo codes and discount codes for ${currentYear}`,
-        'numberOfItems': data.totalCount,
-        'itemListElement': data.whops.slice(0, 10).map((whop, index) => ({
-          '@type': 'ListItem',
-          'position': index + 1,
-          'item': {
-            '@type': 'Product',
-            'name': whop.name,
-            'description': whop.description,
-            'url': `https://whpcodes.com/whop/${whop.slug.toLowerCase()}`,
-            'image': whop.logo,
-            'aggregateRating': {
-              '@type': 'AggregateRating',
-              'ratingValue': whop.rating,
-              'bestRating': 5,
-              'worstRating': 1
-            },
-            'offers': whop.promoCodes.map(promo => ({
-              '@type': 'Offer',
-              'name': promo.title,
-              'description': promo.description,
-              'url': `https://whpcodes.com/whop/${whop.slug.toLowerCase()}`,
-              'availability': 'https://schema.org/InStock',
-              'validFrom': new Date().toISOString(),
-              'priceSpecification': {
-                '@type': 'PriceSpecification',
-                'price': promo.value && promo.value !== '0' ? 
-                  (promo.value.includes('$') || promo.value.includes('%') || promo.value.includes('off') ? promo.value : `${promo.value}% off`) 
-                  : 'Exclusive Access'
-              }
-            }))
-          }
-        }))
-      })}} />
-
-      {/* Suspense wrapper for HomePage component */}
+      {/* Server-rendered content with client island for interactivity */}
       <Suspense fallback={<HomePageLoading />}>
-        <SearchParamsWrapper>
-          <HomePage 
-            initialWhops={data.whops}
-            initialTotal={data.totalCount}
-            totalUsers={data.totalUsers}
-            key={mountKey}
-          />
-        </SearchParamsWrapper>
+        <HomePage
+          initialWhops={data.whops}
+          initialTotal={data.totalCount}
+          totalUsers={data.totalUsers}
+        />
       </Suspense>
 
       {/* Statistics Section */}
@@ -241,7 +256,7 @@ export default function Home() {
 
       <div className="mx-auto w-[90%] md:w-[95%] max-w-[1280px]">
         <div className="mobile-dark-section mt-8 md:mt-24 mb-16 bg-white md:bg-transparent">
-          {/* Hero Section */}
+          {/* Hero Section - Server Rendered */}
           <div className="text-center mb-16">
             <div className="md-pill inline-flex items-center gap-2 rounded-full px-6 py-3 mb-6 mt-1 md:mt-6 transition-theme" style={{ backgroundColor: 'rgba(99, 102, 241, 0.1)', border: '1px solid rgba(99, 102, 241, 0.2)' }}>
               <div className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: 'var(--accent-color)' }}></div>
@@ -256,17 +271,17 @@ export default function Home() {
                 )}
               </span>
             </div>
-            
+
             <h2 className="md-heading text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r bg-clip-text text-transparent leading-tight py-2" style={{ backgroundImage: `linear-gradient(to right, var(--text-color), var(--text-secondary))` }}>
               WHPCodes
             </h2>
-            
+
             <p className="md-body max-w-3xl mx-auto text-lg md:text-xl leading-relaxed mb-8" style={{ color: 'var(--text-secondary)' }}>
               Discover the best Whop promo codes and digital product discounts. Get exclusive access to premium communities, courses, and digital products at discounted prices.
             </p>
           </div>
 
-          {/* Features Grid */}
+          {/* Features Grid - Server Rendered */}
           <div className="grid md:grid-cols-3 gap-8 mb-16">
             <div className="mobile-dark-section text-center p-6">
               <div className="md-icon w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center" style={{ backgroundColor: 'var(--accent-color)' }}>
