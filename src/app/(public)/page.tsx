@@ -4,11 +4,12 @@ import StatisticsSection from '@/components/StatisticsSection';
 import CallToAction from '@/components/CallToAction';
 import { prisma } from '@/lib/prisma';
 import { whereIndexable } from '@/lib/where-indexable';
+import { getWhopsOptimizedCached } from '@/data/whops'; // NEW: Use cached version
 import type { Metadata } from 'next';
 
-// SSG + ISR configuration
+// SSG + ISR configuration with cache tagging (D1)
 export const dynamic = 'force-static';
-export const revalidate = 86400; // 24 hours
+export const revalidate = 300; // 5 minutes ISR (shorter for testing, increase for prod)
 export const fetchCache = 'force-cache';
 export const runtime = 'nodejs'; // Required for Prisma
 
@@ -51,36 +52,11 @@ const HomePageLoading = () => (
   </div>
 );
 
-// Server-side data fetching
+// Server-side data fetching with cache tagging (D1)
 async function getInitialData(): Promise<InitialData> {
   try {
-    // Fetch whops with default sorting (promo codes first)
-    const whops = await prisma.whop.findMany({
-      where: whereIndexable(),
-      select: {
-        id: true,
-        name: true,
-        slug: true,
-        logo: true,
-        description: true,
-        rating: true,
-        displayOrder: true,
-        affiliateLink: true,
-        price: true, // Include price for badge
-        PromoCode: {
-          select: {
-            id: true,
-            title: true,
-            description: true,
-            code: true,
-            type: true,
-            value: true
-          }
-        }
-      },
-      orderBy: { displayOrder: 'asc' },
-      take: 15
-    });
+    // Use cached, tagged data (D1)
+    const whops = await getWhopsOptimizedCached(1, 15);
 
     // Get total count
     const totalCount = await prisma.whop.count({

@@ -2,18 +2,19 @@ import { notFound, permanentRedirect } from 'next/navigation';
 import Link from 'next/link';
 import { Metadata } from 'next';
 import { normalizeImagePath } from '@/lib/image-utils';
-import { getWhopBySlug } from '@/lib/data';
+import { getWhopBySlugCached } from '@/data/whops'; // NEW: Use cached version
+import { getWhopBySlug } from '@/lib/data'; // Keep for metadata generation
 import { prisma } from '@/lib/prisma';
 import { whereIndexable } from '@/lib/where-indexable';
 import { Suspense } from 'react';
 import { canonicalSlugForDB, canonicalSlugForPath } from '@/lib/slug-utils';
 import { siteOrigin } from '@/lib/site-origin';
 
-// SSG + ISR configuration for SEO (production only to avoid dev pool exhaustion)
-export const dynamic = process.env.NODE_ENV === 'production' ? 'force-static' : 'force-dynamic';
-export const revalidate = process.env.NODE_ENV === 'production' ? 86400 : 0;
+// SSG + ISR configuration for SEO with cache tagging (D1)
+export const dynamic = 'force-static'; // Always static for cache tagging
+export const revalidate = 300; // 5 minutes ISR (shorter for testing, increase for prod)
 export const dynamicParams = true; // Enable ISR for non-prebuilt pages
-export const fetchCache = process.env.NODE_ENV === 'production' ? 'force-cache' : 'no-store';
+export const fetchCache = 'force-cache';
 export const runtime = 'nodejs'; // required for Prisma database access
 
 import InitialsAvatar from '@/components/InitialsAvatar';
@@ -430,26 +431,8 @@ export default async function WhopPage({ params }: { params: { slug: string } })
   const dealData = await getDeal(dbSlug);
   console.log('[WHOP DETAIL] getDeal result:', { found: !!dealData, id: dealData?.id });
 
-  let whopData;
-  if (dealData && dealData.id) {
-    whopData = await getWhopBySlug(dbSlug, 'en');
-  } else {
-    whopData = await getWhopBySlug(dbSlug, 'en');
-  }
-  console.log('[WHOP DETAIL] getWhopBySlug result:', { found: !!whopData, name: whopData?.name });
-
-  // 1) Fallback fetch (unified shape) — still from `whop`
-  const whopDbRecord =
-    !whopData
-      ? await prisma.whop.findUnique({
-          where: { slug: dbSlug },
-          include: { PromoCode: true, Review: true },
-        })
-      : null;
-  console.log('[WHOP DETAIL] Prisma fallback result:', { found: !!whopDbRecord, name: whopDbRecord?.name });
-
-  // 2) Choose final data (helper result or fallback)
-  const finalWhopData = whopData || whopDbRecord;
+  // Use cached, tagged data (D1) - no fallback needed
+  const finalWhopData = await getWhopBySlugCached(dbSlug, 'en');
   console.log('[WHOP DETAIL] Final data chosen:', {
     found: !!finalWhopData,
     name: finalWhopData?.name,
