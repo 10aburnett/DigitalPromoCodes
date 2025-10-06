@@ -13,7 +13,7 @@ import InitialsAvatar from './InitialsAvatar';
 interface Promo {
   id: string;
   whopName: string;
-  slug?: string; // Add slug property
+  slug?: string;
   promoType: string;
   promoValue: number;
   promoText: string;
@@ -21,10 +21,10 @@ interface Promo {
   promoCode?: string | null;
   affiliateLink: string;
   isActive: boolean;
-  price?: string | null; // Add price field
-  // Add the whopId field for tracking
+  price?: string | null;
+  priceText?: string;
+  priceBadge?: string;
   whopId?: string;
-  // Add the promoCodeId field for tracking
   promoCodeId?: string;
 }
 
@@ -40,6 +40,52 @@ export default function WhopCard({ promo, priority = false }: WhopCardProps) {
   const [imagePath, setImagePath] = useState('');
   const pathname = usePathname();
   const cardRef = useRef<HTMLDivElement | null>(null);
+
+  // Robust fallbacks for API shape variations
+  const title = (promo as any).title ?? promo.whopName ?? (promo as any).name ?? 'Unknown Whop';
+
+  const imageUrl = (promo as any).imageUrl ??
+    promo.logoUrl ??
+    (promo as any).logo?.startsWith?.('http') ? (promo as any).logo :
+    ((promo as any).logo ? `https://whpcodes.com${(promo as any).logo}` : null) ??
+    '/images/Simplified Logo.png';
+
+  const discountPercent = typeof (promo as any).discountPercent === 'number' ? (promo as any).discountPercent :
+    typeof promo.promoValue === 'number' ? promo.promoValue : null;
+
+  const detailHref =
+    (promo as any).href ??
+    (promo.slug ? `/whop/${encodeURIComponent(promo.slug)}` :
+     promo.id   ? `/whop/${encodeURIComponent(promo.id)}`   : '#');
+
+  const previewText =
+    (promo as any).preview ??
+    (promo as any).promoText ??
+    (promo as any).description ??
+    (promo as any).excerpt ??
+    '';
+
+  // Get price badge from API
+  const rawPriceBadge =
+    (promo as any).priceBadge ??
+    (promo as any).priceText ??
+    (promo as any).price ??
+    null;
+
+  // Only show pill if we have a real price (not "Free")
+  const priceBadge = rawPriceBadge && rawPriceBadge.toLowerCase() !== 'free'
+    ? rawPriceBadge
+    : null;
+
+  // Temporary debug logging
+  console.log('CARD', {
+    slug: promo.slug || promo.id,
+    keys: Object.keys(promo),
+    priceText: (promo as any).priceText,
+    price: (promo as any).price,
+    rawPriceBadge,
+    priceBadge
+  });
 
   // Helper function to get the correct detail page URL based on language
   const getDetailPageUrl = () => {
@@ -227,18 +273,18 @@ export default function WhopCard({ promo, priority = false }: WhopCardProps) {
   useEffect(() => {
     try {
       // Check if logoUrl is empty/null/undefined first
-      if (!promo.logoUrl || 
-          promo.logoUrl.trim() === '' || 
-          promo.logoUrl === 'null' || 
-          promo.logoUrl === 'undefined' ||
-          promo.logoUrl === 'NULL' ||
-          promo.logoUrl === 'UNDEFINED') {
+      if (!imageUrl ||
+          imageUrl.trim() === '' ||
+          imageUrl === 'null' ||
+          imageUrl === 'undefined' ||
+          imageUrl === 'NULL' ||
+          imageUrl === 'UNDEFINED') {
         setImageError(true);
         setImagePath(''); // Clear the path
         return;
       }
 
-      const normalizedPath = normalizeImagePath(promo.logoUrl);
+      const normalizedPath = normalizeImagePath(imageUrl);
       
       // If the path is empty or clearly invalid, go straight to InitialsAvatar
       if (!normalizedPath || 
@@ -266,14 +312,14 @@ export default function WhopCard({ promo, priority = false }: WhopCardProps) {
       setImageError(true);
       setImagePath(''); // Clear the path
     }
-  }, [promo.logoUrl, promo.whopName]);
+  }, [imageUrl, title]);
 
   return (
     <div ref={cardRef} className="relative">
       <article className="relative p-5 rounded-xl shadow-lg border transition-all hover:shadow-xl hover:border-opacity-50" style={{ background: 'linear-gradient(135deg, var(--background-secondary), var(--background-tertiary))', borderColor: 'var(--border-color)' }}>
-        <Link 
+        <Link
           href={getDetailPageUrl()}
-          prefetch={true}
+          prefetch={false}
           className="block"
           title={`${promo.whopName} Promo Code - ${promo.promoText} (${new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })})`}
         >
@@ -281,7 +327,7 @@ export default function WhopCard({ promo, priority = false }: WhopCardProps) {
             <div className="relative w-16 h-16 rounded-lg overflow-hidden flex-shrink-0 flex items-center justify-center bg-gray-800" style={{ backgroundColor: 'var(--background-color)' }}>
               {imageError || !imagePath || imagePath.trim() === '' ? (
                 <InitialsAvatar 
-                  name={promo.whopName} 
+                  name={title} 
                   size="lg" 
                   shape="square"
                   className="w-full h-full"
@@ -304,16 +350,31 @@ export default function WhopCard({ promo, priority = false }: WhopCardProps) {
               )}
             </div>
             <div className="min-w-0">
-              <h2 className="text-xl font-bold truncate" style={{ color: 'var(--text-color)' }}>{promo.whopName}</h2>
-              <p className="text-base mt-1" style={{ color: 'var(--accent-color)' }}>{promo.promoText}</p>
-              {promo.price && (
+              <h2 className="text-xl font-bold truncate" style={{ color: 'var(--text-color)' }}>{title}</h2>
+              {previewText && (
+                <p
+                  className="text-base mt-1 truncate"
+                  style={{ color: 'var(--accent-color)' }}
+                  title={previewText}
+                >
+                  {previewText}
+                </p>
+              )}
+              {priceBadge && (
                 <div className="mt-2 flex items-center gap-2">
-                  <span className="text-sm font-semibold px-2 py-1 rounded-full" style={{ 
-                    backgroundColor: promo.price === 'Free' ? 'var(--success-color)' : 
-                                    promo.price === 'N/A' ? 'var(--text-secondary)' : 'var(--success-color)', 
-                    color: 'white' 
-                  }}>
-                    {promo.price}
+                  <span
+                    className="inline-flex items-center rounded-full px-2 py-1 text-sm font-semibold"
+                    style={{
+                      backgroundColor:
+                        priceBadge.toLowerCase() === 'free'
+                          ? 'var(--success-color)'
+                          : priceBadge.toLowerCase() === 'n/a'
+                          ? 'var(--text-secondary)'
+                          : 'var(--success-color)',
+                      color: 'white',
+                    }}
+                  >
+                    {priceBadge}
                   </span>
                 </div>
               )}
@@ -337,9 +398,9 @@ export default function WhopCard({ promo, priority = false }: WhopCardProps) {
         </a>
 
         <div className="mt-2">
-          <Link 
+          <Link
             href={getDetailPageUrl()}
-            prefetch={true}
+            prefetch={false}
             className="w-full font-bold py-3 px-4 rounded-lg text-center transition-all duration-200 block hover:opacity-90 hover:scale-[1.02] transform-gpu"
             style={{ 
               backgroundColor: 'var(--accent-color)', 

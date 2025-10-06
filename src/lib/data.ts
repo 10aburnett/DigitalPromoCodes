@@ -1,16 +1,40 @@
 import { unstable_noStore as noStore } from 'next/cache';
 import { prisma } from '@/lib/prisma';
+import { whereIndexable } from '@/lib/where-indexable';
+
+function safeDecode(v: string) {
+  try { return decodeURIComponent(v); } catch { return v; }
+}
 
 export async function getWhopBySlug(slug: string, locale: string = 'en') {
   noStore();
-  
-  // Decode the slug in case it's URL encoded
-  const decodedSlug = decodeURIComponent(slug);
-  
+
+  // Try multiple slug variants to handle encoding mismatches
+  const raw = slug ?? '';
+  const decoded = safeDecode(raw);
+  const reEncoded = encodeURIComponent(decoded);
+  const colonSwap = decoded.replace(/:/g, '%3A');
+  const decolonSwap = decoded.replace(/%3A/gi, ':');
+
   const whop = await prisma.whop.findFirst({
-    where: { 
-      slug: decodedSlug,
-      publishedAt: { not: null }
+    where: {
+      AND: [
+        whereIndexable(),
+        {
+          OR: [
+            { slug: decoded },
+            { slug: raw },
+            { slug: reEncoded },
+            { slug: { equals: decoded, mode: 'insensitive' } },
+            { slug: { equals: reEncoded, mode: 'insensitive' } },
+            { slug: colonSwap },
+            { slug: decolonSwap },
+            // Sometimes cards link with an ID instead of slug
+            { id: decoded },
+            { id: raw },
+          ],
+        },
+      ],
     },
     select: {
       id: true,

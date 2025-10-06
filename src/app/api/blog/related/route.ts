@@ -44,9 +44,7 @@ export async function GET(request: NextRequest) {
         slug: true,
         excerpt: true,
         publishedAt: true,
-        author: {
-          select: { name: true }
-        }
+        authorName: true, // Use string column instead of relation (backup DB compatibility)
       },
       orderBy: [
         { pinned: 'desc' },
@@ -71,9 +69,7 @@ export async function GET(request: NextRequest) {
           slug: true,
           excerpt: true,
           publishedAt: true,
-          author: {
-            select: { name: true }
-          }
+          authorName: true, // Use string column instead of relation (backup DB compatibility)
         },
         orderBy: [
           { pinned: 'desc' },

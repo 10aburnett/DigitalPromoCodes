@@ -3,12 +3,14 @@ import HomePage from '@/components/HomePage';
 import StatisticsSection from '@/components/StatisticsSection';
 import CallToAction from '@/components/CallToAction';
 import { prisma } from '@/lib/prisma';
+import { whereIndexable } from '@/lib/where-indexable';
 import type { Metadata } from 'next';
 
 // SSG + ISR configuration
 export const dynamic = 'force-static';
 export const revalidate = 86400; // 24 hours
 export const fetchCache = 'force-cache';
+export const runtime = 'nodejs'; // Required for Prisma
 
 // Define the types for our data
 interface PromoCode {
@@ -29,7 +31,10 @@ interface Whop {
   rating: number;
   displayOrder: number;
   affiliateLink: string | null;
+  price?: string | null;
   promoCodes: PromoCode[];
+  priceText?: string;
+  priceBadge?: string;
 }
 
 interface InitialData {
@@ -51,11 +56,17 @@ async function getInitialData(): Promise<InitialData> {
   try {
     // Fetch whops with default sorting (promo codes first)
     const whops = await prisma.whop.findMany({
-      where: {
-        indexingStatus: 'INDEXED',
-        retirement: { not: 'GONE' }
-      },
-      include: {
+      where: whereIndexable(),
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        logo: true,
+        description: true,
+        rating: true,
+        displayOrder: true,
+        affiliateLink: true,
+        price: true, // Include price for badge
         PromoCode: {
           select: {
             id: true,
@@ -73,10 +84,7 @@ async function getInitialData(): Promise<InitialData> {
 
     // Get total count
     const totalCount = await prisma.whop.count({
-      where: {
-        indexingStatus: 'INDEXED',
-        retirement: { not: 'GONE' }
-      }
+      where: whereIndexable()
     });
 
     // Get user count
@@ -99,7 +107,11 @@ async function getInitialData(): Promise<InitialData> {
         code: code.code,
         type: code.type,
         value: code.value
-      }))
+      })),
+      // Add price fields for card display
+      priceText: (whop as any).price || 'Free',
+      price: (whop as any).price || 'Free',
+      priceBadge: (whop as any).price || 'Free'
     }));
 
     return {

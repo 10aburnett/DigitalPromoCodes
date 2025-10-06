@@ -1,12 +1,13 @@
 import { prisma } from '@/lib/prisma';
 import { siteOrigin } from '@/lib/site-origin';
+import { whereIndexable } from '@/lib/where-indexable';
 
 export default async function sitemap() {
   const origin = siteOrigin();
 
   const [whops, posts] = await Promise.all([
     prisma.whop.findMany({
-      where: { indexingStatus: 'INDEXED', retirement: { not: 'GONE' } },
+      where: whereIndexable(),
       select: { slug: true, updatedAt: true },
       orderBy: { displayOrder: 'asc' },
       take: 5000,

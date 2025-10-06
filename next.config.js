@@ -1,9 +1,20 @@
 /** @type {import('next').NextConfig} */
+
+// Asset origin for proxying uploads in dev
+const ASSET_ORIGIN = process.env.ASSET_ORIGIN || 'https://whpcodes.com';
+
 const nextConfig = {
   images: {
     unoptimized: false, // Enable image optimization
-    domains: ['cdn.prod.website-files.com', 'localhost'],
     remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'whpcodes.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'cdn.prod.website-files.com',
+      },
       {
         protocol: 'https',
         hostname: '**',
@@ -101,12 +112,17 @@ const nextConfig = {
       },
     ];
   },
-  // Rewrites for data directory
+  // Rewrites for data directory and asset proxying
   async rewrites() {
     return [
       {
         source: '/data/:path*',
         destination: '/api/data/:path*',
+      },
+      // Proxy /uploads to production in dev (for DB logo paths)
+      {
+        source: '/uploads/:path*',
+        destination: `${ASSET_ORIGIN}/uploads/:path*`,
       },
     ];
   },

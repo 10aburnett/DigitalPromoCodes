@@ -4,15 +4,16 @@ import { Metadata } from 'next';
 import { normalizeImagePath } from '@/lib/image-utils';
 import { getWhopBySlug } from '@/lib/data';
 import { prisma } from '@/lib/prisma';
+import { whereIndexable } from '@/lib/where-indexable';
 import { Suspense } from 'react';
 import { canonicalSlugForDB, canonicalSlugForPath } from '@/lib/slug-utils';
 import { siteOrigin } from '@/lib/site-origin';
 
-// SSG + ISR configuration for SEO
-export const dynamic = 'force-static';
-export const revalidate = 86400; // 24 hours
+// SSG + ISR configuration for SEO (production only to avoid dev pool exhaustion)
+export const dynamic = process.env.NODE_ENV === 'production' ? 'force-static' : 'force-dynamic';
+export const revalidate = process.env.NODE_ENV === 'production' ? 86400 : 0;
 export const dynamicParams = true; // Enable ISR for non-prebuilt pages
-export const fetchCache = 'force-cache';
+export const fetchCache = process.env.NODE_ENV === 'production' ? 'force-cache' : 'no-store';
 export const runtime = 'nodejs'; // required for Prisma database access
 
 import InitialsAvatar from '@/components/InitialsAvatar';
@@ -40,12 +41,12 @@ import { whopAbsoluteUrl } from '@/lib/urls';
 import { getPageClassification, getRobotsForClassification, shouldIncludeInHreflang } from '@/lib/seo-classification';
 
 // Prebuild top 800 quality pages at build time, use ISR for long tail
+// Disabled in dev to prevent Prisma pool exhaustion
 export async function generateStaticParams() {
+  if (process.env.NODE_ENV !== 'production') return [];
+
   const rows = await prisma.whop.findMany({
-    where: {
-      indexingStatus: 'INDEXED',
-      retirement: { not: 'GONE' }
-    },
+    where: whereIndexable(),
     select: { slug: true },
     orderBy: { displayOrder: 'asc' },
     take: 800 // Budget for top "money pages"

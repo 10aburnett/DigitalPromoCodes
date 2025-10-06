@@ -126,3 +126,6 @@ temp/
 *.dump
 *.sql
 
+# Conflicting static files (served by app routes)
+public/robots.txt
+public/sitemap.xml

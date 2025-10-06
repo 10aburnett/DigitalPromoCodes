@@ -172,7 +172,7 @@ export default async function BlogPage() {
                           </span>
                           
                           <span className="text-sm" style={{ color: 'var(--text-muted)' }}>
-                            By {post.author?.name ?? 'Unknown'}
+                            By {post.authorName ?? post.author?.name ?? 'Unknown'}
                           </span>
                         </div>
                       </div>
