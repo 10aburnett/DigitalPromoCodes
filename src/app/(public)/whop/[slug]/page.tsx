@@ -208,30 +208,39 @@ async function ReviewsSection({ whopId, whopName, reviews }: { whopId: string; w
 }
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
-  // Remove unstable_noStore() - rely on route-level revalidate
-  const canon = canonicalSlugForPath(params.slug ?? '');
-  const dbSlug = canonicalSlugForDB(params.slug ?? '');
-  const whopData = await getWhopBySlug(dbSlug, 'en');
+  try {
+    // Remove unstable_noStore() - rely on route-level revalidate
+    const canon = canonicalSlugForPath(params.slug ?? '');
+    const dbSlug = canonicalSlugForDB(params.slug ?? '');
+    console.log('[WHOP META] Generating metadata for:', { slug: params.slug, dbSlug });
 
-  if (!whopData) {
-    return {
-      title: 'Whop Not Found',
-      description: 'The requested whop could not be found.',
-      robots: { index: false, follow: true }
-    };
-  }
+    const whopData = await getWhopBySlug(dbSlug, 'en');
+    console.log('[WHOP META] Data fetched:', { found: !!whopData, name: whopData?.name });
 
-  // Check if whop is retired or not indexed - return noindex metadata
-  if (whopData.retired || whopData.indexingStatus !== 'INDEXED') {
-    return {
-      title: 'Content No Longer Available',
-      description: 'This content has been retired and is no longer available.',
-      robots: {
-        index: false,
-        follow: false
-      }
-    };
-  }
+    if (!whopData) {
+      console.warn('[WHOP META] No data found, returning 404 metadata');
+      return {
+        title: 'Whop Not Found',
+        description: 'The requested whop could not be found.',
+        robots: { index: false, follow: true }
+      };
+    }
+
+    // Check if whop is retired or not indexed - return noindex metadata
+    if (whopData.retired || whopData.indexingStatus !== 'INDEXED') {
+      console.warn('[WHOP META] Whop is retired/not indexed:', {
+        retired: whopData.retired,
+        indexingStatus: whopData.indexingStatus
+      });
+      return {
+        title: 'Content No Longer Available',
+        description: 'This content has been retired and is no longer available.',
+        robots: {
+          index: false,
+          follow: false
+        }
+      };
+    }
 
   // Get current month and year for SEO
   const currentDate = new Date();
@@ -383,6 +392,15 @@ export async function generateMetadata({ params }: { params: { slug: string } })
       images: whopData.logo ? [whopData.logo] : []
     }
   };
+  } catch (error) {
+    console.error('[WHOP META] Error generating metadata:', error);
+    // Return safe fallback metadata instead of crashing
+    return {
+      title: 'Whop',
+      description: 'Discover exclusive whop promo codes and discounts.',
+      robots: { index: false, follow: true }
+    };
+  }
 }
 
 export default async function WhopPage({ params }: { params: { slug: string } }) {
@@ -407,7 +425,10 @@ export default async function WhopPage({ params }: { params: { slug: string } })
   }
 
   // 1) Try lookup with normalized slug for DB
+  console.log('[WHOP DETAIL] Starting fetch for slug:', { raw, dbSlug, canonSlug });
+
   const dealData = await getDeal(dbSlug);
+  console.log('[WHOP DETAIL] getDeal result:', { found: !!dealData, id: dealData?.id });
 
   let whopData;
   if (dealData && dealData.id) {
@@ -415,6 +436,7 @@ export default async function WhopPage({ params }: { params: { slug: string } })
   } else {
     whopData = await getWhopBySlug(dbSlug, 'en');
   }
+  console.log('[WHOP DETAIL] getWhopBySlug result:', { found: !!whopData, name: whopData?.name });
 
   // 1) Fallback fetch (unified shape) — still from `whop`
   const whopDbRecord =
@@ -424,9 +446,17 @@ export default async function WhopPage({ params }: { params: { slug: string } })
           include: { PromoCode: true, Review: true },
         })
       : null;
+  console.log('[WHOP DETAIL] Prisma fallback result:', { found: !!whopDbRecord, name: whopDbRecord?.name });
 
   // 2) Choose final data (helper result or fallback)
   const finalWhopData = whopData || whopDbRecord;
+  console.log('[WHOP DETAIL] Final data chosen:', {
+    found: !!finalWhopData,
+    name: finalWhopData?.name,
+    indexingStatus: (finalWhopData as any)?.indexingStatus,
+    retirement: (finalWhopData as any)?.retirement,
+    promoCount: (finalWhopData as any)?.PromoCode?.length
+  });
 
   // Load verification data for Screenshot B
   const verificationData = await getVerificationData(dbSlug);
@@ -436,6 +466,7 @@ export default async function WhopPage({ params }: { params: { slug: string } })
 
   // 3) 404 handling: Not found, retired, or not indexed
   if (!finalWhopData) {
+    console.error('[WHOP DETAIL] 404 - No data found:', { raw, dbSlug, reason: 'finalWhopData is null/undefined' });
     if (process.env.SEO_DEBUG === '1') {
       return (
         <pre style={{ padding: 16 }}>
@@ -446,9 +477,39 @@ export default async function WhopPage({ params }: { params: { slug: string } })
     return notFound();
   }
 
-  // 4) Early quality check: Only index INDEXED pages that aren't GONE
-  if (finalWhopData.retirement === 'GONE' || finalWhopData.indexingStatus !== 'INDEXED') {
-    return notFound(); // Serve 404 for non-indexed/dead pages
+  // 4) Early quality check: Only show indexable pages
+  // Accept both 'INDEXED' (production) and 'INDEX' (backup DB)
+  const indexingStatus = String(finalWhopData.indexingStatus || '').toUpperCase();
+  const isIndexable = ['INDEXED', 'INDEX'].includes(indexingStatus);
+  const isGone = finalWhopData.retirement === 'GONE';
+
+  // Build explicit reasons for non-indexable pages
+  const reasons: string[] = [];
+  if (isGone) reasons.push('RETIREMENT_GONE');
+  if (!isIndexable) reasons.push(`NOT_INDEXED (status: ${indexingStatus})`);
+
+  console.log('[WHOP DETAIL] Quality check:', {
+    dbSlug,
+    indexingStatus,
+    isIndexable,
+    retirement: finalWhopData.retirement,
+    isGone,
+    reasons
+  });
+
+  // Only 404 in production for quality issues, or always for GONE pages
+  if (isGone || (process.env.NODE_ENV === 'production' && !isIndexable)) {
+    console.error('[WHOP DETAIL] 404 - Quality check failed:', {
+      raw,
+      dbSlug,
+      reasons
+    });
+    return notFound();
+  }
+
+  // In development, show a warning banner instead of 404ing
+  if (process.env.NODE_ENV !== 'production' && reasons.length > 0) {
+    console.warn('[WHOP DETAIL] Soft quality fail (dev mode):', { dbSlug, reasons });
   }
 
   // 5) Handle redirects
