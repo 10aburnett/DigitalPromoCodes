@@ -555,8 +555,8 @@ export default async function WhopPage({ params }: { params: { slug: string } })
     return firstPromo?.value || '0';
   };
 
-  // Create unique key for remounting when slug changes - add timestamp for cache busting
-  const pageKey = `whop-${params.slug}-${Date.now()}`;
+  // Create unique key for remounting when slug changes
+  const pageKey = `whop-${params.slug}`;
 
   // Prepare fallback FAQ data for the collapsible component (used only if no database FAQ content)
   const fallbackFaqData = [
@@ -703,7 +703,7 @@ export default async function WhopPage({ params }: { params: { slug: string } })
               <div className="mt-1">
                 <hr className="mb-4" style={{ borderColor: 'var(--border-color)', borderWidth: '1px', opacity: 0.3 }} />
                 <CommunityPromoSection
-                  key={`community-${whopFormatted.id}-${whopFormatted.promoCodes?.length || 0}-${Date.now()}`}
+                  key={`community-${whopFormatted.id}-${whopFormatted.promoCodes?.length || 0}`}
                   whop={{
                     id: whopFormatted.id,
                     name: whopFormatted.name,
