@@ -29,6 +29,7 @@
     "assert:seo": "node scripts/assert-seo-build.mjs",
     "build:strict": "npm run lint:seo && npm run build",
     "build:guarded": "npm run build && npm run assert:seo",
+    "warm:whops": "node scripts/warm-top-whops.mjs",
     "schema:guard": "ts-node --transpile-only -r tsconfig-paths/register -r ./scripts/shims/next-build-shims.cjs scripts/schema-guard.ts",
     "test": "playwright test",
     "test:headed": "playwright test --headed",

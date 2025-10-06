@@ -1,6 +1,7 @@
 import { notFound, permanentRedirect } from 'next/navigation';
 import Link from 'next/link';
 import { Metadata } from 'next';
+import dynamicImport from 'next/dynamic';
 import { normalizeImagePath } from '@/lib/image-utils';
 import { getWhopBySlugCached } from '@/data/whops'; // NEW: Use cached version
 import { getWhopBySlug } from '@/lib/data'; // Keep for metadata generation
@@ -19,13 +20,27 @@ export const runtime = 'nodejs'; // required for Prisma database access
 
 import InitialsAvatar from '@/components/InitialsAvatar';
 import WhopLogo from '@/components/WhopLogo';
-import WhopReviewSection from '@/components/WhopReviewSection';
-import RecommendedWhops from '@/components/RecommendedWhops';
-import Alternatives from '@/components/Alternatives';
-import FAQSection from '@/components/FAQSection';
 import WhopPageInteractive, { WhopPageCompactStats } from '@/components/WhopPageInteractive';
 import PromoCodeSubmissionButton from '@/components/PromoCodeSubmissionButton';
-import CommunityPromoSection from '@/components/CommunityPromoSection';
+
+// Below-the-fold components: dynamically import to reduce initial bundle size
+const WhopReviewSection = dynamicImport(() => import('@/components/WhopReviewSection'), {
+  loading: () => null,
+});
+const FAQSection = dynamicImport(() => import('@/components/FAQSection'), {
+  loading: () => null,
+});
+const Alternatives = dynamicImport(() => import('@/components/Alternatives'), {
+  ssr: false, // Pure client widget, defer HTML & JS
+  loading: () => null,
+});
+const RecommendedWhops = dynamicImport(() => import('@/components/RecommendedWhops'), {
+  ssr: false, // Pure client recommendations, defer entirely
+  loading: () => null,
+});
+const CommunityPromoSection = dynamicImport(() => import('@/components/CommunityPromoSection'), {
+  loading: () => null, // Keep SSR for SEO-relevant content
+});
 import { parseFaqContent } from '@/lib/faq-types';
 import RenderPlain from '@/components/RenderPlain';
 import { looksLikeHtml, isMeaningful, escapeHtml, toPlainText } from '@/lib/textRender';
