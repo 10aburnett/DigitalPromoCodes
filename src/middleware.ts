@@ -191,13 +191,18 @@ export function middleware(request: NextRequest) {
   
   // Protect admin routes
   if (pathname.startsWith('/admin')) {
+    // Add noindex header for all admin routes (defense-in-depth)
+    response.headers.set('X-Robots-Tag', 'noindex, nofollow');
+
     // Get admin-token from cookies
     const token = request.cookies.get('admin-token')?.value;
-    
+
     // Redirect to login if no token found
     if (!token) {
       console.log('No admin token found, redirecting to login');
-      return NextResponse.redirect(new URL('/admin/login', request.url));
+      const redirectResponse = NextResponse.redirect(new URL('/admin/login', request.url));
+      redirectResponse.headers.set('X-Robots-Tag', 'noindex, nofollow');
+      return redirectResponse;
     }
     
     try {

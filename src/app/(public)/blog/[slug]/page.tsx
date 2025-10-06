@@ -1,10 +1,18 @@
-import { Metadata } from 'next'
+import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Script from 'next/script'
 import { prisma } from '@/lib/prisma'
 import { getBlogPostBySlug } from '@/lib/blog'
 import BlogPostClient from '@/components/BlogPostClient'
 import { generateArticleSchema, generateBreadcrumbSchema, calculateReadingTime, extractHeadings, processContentWithHeadingIds, optimizeInternalLinkingServer, optimizeImageAltText } from '@/lib/blog-utils'
+import { siteOrigin } from '@/lib/site-origin'
+
+// SSG + ISR configuration
+export const dynamic = 'force-static'
+export const revalidate = 3600 // 1 hour
+export const dynamicParams = true // Enable ISR for new posts
+export const fetchCache = 'force-cache'
+export const runtime = 'nodejs' // Required for Prisma
 
 interface BlogPostPageProps {
   params: {
@@ -26,63 +34,81 @@ interface BlogPost {
   }
 }
 
-// Generate dynamic metadata for each blog post
+// Prebuild all published blog posts at build time
+export async function generateStaticParams() {
+  const posts = await prisma.blogPost.findMany({
+    where: { published: true },
+    select: { slug: true }
+  });
+
+  return posts.map(p => ({ slug: p.slug }));
+}
+
+// Generate metadata with canonical URL and proper robots tags
 export async function generateMetadata({ params }: BlogPostPageProps): Promise<Metadata> {
   try {
-    const post = await getBlogPostBySlug(params.slug)
+    const post = await prisma.blogPost.findUnique({
+      where: { slug: params.slug },
+      select: {
+        title: true,
+        excerpt: true,
+        published: true,
+        updatedAt: true,
+        publishedAt: true,
+        slug: true,
+        authorName: true,
+        User: { select: { name: true } }
+      }
+    });
 
-    if (!post) {
+    if (!post || !post.published) {
       return {
         title: 'Blog Post Not Found - WHP Codes',
-        description: 'The requested blog post could not be found.'
+        description: 'The requested blog post could not be found.',
+        robots: { index: false, follow: true }
       }
     }
 
-    // Create SEO-optimized meta description
-    // Priority: excerpt > first 150 chars of content > fallback
-    let metaDescription = ''
-    if (post.excerpt) {
-      metaDescription = post.excerpt
-    } else if (post.content) {
-      // Extract first 150 characters from content, clean HTML if any
-      const plainTextContent = post.content.replace(/<[^>]*>/g, '').trim()
-      metaDescription = plainTextContent.length > 150 
-        ? plainTextContent.substring(0, 147) + '...'
-        : plainTextContent
-    } else {
-      metaDescription = `Read "${post.title}" on the WHP Blog. Discover the latest Whop promo codes, digital product insights, and exclusive deals.`
-    }
+    const canonical = `${siteOrigin()}/blog/${post.slug}`;
+    const currentYear = new Date().getFullYear();
+    const metaDescription = post.excerpt ?? undefined;
+    const publishedDate = post.publishedAt ? new Date(post.publishedAt).toISOString() : undefined;
 
-    // Ensure meta description is between 120-160 characters for optimal SEO
-    if (metaDescription.length < 120) {
-      metaDescription += ' Get the latest Whop promo codes and digital product insights at WHPCodes.com.'
-    }
-
-    const publishedDate = post.publishedAt ? new Date(post.publishedAt).toISOString() : new Date().toISOString()
-    const currentYear = new Date().getFullYear()
+    const authorName = post.User?.name || post.authorName || 'WHP Team';
 
     return {
       title: `${post.title} - WHP Blog | Whop Promo Codes & Digital Products ${currentYear}`,
       description: metaDescription,
-      keywords: `${post.title}, WHP blog, Whop promo codes ${currentYear}, digital products, ${post.author.name || 'WHP Team'}`,
-      authors: [{ name: post.author.name || 'WHP Team' }],
+      keywords: `${post.title}, WHP blog, Whop promo codes ${currentYear}, digital products, ${authorName}`,
+      authors: [{ name: authorName }],
+      alternates: {
+        canonical
+      },
+      robots: {
+        index: true,
+        follow: true,
+        googleBot: {
+          index: true,
+          follow: true,
+          'max-image-preview': 'large',
+          'max-snippet': -1,
+          'max-video-preview': -1,
+        }
+      },
       openGraph: {
         title: `${post.title} - WHP Blog`,
         description: metaDescription,
         type: 'article',
-        url: `https://whpcodes.com/blog/${params.slug}`,
+        url: canonical,
         publishedTime: publishedDate,
-        authors: [post.author.name || 'WHP Team'],
+        authors: [authorName],
         siteName: 'WHP Codes'
       },
       twitter: {
         card: 'summary_large_image',
         title: `${post.title} - WHP Blog`,
         description: metaDescription,
-        creator: `@${post.author.name.replace(/\s+/g, '') || 'WHPCodes'}`
-      },
-      alternates: {
-        canonical: `https://whpcodes.com/blog/${params.slug}`
+        creator: `@${authorName.replace(/\s+/g, '')}`
       }
     }
   } catch (error) {
@@ -94,44 +120,58 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
   }
 }
 
-// Force dynamic rendering to avoid build-time database connection issues
-export const dynamic = 'force-dynamic'
-
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
-  let post: BlogPost | null = null
+  // Guard: Only serve published posts
+  const post = await prisma.blogPost.findUnique({
+    where: { slug: params.slug },
+    include: { User: { select: { name: true } } },
+  });
 
-  try {
-    const fetchedPost = await getBlogPostBySlug(params.slug)
-    if (fetchedPost) {
-      post = {
-        ...fetchedPost,
-        content: fetchedPost.content || '',
-        publishedAt: fetchedPost.publishedAt ? fetchedPost.publishedAt.toISOString() : null,
-        updatedAt: fetchedPost.updatedAt ? fetchedPost.updatedAt.toISOString() : null,
-        authorName: fetchedPost.author.name
+  if (!post || !post.published) {
+    return notFound();
+  }
+
+  const authorName = post.User?.name || post.authorName || 'WHP Codes';
+
+  // Server-rendered BlogPosting schema (minimal, truthful)
+  const articleLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: post.title,
+    description: post.excerpt ?? undefined,
+    datePublished: post.publishedAt?.toISOString?.(),
+    dateModified: post.updatedAt?.toISOString?.(),
+    mainEntityOfPage: `${siteOrigin()}/blog/${post.slug}`,
+    author: authorName
+      ? { '@type': 'Person', name: authorName }
+      : { '@type': 'Organization', name: 'WHP Codes' },
+  };
+
+  // Breadcrumb schema
+  const breadcrumbLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: siteOrigin()
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Blog',
+        item: `${siteOrigin()}/blog`
+      },
+      {
+        '@type': 'ListItem',
+        position: 3,
+        name: post.title,
+        item: `${siteOrigin()}/blog/${post.slug}`
       }
-    }
-  } catch (error) {
-    console.error('Error fetching blog post:', error)
-    post = null
+    ]
   }
-
-  if (!post) {
-    notFound()
-  }
-
-  // Generate schema markup for SEO
-  const articleSchema = generateArticleSchema({
-    title: post.title,
-    content: post.content,
-    excerpt: post.excerpt,
-    publishedAt: post.publishedAt,
-    updatedAt: post.updatedAt,
-    author: post.author,
-    slug: post.slug
-  })
-  
-  const breadcrumbSchema = generateBreadcrumbSchema(post.title, post.slug)
   
   // Get all blog posts for internal linking optimization
   const allPosts = await prisma.blogPost.findMany({
@@ -160,18 +200,16 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
   return (
     <>
-      {/* Article Schema Markup */}
-      <Script 
-        id="article-schema" 
+      {/* Server-rendered Article Schema */}
+      <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleLd) }}
       />
-      
-      {/* Breadcrumb Schema Markup */}
-      <Script 
-        id="breadcrumb-schema" 
+
+      {/* Server-rendered Breadcrumb Schema */}
+      <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
       />
       
       {/* Pass the processed post data to the client component */}

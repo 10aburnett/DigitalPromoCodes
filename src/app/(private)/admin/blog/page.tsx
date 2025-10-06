@@ -214,7 +214,7 @@ export default function AdminBlogPage() {
                     )}
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-900">
-                    {post.author?.name || 'Unknown'}
+                    {(post as any).authorName || post.author?.name || 'Unknown'}
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-500">
                     {post.publishedAt 

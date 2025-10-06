@@ -80,7 +80,7 @@ export function generateArticleSchema(post: {
     'image': imageUrl,
     'author': {
       '@type': 'Person',
-      'name': post.author?.name || 'WHP Team',
+      'name': (post as any).authorName || post.author?.name || 'WHP Team',
       'url': 'https://whpcodes.com'
     },
     'publisher': {

@@ -237,29 +237,13 @@ ${blogUrls}
     console.log(`💀 Created gone.xml with ${gone.length} URLs (NOT in sitemap index - temp only)`)
   }
 
-  // --- write /public/sitemap.xml as a sitemapindex ---
-  const base = process.env.SITE_URL || 'https://whpcodes.com'
-  const now = new Date().toISOString()
+  // NOTE: /sitemap.xml is now served by src/app/sitemap.ts (app route)
+  // We only write child sitemaps to /public/sitemaps/* for the app route to reference
+  // No longer writing to public/sitemap.xml to avoid conflicts with app route
 
-  const parts = [
-    `${base}/sitemaps/index-1.xml`,
-    `${base}/sitemaps/static.xml`,
-    `${base}/sitemaps/blog.xml`,
-    // Exclude noindex.xml from main sitemap for GSC submission
-    // Keep noindex.xml file locally but don't reference it in sitemap.xml
-    // Only exclude gone.xml to avoid confusing Google with 410 pages
-    // ...(cleanNoindex.length > 0 ? [`${base}/sitemaps/noindex.xml`] : [])
-  ]
-
-  const sitemapIndexXml =
-    `<?xml version="1.0" encoding="UTF-8"?>\n` +
-    `<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +
-    parts.map(u => `  <sitemap><loc>${u}</loc><lastmod>${now}</lastmod></sitemap>`).join('\n') +
-    `\n</sitemapindex>\n`
-
-  mkdirSync(publicDir, { recursive: true })
-  writeFileSync(join(publicDir, 'sitemap.xml'), sitemapIndexXml)
-  console.log(`🎯 Created sitemap.xml referencing ${parts.length} child sitemaps: ${parts.map(p => p.split('/').pop()).join(', ')}`)
+  console.log(`✅ Created index-1.xml with ${indexable.length} URLs (freshness-aware lastmod)`)
+  console.log(`❌ Created noindex.xml with ${noindex.length} URLs (freshness-aware lastmod)`)
+  console.log(`🎯 Sitemap generation complete! Main /sitemap.xml is served by app route`)
 
   console.log('🎉 Sitemap generation complete!')
 }

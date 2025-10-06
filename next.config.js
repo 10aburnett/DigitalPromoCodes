@@ -1,9 +1,20 @@
 /** @type {import('next').NextConfig} */
+
+// Asset origin for proxying uploads in dev
+const ASSET_ORIGIN = process.env.ASSET_ORIGIN || 'https://whpcodes.com';
+
 const nextConfig = {
   images: {
     unoptimized: false, // Enable image optimization
-    domains: ['cdn.prod.website-files.com', 'localhost'],
     remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'whpcodes.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'cdn.prod.website-files.com',
+      },
       {
         protocol: 'https',
         hostname: '**',
@@ -59,6 +70,41 @@ const nextConfig = {
   // Custom headers for sitemap files
   async headers() {
     return [
+      // Allow ISR caching for whop pages
+      {
+        source: '/whop/:slug',
+        headers: [
+          { key: 'Cache-Control', value: 'public, max-age=0, must-revalidate' },
+        ],
+      },
+      // Allow ISR caching for homepage
+      {
+        source: '/',
+        headers: [
+          { key: 'Cache-Control', value: 'public, max-age=0, must-revalidate' },
+        ],
+      },
+      // Strong caching for Next.js static assets
+      {
+        source: '/_next/static/:path*',
+        headers: [
+          { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' },
+        ],
+      },
+      // Strong caching for Next.js image optimization
+      {
+        source: '/_next/image',
+        headers: [
+          { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' },
+        ],
+      },
+      // Keep APIs private
+      {
+        source: '/api/:path*',
+        headers: [
+          { key: 'Cache-Control', value: 'private, no-store' },
+        ],
+      },
       {
         source: '/sitemap.xml',
         headers: [
@@ -101,12 +147,17 @@ const nextConfig = {
       },
     ];
   },
-  // Rewrites for data directory
+  // Rewrites for data directory and asset proxying
   async rewrites() {
     return [
       {
         source: '/data/:path*',
         destination: '/api/data/:path*',
+      },
+      // Proxy /uploads to production in dev (for DB logo paths)
+      {
+        source: '/uploads/:path*',
+        destination: `${ASSET_ORIGIN}/uploads/:path*`,
       },
     ];
   },

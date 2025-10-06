@@ -1,5 +1,6 @@
 // src/lib/graph.ts
 import { normalizeSlug } from './slug-normalize';
+import { siteOrigin } from './site-origin';
 
 export type NeighborData = { recommendations: string[]; alternatives: string[]; explore?: string };
 export type NeighborsMap = Record<string, NeighborData>;
@@ -13,9 +14,13 @@ const GRAPH_URL =
 const GRAPH_VER = process.env.NEXT_PUBLIC_GRAPH_VERSION || '';
 
 export async function loadNeighbors(): Promise<NeighborsMap> {
+  // Make URL absolute for server-side fetches
+  const baseUrl = typeof window === 'undefined' ? siteOrigin() : '';
+  const graphUrl = GRAPH_URL.startsWith('http') ? GRAPH_URL : `${baseUrl}${GRAPH_URL}`;
+
   const url = GRAPH_VER
-    ? `${GRAPH_URL}${GRAPH_URL.includes('?') ? '&' : '?'}v=${encodeURIComponent(GRAPH_VER)}`
-    : GRAPH_URL;
+    ? `${graphUrl}${graphUrl.includes('?') ? '&' : '?'}v=${encodeURIComponent(GRAPH_VER)}`
+    : graphUrl;
 
   if (typeof window !== 'undefined') {
     console.debug('[graph] url in browser:', url);

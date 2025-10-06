@@ -1,6 +1,44 @@
 import React from 'react';
+import type { Metadata } from 'next';
 import { prisma } from '@/lib/prisma';
 import DynamicLegalPage from '@/components/DynamicLegalPage';
+import { siteOrigin } from '@/lib/site-origin';
+
+// SSG configuration
+export const dynamic = 'force-static'
+export const fetchCache = 'force-cache'
+export const revalidate = 86400 // 24h
+
+export const metadata: Metadata = {
+  title: 'Terms of Service - WHPCodes',
+  description: 'Read the terms and conditions for using WHPCodes Whop promo code platform and our affiliate services.',
+  alternates: {
+    canonical: `${siteOrigin()}/terms`,
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+      'max-video-preview': -1,
+    }
+  },
+  openGraph: {
+    title: 'Terms of Service - WHPCodes',
+    description: 'Read the terms and conditions for using WHPCodes Whop promo code platform and our affiliate services.',
+    url: `${siteOrigin()}/terms`,
+    type: 'website',
+    siteName: 'WHPCodes',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Terms of Service - WHPCodes',
+    description: 'Read the terms and conditions for using WHPCodes Whop promo code platform and our affiliate services.',
+  },
+};
 
 // Default content if not found in database
 const defaultTermsContent = `
@@ -51,7 +89,7 @@ const defaultTermsContent = `
 
 export default async function TermsOfService() {
   let legalPage;
-  
+
   try {
     legalPage = await prisma.legalPage.findUnique({
       where: { slug: 'terms' }
@@ -69,11 +107,34 @@ export default async function TermsOfService() {
     };
   }
 
+  const origin = siteOrigin();
+
   return (
-    <DynamicLegalPage
-      title={legalPage.title}
-      content={legalPage.content}
-      lastUpdated={legalPage.updatedAt}
-    />
+    <>
+      {/* WebPage Schema */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebPage",
+            name: "Terms of Service",
+            description: "Read the terms and conditions for using WHPCodes platform.",
+            url: `${origin}/terms`,
+            mainEntity: {
+              "@type": "Organization",
+              name: "WHPCodes",
+              url: origin
+            }
+          })
+        }}
+      />
+
+      <DynamicLegalPage
+        title={legalPage.title}
+        content={legalPage.content}
+        lastUpdated={legalPage.updatedAt}
+      />
+    </>
   );
 } 

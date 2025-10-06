@@ -241,11 +241,6 @@ export default async function RootLayout({
         <link rel="preload" href="/logo.png" as="image" />
         <link rel="preload" href="/api/whops?page=1&limit=15" as="fetch" crossOrigin="anonymous" />
         <link rel="prefetch" href="/api/statistics" as="fetch" crossOrigin="anonymous" />
-        
-        {/* Resource hints for better performance */}
-        <link rel="modulepreload" href="/_next/static/chunks/main.js" />
-        <link rel="modulepreload" href="/_next/static/chunks/webpack.js" />
-        <link rel="modulepreload" href="/_next/static/chunks/framework.js" />
         {/* Comprehensive favicon setup for all browsers */}
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
         <link rel="icon" type="image/x-icon" href="/favicon.ico" />

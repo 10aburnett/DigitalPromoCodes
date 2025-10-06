@@ -1,6 +1,12 @@
-import { Metadata } from 'next'
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { getPublishedBlogPosts } from '@/lib/blog'
+
+// SSG + ISR configuration
+export const dynamic = 'force-static'
+export const revalidate = 3600 // 1 hour
+export const fetchCache = 'force-cache'
+export const runtime = 'nodejs' // Required for Prisma
 
 const currentYear = new Date().getFullYear()
 
@@ -8,6 +14,20 @@ export const metadata: Metadata = {
   title: `WHP Blog - Latest Whop Promo Codes, Tips & Digital Product Insights ${currentYear}`,
   description: `Discover the latest Whop promo codes, digital product reviews, exclusive deals, and insider tips for ${currentYear}. Stay updated with the newest discounts and insights from the world of digital products and online communities.`,
   keywords: `WHP blog, Whop promo codes ${currentYear}, digital products, online courses, Discord communities, exclusive deals, promo code tips, digital marketplace insights`,
+  alternates: {
+    canonical: 'https://whpcodes.com/blog'
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+      'max-video-preview': -1,
+    }
+  },
   openGraph: {
     title: `WHP Blog - Latest Whop Promo Codes & Digital Product Insights ${currentYear}`,
     description: `Your source for the latest Whop promo codes, exclusive deals, and digital product insights for ${currentYear}. Get insider tips and discover new opportunities in the digital marketplace.`,
@@ -20,11 +40,6 @@ export const metadata: Metadata = {
     description: `Your source for the latest Whop promo codes, exclusive deals, and digital product insights for ${currentYear}. Get insider tips and discover new opportunities in the digital marketplace.`
   }
 }
-
-// Force deployment refresh after bidirectional database sync completed
-
-// Force dynamic rendering to avoid build-time database connection issues
-export const dynamic = 'force-dynamic'
 
 export default async function BlogPage() {
   try {
@@ -64,13 +79,36 @@ export default async function BlogPage() {
       );
     }
 
+    // Build JSON-LD CollectionPage schema for SEO
+    const jsonLd = {
+      '@context': 'https://schema.org',
+      '@type': 'CollectionPage',
+      name: 'WHP Blog',
+      description: `Latest posts and guides on Whop promo codes and digital products in ${currentYear}.`,
+      url: 'https://whpcodes.com/blog',
+      hasPart: posts.slice(0, 20).map((p) => ({
+        '@type': 'BlogPosting',
+        headline: p.title,
+        datePublished: p.publishedAt?.toISOString?.() ?? undefined,
+        dateModified: p.updatedAt?.toISOString?.() ?? undefined,
+        url: `https://whpcodes.com/blog/${p.slug}`,
+        author: {
+          '@type': 'Person',
+          name: (p as any).User?.name || (p as any).authorName || 'WHP Team'
+        }
+      })),
+    };
+
     return (
       <div className="min-h-screen py-8 transition-theme" style={{ backgroundColor: 'var(--background-color)', color: 'var(--text-color)' }}>
+        {/* Server-rendered JSON-LD for blog collection */}
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+
         <div className="mx-auto w-[90%] md:w-[95%] max-w-[1200px]">
           <div className="space-y-6">
             {/* Header */}
             <div className="text-center">
-              <h1 className="text-4xl md:text-5xl font-bold py-1" 
+              <h1 className="text-4xl md:text-5xl font-bold py-1"
                   style={{ lineHeight: '1.3', marginBottom: '0.6rem' }}>
                 <span style={{ color: 'var(--accent-color)' }}>WHP</span>
                 <span className="ml-2" style={{ color: 'var(--text-color)' }}>
@@ -134,7 +172,7 @@ export default async function BlogPage() {
                           </span>
                           
                           <span className="text-sm" style={{ color: 'var(--text-muted)' }}>
-                            By {post.author?.name ?? 'Unknown'}
+                            By {post.authorName ?? post.author?.name ?? 'Unknown'}
                           </span>
                         </div>
                       </div>

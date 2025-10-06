@@ -1,7 +1,44 @@
 import React from 'react';
+import type { Metadata } from 'next';
 import { prisma } from '@/lib/prisma';
 import DynamicLegalPage from '@/components/DynamicLegalPage';
-import { notFound } from 'next/navigation';
+import { siteOrigin } from '@/lib/site-origin';
+
+// SSG configuration
+export const dynamic = 'force-static'
+export const fetchCache = 'force-cache'
+export const revalidate = 86400 // 24h
+
+export const metadata: Metadata = {
+  title: 'Privacy Policy - WHPCodes',
+  description: 'Learn how WHPCodes collects, uses, and protects your information when you use our Whop promo code platform.',
+  alternates: {
+    canonical: `${siteOrigin()}/privacy`,
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+      'max-video-preview': -1,
+    }
+  },
+  openGraph: {
+    title: 'Privacy Policy - WHPCodes',
+    description: 'Learn how WHPCodes collects, uses, and protects your information when you use our Whop promo code platform.',
+    url: `${siteOrigin()}/privacy`,
+    type: 'website',
+    siteName: 'WHPCodes',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Privacy Policy - WHPCodes',
+    description: 'Learn how WHPCodes collects, uses, and protects your information when you use our Whop promo code platform.',
+  },
+};
 
 // Default content if not found in database
 const defaultPrivacyContent = `
@@ -62,7 +99,7 @@ const defaultPrivacyContent = `
 
 export default async function PrivacyPolicy() {
   let legalPage;
-  
+
   try {
     legalPage = await prisma.legalPage.findUnique({
       where: { slug: 'privacy' }
@@ -80,11 +117,34 @@ export default async function PrivacyPolicy() {
     };
   }
 
+  const origin = siteOrigin();
+
   return (
-    <DynamicLegalPage
-      title={legalPage.title}
-      content={legalPage.content}
-      lastUpdated={legalPage.updatedAt}
-    />
+    <>
+      {/* WebPage Schema */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebPage",
+            name: "Privacy Policy",
+            description: "Learn how WHPCodes collects, uses, and protects your information.",
+            url: `${origin}/privacy`,
+            mainEntity: {
+              "@type": "Organization",
+              name: "WHPCodes",
+              url: origin
+            }
+          })
+        }}
+      />
+
+      <DynamicLegalPage
+        title={legalPage.title}
+        content={legalPage.content}
+        lastUpdated={legalPage.updatedAt}
+      />
+    </>
   );
 } 

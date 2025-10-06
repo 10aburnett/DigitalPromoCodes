@@ -1,29 +1,46 @@
 import { notFound, permanentRedirect } from 'next/navigation';
 import Link from 'next/link';
 import { Metadata } from 'next';
+import dynamicImport from 'next/dynamic';
 import { normalizeImagePath } from '@/lib/image-utils';
-import { unstable_noStore as noStore } from 'next/cache';
-import { getWhopBySlug } from '@/lib/data';
+import { getWhopBySlugCached } from '@/data/whops'; // NEW: Use cached version
+import { getWhopBySlug } from '@/lib/data'; // Keep for metadata generation
 import { prisma } from '@/lib/prisma';
+import { whereIndexable } from '@/lib/where-indexable';
 import { Suspense } from 'react';
 import { canonicalSlugForDB, canonicalSlugForPath } from '@/lib/slug-utils';
-import { headers } from "next/headers";
+import { siteOrigin } from '@/lib/site-origin';
 
-// Gate rendering mode behind LOG_SCHEMA flag (ChatGPT's reversible approach)
-export const dynamic   = process.env.LOG_SCHEMA === '1' ? 'force-dynamic' : 'auto';
-export const revalidate = process.env.LOG_SCHEMA === '1' ? 0 : 3600;
-export const dynamicParams = true;
+// SSG + ISR configuration for SEO with cache tagging (D1)
+export const dynamic = 'force-static'; // Always static for cache tagging
+export const revalidate = 300; // 5 minutes ISR (shorter for testing, increase for prod)
+export const dynamicParams = true; // Enable ISR for non-prebuilt pages
+export const fetchCache = 'force-cache';
 export const runtime = 'nodejs'; // required for Prisma database access
 
 import InitialsAvatar from '@/components/InitialsAvatar';
 import WhopLogo from '@/components/WhopLogo';
-import WhopReviewSection from '@/components/WhopReviewSection';
-import RecommendedWhops from '@/components/RecommendedWhops';
-import Alternatives from '@/components/Alternatives';
-import FAQSection from '@/components/FAQSection';
 import WhopPageInteractive, { WhopPageCompactStats } from '@/components/WhopPageInteractive';
 import PromoCodeSubmissionButton from '@/components/PromoCodeSubmissionButton';
-import CommunityPromoSection from '@/components/CommunityPromoSection';
+
+// Below-the-fold components: dynamically import to reduce initial bundle size
+const WhopReviewSection = dynamicImport(() => import('@/components/WhopReviewSection'), {
+  loading: () => null,
+});
+const FAQSection = dynamicImport(() => import('@/components/FAQSection'), {
+  loading: () => null,
+});
+const Alternatives = dynamicImport(() => import('@/components/Alternatives'), {
+  ssr: false, // Pure client widget, defer HTML & JS
+  loading: () => null,
+});
+const RecommendedWhops = dynamicImport(() => import('@/components/RecommendedWhops'), {
+  ssr: false, // Pure client recommendations, defer entirely
+  loading: () => null,
+});
+const CommunityPromoSection = dynamicImport(() => import('@/components/CommunityPromoSection'), {
+  loading: () => null, // Keep SSR for SEO-relevant content
+});
 import { parseFaqContent } from '@/lib/faq-types';
 import RenderPlain from '@/components/RenderPlain';
 import { looksLikeHtml, isMeaningful, escapeHtml, toPlainText } from '@/lib/textRender';
@@ -39,7 +56,20 @@ import { LOCALES, isLocaleEnabled, getSchemaLocale } from '@/lib/schema-locale';
 import { whopAbsoluteUrl } from '@/lib/urls';
 import { getPageClassification, getRobotsForClassification, shouldIncludeInHreflang } from '@/lib/seo-classification';
 
+// Prebuild top 800 quality pages at build time, use ISR for long tail
+// Disabled in dev to prevent Prisma pool exhaustion
+export async function generateStaticParams() {
+  if (process.env.NODE_ENV !== 'production') return [];
 
+  const rows = await prisma.whop.findMany({
+    where: whereIndexable(),
+    select: { slug: true },
+    orderBy: { displayOrder: 'asc' },
+    take: 800 // Budget for top "money pages"
+  });
+
+  return rows.map(r => ({ slug: r.slug }));
+}
 
 interface PromoCode {
   id: string;
@@ -76,18 +106,8 @@ interface Whop {
 }
 
 function resolveBaseUrl(): string {
-  // Prefer explicit env if you've set it (e.g. https://whpcodes.com)
-  const explicit = process.env.NEXT_PUBLIC_SITE_ORIGIN || process.env.NEXT_PUBLIC_BASE_URL;
-  if (explicit) return explicit.replace(/\/+$/, "");
-
-  // Derive from the incoming request (SSR-safe)
-  const h = headers();
-  const proto = h.get("x-forwarded-proto") || "http";
-  const host  = h.get("x-forwarded-host") || h.get("host");
-  if (host) return `${proto}://${host}`;
-
-  // Dev fallback
-  return `http://localhost:${process.env.PORT ?? 3000}`;
+  // Use centralized siteOrigin helper (static-generation safe)
+  return siteOrigin();
 }
 
 // Helper function for fetching deal data with Next.js caching
@@ -204,29 +224,39 @@ async function ReviewsSection({ whopId, whopName, reviews }: { whopId: string; w
 }
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
-  noStore();
-  const canon = canonicalSlugForPath(params.slug ?? '');
-  const dbSlug = canonicalSlugForDB(params.slug ?? '');
-  const whopData = await getWhopBySlug(dbSlug, 'en');
-  
-  if (!whopData) {
-    return {
-      title: 'Whop Not Found',
-      description: 'The requested whop could not be found.'
-    };
-  }
+  try {
+    // Remove unstable_noStore() - rely on route-level revalidate
+    const canon = canonicalSlugForPath(params.slug ?? '');
+    const dbSlug = canonicalSlugForDB(params.slug ?? '');
+    console.log('[WHOP META] Generating metadata for:', { slug: params.slug, dbSlug });
 
-  // Check if whop is retired - return basic metadata for 410 pages
-  if (whopData.retired) {
-    return {
-      title: 'Content No Longer Available',
-      description: 'This content has been retired and is no longer available.',
-      robots: {
-        index: false,
-        follow: false
-      }
-    };
-  }
+    const whopData = await getWhopBySlug(dbSlug, 'en');
+    console.log('[WHOP META] Data fetched:', { found: !!whopData, name: whopData?.name });
+
+    if (!whopData) {
+      console.warn('[WHOP META] No data found, returning 404 metadata');
+      return {
+        title: 'Whop Not Found',
+        description: 'The requested whop could not be found.',
+        robots: { index: false, follow: true }
+      };
+    }
+
+    // Check if whop is retired or not indexed - return noindex metadata
+    if (whopData.retired || whopData.indexingStatus !== 'INDEXED') {
+      console.warn('[WHOP META] Whop is retired/not indexed:', {
+        retired: whopData.retired,
+        indexingStatus: whopData.indexingStatus
+      });
+      return {
+        title: 'Content No Longer Available',
+        description: 'This content has been retired and is no longer available.',
+        robots: {
+          index: false,
+          follow: false
+        }
+      };
+    }
 
   // Get current month and year for SEO
   const currentDate = new Date();
@@ -378,6 +408,15 @@ export async function generateMetadata({ params }: { params: { slug: string } })
       images: whopData.logo ? [whopData.logo] : []
     }
   };
+  } catch (error) {
+    console.error('[WHOP META] Error generating metadata:', error);
+    // Return safe fallback metadata instead of crashing
+    return {
+      title: 'Whop',
+      description: 'Discover exclusive whop promo codes and discounts.',
+      robots: { index: false, follow: true }
+    };
+  }
 }
 
 export default async function WhopPage({ params }: { params: { slug: string } }) {
@@ -402,26 +441,20 @@ export default async function WhopPage({ params }: { params: { slug: string } })
   }
 
   // 1) Try lookup with normalized slug for DB
+  console.log('[WHOP DETAIL] Starting fetch for slug:', { raw, dbSlug, canonSlug });
+
   const dealData = await getDeal(dbSlug);
+  console.log('[WHOP DETAIL] getDeal result:', { found: !!dealData, id: dealData?.id });
 
-  let whopData;
-  if (dealData && dealData.id) {
-    whopData = await getWhopBySlug(dbSlug, 'en');
-  } else {
-    whopData = await getWhopBySlug(dbSlug, 'en');
-  }
-
-  // 1) Fallback fetch (unified shape) — still from `whop`
-  const whopDbRecord =
-    !whopData
-      ? await prisma.whop.findUnique({
-          where: { slug: dbSlug },
-          include: { PromoCode: true, Review: true },
-        })
-      : null;
-
-  // 2) Choose final data (helper result or fallback)
-  const finalWhopData = whopData || whopDbRecord;
+  // Use cached, tagged data (D1) - no fallback needed
+  const finalWhopData = await getWhopBySlugCached(dbSlug, 'en');
+  console.log('[WHOP DETAIL] Final data chosen:', {
+    found: !!finalWhopData,
+    name: finalWhopData?.name,
+    indexingStatus: (finalWhopData as any)?.indexingStatus,
+    retirement: (finalWhopData as any)?.retirement,
+    promoCount: (finalWhopData as any)?.PromoCode?.length
+  });
 
   // Load verification data for Screenshot B
   const verificationData = await getVerificationData(dbSlug);
@@ -429,8 +462,9 @@ export default async function WhopPage({ params }: { params: { slug: string } })
   // Debug logging for production troubleshooting
   console.log('Verification data loaded for', dbSlug, ':', verificationData);
 
-  // 3) If nothing, debug or 404 (prevents blank page)
+  // 3) 404 handling: Not found, retired, or not indexed
   if (!finalWhopData) {
+    console.error('[WHOP DETAIL] 404 - No data found:', { raw, dbSlug, reason: 'finalWhopData is null/undefined' });
     if (process.env.SEO_DEBUG === '1') {
       return (
         <pre style={{ padding: 16 }}>
@@ -441,18 +475,44 @@ export default async function WhopPage({ params }: { params: { slug: string } })
     return notFound();
   }
 
-  // 4) Fetch DB-driven flags ONCE (canonical table)
-  const flags = await prisma.whop.findFirst({
-    where: { slug: dbSlug },
-    select: { indexingStatus: true, retirement: true, redirectToPath: true },
+  // 4) Early quality check: Only show indexable pages
+  // Accept both 'INDEXED' (production) and 'INDEX' (backup DB)
+  const indexingStatus = String(finalWhopData.indexingStatus || '').toUpperCase();
+  const isIndexable = ['INDEXED', 'INDEX'].includes(indexingStatus);
+  const isGone = finalWhopData.retirement === 'GONE';
+
+  // Build explicit reasons for non-indexable pages
+  const reasons: string[] = [];
+  if (isGone) reasons.push('RETIREMENT_GONE');
+  if (!isIndexable) reasons.push(`NOT_INDEXED (status: ${indexingStatus})`);
+
+  console.log('[WHOP DETAIL] Quality check:', {
+    dbSlug,
+    indexingStatus,
+    isIndexable,
+    retirement: finalWhopData.retirement,
+    isGone,
+    reasons
   });
 
-  // 5) Respect retirements
-  if (flags?.retirement === 'REDIRECT' && flags.redirectToPath) {
-    return permanentRedirect(flags.redirectToPath); // 308
+  // Only 404 in production for quality issues, or always for GONE pages
+  if (isGone || (process.env.NODE_ENV === 'production' && !isIndexable)) {
+    console.error('[WHOP DETAIL] 404 - Quality check failed:', {
+      raw,
+      dbSlug,
+      reasons
+    });
+    return notFound();
   }
-  if (flags?.retirement === 'GONE') {
-    return notFound(); // middleware serves exact 410
+
+  // In development, show a warning banner instead of 404ing
+  if (process.env.NODE_ENV !== 'production' && reasons.length > 0) {
+    console.warn('[WHOP DETAIL] Soft quality fail (dev mode):', { dbSlug, reasons });
+  }
+
+  // 5) Handle redirects
+  if (finalWhopData.retirement === 'REDIRECT' && finalWhopData.redirectToPath) {
+    return permanentRedirect(finalWhopData.redirectToPath); // 308
   }
 
 
@@ -486,7 +546,9 @@ export default async function WhopPage({ params }: { params: { slug: string } })
       author: review.author,
       content: review.content,
       rating: review.rating,
-      createdAt: review.createdAt.toISOString(),
+      createdAt: review.createdAt instanceof Date
+        ? review.createdAt.toISOString()
+        : String(review.createdAt),
       verified: review.verified
     }))
   };
@@ -508,8 +570,8 @@ export default async function WhopPage({ params }: { params: { slug: string } })
     return firstPromo?.value || '0';
   };
 
-  // Create unique key for remounting when slug changes - add timestamp for cache busting
-  const pageKey = `whop-${params.slug}-${Date.now()}`;
+  // Create unique key for remounting when slug changes
+  const pageKey = `whop-${params.slug}`;
 
   // Prepare fallback FAQ data for the collapsible component (used only if no database FAQ content)
   const fallbackFaqData = [
@@ -656,7 +718,7 @@ export default async function WhopPage({ params }: { params: { slug: string } })
               <div className="mt-1">
                 <hr className="mb-4" style={{ borderColor: 'var(--border-color)', borderWidth: '1px', opacity: 0.3 }} />
                 <CommunityPromoSection
-                  key={`community-${whopFormatted.id}-${whopFormatted.promoCodes?.length || 0}-${Date.now()}`}
+                  key={`community-${whopFormatted.id}-${whopFormatted.promoCodes?.length || 0}`}
                   whop={{
                     id: whopFormatted.id,
                     name: whopFormatted.name,

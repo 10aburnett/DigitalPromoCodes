@@ -321,52 +321,80 @@ function transformWhopDataForUI(whop: any) {
       console.log("Warning: Received null or undefined whop object");
       return null; // Still return null for truly invalid data
     }
-    
+
     console.log(`Transforming whop data for UI, whop ID: ${whop.id}`);
-  
+
+  // Get asset origin for images
+  const ASSET_ORIGIN = process.env.ASSET_ORIGIN || 'https://whpcodes.com';
+
   // Clean up fields
   const displayName = whop.name || 'Unknown Whop';
-  
-  // Use a default placeholder image only if no logo is provided
-  const logoPath = whop.logo || '/images/Simplified Logo.png';
-  
+
   // Get the first promo code (if any) - don't create placeholders
-  const firstPromoCode = whop.PromoCode && Array.isArray(whop.PromoCode) && whop.PromoCode.length > 0 
-    ? whop.PromoCode[0] 
+  const firstPromoCode = whop.PromoCode && Array.isArray(whop.PromoCode) && whop.PromoCode.length > 0
+    ? whop.PromoCode[0]
     : null;
-  
+
+  // Calculate discount percent from promo code
+  function toPercent(beforeCents?: number|null, afterCents?: number|null) {
+    if (!beforeCents || !afterCents || beforeCents <= 0) return null;
+    return Math.round((1 - afterCents / beforeCents) * 100);
+  }
+
+  const beforeCents = firstPromoCode?.beforeCents ?? null;
+  const afterCents = firstPromoCode?.afterCents ?? null;
+  const discountPercent = toPercent(beforeCents, afterCents) || (firstPromoCode ? parseFloat(firstPromoCode?.value || '0') || 0 : 0);
+
+  // Handle logo/image URL - make absolute if relative
+  const logoPath = whop.logo || '/images/Simplified Logo.png';
+  const imageUrl = logoPath.startsWith('http')
+    ? logoPath
+    : `${ASSET_ORIGIN}${logoPath}`;
+
   // Format price properly with validation (simplified to avoid crashes)
-  const formattedPrice = whop.price || 'Free';
-  
-  // Determine promoText - prioritize whop description over generic promo code titles
-  let promoText;
-  
   // Check if promo code title is generic/placeholder text
-  const isGenericTitle = !firstPromoCode?.title || 
+  const isGenericTitle = !firstPromoCode?.title ||
     firstPromoCode.title.toLowerCase().includes('exclusive access') ||
     firstPromoCode.title.toLowerCase().includes('exclusive') ||
     firstPromoCode.title.toLowerCase().includes('access') ||
     firstPromoCode.title === 'N/A' ||
     firstPromoCode.title.trim() === '';
-  
+
+  // Choose a single-line preview (title -> description -> excerpt -> shortDescription)
+  const preview =
+    (!isGenericTitle && firstPromoCode?.title?.trim()) ? firstPromoCode.title.trim()
+    : (whop.description?.trim())
+    ?? (whop as any).excerpt?.trim()
+    ?? (whop as any).shortDescription?.trim()
+    ?? '';
+
+  // Price text (for the green pill badge) - always has a value
+  const priceText =
+    (whop as any).priceBadge?.trim()
+    ?? whop.price?.trim()
+    ?? (firstPromoCode as any)?.priceText?.trim()
+    ?? (afterCents ? `$${(afterCents/100).toFixed(2)}` : null)
+    ?? 'Free';
+
+  const displayPrice = priceText;
+
+  // Determine promoText with truncation
+  let promoText;
   if (!isGenericTitle && firstPromoCode?.title) {
-    // Use specific promo code title if it's not generic, with truncation
     const maxLength = 25;
     const title = firstPromoCode.title || '';
-    promoText = title.length > maxLength 
+    promoText = title.length > maxLength
       ? title.substring(0, maxLength) + '...'
       : title;
-  } else if (whop.description) {
-    // Use whop description, truncate to ensure exactly one line only (25 characters max)
+  } else if (preview) {
     const maxLength = 25;
-    const description = whop.description || '';
-    promoText = description.length > maxLength 
-      ? description.substring(0, maxLength) + '...'
-      : description;
+    promoText = preview.length > maxLength
+      ? preview.substring(0, maxLength) + '...'
+      : preview;
   } else {
     promoText = 'N/A';
   }
-  
+
   // Always return the whop data, even if no promo codes - this shows real whops
   return {
     id: whop.slug || `whop-${whop.id}`,
@@ -374,17 +402,24 @@ function transformWhopDataForUI(whop: any) {
     name: displayName,
     slug: whop.slug || `whop-${whop.id}`,
     logo: logoPath,
+    logoUrl: imageUrl, // Card component expects this
+    imageUrl: imageUrl, // Also provide as imageUrl for consistency
     description: whop.description || "", // Empty string if no description
     rating: typeof whop.rating === 'number' ? whop.rating : 0,
     displayOrder: typeof whop.displayOrder === 'number' ? whop.displayOrder : 0,
     promoType: firstPromoCode?.type?.toLowerCase?.() || 'exclusive',
-    promoValue: firstPromoCode ? (parseFloat(firstPromoCode?.value || '0') || 0) : 0,
+    promoValue: discountPercent,
+    discountPercent: discountPercent, // Also provide as discountPercent
     promoText: promoText,
-    logoUrl: logoPath,
     promoCode: firstPromoCode?.code || null,
     affiliateLink: whop.affiliateLink || '#',
+    href: `/whop/${whop.slug || `whop-${whop.id}`}`, // Card expects href
     isActive: true,
-    price: formattedPrice, // Use formatted price
+    hasPromo: !!discountPercent,
+    priceText: displayPrice, // What the card expects
+    price: displayPrice, // Legacy compatibility
+    priceBadge: displayPrice, // Keep compatibility with older UI
+    preview: preview, // Single-line preview text
     // Add whop and promo code IDs for tracking
     whopId: whop.id,
     promoCodeId: firstPromoCode?.id || null,
@@ -396,7 +431,7 @@ function transformWhopDataForUI(whop: any) {
     website: whop.website,
     category: whop.category
   };
-  
+
   } catch (error) {
     console.error('Error transforming whop data:', error);
     console.error('Failed whop data:', {
@@ -406,24 +441,36 @@ function transformWhopDataForUI(whop: any) {
       firstPromoTitle: whop?.PromoCode?.[0]?.title
     });
     // Return a safe fallback object
+    const ASSET_ORIGIN = process.env.ASSET_ORIGIN || 'https://whpcodes.com';
     return {
       id: whop?.id || 'unknown',
+      whopName: whop?.name || 'Unknown Whop',
       name: whop?.name || 'Unknown Whop',
       slug: whop?.slug || 'unknown',
       logo: whop?.logo || '/images/Simplified Logo.png',
+      logoUrl: `${ASSET_ORIGIN}${whop?.logo || '/images/Simplified Logo.png'}`,
+      imageUrl: `${ASSET_ORIGIN}${whop?.logo || '/images/Simplified Logo.png'}`,
       description: whop?.description || 'No description available',
-      price: 'N/A',
+      price: 'Free', // Default for error case
+      priceText: 'Free', // Default for error case
+      priceBadge: 'Free', // Default for error case
       promoText: 'N/A',
       promoCode: null,
-      promoType: null,
-      promoValue: null,
+      promoType: 'exclusive',
+      promoValue: 0,
+      discountPercent: 0,
       rating: 0,
-      affiliateLink: whop?.affiliateLink || null,
+      affiliateLink: whop?.affiliateLink || '#',
+      href: `/whop/${whop?.slug || 'unknown'}`,
+      isActive: true,
+      hasPromo: false,
       createdAt: whop?.createdAt || new Date(),
       promoCodes: [],
       reviews: [],
       website: whop?.website || null,
-      category: whop?.category || null
+      category: whop?.category || null,
+      whopId: whop?.id || null,
+      promoCodeId: null
     };
   }
 }

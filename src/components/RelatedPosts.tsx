@@ -8,9 +8,7 @@ interface RelatedPost {
   slug: string
   excerpt: string | null
   publishedAt: string | null
-  author?: {
-    name: string
-  } | null
+  authorName?: string | null
 }
 
 interface RelatedPostsProps {
@@ -110,9 +108,9 @@ export default function RelatedPosts({ currentPostId, currentPostTitle }: Relate
                   </time>
                 )}
                 
-                {post.author?.name && (
+                {post.authorName && (
                   <span className="text-xs" style={{ color: 'var(--text-muted)' }}>
-                    By {post.author.name}
+                    By {post.authorName}
                   </span>
                 )}
               </div>
