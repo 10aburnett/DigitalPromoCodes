@@ -12,6 +12,20 @@ export const revalidate = 300; // 5 minutes ISR (shorter for testing, increase f
 export const fetchCache = 'force-cache';
 export const runtime = 'nodejs'; // Required for Prisma
 
+// Floors to the nearest thousand/million: 98,600 -> "98K"
+const formatCompact = (n: number) => {
+  if (!Number.isFinite(n) || n <= 0) return '0';
+  if (n >= 1_000_000) return `${Math.floor(n / 1_000_000)}M`;
+  if (n >= 1_000) return `${Math.floor(n / 1_000)}K`;
+  return `${Math.floor(n)}`;
+};
+
+// Read marketing users from env (NEXT_PUBLIC_ so it's safe in the client if needed)
+const getMarketingUsers = (dbCount: number) => {
+  const fromEnv = Number(process.env.NEXT_PUBLIC_MARKETING_USERS);
+  return Number.isFinite(fromEnv) && fromEnv > 0 ? fromEnv : dbCount;
+};
+
 // Define the types for our data
 interface PromoCode {
   id: string;
@@ -60,8 +74,11 @@ async function getInitialData(): Promise<InitialData> {
     // Get total count of ALL whops (no quality gate)
     const totalCount = await prisma.whop.count();
 
-    // Get user count
-    const totalUsers = await prisma.user.count();
+    // Get user count (DB)
+    const totalUsersDb = await prisma.user.count();
+
+    // Unified, env-first marketing counter
+    const marketingUsers = getMarketingUsers(totalUsersDb);
 
     // Transform data to match expected format
     const formattedWhops = whops.map(whop => ({
@@ -89,7 +106,7 @@ async function getInitialData(): Promise<InitialData> {
 
     return {
       whops: formattedWhops,
-      totalUsers,
+      totalUsers: marketingUsers,
       totalCount
     };
   } catch (error) {
@@ -247,10 +264,7 @@ export default async function Home() {
               <div className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: 'var(--accent-color)' }}></div>
               <span className="text-sm font-medium" style={{ color: 'var(--accent-color)' }}>
                 {data.totalUsers > 0 ? (
-                  (() => {
-                    const roundedUsers = Math.round(data.totalUsers / 10) * 10;
-                    return `Trusted by ${roundedUsers >= 1000 ? `${Math.floor(roundedUsers / 1000)}K+` : `${roundedUsers}+`} Users`;
-                  })()
+                  `Trusted by ${formatCompact(data.totalUsers)}+ Users`
                 ) : (
                   'Verified Promo Codes'
                 )}
