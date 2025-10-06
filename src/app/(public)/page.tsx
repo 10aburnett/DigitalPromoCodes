@@ -3,8 +3,7 @@ import HomePage from '@/components/HomePage';
 import StatisticsSection from '@/components/StatisticsSection';
 import CallToAction from '@/components/CallToAction';
 import { prisma } from '@/lib/prisma';
-import { whereIndexable } from '@/lib/where-indexable';
-import { getWhopsOptimizedCached } from '@/data/whops'; // NEW: Use cached version
+import { getWhopsAllCached } from '@/data/whops'; // NEW: Use cached version for ALL whops
 import type { Metadata } from 'next';
 
 // SSG + ISR configuration with cache tagging (D1)
@@ -55,13 +54,11 @@ const HomePageLoading = () => (
 // Server-side data fetching with cache tagging (D1)
 async function getInitialData(): Promise<InitialData> {
   try {
-    // Use cached, tagged data (D1)
-    const whops = await getWhopsOptimizedCached(1, 15);
+    // Use cached, tagged data for ALL whops (no quality gate)
+    const whops = await getWhopsAllCached(1, 15);
 
-    // Get total count
-    const totalCount = await prisma.whop.count({
-      where: whereIndexable()
-    });
+    // Get total count of ALL whops (no quality gate)
+    const totalCount = await prisma.whop.count();
 
     // Get user count
     const totalUsers = await prisma.user.count();

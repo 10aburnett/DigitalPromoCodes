@@ -79,3 +79,50 @@ export const getWhopsOptimizedCached = (page = 1, limit = 15) =>
       revalidate: 300
     }
   )();
+
+/**
+ * Cached, tagged fetch for ALL whops (no quality gate).
+ * Used for homepage to show total count and list.
+ * Tags: hubs
+ */
+export const getWhopsAllCached = (page = 1, limit = 15) =>
+  unstable_cache(
+    async () => {
+      logCache('MISS getWhopsAll', { page, limit });
+
+      // NOTE: no whereIndexable() — show every whop in DB
+      const whops = await prisma.whop.findMany({
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+          logo: true,
+          description: true,
+          rating: true,
+          displayOrder: true,
+          affiliateLink: true,
+          price: true,
+          PromoCode: {
+            select: {
+              id: true,
+              title: true,
+              description: true,
+              code: true,
+              type: true,
+              value: true
+            }
+          }
+        },
+        orderBy: { displayOrder: 'asc' },
+        skip: (page - 1) * limit,
+        take: limit
+      });
+
+      return whops;
+    },
+    [`whops:all:page=${page}:limit=${limit}`],
+    {
+      tags: [TAG_HUBS],
+      revalidate: 300
+    }
+  )();
