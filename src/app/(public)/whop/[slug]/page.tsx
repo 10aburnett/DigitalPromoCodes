@@ -531,7 +531,9 @@ export default async function WhopPage({ params }: { params: { slug: string } })
       author: review.author,
       content: review.content,
       rating: review.rating,
-      createdAt: review.createdAt.toISOString(),
+      createdAt: review.createdAt instanceof Date
+        ? review.createdAt.toISOString()
+        : String(review.createdAt),
       verified: review.verified
     }))
   };
