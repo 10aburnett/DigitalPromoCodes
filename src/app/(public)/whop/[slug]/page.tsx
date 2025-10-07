@@ -27,9 +27,7 @@ import PromoCodeSubmissionButton from '@/components/PromoCodeSubmissionButton';
 const WhopReviewSection = dynamicImport(() => import('@/components/WhopReviewSection'), {
   loading: () => null,
 });
-const FAQSection = dynamicImport(() => import('@/components/FAQSection'), {
-  loading: () => null,
-});
+import FAQSectionServer from '@/components/FAQSectionServer'; // Server component for SEO
 const Alternatives = dynamicImport(() => import('@/components/Alternatives'), {
   ssr: false, // Pure client widget, defer HTML & JS
   loading: () => null,
@@ -45,6 +43,7 @@ import { parseFaqContent } from '@/lib/faq-types';
 import RenderPlain from '@/components/RenderPlain';
 import { looksLikeHtml, isMeaningful, escapeHtml, toPlainText } from '@/lib/textRender';
 import WhopFreshness from '@/components/WhopFreshness';
+import WhopMetaServer from '@/components/WhopMetaServer';
 import HowToSection from '@/components/whop/HowToSection';
 import HowToSchema from '@/components/whop/HowToSchema';
 import 'server-only';
@@ -739,8 +738,13 @@ export default async function WhopPage({ params }: { params: { slug: string } })
             </div>
           </div>
 
-          {/* Freshness/Verification Section */}
-          <WhopFreshness slug={params.slug} />
+          {/* Usage Stats & Verification Status - Server Rendered */}
+          {whopFormatted.usageStats && (
+            <WhopMetaServer
+              usageStats={whopFormatted.usageStats}
+              freshnessData={whopFormatted.freshnessData}
+            />
+          )}
 
           {/* Product Details for Each Promo Code */}
           {whopFormatted.promoCodes.map((promo, globalIndex) => {
@@ -965,8 +969,8 @@ export default async function WhopPage({ params }: { params: { slug: string } })
             )}
           </section>
 
-          {/* FAQ Section - Enhanced with structured FAQ support */}
-          <FAQSection 
+          {/* FAQ Section - Server Rendered with native details/summary */}
+          <FAQSectionServer
             faqContent={whopFormatted.faqContent}
             faqs={fallbackFaqData}
             whopName={whopFormatted.name}

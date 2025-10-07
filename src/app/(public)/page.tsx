@@ -1,9 +1,10 @@
 import { Suspense } from 'react';
 import HomePage from '@/components/HomePage';
-import StatisticsSection from '@/components/StatisticsSection';
+import StatisticsSectionServer from '@/components/StatisticsSectionServer';
 import CallToAction from '@/components/CallToAction';
 import { prisma } from '@/lib/prisma';
 import { getWhopsAllCached } from '@/data/whops'; // NEW: Use cached version for ALL whops
+import { getStatisticsCached } from '@/data/statistics'; // Server-side statistics
 import type { Metadata } from 'next';
 
 // SSG + ISR configuration with cache tagging (D1)
@@ -155,7 +156,10 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function Home() {
-  const data = await getInitialData();
+  const [data, statistics] = await Promise.all([
+    getInitialData(),
+    getStatisticsCached()
+  ]);
   const currentYear = new Date().getFullYear();
 
   // Build JSON-LD schemas for server HTML
@@ -253,8 +257,8 @@ export default async function Home() {
         />
       </Suspense>
 
-      {/* Statistics Section */}
-      <StatisticsSection />
+      {/* Statistics Section - Server Rendered */}
+      <StatisticsSectionServer stats={statistics} />
 
       <div className="mx-auto w-[90%] md:w-[95%] max-w-[1280px]">
         <div className="mobile-dark-section mt-8 md:mt-24 mb-16 bg-white md:bg-transparent">

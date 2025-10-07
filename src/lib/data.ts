@@ -6,6 +6,12 @@ function safeDecode(v: string) {
   try { return decodeURIComponent(v); } catch { return v; }
 }
 
+const startOfTodayUTC = () => {
+  const d = new Date();
+  d.setUTCHours(0, 0, 0, 0);
+  return d;
+};
+
 export async function getWhopBySlug(slug: string, locale: string = 'en') {
   noStore();
 
@@ -92,10 +98,50 @@ export async function getWhopBySlug(slug: string, locale: string = 'en') {
     ...whop.PromoCode.filter(code => !code.id.startsWith('community_'))
   ];
 
-  // Return whop with combined promo codes
+  // Fetch usage stats for SEO (server-side)
+  const since = startOfTodayUTC();
+  const whereBase = {
+    actionType: 'code_copy' as const,
+    OR: [
+      { path: { contains: `/whop/${whop.slug}`, mode: 'insensitive' as const } },
+      { path: { contains: `/en/whop/${whop.slug}`, mode: 'insensitive' as const } },
+      { path: { contains: `https://whpcodes.com/whop/${whop.slug}`, mode: 'insensitive' as const } }
+    ]
+  };
+
+  const [totalCount, todayCount, lastUsage] = await Promise.all([
+    prisma.offerTracking.count({ where: whereBase }).catch(() => 0),
+    prisma.offerTracking.count({ where: { ...whereBase, createdAt: { gte: since } } }).catch(() => 0),
+    prisma.offerTracking.findFirst({
+      where: whereBase,
+      orderBy: { createdAt: 'desc' },
+      select: { createdAt: true }
+    }).catch(() => null)
+  ]);
+
+  // Fetch verification/freshness data (for Verification Status section)
+  let freshnessData = null;
+  try {
+    const fs = await import('fs/promises');
+    const path = await import('path');
+    const freshnessPath = path.join(process.cwd(), 'public', 'data', 'pages', `${whop.slug}.json`);
+    const freshnessFile = await fs.readFile(freshnessPath, 'utf-8');
+    freshnessData = JSON.parse(freshnessFile);
+  } catch {
+    // No freshness data available
+  }
+
+  // Return whop with combined promo codes + usage stats + verification data
   return {
     ...whop,
-    PromoCode: allPromoCodes
+    PromoCode: allPromoCodes,
+    usageStats: {
+      todayCount,
+      totalCount,
+      lastUsed: lastUsage?.createdAt ?? null,
+      verifiedDate: whop.updatedAt || whop.createdAt
+    },
+    freshnessData
   };
 }
 
