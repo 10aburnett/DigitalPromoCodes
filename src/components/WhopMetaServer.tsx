@@ -32,7 +32,7 @@ interface WhopMetaServerProps {
   freshnessData?: FreshnessData | null;
 }
 
-// Helper function to format dates in London timezone
+// Helper function to format dates in London timezone (deterministic, SSR-safe)
 function formatLondon(isoString: string | Date): string {
   const date = new Date(isoString);
   return date.toLocaleString('en-GB', {
@@ -46,17 +46,14 @@ function formatLondon(isoString: string | Date): string {
   });
 }
 
-function formatVerifiedDate(dateString: string | Date) {
-  try {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    });
-  } catch (e) {
-    return 'Unknown';
-  }
+// Helper to render time with <time> element for SEO and stable hydration
+function TimeDisplay({ isoString }: { isoString: string | Date }) {
+  const dateTimeValue = typeof isoString === 'string' ? isoString : isoString.toISOString();
+  return (
+    <time dateTime={dateTimeValue} suppressHydrationWarning>
+      {formatLondon(isoString)}
+    </time>
+  );
 }
 
 export default function WhopMetaServer({ usageStats, freshnessData }: WhopMetaServerProps) {
@@ -70,7 +67,7 @@ export default function WhopMetaServer({ usageStats, freshnessData }: WhopMetaSe
           {/* Last Updated */}
           <div className="mb-4 p-3 rounded-lg" style={{ backgroundColor: 'var(--background-color)' }}>
             <p className="text-sm font-medium text-green-600 mb-1">
-              ✅ Last checked: {formatLondon(freshnessData.lastUpdated)}
+              ✅ Last checked: <TimeDisplay isoString={freshnessData.lastUpdated} />
             </p>
           </div>
 
@@ -108,11 +105,11 @@ export default function WhopMetaServer({ usageStats, freshnessData }: WhopMetaSe
                       <td className="py-2 px-2 text-sm">
                         {row.verifiedAt ? (
                           <span className="text-green-600 font-medium">
-                            Last verified {formatLondon(row.verifiedAt)}
+                            Last verified <TimeDisplay isoString={row.verifiedAt} />
                           </span>
                         ) : row.checkedAt ? (
                           <span className="text-blue-600">
-                            Last checked {formatLondon(row.checkedAt)}
+                            Last checked <TimeDisplay isoString={row.checkedAt} />
                           </span>
                         ) : (
                           <span className="text-gray-500">Unverified</span>
