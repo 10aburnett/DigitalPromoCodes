@@ -28,14 +28,8 @@ const WhopReviewSection = dynamicImport(() => import('@/components/WhopReviewSec
   loading: () => null,
 });
 import FAQSectionServer from '@/components/FAQSectionServer'; // Server component for SEO
-const Alternatives = dynamicImport(() => import('@/components/Alternatives'), {
-  ssr: false, // Pure client widget, defer HTML & JS
-  loading: () => null,
-});
-const RecommendedWhops = dynamicImport(() => import('@/components/RecommendedWhops'), {
-  ssr: false, // Pure client recommendations, defer entirely
-  loading: () => null,
-});
+import RecommendedWhopsServer from '@/components/RecommendedWhopsServer'; // Server component for recommendations
+import AlternativesServer from '@/components/AlternativesServer'; // Server component for alternatives
 const CommunityPromoSection = dynamicImport(() => import('@/components/CommunityPromoSection'), {
   loading: () => null, // Keep SSR for SEO-relevant content
 });
@@ -199,14 +193,11 @@ function hasTrial(price: string | null): boolean {
 
 // Async component for heavy sections that can be streamed
 async function RecommendedSection({ currentWhopSlug }: { currentWhopSlug: string }) {
-  // Simulate a small delay to show streaming effect in development
-  await new Promise(resolve => setTimeout(resolve, 100));
-
-  return <RecommendedWhops currentWhopSlug={currentWhopSlug} />;
+  return <RecommendedWhopsServer currentWhopSlug={currentWhopSlug} />;
 }
 
 async function AlternativesSection({ currentWhopSlug }: { currentWhopSlug: string }) {
-  return <Alternatives currentWhopSlug={currentWhopSlug} />;
+  return <AlternativesServer currentWhopSlug={currentWhopSlug} />;
 }
 
 async function ReviewsSection({ whopId, whopName, reviews }: { whopId: string; whopName: string; reviews: any[] }) {
