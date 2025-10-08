@@ -739,7 +739,7 @@ export default async function WhopPage({ params }: { params: { slug: string } })
               todayCount: 0,
               totalCount: 0,
               lastUsed: null,
-              verifiedDate: whopFormatted.updatedAt || whopFormatted.createdAt
+              verifiedDate: (whopFormatted.updatedAt || whopFormatted.createdAt)?.toISOString() ?? new Date().toISOString()
             }}
             freshnessData={whopFormatted.freshnessData ?? null}
           />
