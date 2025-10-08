@@ -55,8 +55,6 @@ export async function getRecommendations(currentWhopSlug: string): Promise<{
         const categoryWhops = await prisma.whop.findMany({
           where: {
             category: currentWhop.category,
-            publishedAt: { not: null },
-            indexingStatus: 'INDEX',
             slug: { not: canonicalSlug }
           },
           select: { slug: true },
@@ -75,9 +73,7 @@ export async function getRecommendations(currentWhopSlug: string): Promise<{
     // Fetch whop details from database
     const whops = await prisma.whop.findMany({
       where: {
-        slug: { in: slugs },
-        publishedAt: { not: null },
-        indexingStatus: 'INDEX'
+        slug: { in: slugs }
       },
       select: {
         id: true,
@@ -128,8 +124,7 @@ export async function getRecommendations(currentWhopSlug: string): Promise<{
       if (exploreSlug && !shownSlugs.has(exploreSlug)) {
         const exploreWhop = await prisma.whop.findFirst({
           where: {
-            slug: exploreSlug,
-            publishedAt: { not: null }
+            slug: exploreSlug
           },
           select: {
             slug: true,
@@ -190,8 +185,6 @@ export async function getAlternatives(currentWhopSlug: string): Promise<{
         const categoryWhops = await prisma.whop.findMany({
           where: {
             category: currentWhop.category,
-            publishedAt: { not: null },
-            indexingStatus: 'INDEX',
             slug: { notIn: excludeSlugs } // Exclude current whop and recommendations
           },
           select: { slug: true },
@@ -210,9 +203,7 @@ export async function getAlternatives(currentWhopSlug: string): Promise<{
     // Fetch whop details from database
     const whops = await prisma.whop.findMany({
       where: {
-        slug: { in: slugs },
-        publishedAt: { not: null },
-        indexingStatus: 'INDEX'
+        slug: { in: slugs }
       },
       select: {
         id: true,
@@ -263,8 +254,7 @@ export async function getAlternatives(currentWhopSlug: string): Promise<{
       if (exploreSlug && !shownSlugs.has(exploreSlug)) {
         const exploreWhop = await prisma.whop.findFirst({
           where: {
-            slug: exploreSlug,
-            publishedAt: { not: null }
+            slug: exploreSlug
           },
           select: {
             slug: true,
