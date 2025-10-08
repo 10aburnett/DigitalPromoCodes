@@ -22,12 +22,18 @@ export const getWhopBySlugCached = (slug: string, locale: string = 'en') =>
     async () => {
       logCache('MISS getWhopBySlug', { slug, locale });
       const whop = await getWhopBySlug(slug, locale);
+
+      // Preview debugging log
+      if (process.env.VERCEL_ENV === 'preview') {
+        console.log('[preview] whop data has usageStats?', !!(whop as any)?.usageStats, 'freshness?', !!(whop as any)?.freshnessData);
+      }
+
       return whop;
     },
     // cache key: stable and unique to this query
     [`whop:detail:${slug}:${locale}`],
     {
-      tags: [tagForWhop(slug)],
+      tags: ['whop', `whop:${slug}`],
       revalidate: 300 // 5 minutes in production, use 5 for quick tests
     }
   )();

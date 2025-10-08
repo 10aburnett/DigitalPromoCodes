@@ -42,8 +42,12 @@ export function middleware(request: NextRequest) {
   if (
     pathname.startsWith('/_next/') ||
     pathname.startsWith('/static/') ||
+    pathname.startsWith('/public/') ||
+    pathname.startsWith('/images/') ||
+    pathname.startsWith('/data/pages/') ||
     pathname.startsWith('/favicon') ||
     pathname === '/site.webmanifest' ||
+    pathname === '/manifest.webmanifest' ||
     pathname.startsWith('/sitemaps/') ||
     pathname === '/robots.txt' ||
     pathname === '/sitemap.xml' ||
