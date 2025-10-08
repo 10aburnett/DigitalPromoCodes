@@ -522,6 +522,10 @@ export default async function WhopPage({ params }: { params: { slug: string } })
     featuresContent: finalWhopData.featuresContent,
     termsContent: finalWhopData.termsContent,
     faqContent: finalWhopData.faqContent,
+    updatedAt: finalWhopData.updatedAt,
+    createdAt: finalWhopData.createdAt,
+    usageStats: (finalWhopData as any).usageStats,
+    freshnessData: (finalWhopData as any).freshnessData,
     promoCodes: (finalWhopData.PromoCode ?? []).map(code => ({
       id: code.id,
       title: code.title,
@@ -730,12 +734,15 @@ export default async function WhopPage({ params }: { params: { slug: string } })
           </div>
 
           {/* Usage Stats & Verification Status - Server Rendered */}
-          {whopFormatted.usageStats && (
-            <WhopMetaServer
-              usageStats={whopFormatted.usageStats}
-              freshnessData={whopFormatted.freshnessData}
-            />
-          )}
+          <WhopMetaServer
+            usageStats={whopFormatted.usageStats ?? {
+              todayCount: 0,
+              totalCount: 0,
+              lastUsed: null,
+              verifiedDate: whopFormatted.updatedAt || whopFormatted.createdAt
+            }}
+            freshnessData={whopFormatted.freshnessData ?? null}
+          />
 
           {/* Product Details for Each Promo Code */}
           {whopFormatted.promoCodes.map((promo, globalIndex) => {
@@ -914,17 +921,6 @@ export default async function WhopPage({ params }: { params: { slug: string } })
                   <p className="text-base sm:text-lg leading-relaxed mb-3" style={{ color: 'var(--text-secondary)' }}>
                     Get exclusive access and special discounts with our promo code.
                   </p>
-                  
-                  {/* Compact usage stats */}
-                  {firstPromo && (
-                    <div className="mt-3 pt-3 border-t" style={{ borderColor: 'var(--border-color)' }}>
-                      <WhopPageCompactStats 
-                        whopId={whopFormatted.id}
-                        promoCodeId={firstPromo.id}
-                        slug={params.slug}
-                      />
-                    </div>
-                  )}
                 </div>
                 
                 {/* Promo Type Badge */}

@@ -35,42 +35,19 @@ export function WhopPageCompactStats({ whopId, promoCodeId, slug }: { whopId: st
 }
 
 export default function WhopPageInteractive({ whop, firstPromo, promoCode, promoTitle }: WhopPageInteractiveProps) {
-  const mainStatsRef = useRef<PromoStatsDisplayHandle>(null);
-
-  const handleTrackingComplete = () => {
-    console.log('🔄 WhopPageInteractive: Refreshing main PromoStatsDisplay after tracking');
-    mainStatsRef.current?.refresh();
-    
-    // Also trigger refresh for all compact stats on the page
-    const compactStatsElements = document.querySelectorAll('[data-compact-stats]');
-    compactStatsElements.forEach((element) => {
-      const event = new CustomEvent('refreshStats');
-      element.dispatchEvent(event);
-    });
-  };
-
   return (
     <>
       {/* Interactive Button */}
-      <WhopPageClient 
+      <WhopPageClient
         whop={whop}
         firstPromo={firstPromo}
         promoCode={promoCode}
         promoTitle={promoTitle}
-        onTrackingComplete={handleTrackingComplete}
+        onTrackingComplete={() => {
+          // Stats are now server-rendered via WhopMetaServer, no need to refresh client component
+          console.log('🔄 Tracking complete - stats will update on next page load');
+        }}
       />
-      
-      {/* Main Promo Code Usage Statistics */}
-      {firstPromo && (
-        <div className="mt-6">
-          <PromoStatsDisplay 
-            ref={mainStatsRef}
-            whopId={whop.id} 
-            promoCodeId={firstPromo.id}
-            slug={whop.slug}
-          />
-        </div>
-      )}
     </>
   );
 } 

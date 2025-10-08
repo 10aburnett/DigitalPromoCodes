@@ -42,10 +42,34 @@ export async function getRecommendations(currentWhopSlug: string): Promise<{
     // Load graph neighbors
     const neighbors = await loadNeighbors();
     const rawSlugs = getNeighborSlugsFor(neighbors, canonicalSlug, 'recommendations');
-    const slugs = Array.from(new Set(rawSlugs.filter(Boolean))).slice(0, 4);
+    let slugs = Array.from(new Set(rawSlugs.filter(Boolean))).slice(0, 4);
 
+    // Fallback: if graph has no neighbors, use category-based recommendations
     if (slugs.length === 0) {
-      return { items: [], explore: null };
+      const currentWhop = await prisma.whop.findFirst({
+        where: { slug: canonicalSlug },
+        select: { category: true }
+      });
+
+      if (currentWhop?.category) {
+        const categoryWhops = await prisma.whop.findMany({
+          where: {
+            category: currentWhop.category,
+            publishedAt: { not: null },
+            indexingStatus: 'INDEX',
+            slug: { not: canonicalSlug }
+          },
+          select: { slug: true },
+          orderBy: [{ rating: 'desc' }, { createdAt: 'desc' }],
+          take: 4
+        });
+
+        slugs = categoryWhops.map(w => w.slug);
+      }
+
+      if (slugs.length === 0) {
+        return { items: [], explore: null };
+      }
     }
 
     // Fetch whop details from database
@@ -152,10 +176,35 @@ export async function getAlternatives(currentWhopSlug: string): Promise<{
     const recSet = new Set(recSlugs);
 
     // Filter out any alternatives that appear in recommendations
-    const slugs = Array.from(new Set(rawAltSlugs.filter(Boolean).filter(slug => !recSet.has(slug)))).slice(0, 5);
+    let slugs = Array.from(new Set(rawAltSlugs.filter(Boolean).filter(slug => !recSet.has(slug)))).slice(0, 5);
 
+    // Fallback: if graph has no alternatives, use category-based alternatives
     if (slugs.length === 0) {
-      return { items: [], explore: null };
+      const currentWhop = await prisma.whop.findFirst({
+        where: { slug: canonicalSlug },
+        select: { category: true }
+      });
+
+      if (currentWhop?.category) {
+        const excludeSlugs = [canonicalSlug, ...Array.from(recSet)];
+        const categoryWhops = await prisma.whop.findMany({
+          where: {
+            category: currentWhop.category,
+            publishedAt: { not: null },
+            indexingStatus: 'INDEX',
+            slug: { notIn: excludeSlugs } // Exclude current whop and recommendations
+          },
+          select: { slug: true },
+          orderBy: [{ rating: 'desc' }, { createdAt: 'desc' }],
+          take: 5
+        });
+
+        slugs = categoryWhops.map(w => w.slug);
+      }
+
+      if (slugs.length === 0) {
+        return { items: [], explore: null };
+      }
     }
 
     // Fetch whop details from database
