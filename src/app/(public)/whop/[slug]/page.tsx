@@ -36,7 +36,6 @@ const CommunityPromoSection = dynamicImport(() => import('@/components/Community
 import { parseFaqContent } from '@/lib/faq-types';
 import RenderPlain from '@/components/RenderPlain';
 import { looksLikeHtml, isMeaningful, escapeHtml, toPlainText } from '@/lib/textRender';
-import WhopFreshness from '@/components/WhopFreshness';
 import WhopMetaServer from '@/components/WhopMetaServer';
 import HowToSection from '@/components/whop/HowToSection';
 import HowToSchema from '@/components/whop/HowToSchema';

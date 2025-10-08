@@ -1,6 +1,8 @@
 // src/components/WhopMetaServer.tsx
 // Server component for promo usage statistics and verification status
 
+export const dynamic = 'force-static';
+
 interface UsageStats {
   todayCount: number;
   totalCount: number;
