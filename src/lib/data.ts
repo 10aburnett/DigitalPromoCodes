@@ -138,10 +138,18 @@ export async function getWhopBySlug(slug: string, locale: string = 'en') {
     usageStats: {
       todayCount,
       totalCount,
-      lastUsed: lastUsage?.createdAt ?? null,
-      verifiedDate: whop.updatedAt || whop.createdAt
+      lastUsed: lastUsage?.createdAt ? lastUsage.createdAt.toISOString() : null,
+      verifiedDate: (whop.updatedAt || whop.createdAt)?.toISOString()
     },
-    freshnessData
+    freshnessData: freshnessData ? {
+      ...freshnessData,
+      lastUpdated: new Date(freshnessData.lastUpdated).toISOString(),
+      ledger: (freshnessData.ledger ?? []).map((row: any) => ({
+        ...row,
+        checkedAt: row.checkedAt ? new Date(row.checkedAt).toISOString() : undefined,
+        verifiedAt: row.verifiedAt ? new Date(row.verifiedAt).toISOString() : undefined,
+      })),
+    } : null
   };
 }
 
