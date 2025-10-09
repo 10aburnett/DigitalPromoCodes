@@ -10,6 +10,7 @@ import { prisma } from '@/lib/prisma';
 import { unstable_cache } from 'next/cache';
 import Script from 'next/script';
 import { GA_TRACKING_ID } from '@/lib/analytics';
+import ForceDebugClient from './_force-debug-client';
 
 const inter = Inter({ 
   subsets: ['latin'],
@@ -254,6 +255,7 @@ export default async function RootLayout({
         <link rel="manifest" href="/site.webmanifest" />
       </head>
       <body className={`${inter.className} overflow-x-hidden`} style={{ backgroundColor: 'var(--background-color)', color: 'var(--text-color)' }}>
+        <ForceDebugClient />
         {children}
 
         {/* Google Analytics – load once at root */}

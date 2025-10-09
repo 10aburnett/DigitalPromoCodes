@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import { djb2 } from '@/lib/hydration-debug';
+import { debugOn } from '@/lib/debug-runtime';
 
 function safeParse(el: Element | null) {
   try {
@@ -16,6 +17,14 @@ export default function HydrationTripwire({
   snapshotId = 'whop-meta-snapshot',
 }: { targetId?: string; snapshotId?: string }) {
   useEffect(() => {
+    // Only activate if debug is enabled
+    if (!debugOn) {
+      console.info('[HydrationTripwire] Not active. Enable with ?debugHydration=1 or set localStorage.DEBUG_HYDRATION=1');
+      return;
+    }
+
+    console.info('[HydrationTripwire] Active - monitoring for hydration errors');
+
     const handler = (event: any) => {
       const msg = String(event?.message || event);
       if (!/React error #418|React error #423|hydration/i.test(msg)) return;
@@ -26,9 +35,11 @@ export default function HydrationTripwire({
       const snap = safeParse(script);
       const snapHash = snap ? djb2(JSON.stringify(snap)) : 'n/a';
 
-      console.group('[HydrationTripwire]');
-      console.error('Hydration error detected:', msg);
-      console.log('serverHash(data-hash):', serverHash, ' snapshotHash:', snapHash);
+      console.group('[HydrationTripwire] 🚨 HYDRATION ERROR DETECTED');
+      console.error('Error message:', msg);
+      console.log('serverHash (data-hash):', serverHash);
+      console.log('snapshotHash (computed):', snapHash);
+      console.log('Match:', serverHash === snapHash ? '✅ SAME' : '❌ DIFFERENT');
       console.log('serverSnapshot (first 1k chars):', JSON.stringify(snap)?.slice(0, 1000));
       console.log('outerHTML (first 2k chars):', host?.outerHTML?.slice(0, 2000));
       console.groupEnd();
