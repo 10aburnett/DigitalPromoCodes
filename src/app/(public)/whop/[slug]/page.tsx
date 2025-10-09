@@ -40,6 +40,7 @@ import WhopMetaServer from '@/components/WhopMetaServer';
 import HowToSection from '@/components/whop/HowToSection';
 import HowToSchema from '@/components/whop/HowToSchema';
 import HydrationTripwire from '@/components/HydrationTripwire';
+import { djb2 } from '@/lib/hydration-debug';
 import 'server-only';
 import { jsonLdScript } from '@/lib/jsonld';
 import { buildPrimaryEntity, buildBreadcrumbList, buildOffers, buildFAQ, buildHowTo, buildItemList, buildReviews } from '@/lib/buildSchema';
@@ -734,16 +735,31 @@ export default async function WhopPage({ params, searchParams }: { params: { slu
           </div>
 
           {/* Usage Stats & Verification Status - Server Rendered */}
-          <WhopMetaServer
-            usageStats={whopFormatted.usageStats ?? {
-              todayCount: 0,
-              totalCount: 0,
-              lastUsed: null,
-              verifiedDate: (whopFormatted.updatedAt || whopFormatted.createdAt)?.toISOString() ?? new Date().toISOString()
-            }}
-            freshnessData={whopFormatted.freshnessData ?? null}
-            debugOnly={searchParams?.debugOnly}
-          />
+          {(() => {
+            // Build plain JSON for the meta block - freeze props to avoid Date/undefined leaks
+            const metaUsage = JSON.parse(JSON.stringify({
+              todayCount: whopFormatted?.usageStats?.todayCount ?? 0,
+              totalCount: whopFormatted?.usageStats?.totalCount ?? 0,
+              lastUsed: whopFormatted?.usageStats?.lastUsed ?? null,        // already ISO string from data.ts
+              verifiedDate: whopFormatted?.usageStats?.verifiedDate ?? null // already ISO string from data.ts
+            }));
+
+            const metaFreshness = whopFormatted?.freshnessData
+              ? JSON.parse(JSON.stringify(whopFormatted.freshnessData))
+              : null;
+
+            // Stable hash to key the section
+            const metaKey = djb2(JSON.stringify({ usage: metaUsage, freshness: metaFreshness }));
+
+            return metaUsage && (
+              <WhopMetaServer
+                key={metaKey}
+                usageStats={metaUsage}
+                freshnessData={metaFreshness}
+                debugOnly={searchParams?.debugOnly}
+              />
+            );
+          })()}
 
           {/* Product Details for Each Promo Code */}
           {whopFormatted.promoCodes.map((promo, globalIndex) => {
