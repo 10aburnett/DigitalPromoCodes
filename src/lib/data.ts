@@ -1,6 +1,7 @@
 import { unstable_noStore as noStore } from 'next/cache';
 import { prisma } from '@/lib/prisma';
 import { whereIndexable } from '@/lib/where-indexable';
+import { toIso } from '@/lib/hydration-debug';
 
 function safeDecode(v: string) {
   try { return decodeURIComponent(v); } catch { return v; }
@@ -132,24 +133,32 @@ export async function getWhopBySlug(slug: string, locale: string = 'en') {
   }
 
   // Return whop with combined promo codes + usage stats + verification data
+  const verifiedRaw = whop.updatedAt || whop.createdAt || null;
+  const usageStats = {
+    todayCount,
+    totalCount,
+    lastUsed: lastUsage?.createdAt ? lastUsage.createdAt.toISOString() : null,
+    verifiedDate: verifiedRaw ? verifiedRaw.toISOString() : null,
+  };
+
+  let freshness: any = null;
+  try {
+    freshness = freshnessData ? {
+      ...freshnessData,
+      lastUpdated: toIso(freshnessData.lastUpdated),
+      ledger: (freshnessData.ledger ?? []).map((r: any) => ({
+        ...r,
+        checkedAt: toIso(r.checkedAt ?? null),
+        verifiedAt: toIso(r.verifiedAt ?? null),
+      })),
+    } : null;
+  } catch {}
+
   return {
     ...whop,
     PromoCode: allPromoCodes,
-    usageStats: {
-      todayCount,
-      totalCount,
-      lastUsed: lastUsage?.createdAt ? lastUsage.createdAt.toISOString() : null,
-      verifiedDate: (whop.updatedAt || whop.createdAt)?.toISOString()
-    },
-    freshnessData: freshnessData ? {
-      ...freshnessData,
-      lastUpdated: new Date(freshnessData.lastUpdated).toISOString(),
-      ledger: (freshnessData.ledger ?? []).map((row: any) => ({
-        ...row,
-        checkedAt: row.checkedAt ? new Date(row.checkedAt).toISOString() : undefined,
-        verifiedAt: row.verifiedAt ? new Date(row.verifiedAt).toISOString() : undefined,
-      })),
-    } : null
+    usageStats,
+    freshnessData: freshness,
   };
 }
 

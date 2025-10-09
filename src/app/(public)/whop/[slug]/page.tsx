@@ -39,6 +39,7 @@ import { looksLikeHtml, isMeaningful, escapeHtml, toPlainText } from '@/lib/text
 import WhopMetaServer from '@/components/WhopMetaServer';
 import HowToSection from '@/components/whop/HowToSection';
 import HowToSchema from '@/components/whop/HowToSchema';
+import HydrationTripwire from '@/components/HydrationTripwire';
 import 'server-only';
 import { jsonLdScript } from '@/lib/jsonld';
 import { buildPrimaryEntity, buildBreadcrumbList, buildOffers, buildFAQ, buildHowTo, buildItemList, buildReviews } from '@/lib/buildSchema';
@@ -408,7 +409,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   }
 }
 
-export default async function WhopPage({ params }: { params: { slug: string } }) {
+export default async function WhopPage({ params, searchParams }: { params: { slug: string }, searchParams?: { debugOnly?: string } }) {
   const raw = params.slug || '';
   const dbSlug = canonicalSlugForDB(raw);
   const canonSlug = canonicalSlugForPath(raw);
@@ -741,6 +742,7 @@ export default async function WhopPage({ params }: { params: { slug: string } })
               verifiedDate: (whopFormatted.updatedAt || whopFormatted.createdAt)?.toISOString() ?? new Date().toISOString()
             }}
             freshnessData={whopFormatted.freshnessData ?? null}
+            debugOnly={searchParams?.debugOnly}
           />
 
           {/* Product Details for Each Promo Code */}
@@ -1019,6 +1021,9 @@ export default async function WhopPage({ params }: { params: { slug: string } })
           </div>
         </div>
       </div>
+
+      {/* Hydration Debug Tripwire - only active when NEXT_PUBLIC_HYDRATION_DEBUG=1 */}
+      {process.env.NEXT_PUBLIC_HYDRATION_DEBUG === '1' && <HydrationTripwire />}
     </main>
   );
 } 
