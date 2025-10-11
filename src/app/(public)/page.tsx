@@ -9,6 +9,8 @@ import type { Metadata } from 'next';
 
 // Force dynamic rendering so ?page= works server-side (not statically cached)
 export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+export const dynamicParams = true;
 export const runtime = 'nodejs'; // Required for Prisma
 
 // Floors to the nearest thousand/million: 98,600 -> "98K"

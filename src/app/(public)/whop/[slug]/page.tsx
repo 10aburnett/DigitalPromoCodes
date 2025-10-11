@@ -11,11 +11,10 @@ import { Suspense } from 'react';
 import { canonicalSlugForDB, canonicalSlugForPath } from '@/lib/slug-utils';
 import { siteOrigin } from '@/lib/site-origin';
 
-// SSG + ISR configuration for SEO with cache tagging (D1)
-export const dynamic = 'force-static'; // Always static for cache tagging
-export const revalidate = 300; // 5 minutes ISR (shorter for testing, increase for prod)
-export const dynamicParams = true; // Enable ISR for non-prebuilt pages
-export const fetchCache = 'force-cache';
+// Dynamic rendering for JS-on and JS-off compatibility
+export const dynamic = 'force-dynamic';
+export const revalidate = 60; // 1 minute revalidation
+export const dynamicParams = true; // Enable dynamic params for all slugs
 export const runtime = 'nodejs'; // required for Prisma database access
 
 import InitialsAvatar from '@/components/InitialsAvatar';
@@ -1016,19 +1015,15 @@ export default async function WhopPage({ params, searchParams }: { params: { slu
 
         {/* Full-width sections for better layout */}
         <div className="w-full space-y-8">
-          {/* Recommended Whops Section - Streamed for better performance */}
+          {/* Recommended Whops Section - Server-rendered for JS-off compatibility */}
           <div className="max-w-2xl mx-auto">
-            <Suspense fallback={<SectionSkeleton />}>
-              <RecommendedSection currentWhopSlug={params.slug} />
-            </Suspense>
+            <RecommendedSection currentWhopSlug={params.slug} />
           </div>
 
-          {/* Alternatives Section - Topical clustering for SEO */}
+          {/* Alternatives Section - Server-rendered for JS-off compatibility */}
           <div className="max-w-2xl mx-auto">
-            <Suspense fallback={null}>
-              {/* @ts-expect-error Async Server Component */}
-              <AlternativesSection currentWhopSlug={params.slug} />
-            </Suspense>
+            {/* @ts-expect-error Async Server Component */}
+            <AlternativesSection currentWhopSlug={params.slug} />
           </div>
 
           {/* Reviews Section - Streamed for better performance */}

@@ -2,6 +2,7 @@
 
 import React, { useState, useCallback, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import Link from 'next/link';
 import { FilterState } from '@/types/whop';
 import WhopCard from '@/components/WhopCard';
 import FilterControls from '@/components/FilterControls';
@@ -239,16 +240,6 @@ export default function HomePage({ initialWhops, initialTotal, totalUsers, curre
   // Build URL for pagination links (works without JavaScript)
   const pageHref = (p: number) => `/?page=${p}`;
 
-  // Optional progressive enhancement for smooth transitions when JS is available
-  const enhanceNav: React.MouseEventHandler<HTMLAnchorElement> = (e) => {
-    if (typeof window === 'undefined') return; // SSR safeguard
-    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return; // let new-tab etc work
-    e.preventDefault();
-    const href = (e.currentTarget as HTMLAnchorElement).href;
-    router.push(href);
-    window.scrollTo({ top: 0, behavior: 'instant' });
-  };
-
   // Cleanup timeout on unmount
   useEffect(() => {
     return () => {
@@ -286,9 +277,9 @@ export default function HomePage({ initialWhops, initialTotal, totalUsers, curre
         <div className="md:hidden flex justify-center items-center gap-1 sm:gap-2 mt-4 mb-6 px-2 overflow-x-auto">
           {/* Previous Button */}
           {pagination.page > 1 ? (
-            <a
+            <Link
               href={pageHref(pagination.page - 1)}
-              onClick={enhanceNav}
+              prefetch={false}
               className="px-3 sm:px-5 py-2.5 rounded-lg border transition-all duration-200 hover:opacity-80 text-sm sm:text-base whitespace-nowrap flex-shrink-0"
               style={{
                 backgroundColor: 'var(--background-secondary)',
@@ -298,7 +289,7 @@ export default function HomePage({ initialWhops, initialTotal, totalUsers, curre
             >
               <span className="hidden sm:inline">Previous</span>
               <span className="sm:hidden">Prev</span>
-            </a>
+            </Link>
           ) : (
             <span className="px-3 sm:px-5 py-2.5 rounded-lg border opacity-50 text-sm sm:text-base whitespace-nowrap flex-shrink-0"
               style={{
@@ -316,10 +307,10 @@ export default function HomePage({ initialWhops, initialTotal, totalUsers, curre
           {/* Page Numbers */}
           <div className="flex items-center gap-1 sm:gap-2 min-w-0">
             {getPageNumbers().map((pageNum) => (
-              <a
+              <Link
                 key={pageNum}
                 href={pageHref(pageNum)}
-                onClick={enhanceNav}
+                prefetch={false}
                 aria-current={pageNum === pagination.page ? 'page' : undefined}
                 className={`px-3 sm:px-5 py-2.5 rounded-lg border transition-all duration-200 hover:opacity-80 text-sm sm:text-base flex-shrink-0 min-w-[36px] sm:min-w-[44px] ${
                   pageNum === pagination.page ? 'font-bold' : ''
@@ -331,15 +322,15 @@ export default function HomePage({ initialWhops, initialTotal, totalUsers, curre
                 }}
               >
                 {pageNum}
-              </a>
+              </Link>
             ))}
           </div>
 
           {/* Next Button */}
           {pagination.page < pagination.totalPages ? (
-            <a
+            <Link
               href={pageHref(pagination.page + 1)}
-              onClick={enhanceNav}
+              prefetch={false}
               className="px-3 sm:px-5 py-2.5 rounded-lg border transition-all duration-200 hover:opacity-80 text-sm sm:text-base whitespace-nowrap flex-shrink-0"
               style={{
                 backgroundColor: 'var(--background-secondary)',
@@ -349,7 +340,7 @@ export default function HomePage({ initialWhops, initialTotal, totalUsers, curre
             >
               <span className="hidden sm:inline">Next</span>
               <span className="sm:hidden">Next</span>
-            </a>
+            </Link>
           ) : (
             <span className="px-3 sm:px-5 py-2.5 rounded-lg border opacity-50 text-sm sm:text-base whitespace-nowrap flex-shrink-0"
               style={{
@@ -371,9 +362,9 @@ export default function HomePage({ initialWhops, initialTotal, totalUsers, curre
         <div className="hidden md:flex justify-center items-center gap-1 sm:gap-2 mt-4 mb-6 px-2 overflow-x-auto">
           {/* Previous Button */}
           {pagination.page > 1 ? (
-            <a
+            <Link
               href={pageHref(pagination.page - 1)}
-              onClick={enhanceNav}
+              prefetch={false}
               className="px-3 sm:px-5 py-2.5 rounded-lg border transition-all duration-200 hover:opacity-80 text-sm sm:text-base whitespace-nowrap flex-shrink-0"
               style={{
                 backgroundColor: 'var(--background-secondary)',
@@ -383,7 +374,7 @@ export default function HomePage({ initialWhops, initialTotal, totalUsers, curre
             >
               <span className="hidden sm:inline">Previous</span>
               <span className="sm:hidden">Prev</span>
-            </a>
+            </Link>
           ) : (
             <span className="px-3 sm:px-5 py-2.5 rounded-lg border opacity-50 text-sm sm:text-base whitespace-nowrap flex-shrink-0"
               style={{
@@ -401,10 +392,10 @@ export default function HomePage({ initialWhops, initialTotal, totalUsers, curre
           {/* Page Numbers */}
           <div className="flex items-center gap-1 sm:gap-2 min-w-0">
             {getPageNumbers().map((pageNum) => (
-              <a
+              <Link
                 key={pageNum}
                 href={pageHref(pageNum)}
-                onClick={enhanceNav}
+                prefetch={false}
                 aria-current={pageNum === pagination.page ? 'page' : undefined}
                 className={`px-3 sm:px-5 py-2.5 rounded-lg border transition-all duration-200 hover:opacity-80 text-sm sm:text-base flex-shrink-0 min-w-[36px] sm:min-w-[44px] ${
                   pageNum === pagination.page ? 'font-bold' : ''
@@ -416,15 +407,15 @@ export default function HomePage({ initialWhops, initialTotal, totalUsers, curre
                 }}
               >
                 {pageNum}
-              </a>
+              </Link>
             ))}
           </div>
 
           {/* Next Button */}
           {pagination.page < pagination.totalPages ? (
-            <a
+            <Link
               href={pageHref(pagination.page + 1)}
-              onClick={enhanceNav}
+              prefetch={false}
               className="px-3 sm:px-5 py-2.5 rounded-lg border transition-all duration-200 hover:opacity-80 text-sm sm:text-base whitespace-nowrap flex-shrink-0"
               style={{
                 backgroundColor: 'var(--background-secondary)',
@@ -434,7 +425,7 @@ export default function HomePage({ initialWhops, initialTotal, totalUsers, curre
             >
               <span className="hidden sm:inline">Next</span>
               <span className="sm:hidden">Next</span>
-            </a>
+            </Link>
           ) : (
             <span className="px-3 sm:px-5 py-2.5 rounded-lg border opacity-50 text-sm sm:text-base whitespace-nowrap flex-shrink-0"
               style={{
@@ -466,9 +457,9 @@ export default function HomePage({ initialWhops, initialTotal, totalUsers, curre
         <div className="flex justify-center items-center gap-1 sm:gap-2 mt-8 mb-8 px-2 overflow-x-auto">
           {/* Previous Button */}
           {pagination.page > 1 ? (
-            <a
+            <Link
               href={pageHref(pagination.page - 1)}
-              onClick={enhanceNav}
+              prefetch={false}
               className="px-3 sm:px-5 py-2.5 rounded-lg border transition-all duration-200 hover:opacity-80 text-sm sm:text-base whitespace-nowrap flex-shrink-0"
               style={{
                 backgroundColor: 'var(--background-secondary)',
@@ -478,7 +469,7 @@ export default function HomePage({ initialWhops, initialTotal, totalUsers, curre
             >
               <span className="hidden sm:inline">Previous</span>
               <span className="sm:hidden">Prev</span>
-            </a>
+            </Link>
           ) : (
             <span className="px-3 sm:px-5 py-2.5 rounded-lg border opacity-50 text-sm sm:text-base whitespace-nowrap flex-shrink-0"
               style={{
@@ -496,10 +487,10 @@ export default function HomePage({ initialWhops, initialTotal, totalUsers, curre
           {/* Page Numbers */}
           <div className="flex items-center gap-1 sm:gap-2 min-w-0">
             {getPageNumbers().map((pageNum) => (
-              <a
+              <Link
                 key={pageNum}
                 href={pageHref(pageNum)}
-                onClick={enhanceNav}
+                prefetch={false}
                 aria-current={pageNum === pagination.page ? 'page' : undefined}
                 className={`px-3 sm:px-5 py-2.5 rounded-lg border transition-all duration-200 hover:opacity-80 text-sm sm:text-base flex-shrink-0 min-w-[36px] sm:min-w-[44px] ${
                   pageNum === pagination.page ? 'font-bold' : ''
@@ -511,15 +502,15 @@ export default function HomePage({ initialWhops, initialTotal, totalUsers, curre
                 }}
               >
                 {pageNum}
-              </a>
+              </Link>
             ))}
           </div>
 
           {/* Next Button */}
           {pagination.page < pagination.totalPages ? (
-            <a
+            <Link
               href={pageHref(pagination.page + 1)}
-              onClick={enhanceNav}
+              prefetch={false}
               className="px-3 sm:px-5 py-2.5 rounded-lg border transition-all duration-200 hover:opacity-80 text-sm sm:text-base whitespace-nowrap flex-shrink-0"
               style={{
                 backgroundColor: 'var(--background-secondary)',
@@ -529,7 +520,7 @@ export default function HomePage({ initialWhops, initialTotal, totalUsers, curre
             >
               <span className="hidden sm:inline">Next</span>
               <span className="sm:hidden">Next</span>
-            </a>
+            </Link>
           ) : (
             <span className="px-3 sm:px-5 py-2.5 rounded-lg border opacity-50 text-sm sm:text-base whitespace-nowrap flex-shrink-0"
               style={{
