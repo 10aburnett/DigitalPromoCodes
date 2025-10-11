@@ -237,14 +237,16 @@ export default function HomePage({ initialWhops, initialTotal, totalUsers, curre
   };
 
   // Build URL for pagination links (works without JavaScript)
-  const buildPageUrl = (page: number) => {
-    const params = new URLSearchParams();
-    if (filters.searchTerm) params.set('search', filters.searchTerm);
-    if (filters.whopCategory) params.set('whopCategory', filters.whopCategory);
-    if (filters.whop) params.set('whop', filters.whop);
-    if (filters.sortBy) params.set('sortBy', filters.sortBy);
-    if (page > 1) params.set('page', page.toString());
-    return `/${params.toString() ? `?${params.toString()}` : ''}`;
+  const pageHref = (p: number) => `/?page=${p}`;
+
+  // Optional progressive enhancement for smooth transitions when JS is available
+  const enhanceNav: React.MouseEventHandler<HTMLAnchorElement> = (e) => {
+    if (typeof window === 'undefined') return; // SSR safeguard
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return; // let new-tab etc work
+    e.preventDefault();
+    const href = (e.currentTarget as HTMLAnchorElement).href;
+    router.push(href);
+    window.scrollTo({ top: 0, behavior: 'instant' });
   };
 
   // Cleanup timeout on unmount
@@ -285,8 +287,8 @@ export default function HomePage({ initialWhops, initialTotal, totalUsers, curre
           {/* Previous Button */}
           {pagination.page > 1 ? (
             <a
-              href={buildPageUrl(pagination.page - 1)}
-              onClick={(e) => { e.preventDefault(); handlePageChange(pagination.page - 1); }}
+              href={pageHref(pagination.page - 1)}
+              onClick={enhanceNav}
               className="px-3 sm:px-5 py-2.5 rounded-lg border transition-all duration-200 hover:opacity-80 text-sm sm:text-base whitespace-nowrap flex-shrink-0"
               style={{
                 backgroundColor: 'var(--background-secondary)',
@@ -304,6 +306,7 @@ export default function HomePage({ initialWhops, initialTotal, totalUsers, curre
                 borderColor: 'var(--border-color)',
                 color: 'var(--text-color)'
               }}
+              aria-disabled="true"
             >
               <span className="hidden sm:inline">Previous</span>
               <span className="sm:hidden">Prev</span>
@@ -315,8 +318,8 @@ export default function HomePage({ initialWhops, initialTotal, totalUsers, curre
             {getPageNumbers().map((pageNum) => (
               <a
                 key={pageNum}
-                href={buildPageUrl(pageNum)}
-                onClick={(e) => { e.preventDefault(); handlePageChange(pageNum); }}
+                href={pageHref(pageNum)}
+                onClick={enhanceNav}
                 aria-current={pageNum === pagination.page ? 'page' : undefined}
                 className={`px-3 sm:px-5 py-2.5 rounded-lg border transition-all duration-200 hover:opacity-80 text-sm sm:text-base flex-shrink-0 min-w-[36px] sm:min-w-[44px] ${
                   pageNum === pagination.page ? 'font-bold' : ''
@@ -335,8 +338,8 @@ export default function HomePage({ initialWhops, initialTotal, totalUsers, curre
           {/* Next Button */}
           {pagination.page < pagination.totalPages ? (
             <a
-              href={buildPageUrl(pagination.page + 1)}
-              onClick={(e) => { e.preventDefault(); handlePageChange(pagination.page + 1); }}
+              href={pageHref(pagination.page + 1)}
+              onClick={enhanceNav}
               className="px-3 sm:px-5 py-2.5 rounded-lg border transition-all duration-200 hover:opacity-80 text-sm sm:text-base whitespace-nowrap flex-shrink-0"
               style={{
                 backgroundColor: 'var(--background-secondary)',
@@ -354,6 +357,7 @@ export default function HomePage({ initialWhops, initialTotal, totalUsers, curre
                 borderColor: 'var(--border-color)',
                 color: 'var(--text-color)'
               }}
+              aria-disabled="true"
             >
               <span className="hidden sm:inline">Next</span>
               <span className="sm:hidden">Next</span>
@@ -368,8 +372,8 @@ export default function HomePage({ initialWhops, initialTotal, totalUsers, curre
           {/* Previous Button */}
           {pagination.page > 1 ? (
             <a
-              href={buildPageUrl(pagination.page - 1)}
-              onClick={(e) => { e.preventDefault(); handlePageChange(pagination.page - 1); }}
+              href={pageHref(pagination.page - 1)}
+              onClick={enhanceNav}
               className="px-3 sm:px-5 py-2.5 rounded-lg border transition-all duration-200 hover:opacity-80 text-sm sm:text-base whitespace-nowrap flex-shrink-0"
               style={{
                 backgroundColor: 'var(--background-secondary)',
@@ -387,6 +391,7 @@ export default function HomePage({ initialWhops, initialTotal, totalUsers, curre
                 borderColor: 'var(--border-color)',
                 color: 'var(--text-color)'
               }}
+              aria-disabled="true"
             >
               <span className="hidden sm:inline">Previous</span>
               <span className="sm:hidden">Prev</span>
@@ -398,8 +403,8 @@ export default function HomePage({ initialWhops, initialTotal, totalUsers, curre
             {getPageNumbers().map((pageNum) => (
               <a
                 key={pageNum}
-                href={buildPageUrl(pageNum)}
-                onClick={(e) => { e.preventDefault(); handlePageChange(pageNum); }}
+                href={pageHref(pageNum)}
+                onClick={enhanceNav}
                 aria-current={pageNum === pagination.page ? 'page' : undefined}
                 className={`px-3 sm:px-5 py-2.5 rounded-lg border transition-all duration-200 hover:opacity-80 text-sm sm:text-base flex-shrink-0 min-w-[36px] sm:min-w-[44px] ${
                   pageNum === pagination.page ? 'font-bold' : ''
@@ -418,8 +423,8 @@ export default function HomePage({ initialWhops, initialTotal, totalUsers, curre
           {/* Next Button */}
           {pagination.page < pagination.totalPages ? (
             <a
-              href={buildPageUrl(pagination.page + 1)}
-              onClick={(e) => { e.preventDefault(); handlePageChange(pagination.page + 1); }}
+              href={pageHref(pagination.page + 1)}
+              onClick={enhanceNav}
               className="px-3 sm:px-5 py-2.5 rounded-lg border transition-all duration-200 hover:opacity-80 text-sm sm:text-base whitespace-nowrap flex-shrink-0"
               style={{
                 backgroundColor: 'var(--background-secondary)',
@@ -437,6 +442,7 @@ export default function HomePage({ initialWhops, initialTotal, totalUsers, curre
                 borderColor: 'var(--border-color)',
                 color: 'var(--text-color)'
               }}
+              aria-disabled="true"
             >
               <span className="hidden sm:inline">Next</span>
               <span className="sm:hidden">Next</span>
@@ -461,8 +467,8 @@ export default function HomePage({ initialWhops, initialTotal, totalUsers, curre
           {/* Previous Button */}
           {pagination.page > 1 ? (
             <a
-              href={buildPageUrl(pagination.page - 1)}
-              onClick={(e) => { e.preventDefault(); handlePageChange(pagination.page - 1); }}
+              href={pageHref(pagination.page - 1)}
+              onClick={enhanceNav}
               className="px-3 sm:px-5 py-2.5 rounded-lg border transition-all duration-200 hover:opacity-80 text-sm sm:text-base whitespace-nowrap flex-shrink-0"
               style={{
                 backgroundColor: 'var(--background-secondary)',
@@ -480,6 +486,7 @@ export default function HomePage({ initialWhops, initialTotal, totalUsers, curre
                 borderColor: 'var(--border-color)',
                 color: 'var(--text-color)'
               }}
+              aria-disabled="true"
             >
               <span className="hidden sm:inline">Previous</span>
               <span className="sm:hidden">Prev</span>
@@ -491,8 +498,8 @@ export default function HomePage({ initialWhops, initialTotal, totalUsers, curre
             {getPageNumbers().map((pageNum) => (
               <a
                 key={pageNum}
-                href={buildPageUrl(pageNum)}
-                onClick={(e) => { e.preventDefault(); handlePageChange(pageNum); }}
+                href={pageHref(pageNum)}
+                onClick={enhanceNav}
                 aria-current={pageNum === pagination.page ? 'page' : undefined}
                 className={`px-3 sm:px-5 py-2.5 rounded-lg border transition-all duration-200 hover:opacity-80 text-sm sm:text-base flex-shrink-0 min-w-[36px] sm:min-w-[44px] ${
                   pageNum === pagination.page ? 'font-bold' : ''
@@ -511,8 +518,8 @@ export default function HomePage({ initialWhops, initialTotal, totalUsers, curre
           {/* Next Button */}
           {pagination.page < pagination.totalPages ? (
             <a
-              href={buildPageUrl(pagination.page + 1)}
-              onClick={(e) => { e.preventDefault(); handlePageChange(pagination.page + 1); }}
+              href={pageHref(pagination.page + 1)}
+              onClick={enhanceNav}
               className="px-3 sm:px-5 py-2.5 rounded-lg border transition-all duration-200 hover:opacity-80 text-sm sm:text-base whitespace-nowrap flex-shrink-0"
               style={{
                 backgroundColor: 'var(--background-secondary)',
@@ -530,6 +537,7 @@ export default function HomePage({ initialWhops, initialTotal, totalUsers, curre
                 borderColor: 'var(--border-color)',
                 color: 'var(--text-color)'
               }}
+              aria-disabled="true"
             >
               <span className="hidden sm:inline">Next</span>
               <span className="sm:hidden">Next</span>

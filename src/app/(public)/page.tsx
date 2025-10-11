@@ -7,10 +7,8 @@ import { getWhopsAllCached } from '@/data/whops'; // NEW: Use cached version for
 import { getStatisticsCached } from '@/data/statistics'; // Server-side statistics
 import type { Metadata } from 'next';
 
-// SSG + ISR configuration with cache tagging (D1)
-export const dynamic = 'force-static';
-export const revalidate = 300; // 5 minutes ISR (shorter for testing, increase for prod)
-export const fetchCache = 'force-cache';
+// Force dynamic rendering so ?page= works server-side (not statically cached)
+export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs'; // Required for Prisma
 
 // Floors to the nearest thousand/million: 98,600 -> "98K"
