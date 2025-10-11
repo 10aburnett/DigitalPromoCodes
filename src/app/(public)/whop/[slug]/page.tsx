@@ -20,7 +20,7 @@ export const runtime = 'nodejs'; // required for Prisma database access
 
 import InitialsAvatar from '@/components/InitialsAvatar';
 import WhopLogo from '@/components/WhopLogo';
-import WhopPageInteractive, { WhopPageCompactStats } from '@/components/WhopPageInteractive';
+import WhopPageInteractive from '@/components/WhopPageInteractive';
 import PromoCodeSubmissionButton from '@/components/PromoCodeSubmissionButton';
 
 // Below-the-fold components: dynamically import to reduce initial bundle size
@@ -36,11 +36,11 @@ const CommunityPromoSection = dynamicImport(() => import('@/components/Community
 import { parseFaqContent } from '@/lib/faq-types';
 import RenderPlain from '@/components/RenderPlain';
 import { looksLikeHtml, isMeaningful, escapeHtml, toPlainText } from '@/lib/textRender';
-import WhopMetaServer from '@/components/WhopMetaServer';
+import PromoStatsDisplay from '@/components/PromoStatsDisplay';
+import VerificationStatus from '@/components/VerificationStatus';
 import HowToSection from '@/components/whop/HowToSection';
 import HowToSchema from '@/components/whop/HowToSchema';
 import HydrationTripwire from '@/components/HydrationTripwire';
-import WhopMetaProbe from '@/components/WhopMetaProbe.client';
 import ServerSectionGuard from '@/components/ServerSectionGuard';
 import { djb2 } from '@/lib/hydration-debug';
 import 'server-only';
@@ -763,49 +763,17 @@ export default async function WhopPage({ params, searchParams }: { params: { slu
             </div>
           </div>
 
-          {/* DEBUG snapshot for hydration diagnosis */}
-          {whopFormatted.usageStats && (
-            <script
-              id="whop-meta-snapshot"
-              type="application/json"
-              dangerouslySetInnerHTML={{
-                __html: JSON.stringify({
-                  usageStats: whopFormatted.usageStats,
-                  freshnessData: whopFormatted.freshnessData
-                    ? { ...whopFormatted.freshnessData, ledger: (whopFormatted.freshnessData.ledger || []).length }
-                    : null
-                })
-              }}
-            />
-          )}
+          {/* Code Usage Statistics - Client Component with beautiful design */}
+          <PromoStatsDisplay
+            whopId={whopFormatted.id}
+            slug={params.slug}
+          />
 
-          {/* Usage Stats & Verification Status - Server Rendered */}
-          <ServerSectionGuard label="WhopMeta">
-            {(() => {
-              // Build plain JSON for the meta block - freeze props to avoid Date/undefined leaks
-              const metaUsage = JSON.parse(JSON.stringify({
-                todayCount: whopFormatted?.usageStats?.todayCount ?? 0,
-                totalCount: whopFormatted?.usageStats?.totalCount ?? 0,
-                lastUsed: whopFormatted?.usageStats?.lastUsed ?? null,        // already ISO string
-                verifiedDate: whopFormatted?.usageStats?.verifiedDate ?? null // already ISO string
-              }));
-
-              const metaFreshness = whopFormatted?.freshnessData
-                ? JSON.parse(JSON.stringify(whopFormatted.freshnessData))
-                : null;
-
-              // Stable hash to key the section
-              const metaKey = djb2(JSON.stringify({ usage: metaUsage, freshness: metaFreshness }));
-
-              return metaUsage && (
-                <WhopMetaServer
-                  key={metaKey}
-                  usageStats={metaUsage}
-                  freshnessData={metaFreshness}
-                  debugOnly={searchParams?.debugOnly}
-                />
-              );
-            })()}
+          {/* Verification Status - Server Rendered (separate section) */}
+          <ServerSectionGuard label="VerificationStatus">
+            {whopFormatted.freshnessData && (
+              <VerificationStatus freshnessData={whopFormatted.freshnessData} />
+            )}
           </ServerSectionGuard>
 
           {/* Product Details for Each Promo Code */}
@@ -1087,9 +1055,6 @@ export default async function WhopPage({ params, searchParams }: { params: { slu
 
       {/* Hydration Debug Tripwire - only active when NEXT_PUBLIC_HYDRATION_DEBUG=1 */}
       {process.env.NEXT_PUBLIC_HYDRATION_DEBUG === '1' && <HydrationTripwire />}
-
-      {/* Debug probe to log snapshot in browser console */}
-      <WhopMetaProbe />
     </main>
   );
 } 
