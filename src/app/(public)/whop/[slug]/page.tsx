@@ -759,11 +759,16 @@ export default async function WhopPage({ params, searchParams }: { params: { slu
             </div>
           </div>
 
-          {/* Code Usage Statistics - Client Component with beautiful design */}
-          <PromoStatsDisplay
-            whopId={whopFormatted.id}
-            slug={params.slug}
-          />
+          {/* Code Usage Statistics - Server Rendered (immediately after Reveal Code) */}
+          <ServerSectionGuard label="PromoUsageStats">
+            {whopFormatted.usageStats && (
+              <PromoStatsDisplay
+                whopId={whopFormatted.id}
+                slug={params.slug}
+                initialStats={whopFormatted.usageStats}
+              />
+            )}
+          </ServerSectionGuard>
 
           {/* Verification Status - Server Rendered (separate section) */}
           <ServerSectionGuard label="VerificationStatus">
