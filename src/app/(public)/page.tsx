@@ -67,10 +67,10 @@ const HomePageLoading = () => (
 );
 
 // Server-side data fetching with cache tagging (D1)
-async function getInitialData(): Promise<InitialData> {
+async function getInitialData(page: number = 1): Promise<InitialData> {
   try {
     // Use cached, tagged data for ALL whops (no quality gate)
-    const whops = await getWhopsAllCached(1, 15);
+    const whops = await getWhopsAllCached(page, 15);
 
     // Get total count of ALL whops (no quality gate)
     const totalCount = await prisma.whop.count();
@@ -155,9 +155,16 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default async function Home() {
+export default async function Home({
+  searchParams,
+}: {
+  searchParams: { page?: string };
+}) {
+  // Parse page number from searchParams, default to 1
+  const page = Math.max(1, Number(searchParams?.page ?? 1));
+
   const [data, statistics] = await Promise.all([
-    getInitialData(),
+    getInitialData(page),
     getStatisticsCached()
   ]);
   const currentYear = new Date().getFullYear();
@@ -254,6 +261,7 @@ export default async function Home() {
           initialWhops={data.whops}
           initialTotal={data.totalCount}
           totalUsers={data.totalUsers}
+          currentPage={page}
         />
       </Suspense>
 
