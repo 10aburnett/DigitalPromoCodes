@@ -145,20 +145,16 @@ async function getVerificationData(slug: string) {
       });
     }
 
-    if (!res.ok) return null;
+    if (!res.ok) {
+      console.error('VERIFICATION_FETCH_FAIL: HTTP', res.status, 'for', encoded);
+      return null;
+    }
 
     const raw = await res.json();
+    console.log('VERIFICATION_DATA_RAW:', slug, JSON.stringify(raw).slice(0, 200));
 
-    // normalize to { best: { beforeCents, afterCents, computedAt, currency } }
-    const candidate = raw?.best ?? {
-      beforeCents: raw?.beforeCents ?? null,
-      afterCents:  raw?.afterCents  ?? null,
-      computedAt:  raw?.computedAt ?? raw?.lastUpdated ?? null,
-      currency:    raw?.currency ?? null,
-    };
-
-    if (candidate.beforeCents == null && candidate.afterCents == null) return null;
-    return { best: candidate };
+    // Return the full raw data including whopUrl, lastUpdated, and ledger
+    return raw;
   } catch (err) {
     console.error('VERIFICATION_FETCH_FAIL', slug, err);
     return null; // never throw
@@ -523,12 +519,12 @@ export default async function WhopPage({ params, searchParams }: { params: { slu
       }
     : null;
 
-  // Normalize freshnessData - all Dates to ISO strings
-  const freshnessData = (finalWhopData as any).freshnessData
+  // Use verification data loaded from JSON files (not from database)
+  const freshnessData = verificationData
     ? {
-        whopUrl: String((finalWhopData as any).freshnessData.whopUrl || ''),
-        lastUpdated: new Date((finalWhopData as any).freshnessData.lastUpdated).toISOString(),
-        ledger: ((finalWhopData as any).freshnessData.ledger || []).map((row: any) => ({
+        whopUrl: String(verificationData.whopUrl || ''),
+        lastUpdated: verificationData.lastUpdated ? new Date(verificationData.lastUpdated).toISOString() : new Date().toISOString(),
+        ledger: (verificationData.ledger || []).map((row: any) => ({
           ...row,
           checkedAt: row?.checkedAt ? new Date(row.checkedAt).toISOString() : undefined,
           verifiedAt: row?.verifiedAt ? new Date(row.verifiedAt).toISOString() : undefined,
