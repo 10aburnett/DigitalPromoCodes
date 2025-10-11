@@ -252,7 +252,10 @@ export default async function RootLayout({
         <link rel="icon" type="image/png" sizes="512x512" href="/android-chrome-512x512.png" />
         <meta name="msapplication-TileColor" content="#4285f4" />
         <meta name="theme-color" content="#4285f4" />
-        <link rel="manifest" href="/site.webmanifest" />
+        {/* Only include manifest in production to avoid 401s on Vercel protected previews */}
+        {process.env.VERCEL_ENV === 'production' && (
+          <link rel="manifest" href="/site.webmanifest" />
+        )}
       </head>
       <body className={`${inter.className} overflow-x-hidden`} style={{ backgroundColor: 'var(--background-color)', color: 'var(--text-color)' }}>
         <ForceDebugClient />

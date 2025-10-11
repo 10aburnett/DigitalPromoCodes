@@ -2,7 +2,7 @@
 // Server component for FAQ section using native HTML details/summary
 
 import { FaqItem, parseFaqContent } from '@/lib/faq-types';
-import RenderPlain from '@/components/RenderPlain';
+import { RenderPlainServer } from '@/lib/RenderPlainServer';
 import { looksLikeHtml, toPlainText } from '@/lib/textRender';
 
 interface LegacyFAQItem {
@@ -128,7 +128,7 @@ export default function FAQSectionServer({ faqs = [], faqContent, whopName }: FA
                   />
                 ) : (
                   <div className="leading-relaxed">
-                    <RenderPlain text={faq.answer} />
+                    <RenderPlainServer text={faq.answer} />
                   </div>
                 )}
               </div>

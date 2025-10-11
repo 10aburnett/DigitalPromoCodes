@@ -40,6 +40,8 @@ import WhopMetaServer from '@/components/WhopMetaServer';
 import HowToSection from '@/components/whop/HowToSection';
 import HowToSchema from '@/components/whop/HowToSchema';
 import HydrationTripwire from '@/components/HydrationTripwire';
+import WhopMetaProbe from '@/components/WhopMetaProbe.client';
+import ServerSectionGuard from '@/components/ServerSectionGuard';
 import { djb2 } from '@/lib/hydration-debug';
 import 'server-only';
 import { jsonLdScript } from '@/lib/jsonld';
@@ -507,6 +509,33 @@ export default async function WhopPage({ params, searchParams }: { params: { slu
   }
 
 
+  // Normalize usageStats - all Dates to ISO strings for stable SSR/hydration
+  const usageStats = (finalWhopData as any).usageStats
+    ? {
+        todayCount: Number((finalWhopData as any).usageStats.todayCount || 0),
+        totalCount: Number((finalWhopData as any).usageStats.totalCount || 0),
+        lastUsed: (finalWhopData as any).usageStats.lastUsed
+          ? new Date((finalWhopData as any).usageStats.lastUsed).toISOString()
+          : null,
+        verifiedDate: new Date(
+          (finalWhopData as any).usageStats.verifiedDate ?? finalWhopData.updatedAt ?? finalWhopData.createdAt
+        ).toISOString(),
+      }
+    : null;
+
+  // Normalize freshnessData - all Dates to ISO strings
+  const freshnessData = (finalWhopData as any).freshnessData
+    ? {
+        whopUrl: String((finalWhopData as any).freshnessData.whopUrl || ''),
+        lastUpdated: new Date((finalWhopData as any).freshnessData.lastUpdated).toISOString(),
+        ledger: ((finalWhopData as any).freshnessData.ledger || []).map((row: any) => ({
+          ...row,
+          checkedAt: row?.checkedAt ? new Date(row.checkedAt).toISOString() : undefined,
+          verifiedAt: row?.verifiedAt ? new Date(row.verifiedAt).toISOString() : undefined,
+        })),
+      }
+    : null;
+
   // Transform raw Prisma data to match expected format
   const whopFormatted = {
     id: finalWhopData.id,
@@ -525,8 +554,8 @@ export default async function WhopPage({ params, searchParams }: { params: { slu
     faqContent: finalWhopData.faqContent,
     updatedAt: finalWhopData.updatedAt,
     createdAt: finalWhopData.createdAt,
-    usageStats: (finalWhopData as any).usageStats,
-    freshnessData: (finalWhopData as any).freshnessData,
+    usageStats,
+    freshnessData,
     promoCodes: (finalWhopData.PromoCode ?? []).map(code => ({
       id: code.id,
       title: code.title,
@@ -734,32 +763,50 @@ export default async function WhopPage({ params, searchParams }: { params: { slu
             </div>
           </div>
 
+          {/* DEBUG snapshot for hydration diagnosis */}
+          {whopFormatted.usageStats && (
+            <script
+              id="whop-meta-snapshot"
+              type="application/json"
+              dangerouslySetInnerHTML={{
+                __html: JSON.stringify({
+                  usageStats: whopFormatted.usageStats,
+                  freshnessData: whopFormatted.freshnessData
+                    ? { ...whopFormatted.freshnessData, ledger: (whopFormatted.freshnessData.ledger || []).length }
+                    : null
+                })
+              }}
+            />
+          )}
+
           {/* Usage Stats & Verification Status - Server Rendered */}
-          {(() => {
-            // Build plain JSON for the meta block - freeze props to avoid Date/undefined leaks
-            const metaUsage = JSON.parse(JSON.stringify({
-              todayCount: whopFormatted?.usageStats?.todayCount ?? 0,
-              totalCount: whopFormatted?.usageStats?.totalCount ?? 0,
-              lastUsed: whopFormatted?.usageStats?.lastUsed ?? null,        // already ISO string from data.ts
-              verifiedDate: whopFormatted?.usageStats?.verifiedDate ?? null // already ISO string from data.ts
-            }));
+          <ServerSectionGuard label="WhopMeta">
+            {(() => {
+              // Build plain JSON for the meta block - freeze props to avoid Date/undefined leaks
+              const metaUsage = JSON.parse(JSON.stringify({
+                todayCount: whopFormatted?.usageStats?.todayCount ?? 0,
+                totalCount: whopFormatted?.usageStats?.totalCount ?? 0,
+                lastUsed: whopFormatted?.usageStats?.lastUsed ?? null,        // already ISO string
+                verifiedDate: whopFormatted?.usageStats?.verifiedDate ?? null // already ISO string
+              }));
 
-            const metaFreshness = whopFormatted?.freshnessData
-              ? JSON.parse(JSON.stringify(whopFormatted.freshnessData))
-              : null;
+              const metaFreshness = whopFormatted?.freshnessData
+                ? JSON.parse(JSON.stringify(whopFormatted.freshnessData))
+                : null;
 
-            // Stable hash to key the section
-            const metaKey = djb2(JSON.stringify({ usage: metaUsage, freshness: metaFreshness }));
+              // Stable hash to key the section
+              const metaKey = djb2(JSON.stringify({ usage: metaUsage, freshness: metaFreshness }));
 
-            return metaUsage && (
-              <WhopMetaServer
-                key={metaKey}
-                usageStats={metaUsage}
-                freshnessData={metaFreshness}
-                debugOnly={searchParams?.debugOnly}
-              />
-            );
-          })()}
+              return metaUsage && (
+                <WhopMetaServer
+                  key={metaKey}
+                  usageStats={metaUsage}
+                  freshnessData={metaFreshness}
+                  debugOnly={searchParams?.debugOnly}
+                />
+              );
+            })()}
+          </ServerSectionGuard>
 
           {/* Product Details for Each Promo Code */}
           {whopFormatted.promoCodes.map((promo, globalIndex) => {
@@ -1040,6 +1087,9 @@ export default async function WhopPage({ params, searchParams }: { params: { slu
 
       {/* Hydration Debug Tripwire - only active when NEXT_PUBLIC_HYDRATION_DEBUG=1 */}
       {process.env.NEXT_PUBLIC_HYDRATION_DEBUG === '1' && <HydrationTripwire />}
+
+      {/* Debug probe to log snapshot in browser console */}
+      <WhopMetaProbe />
     </main>
   );
 } 
