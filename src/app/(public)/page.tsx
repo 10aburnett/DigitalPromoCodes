@@ -1,9 +1,7 @@
-import { Suspense } from 'react';
-import HomePage from '@/components/HomePage';
+import HomePageServer from '@/components/HomePageServer';
 import StatisticsSectionServer from '@/components/StatisticsSectionServer';
 import CallToAction from '@/components/CallToAction';
 import { prisma } from '@/lib/prisma';
-import { getWhopsAllCached } from '@/data/whops'; // NEW: Use cached version for ALL whops
 import { getStatisticsCached } from '@/data/statistics'; // Server-side statistics
 import type { Metadata } from 'next';
 
@@ -66,14 +64,33 @@ const HomePageLoading = () => (
   </div>
 );
 
-// Server-side data fetching with cache tagging (D1)
-async function getInitialData(page: number = 1): Promise<InitialData> {
+// Server-side data fetching - NO CACHE (ChatGPT fix)
+async function getPagedWhops(page: number = 1) {
   try {
-    // Use cached, tagged data for ALL whops (no quality gate)
-    const whops = await getWhopsAllCached(page, 15);
+    const limit = 15;
+    const skip = (page - 1) * limit;
 
-    // Get total count of ALL whops (no quality gate)
-    const totalCount = await prisma.whop.count();
+    // Fetch with no caching to ensure fresh data every time
+    const [whops, totalCount] = await Promise.all([
+      prisma.whop.findMany({
+        skip,
+        take: limit,
+        orderBy: { displayOrder: 'asc' },
+        include: {
+          PromoCode: {
+            select: {
+              id: true,
+              title: true,
+              description: true,
+              code: true,
+              type: true,
+              value: true,
+            },
+          },
+        },
+      }),
+      prisma.whop.count(),
+    ]);
 
     // Get user count (DB)
     const totalUsersDb = await prisma.user.count();
@@ -106,16 +123,18 @@ async function getInitialData(page: number = 1): Promise<InitialData> {
     }));
 
     return {
-      whops: formattedWhops,
+      items: formattedWhops,
+      totalPages: Math.ceil(totalCount / limit),
+      total: totalCount,
       totalUsers: marketingUsers,
-      totalCount
     };
   } catch (error) {
-    console.error('Error fetching initial data:', error);
+    console.error('Error fetching paged whops:', error);
     return {
-      whops: [],
+      items: [],
+      totalPages: 1,
+      total: 0,
       totalUsers: 0,
-      totalCount: 0
     };
   }
 }
@@ -158,13 +177,16 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function Home({
   searchParams,
 }: {
-  searchParams: { page?: string };
+  searchParams?: { page?: string };
 }) {
   // Parse page number from searchParams, default to 1
-  const page = Math.max(1, Number(searchParams?.page ?? 1));
+  const page = Math.max(1, Number(searchParams?.page ?? '1') || 1);
+
+  // Step 5: Deterministic log for debugging
+  console.log('[HOME SSR]', { page });
 
   const [data, statistics] = await Promise.all([
-    getInitialData(page),
+    getPagedWhops(page),
     getStatisticsCached()
   ]);
   const currentYear = new Date().getFullYear();
@@ -214,8 +236,8 @@ export default async function Home({
     '@type': 'ItemList',
     'name': `Best Whop Promo Codes ${currentYear}`,
     'description': `Curated list of the best Whop promo codes and discount codes for ${currentYear}`,
-    'numberOfItems': data.totalCount,
-    'itemListElement': data.whops.slice(0, 10).map((whop, index) => ({
+    'numberOfItems': data.total,
+    'itemListElement': data.items.slice(0, 10).map((whop, index) => ({
       '@type': 'ListItem',
       'position': index + 1,
       'item': {
@@ -255,15 +277,14 @@ export default async function Home({
       <script id="organization-schema" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }} />
       <script id="offers-schema" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(offersSchema) }} />
 
-      {/* Server-rendered content with client island for interactivity */}
-      <Suspense fallback={<HomePageLoading />}>
-        <HomePage
-          initialWhops={data.whops}
-          initialTotal={data.totalCount}
-          totalUsers={data.totalUsers}
-          currentPage={page}
-        />
-      </Suspense>
+      {/* Server-rendered content - pure server component with key for remounting */}
+      <HomePageServer
+        key={`p-${page}`}
+        items={data.items}
+        currentPage={page}
+        totalPages={data.totalPages}
+        total={data.total}
+      />
 
       {/* Statistics Section - Server Rendered */}
       <StatisticsSectionServer stats={statistics} />

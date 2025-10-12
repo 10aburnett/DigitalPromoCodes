@@ -52,19 +52,19 @@ import { whopAbsoluteUrl } from '@/lib/urls';
 import { getPageClassification, getRobotsForClassification, shouldIncludeInHreflang } from '@/lib/seo-classification';
 
 // Prebuild top 800 quality pages at build time, use ISR for long tail
-// Disabled in dev to prevent Prisma pool exhaustion
-export async function generateStaticParams() {
-  if (process.env.NODE_ENV !== 'production') return [];
+// TEMPORARILY DISABLED per ChatGPT fix - causes 404s with JS ON
+// export async function generateStaticParams() {
+//   if (process.env.NODE_ENV !== 'production') return [];
 
-  const rows = await prisma.whop.findMany({
-    where: whereIndexable(),
-    select: { slug: true },
-    orderBy: { displayOrder: 'asc' },
-    take: 800 // Budget for top "money pages"
-  });
+//   const rows = await prisma.whop.findMany({
+//     where: whereIndexable(),
+//     select: { slug: true },
+//     orderBy: { displayOrder: 'asc' },
+//     take: 800 // Budget for top "money pages"
+//   });
 
-  return rows.map(r => ({ slug: r.slug }));
-}
+//   return rows.map(r => ({ slug: r.slug }));
+// }
 
 interface PromoCode {
   id: string;
@@ -412,12 +412,12 @@ export default async function WhopPage({ params, searchParams }: { params: { slu
   const dbSlug = canonicalSlugForDB(raw);
   const canonSlug = canonicalSlugForPath(raw);
 
+  // Step 5: Deterministic log for debugging
+  console.log('[WHOP SSR]', { slug: params.slug, dbSlug, canonSlug });
+
   // Step 8: Determine SEO classification for this page
   const classification = getPageClassification(canonSlug);
   const shouldEmitSchema = classification === 'indexable';
-
-  // Debug logging to verify slug normalization
-  console.log('whop slug raw/db:', raw, dbSlug, 'classification:', classification);
 
   // Load view model for schema (reuse existing data path)
   let vm: WhopViewModel | null = null;
@@ -463,39 +463,31 @@ export default async function WhopPage({ params, searchParams }: { params: { slu
     return notFound();
   }
 
-  // 4) Early quality check: Only show indexable pages
+  // 4) Relaxed quality check per ChatGPT fix - only block GONE pages
   // Accept both 'INDEXED' (production) and 'INDEX' (backup DB)
   const indexingStatus = String(finalWhopData.indexingStatus || '').toUpperCase();
   const isIndexable = ['INDEXED', 'INDEX'].includes(indexingStatus);
   const isGone = finalWhopData.retirement === 'GONE';
 
-  // Build explicit reasons for non-indexable pages
-  const reasons: string[] = [];
-  if (isGone) reasons.push('RETIREMENT_GONE');
-  if (!isIndexable) reasons.push(`NOT_INDEXED (status: ${indexingStatus})`);
-
-  console.log('[WHOP DETAIL] Quality check:', {
+  console.log('[WHOP DETAIL] Quality check (relaxed):', {
     dbSlug,
     indexingStatus,
     isIndexable,
     retirement: finalWhopData.retirement,
     isGone,
-    reasons
+    nodeEnv: process.env.NODE_ENV
   });
 
-  // Only 404 in production for quality issues, or always for GONE pages
-  if (isGone || (process.env.NODE_ENV === 'production' && !isIndexable)) {
-    console.error('[WHOP DETAIL] 404 - Quality check failed:', {
-      raw,
-      dbSlug,
-      reasons
-    });
+  // RELAXED: Only 404 for GONE pages in all environments
+  // In development, allow all non-GONE pages (even if not indexed) to fix rec/alt 404s
+  if (isGone) {
+    console.error('[WHOP DETAIL] 404 - Page marked as GONE:', { raw, dbSlug });
     return notFound();
   }
 
-  // In development, show a warning banner instead of 404ing
-  if (process.env.NODE_ENV !== 'production' && reasons.length > 0) {
-    console.warn('[WHOP DETAIL] Soft quality fail (dev mode):', { dbSlug, reasons });
+  // Soft warning in dev for non-indexed pages (but don't 404)
+  if (process.env.NODE_ENV !== 'production' && !isIndexable) {
+    console.warn('[WHOP DETAIL] Non-indexed page shown in dev mode:', { dbSlug, indexingStatus });
   }
 
   // 5) Handle redirects

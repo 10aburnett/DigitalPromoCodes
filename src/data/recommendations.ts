@@ -70,10 +70,14 @@ export async function getRecommendations(currentWhopSlug: string): Promise<{
       }
     }
 
-    // Fetch whop details from database
+    // Fetch whop details from database - FILTER OUT GONE pages to prevent 404s
     const whops = await prisma.whop.findMany({
       where: {
-        slug: { in: slugs }
+        slug: { in: slugs },
+        // Per ChatGPT fix: only exclude GONE pages (match whop detail page logic)
+        NOT: {
+          retirement: 'GONE'
+        }
       },
       select: {
         id: true,
@@ -124,7 +128,11 @@ export async function getRecommendations(currentWhopSlug: string): Promise<{
       if (exploreSlug && !shownSlugs.has(exploreSlug)) {
         const exploreWhop = await prisma.whop.findFirst({
           where: {
-            slug: exploreSlug
+            slug: exploreSlug,
+            // Filter out GONE pages to prevent 404s
+            NOT: {
+              retirement: 'GONE'
+            }
           },
           select: {
             slug: true,
@@ -200,10 +208,14 @@ export async function getAlternatives(currentWhopSlug: string): Promise<{
       }
     }
 
-    // Fetch whop details from database
+    // Fetch whop details from database - FILTER OUT GONE pages to prevent 404s
     const whops = await prisma.whop.findMany({
       where: {
-        slug: { in: slugs }
+        slug: { in: slugs },
+        // Per ChatGPT fix: only exclude GONE pages (match whop detail page logic)
+        NOT: {
+          retirement: 'GONE'
+        }
       },
       select: {
         id: true,
@@ -254,7 +266,11 @@ export async function getAlternatives(currentWhopSlug: string): Promise<{
       if (exploreSlug && !shownSlugs.has(exploreSlug)) {
         const exploreWhop = await prisma.whop.findFirst({
           where: {
-            slug: exploreSlug
+            slug: exploreSlug,
+            // Filter out GONE pages to prevent 404s
+            NOT: {
+              retirement: 'GONE'
+            }
           },
           select: {
             slug: true,
