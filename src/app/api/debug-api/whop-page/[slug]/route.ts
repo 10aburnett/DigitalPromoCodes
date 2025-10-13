@@ -31,7 +31,7 @@ export async function GET(_req: Request, { params }: { params: { slug: string } 
 
   // apply the same "should render?" guard your page uses
   let shouldRender: boolean | null = null;
-  let reasons: string[] = [];
+  const reasons: string[] = [];
 
   if (!direct) {
     shouldRender = false;
