@@ -110,7 +110,7 @@ export async function getRecommendations(currentWhopSlug: string): Promise<{
     const items: WhopItem[] = whops.map(whop => ({
       id: whop.id,
       name: whop.name,
-      slug: whop.slug,
+      slug: normalizeSlug(whop.slug), // Ensure canonical slug for links
       logo: whop.logo,
       description: whop.description,
       category: whop.category,
@@ -143,7 +143,7 @@ export async function getRecommendations(currentWhopSlug: string): Promise<{
 
         if (exploreWhop) {
           explore = {
-            slug: exploreWhop.slug,
+            slug: normalizeSlug(exploreWhop.slug), // Ensure canonical slug
             name: exploreWhop.name,
             category: exploreWhop.category ?? undefined
           };
@@ -248,7 +248,7 @@ export async function getAlternatives(currentWhopSlug: string): Promise<{
     const items: WhopItem[] = whops.map(whop => ({
       id: whop.id,
       name: whop.name,
-      slug: whop.slug,
+      slug: normalizeSlug(whop.slug), // Ensure canonical slug for links
       logo: whop.logo,
       description: whop.description,
       category: whop.category,
@@ -281,7 +281,7 @@ export async function getAlternatives(currentWhopSlug: string): Promise<{
 
         if (exploreWhop) {
           explore = {
-            slug: exploreWhop.slug,
+            slug: normalizeSlug(exploreWhop.slug), // Ensure canonical slug
             name: exploreWhop.name,
             category: exploreWhop.category ?? undefined
           };

@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "node scripts/set-env-from-branch.js && npm run build:proofs && npm run build:verifyjson && next dev",
+    "dev": "PORT=3000 node scripts/set-env-from-branch.js && npm run build:proofs && npm run build:verifyjson && next dev -p 3000",
     "start:local-prod": "node scripts/set-env-from-branch.js --force-production && next dev",
     "start:local-backup": "node scripts/set-env-from-branch.js --force-backup && next dev",
     "dev:seo": "ts-node --transpile-only scripts/build-seo-indexes.ts && next dev",

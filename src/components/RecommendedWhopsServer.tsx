@@ -1,7 +1,7 @@
 // src/components/RecommendedWhopsServer.tsx
 import Link from 'next/link';
-import { ServerWhopCard } from './_ServerWhopCard';
 import { getRecommendations } from '@/data/recommendations';
+import { resolveLogoUrl } from '@/lib/image-url';
 
 interface PromoCode {
   id: string;
@@ -66,18 +66,43 @@ export default async function RecommendedWhopsServer({ currentWhopSlug }: Recomm
       </p>
 
       <div className="space-y-4">
-        {recommendations.map((whop, index) => (
-          <ServerWhopCard
-            key={whop.id}
-            slug={whop.slug}
-            title={whop.name}
-            subtitle={whop.description}
-            imageUrl={whop.logo}
-            badgeText={getPromoText(whop)}
-            category={whop.category}
-            rating={whop.rating ?? undefined}
-          />
-        ))}
+        {recommendations.map((whop, index) => {
+          const logoUrl = resolveLogoUrl(whop.logo);
+          console.log('[REC LOGO]', { slug: whop.slug, rawLogo: whop.logo, resolved: logoUrl });
+
+          return (
+            <Link
+              key={whop.id}
+              href={`/whop/${encodeURIComponent(whop.slug)}`}
+              className="block rounded-lg border p-4 hover:opacity-90 transition group"
+              style={{ borderColor: 'var(--border-color)', backgroundColor: 'var(--background-color)' }}
+              prefetch
+            >
+              <div className="flex gap-3 items-center">
+                <div className="w-12 h-12 rounded-md overflow-hidden bg-[var(--background-secondary)] shrink-0">
+                  <img
+                    src={logoUrl}
+                    alt={whop.name}
+                    width={48}
+                    height={48}
+                    loading={index < 2 ? 'eager' : 'lazy'}
+                    decoding="async"
+                    className="w-full h-full object-cover rounded"
+                  />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="font-semibold truncate" style={{ color: 'var(--text-color)' }}>{whop.name}</div>
+                  {whop.description && <div className="text-sm truncate" style={{ color: 'var(--text-secondary)' }}>{whop.description}</div>}
+                  <div className="mt-1 text-xs flex gap-2" style={{ color: 'var(--text-secondary)' }}>
+                    <span className="px-2 py-0.5 rounded-full border" style={{ borderColor: 'var(--border-color)' }}>{getPromoText(whop)}</span>
+                    {whop.category && <span>{whop.category}</span>}
+                    {typeof whop.rating === 'number' && <span>★ {whop.rating.toFixed(1)}</span>}
+                  </div>
+                </div>
+              </div>
+            </Link>
+          );
+        })}
       </div>
 
       {explore && (
@@ -87,7 +112,7 @@ export default async function RecommendedWhopsServer({ currentWhopSlug }: Recomm
             <span style={{ color: 'var(--text-secondary)' }}>
               Explore another{explore.category ? ` in ${explore.category}` : ''}:
             </span>
-            <Link href={`/whop/${explore.slug}`} className="font-medium hover:opacity-80 transition-opacity" style={{ color: 'var(--accent-color)' }}>
+            <Link href={`/whop/${encodeURIComponent(explore.slug)}`} className="font-medium hover:opacity-80 transition-opacity" style={{ color: 'var(--accent-color)' }} prefetch>
               {explore.name}
             </Link>
           </div>

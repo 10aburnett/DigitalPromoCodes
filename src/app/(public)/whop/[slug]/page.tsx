@@ -10,10 +10,12 @@ import { whereIndexable } from '@/lib/where-indexable';
 import { Suspense } from 'react';
 import { canonicalSlugForDB, canonicalSlugForPath } from '@/lib/slug-utils';
 import { siteOrigin } from '@/lib/site-origin';
+import { notFoundWithReason } from '@/lib/notFoundReason';
+import { dlog } from '@/lib/debug';
 
 // Dynamic rendering for JS-on and JS-off compatibility
 export const dynamic = 'force-dynamic';
-export const revalidate = 60; // 1 minute revalidation
+export const revalidate = 300; // 5 minute revalidation
 export const dynamicParams = true; // Enable dynamic params for all slugs
 export const runtime = 'nodejs'; // required for Prisma database access
 
@@ -214,8 +216,9 @@ async function ReviewsSection({ whopId, whopName, reviews }: { whopId: string; w
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   try {
     // Remove unstable_noStore() - rely on route-level revalidate
-    const canon = canonicalSlugForPath(params.slug ?? '');
-    const dbSlug = canonicalSlugForDB(params.slug ?? '');
+    const decoded = decodeURIComponent(params.slug ?? '');  // Decode before normalizing
+    const canon = canonicalSlugForPath(decoded);
+    const dbSlug = canonicalSlugForDB(decoded);
     console.log('[WHOP META] Generating metadata for:', { slug: params.slug, dbSlug });
 
     const whopData = await getWhopBySlug(dbSlug, 'en');
@@ -407,13 +410,14 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   }
 }
 
-export default async function WhopPage({ params, searchParams }: { params: { slug: string }, searchParams?: { debugOnly?: string } }) {
+export default async function WhopPage({ params, searchParams }: { params: { slug: string }, searchParams?: { debugOnly?: string; __debug?: string } }) {
   const raw = params.slug || '';
-  const dbSlug = canonicalSlugForDB(raw);
-  const canonSlug = canonicalSlugForPath(raw);
+  const decoded = decodeURIComponent(raw);  // Decode before normalizing
+  const dbSlug = canonicalSlugForDB(decoded);
+  const canonSlug = canonicalSlugForPath(decoded);
 
-  // Step 5: Deterministic log for debugging
-  console.log('[WHOP SSR]', { slug: params.slug, dbSlug, canonSlug });
+  // Phase 1 instrumentation: Log inputs
+  dlog('whop', 'WhopPage params', { raw, decoded, dbSlug, canonSlug, searchParams });
 
   // Step 8: Determine SEO classification for this page
   const classification = getPageClassification(canonSlug);
@@ -460,7 +464,7 @@ export default async function WhopPage({ params, searchParams }: { params: { slu
         </pre>
       );
     }
-    return notFound();
+    return notFoundWithReason('no_record_for_slug', { raw, decoded, dbSlug });
   }
 
   // 4) Relaxed quality check per ChatGPT fix - only block GONE pages
@@ -468,6 +472,11 @@ export default async function WhopPage({ params, searchParams }: { params: { slu
   const indexingStatus = String(finalWhopData.indexingStatus || '').toUpperCase();
   const isIndexable = ['INDEXED', 'INDEX'].includes(indexingStatus);
   const isGone = finalWhopData.retirement === 'GONE';
+
+  // T3: Build trace array for future 404 debugging
+  const trace: string[] = [];
+  trace.push(`slug=${dbSlug}, id=${finalWhopData.id ?? 'null'}`);
+  trace.push(`retired=${finalWhopData.retirement} indexing=${indexingStatus}`);
 
   console.log('[WHOP DETAIL] Quality check (relaxed):', {
     dbSlug,
@@ -481,13 +490,18 @@ export default async function WhopPage({ params, searchParams }: { params: { slu
   // RELAXED: Only 404 for GONE pages in all environments
   // In development, allow all non-GONE pages (even if not indexed) to fix rec/alt 404s
   if (isGone) {
-    console.error('[WHOP DETAIL] 404 - Page marked as GONE:', { raw, dbSlug });
-    return notFound();
+    trace.push('gate:retired_or_gone');
+    console.log('[DBG:reasons:page]', new Date().toISOString(), trace);
+    return notFoundWithReason('retired_or_gone', { raw, decoded, dbSlug, retirement: finalWhopData.retirement, isGone });
   }
+
+  // Log successful render decision
+  trace.push(`render:true (relaxed_gate)`);
+  console.log('[DBG:reasons:page]', new Date().toISOString(), trace);
 
   // Soft warning in dev for non-indexed pages (but don't 404)
   if (process.env.NODE_ENV !== 'production' && !isIndexable) {
-    console.warn('[WHOP DETAIL] Non-indexed page shown in dev mode:', { dbSlug, indexingStatus });
+    dlog('reasons', 'indexingStatus not indexed - still rendering', { dbSlug, indexingStatus });
   }
 
   // 5) Handle redirects

@@ -15,6 +15,24 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'cdn.prod.website-files.com',
       },
+      // Common CDN hosts for whop logos
+      {
+        protocol: 'https',
+        hostname: 'cdn.whop.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'static.whop.xyz',
+      },
+      {
+        protocol: 'https',
+        hostname: 'res.cloudinary.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'images.ctfassets.net',
+      },
+      // Wildcard for any other https images
       {
         protocol: 'https',
         hostname: '**',

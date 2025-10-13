@@ -1,9 +1,9 @@
 // src/data/whops.ts
 import { unstable_cache } from 'next/cache';
 import { tagForWhop, TAG_HUBS } from '@/lib/cacheTags';
-import { getWhopBySlug } from '@/lib/data';
 import { prisma } from '@/lib/prisma';
 import { whereIndexable } from '@/lib/where-indexable';
+import { canonicalSlugForDB } from '@/lib/slug-utils';
 
 // Optional: tiny debug helper (no-op unless env set)
 const logCache = (...args: any[]) => {
@@ -13,30 +13,43 @@ const logCache = (...args: any[]) => {
   }
 };
 
+// Direct fetch without whereIndexable() to match page.tsx relaxed gate
+async function fetchWhopDirect(slug: string) {
+  const canonical = canonicalSlugForDB(slug);
+  const whop = await prisma.whop.findFirst({
+    where: { slug: canonical },
+    include: {
+      PromoCode: true,
+      Review: true
+    }
+  });
+  return whop ?? null;
+}
+
 /**
  * Cached, tagged fetch for a single whop by slug.
  * Tags: whop:<slug>
+ * NOTE: Does NOT apply whereIndexable() - page.tsx applies relaxed gate allowing NOINDEX
  */
-export const getWhopBySlugCached = (slug: string, locale: string = 'en') =>
-  unstable_cache(
-    async () => {
-      logCache('MISS getWhopBySlug', { slug, locale });
-      const whop = await getWhopBySlug(slug, locale);
+export const getWhopBySlugCached = unstable_cache(
+  async (slug: string) => {
+    logCache('MISS fetchWhopDirect', { slug });
+    const whop = await fetchWhopDirect(slug);
 
-      // Preview debugging log
-      if (process.env.VERCEL_ENV === 'preview') {
-        console.log('[preview] whop data has usageStats?', !!(whop as any)?.usageStats, 'freshness?', !!(whop as any)?.freshnessData);
-      }
-
-      return whop;
-    },
-    // cache key: stable and unique to this query
-    [`whop:detail:${slug}:${locale}`],
-    {
-      tags: ['whop', `whop:${slug}`],
-      revalidate: 300 // 5 minutes in production, use 5 for quick tests
+    // Preview debugging log
+    if (process.env.VERCEL_ENV === 'preview') {
+      console.log('[preview] whop data has usageStats?', !!(whop as any)?.usageStats, 'freshness?', !!(whop as any)?.freshnessData);
     }
-  )();
+
+    return whop;
+  },
+  // cache key must include slug for uniqueness
+  (slug: string) => [`whop:${canonicalSlugForDB(slug)}`],
+  {
+    tags: (slug: string) => [`whop:${canonicalSlugForDB(slug)}`],
+    revalidate: 300 // 5 minutes
+  }
+);
 
 /**
  * Cached, tagged fetch for homepage/hubs list.

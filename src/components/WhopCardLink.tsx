@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { normalizeImagePath } from '@/lib/image-utils';
 import InitialsAvatar from './InitialsAvatar';
+import { whopHref } from '@/lib/paths';
 
 interface WhopCardLinkProps {
   slug: string;
@@ -120,7 +121,7 @@ export default function WhopCardLink({
 
   return (
     <Link
-      href={`/whop/${slug.toLowerCase()}`}
+      href={whopHref(slug)}
       className="group block"
       prefetch={priority}
       aria-label={title}
