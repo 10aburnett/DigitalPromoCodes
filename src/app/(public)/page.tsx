@@ -64,18 +64,69 @@ const HomePageLoading = () => (
   </div>
 );
 
-// Server-side data fetching - NO CACHE (ChatGPT fix)
-async function getPagedWhops(page: number = 1) {
+// Server-side data fetching with search/filter/sort support
+async function getPagedWhops({
+  page = 1,
+  q = '',
+  category = '',
+  sort = ''
+}: {
+  page?: number;
+  q?: string;
+  category?: string;
+  sort?: string;
+}) {
   try {
     const limit = 15;
     const skip = (page - 1) * limit;
 
-    // Fetch with no caching to ensure fresh data every time
+    // Build where clause for filtering
+    const where: any = {};
+
+    // Search filter
+    if (q) {
+      where.OR = [
+        { name: { contains: q, mode: 'insensitive' } },
+        { description: { contains: q, mode: 'insensitive' } },
+      ];
+    }
+
+    // Category filter - using whopCategory enum field
+    if (category && category !== '' && category !== 'all') {
+      where.whopCategory = category;
+    }
+
+    // Build orderBy clause for sorting
+    let orderBy: any = { displayOrder: 'asc' }; // default
+
+    if (sort) {
+      switch (sort) {
+        case 'newest':
+          orderBy = { createdAt: 'desc' };
+          break;
+        case 'highest-rated':
+          orderBy = { rating: 'desc' };
+          break;
+        case 'alpha-asc':
+          orderBy = { name: 'asc' };
+          break;
+        case 'alpha-desc':
+          orderBy = { name: 'desc' };
+          break;
+        case 'relevance':
+        default:
+          orderBy = { displayOrder: 'asc' };
+          break;
+      }
+    }
+
+    // Fetch with filtering and sorting
     const [whops, totalCount] = await Promise.all([
       prisma.whop.findMany({
+        where,
         skip,
         take: limit,
-        orderBy: { displayOrder: 'asc' },
+        orderBy,
         include: {
           PromoCode: {
             select: {
@@ -89,7 +140,7 @@ async function getPagedWhops(page: number = 1) {
           },
         },
       }),
-      prisma.whop.count(),
+      prisma.whop.count({ where }),
     ]);
 
     // Get user count (DB)
@@ -177,16 +228,29 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function Home({
   searchParams,
 }: {
-  searchParams?: { page?: string };
+  searchParams?: {
+    page?: string;
+    search?: string;
+    whopCategory?: string;
+    sortBy?: string;
+  };
 }) {
-  // Parse page number from searchParams, default to 1
+  // Parse all search params
   const page = Math.max(1, Number(searchParams?.page ?? '1') || 1);
+  const search = (searchParams?.search ?? '').toString().trim();
+  const whopCategory = (searchParams?.whopCategory ?? '').toString();
+  const sortBy = (searchParams?.sortBy ?? '').toString();
 
-  // Step 5: Deterministic log for debugging
-  console.log('[HOME SSR]', { page });
+  // Deterministic log for debugging
+  console.log('[HOME SSR]', { page, search, whopCategory, sortBy });
 
   const [data, statistics] = await Promise.all([
-    getPagedWhops(page),
+    getPagedWhops({
+      page,
+      q: search,
+      category: whopCategory,
+      sort: sortBy,
+    }),
     getStatisticsCached()
   ]);
   const currentYear = new Date().getFullYear();
