@@ -2,7 +2,6 @@
 
 import React, { useState, useCallback, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import Link from 'next/link';
 import { FilterState } from '@/types/whop';
 import WhopCard from '@/components/WhopCard';
 import FilterControls from '@/components/FilterControls';
@@ -47,16 +46,15 @@ interface HomePageProps {
   initialWhops: any[];
   initialTotal: number;
   totalUsers: number;
-  currentPage?: number;
   key?: number;
 }
 
-export default function HomePage({ initialWhops, initialTotal, totalUsers, currentPage = 1, key }: HomePageProps) {
+export default function HomePage({ initialWhops, initialTotal, totalUsers, key }: HomePageProps) {
   const { t } = useLanguage();
   const router = useRouter();
   const searchParams = useSearchParams();
   const [loading, setLoading] = useState(false);
-
+  
   // Initialize filters from URL parameters - reset completely on key change
   const [filters, setFilters] = useState<FilterState>({
     searchTerm: '',
@@ -65,10 +63,10 @@ export default function HomePage({ initialWhops, initialTotal, totalUsers, curre
     whop: '',
     sortBy: ''
   });
-
+  
   const [whops, setWhops] = useState<any[]>(initialWhops);
   const [pagination, setPagination] = useState({
-    page: currentPage,
+    page: parseInt(searchParams.get('page') || '1'),
     totalPages: Math.ceil(initialTotal / 15),
     total: initialTotal
   });
@@ -237,9 +235,6 @@ export default function HomePage({ initialWhops, initialTotal, totalUsers, curre
     return pages;
   };
 
-  // Build URL for pagination links (works without JavaScript)
-  const pageHref = (p: number) => `/?page=${p}`;
-
   // Cleanup timeout on unmount
   useEffect(() => {
     return () => {
@@ -276,84 +271,54 @@ export default function HomePage({ initialWhops, initialTotal, totalUsers, curre
       {pagination.totalPages > 1 && !loading && (
         <div className="md:hidden flex justify-center items-center gap-1 sm:gap-2 mt-4 mb-6 px-2 overflow-x-auto">
           {/* Previous Button */}
-          {pagination.page > 1 ? (
-            <Link
-              href={pageHref(pagination.page - 1)}
-              prefetch={false}
-              className="px-3 sm:px-5 py-2.5 rounded-lg border transition-all duration-200 hover:opacity-80 text-sm sm:text-base whitespace-nowrap flex-shrink-0"
-              style={{
-                backgroundColor: 'var(--background-secondary)',
-                borderColor: 'var(--border-color)',
-                color: 'var(--text-color)'
-              }}
-            >
-              <span className="hidden sm:inline">Previous</span>
-              <span className="sm:hidden">Prev</span>
-            </Link>
-          ) : (
-            <span className="px-3 sm:px-5 py-2.5 rounded-lg border opacity-50 text-sm sm:text-base whitespace-nowrap flex-shrink-0"
-              style={{
-                backgroundColor: 'var(--background-secondary)',
-                borderColor: 'var(--border-color)',
-                color: 'var(--text-color)'
-              }}
-              aria-disabled="true"
-            >
-              <span className="hidden sm:inline">Previous</span>
-              <span className="sm:hidden">Prev</span>
-            </span>
-          )}
+          <button
+            onClick={() => handlePageChange(pagination.page - 1)}
+            disabled={pagination.page === 1}
+            className="px-3 sm:px-5 py-2.5 rounded-lg border transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-80 text-sm sm:text-base whitespace-nowrap flex-shrink-0"
+            style={{ 
+              backgroundColor: 'var(--background-secondary)', 
+              borderColor: 'var(--border-color)',
+              color: 'var(--text-color)'
+            }}
+          >
+            <span className="hidden sm:inline">Previous</span>
+            <span className="sm:hidden">Prev</span>
+          </button>
 
           {/* Page Numbers */}
           <div className="flex items-center gap-1 sm:gap-2 min-w-0">
             {getPageNumbers().map((pageNum) => (
-              <Link
+              <button
                 key={pageNum}
-                href={pageHref(pageNum)}
-                prefetch={false}
-                aria-current={pageNum === pagination.page ? 'page' : undefined}
+                onClick={() => handlePageChange(pageNum)}
                 className={`px-3 sm:px-5 py-2.5 rounded-lg border transition-all duration-200 hover:opacity-80 text-sm sm:text-base flex-shrink-0 min-w-[36px] sm:min-w-[44px] ${
                   pageNum === pagination.page ? 'font-bold' : ''
                 }`}
-                style={{
+                style={{ 
                   backgroundColor: pageNum === pagination.page ? 'var(--accent-color)' : 'var(--background-secondary)',
                   borderColor: pageNum === pagination.page ? 'var(--accent-color)' : 'var(--border-color)',
                   color: pageNum === pagination.page ? 'white' : 'var(--text-color)'
                 }}
               >
                 {pageNum}
-              </Link>
+              </button>
             ))}
           </div>
 
           {/* Next Button */}
-          {pagination.page < pagination.totalPages ? (
-            <Link
-              href={pageHref(pagination.page + 1)}
-              prefetch={false}
-              className="px-3 sm:px-5 py-2.5 rounded-lg border transition-all duration-200 hover:opacity-80 text-sm sm:text-base whitespace-nowrap flex-shrink-0"
-              style={{
-                backgroundColor: 'var(--background-secondary)',
-                borderColor: 'var(--border-color)',
-                color: 'var(--text-color)'
-              }}
-            >
-              <span className="hidden sm:inline">Next</span>
-              <span className="sm:hidden">Next</span>
-            </Link>
-          ) : (
-            <span className="px-3 sm:px-5 py-2.5 rounded-lg border opacity-50 text-sm sm:text-base whitespace-nowrap flex-shrink-0"
-              style={{
-                backgroundColor: 'var(--background-secondary)',
-                borderColor: 'var(--border-color)',
-                color: 'var(--text-color)'
-              }}
-              aria-disabled="true"
-            >
-              <span className="hidden sm:inline">Next</span>
-              <span className="sm:hidden">Next</span>
-            </span>
-          )}
+          <button
+            onClick={() => handlePageChange(pagination.page + 1)}
+            disabled={pagination.page === pagination.totalPages}
+            className="px-3 sm:px-5 py-2.5 rounded-lg border transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-80 text-sm sm:text-base whitespace-nowrap flex-shrink-0"
+            style={{ 
+              backgroundColor: 'var(--background-secondary)', 
+              borderColor: 'var(--border-color)',
+              color: 'var(--text-color)'
+            }}
+          >
+            <span className="hidden sm:inline">Next</span>
+            <span className="sm:hidden">Next</span>
+          </button>
         </div>
       )}
 
@@ -361,84 +326,54 @@ export default function HomePage({ initialWhops, initialTotal, totalUsers, curre
       {pagination.totalPages > 1 && !loading && (
         <div className="hidden md:flex justify-center items-center gap-1 sm:gap-2 mt-4 mb-6 px-2 overflow-x-auto">
           {/* Previous Button */}
-          {pagination.page > 1 ? (
-            <Link
-              href={pageHref(pagination.page - 1)}
-              prefetch={false}
-              className="px-3 sm:px-5 py-2.5 rounded-lg border transition-all duration-200 hover:opacity-80 text-sm sm:text-base whitespace-nowrap flex-shrink-0"
-              style={{
-                backgroundColor: 'var(--background-secondary)',
-                borderColor: 'var(--border-color)',
-                color: 'var(--text-color)'
-              }}
-            >
-              <span className="hidden sm:inline">Previous</span>
-              <span className="sm:hidden">Prev</span>
-            </Link>
-          ) : (
-            <span className="px-3 sm:px-5 py-2.5 rounded-lg border opacity-50 text-sm sm:text-base whitespace-nowrap flex-shrink-0"
-              style={{
-                backgroundColor: 'var(--background-secondary)',
-                borderColor: 'var(--border-color)',
-                color: 'var(--text-color)'
-              }}
-              aria-disabled="true"
-            >
-              <span className="hidden sm:inline">Previous</span>
-              <span className="sm:hidden">Prev</span>
-            </span>
-          )}
+          <button
+            onClick={() => handlePageChange(pagination.page - 1)}
+            disabled={pagination.page === 1}
+            className="px-3 sm:px-5 py-2.5 rounded-lg border transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-80 text-sm sm:text-base whitespace-nowrap flex-shrink-0"
+            style={{ 
+              backgroundColor: 'var(--background-secondary)', 
+              borderColor: 'var(--border-color)',
+              color: 'var(--text-color)'
+            }}
+          >
+            <span className="hidden sm:inline">Previous</span>
+            <span className="sm:hidden">Prev</span>
+          </button>
 
           {/* Page Numbers */}
           <div className="flex items-center gap-1 sm:gap-2 min-w-0">
             {getPageNumbers().map((pageNum) => (
-              <Link
+              <button
                 key={pageNum}
-                href={pageHref(pageNum)}
-                prefetch={false}
-                aria-current={pageNum === pagination.page ? 'page' : undefined}
+                onClick={() => handlePageChange(pageNum)}
                 className={`px-3 sm:px-5 py-2.5 rounded-lg border transition-all duration-200 hover:opacity-80 text-sm sm:text-base flex-shrink-0 min-w-[36px] sm:min-w-[44px] ${
                   pageNum === pagination.page ? 'font-bold' : ''
                 }`}
-                style={{
+                style={{ 
                   backgroundColor: pageNum === pagination.page ? 'var(--accent-color)' : 'var(--background-secondary)',
                   borderColor: pageNum === pagination.page ? 'var(--accent-color)' : 'var(--border-color)',
                   color: pageNum === pagination.page ? 'white' : 'var(--text-color)'
                 }}
               >
                 {pageNum}
-              </Link>
+              </button>
             ))}
           </div>
 
           {/* Next Button */}
-          {pagination.page < pagination.totalPages ? (
-            <Link
-              href={pageHref(pagination.page + 1)}
-              prefetch={false}
-              className="px-3 sm:px-5 py-2.5 rounded-lg border transition-all duration-200 hover:opacity-80 text-sm sm:text-base whitespace-nowrap flex-shrink-0"
-              style={{
-                backgroundColor: 'var(--background-secondary)',
-                borderColor: 'var(--border-color)',
-                color: 'var(--text-color)'
-              }}
-            >
-              <span className="hidden sm:inline">Next</span>
-              <span className="sm:hidden">Next</span>
-            </Link>
-          ) : (
-            <span className="px-3 sm:px-5 py-2.5 rounded-lg border opacity-50 text-sm sm:text-base whitespace-nowrap flex-shrink-0"
-              style={{
-                backgroundColor: 'var(--background-secondary)',
-                borderColor: 'var(--border-color)',
-                color: 'var(--text-color)'
-              }}
-              aria-disabled="true"
-            >
-              <span className="hidden sm:inline">Next</span>
-              <span className="sm:hidden">Next</span>
-            </span>
-          )}
+          <button
+            onClick={() => handlePageChange(pagination.page + 1)}
+            disabled={pagination.page === pagination.totalPages}
+            className="px-3 sm:px-5 py-2.5 rounded-lg border transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-80 text-sm sm:text-base whitespace-nowrap flex-shrink-0"
+            style={{ 
+              backgroundColor: 'var(--background-secondary)', 
+              borderColor: 'var(--border-color)',
+              color: 'var(--text-color)'
+            }}
+          >
+            <span className="hidden sm:inline">Next</span>
+            <span className="sm:hidden">Next</span>
+          </button>
         </div>
       )}
 
@@ -452,88 +387,58 @@ export default function HomePage({ initialWhops, initialTotal, totalUsers, curre
         </div>
       )}
       
-      {/* Pagination Controls (Bottom) */}
+      {/* Pagination Controls */}
       {pagination.totalPages > 1 && !loading && (
         <div className="flex justify-center items-center gap-1 sm:gap-2 mt-8 mb-8 px-2 overflow-x-auto">
           {/* Previous Button */}
-          {pagination.page > 1 ? (
-            <Link
-              href={pageHref(pagination.page - 1)}
-              prefetch={false}
-              className="px-3 sm:px-5 py-2.5 rounded-lg border transition-all duration-200 hover:opacity-80 text-sm sm:text-base whitespace-nowrap flex-shrink-0"
-              style={{
-                backgroundColor: 'var(--background-secondary)',
-                borderColor: 'var(--border-color)',
-                color: 'var(--text-color)'
-              }}
-            >
-              <span className="hidden sm:inline">Previous</span>
-              <span className="sm:hidden">Prev</span>
-            </Link>
-          ) : (
-            <span className="px-3 sm:px-5 py-2.5 rounded-lg border opacity-50 text-sm sm:text-base whitespace-nowrap flex-shrink-0"
-              style={{
-                backgroundColor: 'var(--background-secondary)',
-                borderColor: 'var(--border-color)',
-                color: 'var(--text-color)'
-              }}
-              aria-disabled="true"
-            >
-              <span className="hidden sm:inline">Previous</span>
-              <span className="sm:hidden">Prev</span>
-            </span>
-          )}
+          <button
+            onClick={() => handlePageChange(pagination.page - 1)}
+            disabled={pagination.page === 1}
+            className="px-3 sm:px-5 py-2.5 rounded-lg border transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-80 text-sm sm:text-base whitespace-nowrap flex-shrink-0"
+            style={{ 
+              backgroundColor: 'var(--background-secondary)', 
+              borderColor: 'var(--border-color)',
+              color: 'var(--text-color)'
+            }}
+          >
+            <span className="hidden sm:inline">Previous</span>
+            <span className="sm:hidden">Prev</span>
+          </button>
 
           {/* Page Numbers */}
           <div className="flex items-center gap-1 sm:gap-2 min-w-0">
             {getPageNumbers().map((pageNum) => (
-              <Link
+              <button
                 key={pageNum}
-                href={pageHref(pageNum)}
-                prefetch={false}
-                aria-current={pageNum === pagination.page ? 'page' : undefined}
+                onClick={() => handlePageChange(pageNum)}
                 className={`px-3 sm:px-5 py-2.5 rounded-lg border transition-all duration-200 hover:opacity-80 text-sm sm:text-base flex-shrink-0 min-w-[36px] sm:min-w-[44px] ${
                   pageNum === pagination.page ? 'font-bold' : ''
                 }`}
-                style={{
+                style={{ 
                   backgroundColor: pageNum === pagination.page ? 'var(--accent-color)' : 'var(--background-secondary)',
                   borderColor: pageNum === pagination.page ? 'var(--accent-color)' : 'var(--border-color)',
                   color: pageNum === pagination.page ? 'white' : 'var(--text-color)'
                 }}
               >
                 {pageNum}
-              </Link>
+              </button>
             ))}
           </div>
 
           {/* Next Button */}
-          {pagination.page < pagination.totalPages ? (
-            <Link
-              href={pageHref(pagination.page + 1)}
-              prefetch={false}
-              className="px-3 sm:px-5 py-2.5 rounded-lg border transition-all duration-200 hover:opacity-80 text-sm sm:text-base whitespace-nowrap flex-shrink-0"
-              style={{
-                backgroundColor: 'var(--background-secondary)',
-                borderColor: 'var(--border-color)',
-                color: 'var(--text-color)'
-              }}
-            >
-              <span className="hidden sm:inline">Next</span>
-              <span className="sm:hidden">Next</span>
-            </Link>
-          ) : (
-            <span className="px-3 sm:px-5 py-2.5 rounded-lg border opacity-50 text-sm sm:text-base whitespace-nowrap flex-shrink-0"
-              style={{
-                backgroundColor: 'var(--background-secondary)',
-                borderColor: 'var(--border-color)',
-                color: 'var(--text-color)'
-              }}
-              aria-disabled="true"
-            >
-              <span className="hidden sm:inline">Next</span>
-              <span className="sm:hidden">Next</span>
-            </span>
-          )}
+          <button
+            onClick={() => handlePageChange(pagination.page + 1)}
+            disabled={pagination.page === pagination.totalPages}
+            className="px-3 sm:px-5 py-2.5 rounded-lg border transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-80 text-sm sm:text-base whitespace-nowrap flex-shrink-0"
+            style={{ 
+              backgroundColor: 'var(--background-secondary)', 
+              borderColor: 'var(--border-color)',
+              color: 'var(--text-color)'
+            }}
+          >
+            <span className="hidden sm:inline">Next</span>
+            <span className="sm:hidden">Next</span>
+          </button>
         </div>
       )}
       

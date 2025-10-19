@@ -2,6 +2,7 @@
 // Server component for homepage - no client state, pure server rendering
 import Link from 'next/link';
 import WhopCard from '@/components/WhopCard';
+import FilterControlsWrapper from '@/components/FilterControlsWrapper';
 
 interface PromoCode {
   id: string;
@@ -62,11 +63,16 @@ export default function HomePageServer({
 
   return (
     <div className="mx-auto w-[90%] md:w-[95%] max-w-[1280px] mt-[50px] md:mt-0">
-      <h1 className="text-4xl font-bold text-center mt-2 mb-12">
+      <h1 className="text-4xl font-bold text-center mt-2 mb-8">
         <span style={{ color: 'var(--accent-color)' }}>WHP</span>
         <span style={{ color: 'var(--text-color)' }}>Codes</span>
         <span style={{ color: 'var(--text-color)' }}> - Whop Promo Codes, Coupons & Discounts</span>
       </h1>
+
+      {/* Client island for search/filters */}
+      <FilterControlsWrapper />
+
+      <div className="h-6"></div>
 
       {/* Results count */}
       {total > 0 && (
