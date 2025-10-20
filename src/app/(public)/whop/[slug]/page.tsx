@@ -42,7 +42,6 @@ import VerificationStatus from '@/components/VerificationStatus';
 import HowToSection from '@/components/whop/HowToSection';
 import HowToSchema from '@/components/whop/HowToSchema';
 import HydrationTripwire from '@/components/HydrationTripwire';
-import { DebugHydrationLogger } from '@/components/DebugHydrationLogger';
 import ServerSectionGuard from '@/components/ServerSectionGuard';
 import { djb2 } from '@/lib/hydration-debug';
 import 'server-only';
@@ -1060,9 +1059,6 @@ export default async function WhopPage({ params, searchParams }: { params: { slu
 
       {/* Hydration Debug Tripwire - only active when NEXT_PUBLIC_HYDRATION_DEBUG=1 */}
       {process.env.NEXT_PUBLIC_HYDRATION_DEBUG === '1' && <HydrationTripwire />}
-
-      {/* Debug: Client-side logger to verify recommendation count */}
-      <DebugHydrationLogger />
     </main>
   );
 } 
