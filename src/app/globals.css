@@ -381,3 +381,26 @@ html.dark .about-v2 .about-copy-muted { color: #a4a5b0 !important; }  /* muted c
 .prose.whitespace-break-spaces pre {
   white-space: break-spaces;
 }
+
+/* FAQ Details/Summary - SSR-safe chevron with CSS pseudo-element */
+details summary {
+  position: relative;
+}
+
+details summary::after {
+  content: "";
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid currentColor;
+  transition: transform 200ms ease;
+}
+
+details[open] summary::after {
+  transform: translateY(-50%) rotate(180deg);
+}

@@ -14,7 +14,9 @@ import { loadNeighbors, getNeighborSlugsFor } from '@/lib/graph';
 // Safe locale support - maintains existing behavior when feature flag is off
 export async function getWhopViewModel(slug: string, localeParam?: string): Promise<WhopViewModel> {
   const locale = getSchemaLocale(localeParam); // Safe: returns 'en' when flag is off
-  const dbSlug = canonicalSlugForDB(slug);
+  // Use lowercase decoded slug for DB lookup (DB stores literal colons, not %3a)
+  const decoded = decodeURIComponent(slug);
+  const dbSlug = decoded.toLowerCase();
 
   // Reuse the same data path as the existing page component
   const whopData = await getWhopBySlug(dbSlug, 'en');

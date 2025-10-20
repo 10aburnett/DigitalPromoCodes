@@ -7,6 +7,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useSocialProof, createSocialProofFromWhop } from '@/contexts/SocialProofContext';
 import InitialsAvatar from './InitialsAvatar';
 import { WhopLogoSSR } from './WhopLogoSSR';
+import { whopHref } from '@/lib/paths';
 
 // Define the promo type directly here to avoid import issues
 interface Promo {
@@ -85,34 +86,10 @@ export default function WhopCard({ promo, priority = false }: WhopCardProps) {
   const getDetailPageUrl = () => {
     // Use slug if available, otherwise fall back to id
     const identifier = promo.slug || promo.id;
-    
-    // More reliable language detection using pathname
-    let currentLanguage = language;
-    
-    // Always use pathname as the source of truth for current language
-    if (pathname) {
-      const pathSegments = pathname.split('/').filter(Boolean);
-      if (pathSegments.length > 0 && ['es', 'nl', 'fr', 'de', 'it', 'pt', 'zh'].includes(pathSegments[0])) {
-        currentLanguage = pathSegments[0] as any;
-      } else {
-        currentLanguage = 'en'; // Default to English if no valid language prefix
-      }
-    }
-    
-    // Fallback for when pathname is not available (SSR)
-    if (!currentLanguage || currentLanguage === 'en') {
-      if (!isHydrated && typeof window !== 'undefined') {
-        const pathSegments = window.location.pathname.split('/').filter(Boolean);
-        if (pathSegments.length > 0 && ['es', 'nl', 'fr', 'de', 'it', 'pt', 'zh'].includes(pathSegments[0])) {
-          currentLanguage = pathSegments[0] as any;
-        }
-      }
-    }
-    
-    if (currentLanguage === 'en') {
-      return `/whop/${identifier.toLowerCase()}`; // English uses /whop/{slug}
-    }
-    return `/${currentLanguage}/${identifier.toLowerCase()}`; // Other languages use direct language prefix with whop pages under locale
+
+    // Use canonical whopHref helper - handles encoding properly (no double-encoding)
+    // This ensures colons are encoded as %3a exactly once
+    return whopHref(identifier);
   };
 
   const handleGetPromoClick = (e: React.MouseEvent) => {

@@ -13,7 +13,9 @@ function maskDbUrl(u?: string) {
 
 export async function GET(_req: Request, { params }: { params: { slug: string } }) {
   const raw = params.slug || '';
-  const canonical = canonicalSlugForDB(raw);
+  const decoded = decodeURIComponent(raw);
+  // Use lowercase decoded slug for DB lookup (DB stores literal colons, not %3a)
+  const canonical = decoded.toLowerCase();
 
   const direct = await prisma.whop.findFirst({
     where: { slug: canonical },

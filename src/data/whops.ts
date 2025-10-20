@@ -15,9 +15,11 @@ const logCache = (...args: any[]) => {
 
 // Direct fetch without whereIndexable() to match page.tsx relaxed gate
 async function fetchWhopDirect(slug: string) {
-  const canonical = canonicalSlugForDB(slug);
+  // Use lowercase decoded slug for DB lookup (DB stores literal colons, not %3a)
+  const decoded = decodeURIComponent(slug);
+  const dbSlug = decoded.toLowerCase();
   const whop = await prisma.whop.findFirst({
-    where: { slug: canonical },
+    where: { slug: dbSlug },
     include: {
       PromoCode: true,
       Review: true
@@ -43,10 +45,16 @@ export const getWhopBySlugCached = unstable_cache(
 
     return whop;
   },
-  // cache key must include slug for uniqueness
-  (slug: string) => [`whop:${canonicalSlugForDB(slug)}`],
+  // cache key must include slug for uniqueness - use decoded lowercase for consistency
+  (slug: string) => {
+    const decoded = decodeURIComponent(slug);
+    return [`whop:${decoded.toLowerCase()}`];
+  },
   {
-    tags: (slug: string) => [`whop:${canonicalSlugForDB(slug)}`],
+    tags: (slug: string) => {
+      const decoded = decodeURIComponent(slug);
+      return [`whop:${decoded.toLowerCase()}`];
+    },
     revalidate: 300 // 5 minutes
   }
 );

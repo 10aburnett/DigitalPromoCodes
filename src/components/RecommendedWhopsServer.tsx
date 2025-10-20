@@ -1,5 +1,8 @@
 // src/components/RecommendedWhopsServer.tsx
+// Pure server component - server-final markup, no client mutations
+import 'server-only';
 import Link from 'next/link';
+import crypto from 'crypto';
 import { getRecommendations } from '@/data/recommendations';
 import { resolveLogoUrl } from '@/lib/image-url';
 
@@ -51,71 +54,84 @@ function getBaseUrl() {
 }
 
 export default async function RecommendedWhopsServer({ currentWhopSlug }: RecommendedWhopsServerProps) {
+  // Debug log to verify slug is decoded/normalized
+  console.log('[Recommended] server slug:', currentWhopSlug);
+
   const { items: recommendations, explore } = await getRecommendations(currentWhopSlug);
 
-  // Don't show section if no recommendations
+  // Don't show section if no recommendations - return null to hide completely
+  // This is safe because this is a server component with stable data
   if (recommendations.length === 0) {
     return null;
   }
 
+  // Debug: Generate checksum to verify data stability between SSR and client
+  const checksum = crypto
+    .createHash('md5')
+    .update(JSON.stringify(recommendations.map(r => r.slug)))
+    .digest('hex');
+  console.log('[SSR RECS CHECKSUM]', currentWhopSlug, checksum, recommendations.length);
+
   return (
-    <section className="mt-8">
-      <h2 className="text-xl sm:text-2xl font-bold mb-1">Recommended for You</h2>
+    <section className="mt-10 w-full max-w-6xl mx-auto mb-8" data-recs data-recs-count={recommendations.length}>
+      <h2 className="text-xl sm:text-2xl font-bold mb-2">Recommended for You</h2>
       <p className="text-sm mb-4" style={{ color: 'var(--text-secondary)' }}>
         Similar offers based on your current selection
       </p>
 
-      <div className="space-y-4">
+      <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 overflow-hidden">
         {recommendations.map((whop, index) => {
           const logoUrl = resolveLogoUrl(whop.logo);
-          console.log('[REC LOGO]', { slug: whop.slug, rawLogo: whop.logo, resolved: logoUrl });
+          const href = `/whop/${encodeURIComponent(whop.slug)}`;
+          console.log('[REC LOGO]', { slug: whop.slug, rawLogo: whop.logo, resolved: logoUrl, href });
 
           return (
-            <Link
-              key={whop.id}
-              href={`/whop/${encodeURIComponent(whop.slug)}`}
-              className="block rounded-lg border p-4 hover:opacity-90 transition group"
-              style={{ borderColor: 'var(--border-color)', backgroundColor: 'var(--background-color)' }}
-              prefetch
-            >
-              <div className="flex gap-3 items-center">
-                <div className="w-12 h-12 rounded-md overflow-hidden bg-[var(--background-secondary)] shrink-0">
-                  <img
-                    src={logoUrl}
-                    alt={whop.name}
-                    width={48}
-                    height={48}
-                    loading={index < 2 ? 'eager' : 'lazy'}
-                    decoding="async"
-                    className="w-full h-full object-cover rounded"
-                  />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <div className="font-semibold truncate" style={{ color: 'var(--text-color)' }}>{whop.name}</div>
-                  {whop.description && <div className="text-sm truncate" style={{ color: 'var(--text-secondary)' }}>{whop.description}</div>}
-                  <div className="mt-1 text-xs flex gap-2" style={{ color: 'var(--text-secondary)' }}>
-                    <span className="px-2 py-0.5 rounded-full border" style={{ borderColor: 'var(--border-color)' }}>{getPromoText(whop)}</span>
-                    {whop.category && <span>{whop.category}</span>}
-                    {typeof whop.rating === 'number' && <span>★ {whop.rating.toFixed(1)}</span>}
+            <li key={whop.slug}>
+              <Link
+                href={href}
+                prefetch={false}
+                className="block rounded-lg border p-4 hover:shadow-md hover:opacity-95 transition-all duration-200 group overflow-hidden"
+                style={{ borderColor: 'var(--border-color)', backgroundColor: 'var(--background-color)' }}
+                aria-label={`View ${whop.name}`}
+              >
+                <div className="flex gap-3 items-center">
+                  <div className="w-12 h-12 rounded-md overflow-hidden bg-[var(--background-secondary)] shrink-0">
+                    <img
+                      src={logoUrl}
+                      alt={whop.name}
+                      width={48}
+                      height={48}
+                      loading={index < 2 ? 'eager' : 'lazy'}
+                      decoding="async"
+                      className="w-full h-full object-cover rounded"
+                    />
+                  </div>
+                  <div className="min-w-0 flex-1 overflow-hidden">
+                    <div className="font-semibold line-clamp-2 break-words mb-1" style={{ color: 'var(--text-color)' }}>{whop.name}</div>
+                    {whop.description && <div className="text-sm line-clamp-2 break-words" style={{ color: 'var(--text-secondary)' }}>{whop.description}</div>}
+                    <div className="mt-1 text-xs flex gap-2" style={{ color: 'var(--text-secondary)' }}>
+                      <span className="px-2 py-0.5 rounded-full border" style={{ borderColor: 'var(--border-color)' }}>{getPromoText(whop)}</span>
+                      {whop.category && <span>{whop.category}</span>}
+                      {typeof whop.rating === 'number' && <span>★ {whop.rating.toFixed(1)}</span>}
+                    </div>
                   </div>
                 </div>
-              </div>
-            </Link>
+              </Link>
+            </li>
           );
         })}
-      </div>
+      </ul>
 
       {explore && (
-        <div className="mt-6 rounded-lg border p-4"
-          style={{ borderColor: 'var(--border-color)', backgroundColor: 'var(--background-color)' }}>
-          <div className="flex flex-wrap items-center gap-2 text-sm">
-            <span style={{ color: 'var(--text-secondary)' }}>
-              Explore another{explore.category ? ` in ${explore.category}` : ''}:
-            </span>
-            <Link href={`/whop/${encodeURIComponent(explore.slug)}`} className="font-medium hover:opacity-80 transition-opacity" style={{ color: 'var(--accent-color)' }} prefetch>
-              {explore.name}
-            </Link>
-          </div>
+        <div className="mt-3">
+          <Link
+            href={`/whop/${encodeURIComponent(explore.slug)}`}
+            prefetch={false}
+            className="text-sm underline hover:opacity-80 transition-opacity"
+            style={{ color: 'var(--accent-color)' }}
+          >
+            Explore {explore.name}{explore.category ? ` in ${explore.category}` : ''}
+          </Link>
         </div>
       )}
     </section>

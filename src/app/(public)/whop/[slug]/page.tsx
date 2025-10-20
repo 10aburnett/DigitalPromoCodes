@@ -13,9 +13,9 @@ import { siteOrigin } from '@/lib/site-origin';
 import { notFoundWithReason } from '@/lib/notFoundReason';
 import { dlog } from '@/lib/debug';
 
-// Dynamic rendering for JS-on and JS-off compatibility
-export const dynamic = 'force-dynamic';
-export const revalidate = 300; // 5 minute revalidation
+// Static generation with ISR for stable SSR/CSR hydration
+export const dynamic = 'force-static';
+export const revalidate = 600; // 10 minute revalidation for freshness
 export const dynamicParams = true; // Enable dynamic params for all slugs
 export const runtime = 'nodejs'; // required for Prisma database access
 
@@ -42,6 +42,7 @@ import VerificationStatus from '@/components/VerificationStatus';
 import HowToSection from '@/components/whop/HowToSection';
 import HowToSchema from '@/components/whop/HowToSchema';
 import HydrationTripwire from '@/components/HydrationTripwire';
+import { DebugHydrationLogger } from '@/components/DebugHydrationLogger';
 import ServerSectionGuard from '@/components/ServerSectionGuard';
 import { djb2 } from '@/lib/hydration-debug';
 import 'server-only';
@@ -218,7 +219,8 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     // Remove unstable_noStore() - rely on route-level revalidate
     const decoded = decodeURIComponent(params.slug ?? '');  // Decode before normalizing
     const canon = canonicalSlugForPath(decoded);
-    const dbSlug = canonicalSlugForDB(decoded);
+    // Use lowercase decoded slug for DB lookup (DB stores literal colons, not %3a)
+    const dbSlug = decoded.toLowerCase();
     console.log('[WHOP META] Generating metadata for:', { slug: params.slug, dbSlug });
 
     const whopData = await getWhopBySlug(dbSlug, 'en');
@@ -413,7 +415,8 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 export default async function WhopPage({ params, searchParams }: { params: { slug: string }, searchParams?: { debugOnly?: string; __debug?: string } }) {
   const raw = params.slug || '';
   const decoded = decodeURIComponent(raw);  // Decode before normalizing
-  const dbSlug = canonicalSlugForDB(decoded);
+  // Use lowercase decoded slug for DB lookup (DB stores literal colons, not %3a)
+  const dbSlug = decoded.toLowerCase();
   const canonSlug = canonicalSlugForPath(decoded);
 
   // Phase 1 instrumentation: Log inputs
@@ -1023,13 +1026,13 @@ export default async function WhopPage({ params, searchParams }: { params: { slu
         <div className="w-full space-y-8">
           {/* Recommended Whops Section - Server-rendered for JS-off compatibility */}
           <div className="max-w-2xl mx-auto">
-            <RecommendedSection currentWhopSlug={params.slug} />
+            <RecommendedSection currentWhopSlug={dbSlug} />
           </div>
 
           {/* Alternatives Section - Server-rendered for JS-off compatibility */}
           <div className="max-w-2xl mx-auto">
             {/* @ts-expect-error Async Server Component */}
-            <AlternativesSection currentWhopSlug={params.slug} />
+            <AlternativesSection currentWhopSlug={dbSlug} />
           </div>
 
           {/* Reviews Section - Streamed for better performance */}
@@ -1057,6 +1060,9 @@ export default async function WhopPage({ params, searchParams }: { params: { slu
 
       {/* Hydration Debug Tripwire - only active when NEXT_PUBLIC_HYDRATION_DEBUG=1 */}
       {process.env.NEXT_PUBLIC_HYDRATION_DEBUG === '1' && <HydrationTripwire />}
+
+      {/* Debug: Client-side logger to verify recommendation count */}
+      <DebugHydrationLogger />
     </main>
   );
 } 

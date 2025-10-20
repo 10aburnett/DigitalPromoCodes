@@ -1,15 +1,20 @@
 // src/lib/paths.ts
 // Centralized path building helpers to prevent double-encoding
 
-import { canonicalSlugForPath } from './slug-utils';
+import { safeDecode } from './slug-utils';
 
 /**
  * Build a whop detail page href with proper encoding.
- * Prevents double-encoding by using canonicalSlugForPath and encodeURIComponent once.
+ * Handles colons correctly: converts to %3a exactly once, no double-encoding.
  */
 export function whopHref(slug: string): string {
-  const canonical = canonicalSlugForPath(slug);
-  return `/whop/${encodeURIComponent(canonical)}`;
+  // Decode first (in case slug is already encoded)
+  const decoded = safeDecode(slug);
+  // Lowercase and encode (this will turn : into %3A)
+  const encoded = encodeURIComponent(decoded.toLowerCase());
+  // Force lowercase hex (%3A -> %3a for consistency)
+  const canonical = encoded.replace(/%[0-9A-F]{2}/g, m => m.toLowerCase());
+  return `/whop/${canonical}`;
 }
 
 /**
