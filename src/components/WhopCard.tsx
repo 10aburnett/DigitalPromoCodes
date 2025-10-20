@@ -8,6 +8,7 @@ import { useSocialProof, createSocialProofFromWhop } from '@/contexts/SocialProo
 import InitialsAvatar from './InitialsAvatar';
 import { WhopLogoSSR } from './WhopLogoSSR';
 import { whopHref } from '@/lib/paths';
+import { resolveLogoUrl } from '@/lib/image-url';
 
 // Define the promo type directly here to avoid import issues
 interface Promo {
@@ -42,8 +43,8 @@ export default function WhopCard({ promo, priority = false }: WhopCardProps) {
   // Robust fallbacks for API shape variations
   const title = (promo as any).title ?? promo.whopName ?? (promo as any).name ?? 'Unknown Whop';
 
-  // Use logoUrl directly for SSR-safe rendering
-  const logoUrl = promo.logoUrl || '';
+  // Resolve logo URL to absolute path for SSR-safe rendering
+  const logoUrl = resolveLogoUrl(promo.logoUrl);
 
   const discountPercent = typeof (promo as any).discountPercent === 'number' ? (promo as any).discountPercent :
     typeof promo.promoValue === 'number' ? promo.promoValue : null;
