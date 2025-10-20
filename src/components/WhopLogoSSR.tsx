@@ -10,7 +10,12 @@ export function WhopLogoSSR({
   width?: number;
   height?: number;
 }) {
-  const safe = `/api/img?src=${encodeURIComponent(src || '')}`;
+  // For relative paths (starting with /), serve directly from public folder
+  // For absolute URLs (http/https), proxy through /api/img for security & caching
+  const isAbsoluteUrl = src.startsWith('http://') || src.startsWith('https://');
+  const safe = isAbsoluteUrl
+    ? `/api/img?src=${encodeURIComponent(src)}`
+    : src; // Serve directly from /public
 
   return (
     <>
