@@ -27,6 +27,12 @@ interface PromoStatsDisplayProps {
   promoCodeId?: string;
   slug?: string;
   compact?: boolean;
+  initialStats?: {
+    todayCount: number;
+    totalCount: number;
+    lastUsed: string | null;
+    verifiedDate: string;
+  };
 }
 
 export interface PromoStatsDisplayHandle {
@@ -34,9 +40,28 @@ export interface PromoStatsDisplayHandle {
 }
 
 const PromoStatsDisplay = forwardRef<PromoStatsDisplayHandle, PromoStatsDisplayProps>(
-  ({ whopId, promoCodeId, slug, compact = false }, ref) => {
-    const [stats, setStats] = useState<PromoStats | null>(null);
-    const [loading, setLoading] = useState(true);
+  ({ whopId, promoCodeId, slug, compact = false, initialStats }, ref) => {
+    // Initialize with server-rendered stats for SSR/SSG support
+    const [stats, setStats] = useState<PromoStats | null>(
+      initialStats ? {
+        promoCode: {
+          id: promoCodeId || '',
+          title: 'Promo Code',
+          code: '',
+          type: '',
+          value: '',
+          createdAt: new Date().toISOString()
+        },
+        usage: {
+          todayCount: initialStats.todayCount,
+          totalCount: initialStats.totalCount,
+          todayClicks: initialStats.todayCount,
+          lastUsed: initialStats.lastUsed,
+          verifiedDate: initialStats.verifiedDate
+        }
+      } : null
+    );
+    const [loading, setLoading] = useState(!initialStats); // Don't show loading if we have initial stats
     const [error, setError] = useState<string | null>(null);
     const containerRef = useRef<HTMLDivElement>(null);
     const pathname = usePathname();
@@ -96,8 +121,11 @@ const PromoStatsDisplay = forwardRef<PromoStatsDisplayHandle, PromoStatsDisplayP
     };
 
     useEffect(() => {
-      fetchStats();
-    }, [whopId, promoCodeId, slug]);
+      // Only fetch if we don't have initial stats (progressive enhancement)
+      if (!initialStats) {
+        fetchStats();
+      }
+    }, [whopId, promoCodeId, slug, initialStats]);
 
     // Listen for custom refresh events in compact mode
     useEffect(() => {

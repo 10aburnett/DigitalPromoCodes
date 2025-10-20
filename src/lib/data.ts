@@ -1,6 +1,7 @@
 import { unstable_noStore as noStore } from 'next/cache';
 import { prisma } from '@/lib/prisma';
 import { whereIndexable } from '@/lib/where-indexable';
+import { toIso } from '@/lib/hydration-debug';
 
 function safeDecode(v: string) {
   try { return decodeURIComponent(v); } catch { return v; }
@@ -120,7 +121,7 @@ export async function getWhopBySlug(slug: string, locale: string = 'en') {
   ]);
 
   // Fetch verification/freshness data (for Verification Status section)
-  let freshnessData = null;
+  let freshnessData: any = null;
   try {
     const fs = await import('fs/promises');
     const path = await import('path');
@@ -128,20 +129,37 @@ export async function getWhopBySlug(slug: string, locale: string = 'en') {
     const freshnessFile = await fs.readFile(freshnessPath, 'utf-8');
     freshnessData = JSON.parse(freshnessFile);
   } catch {
-    // No freshness data available
+    // Fallback: consistent object so UI/hydration is stable
+    freshnessData = { lastUpdated: new Date().toISOString(), ledger: [] };
   }
 
   // Return whop with combined promo codes + usage stats + verification data
+  const verifiedRaw = whop.updatedAt || whop.createdAt || new Date(0);
+  const usageStats = {
+    todayCount: todayCount ?? 0,
+    totalCount: totalCount ?? 0,
+    lastUsed: lastUsage?.createdAt ? lastUsage.createdAt.toISOString() : null,
+    verifiedDate: verifiedRaw ? verifiedRaw.toISOString() : new Date(0).toISOString(),
+  };
+
+  let freshness: any = null;
+  try {
+    freshness = freshnessData ? {
+      ...freshnessData,
+      lastUpdated: toIso(freshnessData.lastUpdated),
+      ledger: (freshnessData.ledger ?? []).map((r: any) => ({
+        ...r,
+        checkedAt: toIso(r.checkedAt ?? null),
+        verifiedAt: toIso(r.verifiedAt ?? null),
+      })),
+    } : null;
+  } catch {}
+
   return {
     ...whop,
     PromoCode: allPromoCodes,
-    usageStats: {
-      todayCount,
-      totalCount,
-      lastUsed: lastUsage?.createdAt ?? null,
-      verifiedDate: whop.updatedAt || whop.createdAt
-    },
-    freshnessData
+    usageStats,
+    freshnessData: freshness,
   };
 }
 

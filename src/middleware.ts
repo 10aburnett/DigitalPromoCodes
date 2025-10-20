@@ -27,14 +27,18 @@ function verifyJWT(token: string, secret: string): any {
 
 // Middleware that handles admin routes, API routes, and SEO
 export function middleware(request: NextRequest) {
+  const pathname = request.nextUrl.pathname;
+
+  // Allow all debug routes to pass through untouched
+  if (pathname.startsWith('/api/_debug/') || pathname.startsWith('/api/debug-api/')) {
+    return NextResponse.next();
+  }
+
   if (process.env.SKIP_SEO_BUILD === '1') {
     const res = NextResponse.next();
     res.headers.set('x-skip-seo', '1');
     return res;
   }
-
-  // Get the pathname from the URL
-  const pathname = request.nextUrl.pathname;
   const url = request.nextUrl;
   const path = url.pathname.replace(/\/+$/, '');
 
@@ -42,8 +46,12 @@ export function middleware(request: NextRequest) {
   if (
     pathname.startsWith('/_next/') ||
     pathname.startsWith('/static/') ||
+    pathname.startsWith('/public/') ||
+    pathname.startsWith('/images/') ||
+    pathname.startsWith('/data/pages/') ||
     pathname.startsWith('/favicon') ||
     pathname === '/site.webmanifest' ||
+    pathname === '/manifest.webmanifest' ||
     pathname.startsWith('/sitemaps/') ||
     pathname === '/robots.txt' ||
     pathname === '/sitemap.xml' ||

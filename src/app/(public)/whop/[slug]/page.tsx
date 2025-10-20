@@ -10,17 +10,18 @@ import { whereIndexable } from '@/lib/where-indexable';
 import { Suspense } from 'react';
 import { canonicalSlugForDB, canonicalSlugForPath } from '@/lib/slug-utils';
 import { siteOrigin } from '@/lib/site-origin';
+import { notFoundWithReason } from '@/lib/notFoundReason';
+import { dlog } from '@/lib/debug';
 
-// SSG + ISR configuration for SEO with cache tagging (D1)
-export const dynamic = 'force-static'; // Always static for cache tagging
-export const revalidate = 300; // 5 minutes ISR (shorter for testing, increase for prod)
-export const dynamicParams = true; // Enable ISR for non-prebuilt pages
-export const fetchCache = 'force-cache';
+// Static generation with ISR for stable SSR/CSR hydration
+export const dynamic = 'force-static';
+export const revalidate = 600; // 10 minute revalidation for freshness
+export const dynamicParams = true; // Enable dynamic params for all slugs
 export const runtime = 'nodejs'; // required for Prisma database access
 
 import InitialsAvatar from '@/components/InitialsAvatar';
 import WhopLogo from '@/components/WhopLogo';
-import WhopPageInteractive, { WhopPageCompactStats } from '@/components/WhopPageInteractive';
+import WhopPageInteractive from '@/components/WhopPageInteractive';
 import PromoCodeSubmissionButton from '@/components/PromoCodeSubmissionButton';
 
 // Below-the-fold components: dynamically import to reduce initial bundle size
@@ -28,24 +29,22 @@ const WhopReviewSection = dynamicImport(() => import('@/components/WhopReviewSec
   loading: () => null,
 });
 import FAQSectionServer from '@/components/FAQSectionServer'; // Server component for SEO
-const Alternatives = dynamicImport(() => import('@/components/Alternatives'), {
-  ssr: false, // Pure client widget, defer HTML & JS
-  loading: () => null,
-});
-const RecommendedWhops = dynamicImport(() => import('@/components/RecommendedWhops'), {
-  ssr: false, // Pure client recommendations, defer entirely
-  loading: () => null,
-});
+import RecommendedWhopsServer from '@/components/RecommendedWhopsServer'; // Server component for recommendations
+import AlternativesServer from '@/components/AlternativesServer'; // Server component for alternatives
 const CommunityPromoSection = dynamicImport(() => import('@/components/CommunityPromoSection'), {
   loading: () => null, // Keep SSR for SEO-relevant content
 });
 import { parseFaqContent } from '@/lib/faq-types';
 import RenderPlain from '@/components/RenderPlain';
 import { looksLikeHtml, isMeaningful, escapeHtml, toPlainText } from '@/lib/textRender';
-import WhopFreshness from '@/components/WhopFreshness';
-import WhopMetaServer from '@/components/WhopMetaServer';
+import PromoStatsDisplay from '@/components/PromoStatsDisplay';
+import VerificationStatus from '@/components/VerificationStatus';
 import HowToSection from '@/components/whop/HowToSection';
 import HowToSchema from '@/components/whop/HowToSchema';
+import HydrationTripwire from '@/components/HydrationTripwire';
+import { DebugHydrationLogger } from '@/components/DebugHydrationLogger';
+import ServerSectionGuard from '@/components/ServerSectionGuard';
+import { djb2 } from '@/lib/hydration-debug';
 import 'server-only';
 import { jsonLdScript } from '@/lib/jsonld';
 import { buildPrimaryEntity, buildBreadcrumbList, buildOffers, buildFAQ, buildHowTo, buildItemList, buildReviews } from '@/lib/buildSchema';
@@ -56,19 +55,19 @@ import { whopAbsoluteUrl } from '@/lib/urls';
 import { getPageClassification, getRobotsForClassification, shouldIncludeInHreflang } from '@/lib/seo-classification';
 
 // Prebuild top 800 quality pages at build time, use ISR for long tail
-// Disabled in dev to prevent Prisma pool exhaustion
-export async function generateStaticParams() {
-  if (process.env.NODE_ENV !== 'production') return [];
+// TEMPORARILY DISABLED per ChatGPT fix - causes 404s with JS ON
+// export async function generateStaticParams() {
+//   if (process.env.NODE_ENV !== 'production') return [];
 
-  const rows = await prisma.whop.findMany({
-    where: whereIndexable(),
-    select: { slug: true },
-    orderBy: { displayOrder: 'asc' },
-    take: 800 // Budget for top "money pages"
-  });
+//   const rows = await prisma.whop.findMany({
+//     where: whereIndexable(),
+//     select: { slug: true },
+//     orderBy: { displayOrder: 'asc' },
+//     take: 800 // Budget for top "money pages"
+//   });
 
-  return rows.map(r => ({ slug: r.slug }));
-}
+//   return rows.map(r => ({ slug: r.slug }));
+// }
 
 interface PromoCode {
   id: string;
@@ -148,20 +147,16 @@ async function getVerificationData(slug: string) {
       });
     }
 
-    if (!res.ok) return null;
+    if (!res.ok) {
+      console.error('VERIFICATION_FETCH_FAIL: HTTP', res.status, 'for', encoded);
+      return null;
+    }
 
     const raw = await res.json();
+    console.log('VERIFICATION_DATA_RAW:', slug, JSON.stringify(raw).slice(0, 200));
 
-    // normalize to { best: { beforeCents, afterCents, computedAt, currency } }
-    const candidate = raw?.best ?? {
-      beforeCents: raw?.beforeCents ?? null,
-      afterCents:  raw?.afterCents  ?? null,
-      computedAt:  raw?.computedAt ?? raw?.lastUpdated ?? null,
-      currency:    raw?.currency ?? null,
-    };
-
-    if (candidate.beforeCents == null && candidate.afterCents == null) return null;
-    return { best: candidate };
+    // Return the full raw data including whopUrl, lastUpdated, and ledger
+    return raw;
   } catch (err) {
     console.error('VERIFICATION_FETCH_FAIL', slug, err);
     return null; // never throw
@@ -199,14 +194,11 @@ function hasTrial(price: string | null): boolean {
 
 // Async component for heavy sections that can be streamed
 async function RecommendedSection({ currentWhopSlug }: { currentWhopSlug: string }) {
-  // Simulate a small delay to show streaming effect in development
-  await new Promise(resolve => setTimeout(resolve, 100));
-
-  return <RecommendedWhops currentWhopSlug={currentWhopSlug} />;
+  return <RecommendedWhopsServer currentWhopSlug={currentWhopSlug} />;
 }
 
 async function AlternativesSection({ currentWhopSlug }: { currentWhopSlug: string }) {
-  return <Alternatives currentWhopSlug={currentWhopSlug} />;
+  return <AlternativesServer currentWhopSlug={currentWhopSlug} />;
 }
 
 async function ReviewsSection({ whopId, whopName, reviews }: { whopId: string; whopName: string; reviews: any[] }) {
@@ -225,8 +217,10 @@ async function ReviewsSection({ whopId, whopName, reviews }: { whopId: string; w
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   try {
     // Remove unstable_noStore() - rely on route-level revalidate
-    const canon = canonicalSlugForPath(params.slug ?? '');
-    const dbSlug = canonicalSlugForDB(params.slug ?? '');
+    const decoded = decodeURIComponent(params.slug ?? '');  // Decode before normalizing
+    const canon = canonicalSlugForPath(decoded);
+    // Use lowercase decoded slug for DB lookup (DB stores literal colons, not %3a)
+    const dbSlug = decoded.toLowerCase();
     console.log('[WHOP META] Generating metadata for:', { slug: params.slug, dbSlug });
 
     const whopData = await getWhopBySlug(dbSlug, 'en');
@@ -418,17 +412,19 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   }
 }
 
-export default async function WhopPage({ params }: { params: { slug: string } }) {
+export default async function WhopPage({ params, searchParams }: { params: { slug: string }, searchParams?: { debugOnly?: string; __debug?: string } }) {
   const raw = params.slug || '';
-  const dbSlug = canonicalSlugForDB(raw);
-  const canonSlug = canonicalSlugForPath(raw);
+  const decoded = decodeURIComponent(raw);  // Decode before normalizing
+  // Use lowercase decoded slug for DB lookup (DB stores literal colons, not %3a)
+  const dbSlug = decoded.toLowerCase();
+  const canonSlug = canonicalSlugForPath(decoded);
+
+  // Phase 1 instrumentation: Log inputs
+  dlog('whop', 'WhopPage params', { raw, decoded, dbSlug, canonSlug, searchParams });
 
   // Step 8: Determine SEO classification for this page
   const classification = getPageClassification(canonSlug);
   const shouldEmitSchema = classification === 'indexable';
-
-  // Debug logging to verify slug normalization
-  console.log('whop slug raw/db:', raw, dbSlug, 'classification:', classification);
 
   // Load view model for schema (reuse existing data path)
   let vm: WhopViewModel | null = null;
@@ -471,42 +467,44 @@ export default async function WhopPage({ params }: { params: { slug: string } })
         </pre>
       );
     }
-    return notFound();
+    return notFoundWithReason('no_record_for_slug', { raw, decoded, dbSlug });
   }
 
-  // 4) Early quality check: Only show indexable pages
+  // 4) Relaxed quality check per ChatGPT fix - only block GONE pages
   // Accept both 'INDEXED' (production) and 'INDEX' (backup DB)
   const indexingStatus = String(finalWhopData.indexingStatus || '').toUpperCase();
   const isIndexable = ['INDEXED', 'INDEX'].includes(indexingStatus);
   const isGone = finalWhopData.retirement === 'GONE';
 
-  // Build explicit reasons for non-indexable pages
-  const reasons: string[] = [];
-  if (isGone) reasons.push('RETIREMENT_GONE');
-  if (!isIndexable) reasons.push(`NOT_INDEXED (status: ${indexingStatus})`);
+  // T3: Build trace array for future 404 debugging
+  const trace: string[] = [];
+  trace.push(`slug=${dbSlug}, id=${finalWhopData.id ?? 'null'}`);
+  trace.push(`retired=${finalWhopData.retirement} indexing=${indexingStatus}`);
 
-  console.log('[WHOP DETAIL] Quality check:', {
+  console.log('[WHOP DETAIL] Quality check (relaxed):', {
     dbSlug,
     indexingStatus,
     isIndexable,
     retirement: finalWhopData.retirement,
     isGone,
-    reasons
+    nodeEnv: process.env.NODE_ENV
   });
 
-  // Only 404 in production for quality issues, or always for GONE pages
-  if (isGone || (process.env.NODE_ENV === 'production' && !isIndexable)) {
-    console.error('[WHOP DETAIL] 404 - Quality check failed:', {
-      raw,
-      dbSlug,
-      reasons
-    });
-    return notFound();
+  // RELAXED: Only 404 for GONE pages in all environments
+  // In development, allow all non-GONE pages (even if not indexed) to fix rec/alt 404s
+  if (isGone) {
+    trace.push('gate:retired_or_gone');
+    console.log('[DBG:reasons:page]', new Date().toISOString(), trace);
+    return notFoundWithReason('retired_or_gone', { raw, decoded, dbSlug, retirement: finalWhopData.retirement, isGone });
   }
 
-  // In development, show a warning banner instead of 404ing
-  if (process.env.NODE_ENV !== 'production' && reasons.length > 0) {
-    console.warn('[WHOP DETAIL] Soft quality fail (dev mode):', { dbSlug, reasons });
+  // Log successful render decision
+  trace.push(`render:true (relaxed_gate)`);
+  console.log('[DBG:reasons:page]', new Date().toISOString(), trace);
+
+  // Soft warning in dev for non-indexed pages (but don't 404)
+  if (process.env.NODE_ENV !== 'production' && !isIndexable) {
+    dlog('reasons', 'indexingStatus not indexed - still rendering', { dbSlug, indexingStatus });
   }
 
   // 5) Handle redirects
@@ -514,6 +512,33 @@ export default async function WhopPage({ params }: { params: { slug: string } })
     return permanentRedirect(finalWhopData.redirectToPath); // 308
   }
 
+
+  // Normalize usageStats - all Dates to ISO strings for stable SSR/hydration
+  const usageStats = (finalWhopData as any).usageStats
+    ? {
+        todayCount: Number((finalWhopData as any).usageStats.todayCount || 0),
+        totalCount: Number((finalWhopData as any).usageStats.totalCount || 0),
+        lastUsed: (finalWhopData as any).usageStats.lastUsed
+          ? new Date((finalWhopData as any).usageStats.lastUsed).toISOString()
+          : null,
+        verifiedDate: new Date(
+          (finalWhopData as any).usageStats.verifiedDate ?? finalWhopData.updatedAt ?? finalWhopData.createdAt
+        ).toISOString(),
+      }
+    : null;
+
+  // Use verification data loaded from JSON files (not from database)
+  const freshnessData = verificationData
+    ? {
+        whopUrl: String(verificationData.whopUrl || ''),
+        lastUpdated: verificationData.lastUpdated ? new Date(verificationData.lastUpdated).toISOString() : new Date().toISOString(),
+        ledger: (verificationData.ledger || []).map((row: any) => ({
+          ...row,
+          checkedAt: row?.checkedAt ? new Date(row.checkedAt).toISOString() : undefined,
+          verifiedAt: row?.verifiedAt ? new Date(row.verifiedAt).toISOString() : undefined,
+        })),
+      }
+    : null;
 
   // Transform raw Prisma data to match expected format
   const whopFormatted = {
@@ -531,6 +556,10 @@ export default async function WhopPage({ params }: { params: { slug: string } })
     featuresContent: finalWhopData.featuresContent,
     termsContent: finalWhopData.termsContent,
     faqContent: finalWhopData.faqContent,
+    updatedAt: finalWhopData.updatedAt,
+    createdAt: finalWhopData.createdAt,
+    usageStats,
+    freshnessData,
     promoCodes: (finalWhopData.PromoCode ?? []).map(code => ({
       id: code.id,
       title: code.title,
@@ -738,13 +767,23 @@ export default async function WhopPage({ params }: { params: { slug: string } })
             </div>
           </div>
 
-          {/* Usage Stats & Verification Status - Server Rendered */}
-          {whopFormatted.usageStats && (
-            <WhopMetaServer
-              usageStats={whopFormatted.usageStats}
-              freshnessData={whopFormatted.freshnessData}
-            />
-          )}
+          {/* Code Usage Statistics - Server Rendered (immediately after Reveal Code) */}
+          <ServerSectionGuard label="PromoUsageStats">
+            {whopFormatted.usageStats && (
+              <PromoStatsDisplay
+                whopId={whopFormatted.id}
+                slug={params.slug}
+                initialStats={whopFormatted.usageStats}
+              />
+            )}
+          </ServerSectionGuard>
+
+          {/* Verification Status - Server Rendered (separate section) */}
+          <ServerSectionGuard label="VerificationStatus">
+            {whopFormatted.freshnessData && (
+              <VerificationStatus freshnessData={whopFormatted.freshnessData} />
+            )}
+          </ServerSectionGuard>
 
           {/* Product Details for Each Promo Code */}
           {whopFormatted.promoCodes.map((promo, globalIndex) => {
@@ -923,17 +962,6 @@ export default async function WhopPage({ params }: { params: { slug: string } })
                   <p className="text-base sm:text-lg leading-relaxed mb-3" style={{ color: 'var(--text-secondary)' }}>
                     Get exclusive access and special discounts with our promo code.
                   </p>
-                  
-                  {/* Compact usage stats */}
-                  {firstPromo && (
-                    <div className="mt-3 pt-3 border-t" style={{ borderColor: 'var(--border-color)' }}>
-                      <WhopPageCompactStats 
-                        whopId={whopFormatted.id}
-                        promoCodeId={firstPromo.id}
-                        slug={params.slug}
-                      />
-                    </div>
-                  )}
                 </div>
                 
                 {/* Promo Type Badge */}
@@ -996,19 +1024,15 @@ export default async function WhopPage({ params }: { params: { slug: string } })
 
         {/* Full-width sections for better layout */}
         <div className="w-full space-y-8">
-          {/* Recommended Whops Section - Streamed for better performance */}
+          {/* Recommended Whops Section - Server-rendered for JS-off compatibility */}
           <div className="max-w-2xl mx-auto">
-            <Suspense fallback={<SectionSkeleton />}>
-              <RecommendedSection currentWhopSlug={params.slug} />
-            </Suspense>
+            <RecommendedSection currentWhopSlug={dbSlug} />
           </div>
 
-          {/* Alternatives Section - Topical clustering for SEO */}
+          {/* Alternatives Section - Server-rendered for JS-off compatibility */}
           <div className="max-w-2xl mx-auto">
-            <Suspense fallback={null}>
-              {/* @ts-expect-error Async Server Component */}
-              <AlternativesSection currentWhopSlug={params.slug} />
-            </Suspense>
+            {/* @ts-expect-error Async Server Component */}
+            <AlternativesSection currentWhopSlug={dbSlug} />
           </div>
 
           {/* Reviews Section - Streamed for better performance */}
@@ -1033,6 +1057,12 @@ export default async function WhopPage({ params }: { params: { slug: string } })
           </div>
         </div>
       </div>
+
+      {/* Hydration Debug Tripwire - only active when NEXT_PUBLIC_HYDRATION_DEBUG=1 */}
+      {process.env.NEXT_PUBLIC_HYDRATION_DEBUG === '1' && <HydrationTripwire />}
+
+      {/* Debug: Client-side logger to verify recommendation count */}
+      <DebugHydrationLogger />
     </main>
   );
 } 

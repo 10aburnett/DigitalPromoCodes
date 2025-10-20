@@ -1,7 +1,6 @@
 'use client'
 import React, { useState, useEffect, useRef } from 'react'
 import WhopPageClient from './WhopPageClient'
-import PromoStatsDisplay from './PromoStatsDisplay'
 
 interface PromoCode {
   id: string
@@ -106,15 +105,6 @@ export default function CommunityPromoSection({ whop, promoCodes, slug }: Commun
                 promoTitle={promo.title}
                 onTrackingComplete={handleTrackingComplete}
               />
-              {/* Stats display */}
-              <div className="mt-2">
-                <PromoStatsDisplay 
-                  whopId={whop.id}
-                  promoCodeId={promo.id}
-                  slug={slug}
-                  compact={false}
-                />
-              </div>
             </div>
           ))}
 
@@ -153,15 +143,6 @@ export default function CommunityPromoSection({ whop, promoCodes, slug }: Commun
                 promoTitle={promo.title}
                 onTrackingComplete={handleTrackingComplete}
               />
-              {/* Stats display */}
-              <div className="mt-2">
-                <PromoStatsDisplay 
-                  whopId={whop.id}
-                  promoCodeId={promo.id}
-                  slug={slug}
-                  compact={false}
-                />
-              </div>
             </div>
           ))}
         </div>

@@ -1,13 +1,13 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
-import Image from 'next/image';
+import React, { useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { normalizeImagePath } from '@/lib/image-utils';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useSocialProof, createSocialProofFromWhop } from '@/contexts/SocialProofContext';
 import InitialsAvatar from './InitialsAvatar';
+import { WhopLogoSSR } from './WhopLogoSSR';
+import { whopHref } from '@/lib/paths';
 
 // Define the promo type directly here to avoid import issues
 interface Promo {
@@ -36,19 +36,14 @@ interface WhopCardProps {
 export default function WhopCard({ promo, priority = false }: WhopCardProps) {
   const { t, language, isHydrated } = useLanguage();
   const { addNotification } = useSocialProof();
-  const [imageError, setImageError] = useState(false);
-  const [imagePath, setImagePath] = useState('');
   const pathname = usePathname();
   const cardRef = useRef<HTMLDivElement | null>(null);
 
   // Robust fallbacks for API shape variations
   const title = (promo as any).title ?? promo.whopName ?? (promo as any).name ?? 'Unknown Whop';
 
-  const imageUrl = (promo as any).imageUrl ??
-    promo.logoUrl ??
-    (promo as any).logo?.startsWith?.('http') ? (promo as any).logo :
-    ((promo as any).logo ? `https://whpcodes.com${(promo as any).logo}` : null) ??
-    '/images/Simplified Logo.png';
+  // Use logoUrl directly for SSR-safe rendering
+  const logoUrl = promo.logoUrl || '';
 
   const discountPercent = typeof (promo as any).discountPercent === 'number' ? (promo as any).discountPercent :
     typeof promo.promoValue === 'number' ? promo.promoValue : null;
@@ -91,34 +86,10 @@ export default function WhopCard({ promo, priority = false }: WhopCardProps) {
   const getDetailPageUrl = () => {
     // Use slug if available, otherwise fall back to id
     const identifier = promo.slug || promo.id;
-    
-    // More reliable language detection using pathname
-    let currentLanguage = language;
-    
-    // Always use pathname as the source of truth for current language
-    if (pathname) {
-      const pathSegments = pathname.split('/').filter(Boolean);
-      if (pathSegments.length > 0 && ['es', 'nl', 'fr', 'de', 'it', 'pt', 'zh'].includes(pathSegments[0])) {
-        currentLanguage = pathSegments[0] as any;
-      } else {
-        currentLanguage = 'en'; // Default to English if no valid language prefix
-      }
-    }
-    
-    // Fallback for when pathname is not available (SSR)
-    if (!currentLanguage || currentLanguage === 'en') {
-      if (!isHydrated && typeof window !== 'undefined') {
-        const pathSegments = window.location.pathname.split('/').filter(Boolean);
-        if (pathSegments.length > 0 && ['es', 'nl', 'fr', 'de', 'it', 'pt', 'zh'].includes(pathSegments[0])) {
-          currentLanguage = pathSegments[0] as any;
-        }
-      }
-    }
-    
-    if (currentLanguage === 'en') {
-      return `/whop/${identifier.toLowerCase()}`; // English uses /whop/{slug}
-    }
-    return `/${currentLanguage}/${identifier.toLowerCase()}`; // Other languages use direct language prefix with whop pages under locale
+
+    // Use canonical whopHref helper - handles encoding properly (no double-encoding)
+    // This ensures colons are encoded as %3a exactly once
+    return whopHref(identifier);
   };
 
   const handleGetPromoClick = (e: React.MouseEvent) => {
@@ -194,61 +165,10 @@ export default function WhopCard({ promo, priority = false }: WhopCardProps) {
     }
   };
 
-  // Load alternative logo paths to try
-  const getAlternativeLogoPaths = (whopName: string, originalPath: string) => {
-    const cleanName = whopName.replace(/[^a-zA-Z0-9]/g, '');
-    return [
-      `/images/${whopName} Logo.png`,
-      `/images/${whopName.replace(/\s+/g, '')} Logo.png`,
-      `/images/${cleanName} Logo.png`,
-      `/images/${cleanName}Logo.png`,
-      '/images/Simplified Logo.png'
-    ];
-  };
-
-  // Try next image in case of error
-  const handleImageError = () => {
-    console.error(`Image failed to load: ${imagePath} for ${promo.whopName}`);
-    
-    // If the current path has @avif, try without it first
-    if (imagePath.includes('@avif')) {
-      const pathWithoutAvif = imagePath.replace('@avif', '');
-      console.log(`Trying without @avif: ${pathWithoutAvif}`);
-      setImagePath(pathWithoutAvif);
-      return;
-    }
-    
-    // If the path looks like a placeholder or default image, go straight to InitialsAvatar
-    if (imagePath.includes('Simplified Logo') || 
-        imagePath.includes('default') || 
-        imagePath.includes('placeholder') ||
-        imagePath.includes('no-image') ||
-        imagePath.includes('missing')) {
-      console.log(`Placeholder detected, showing initials for ${promo.whopName}`);
-      setImageError(true);
-      return;
-    }
-    
-    // Get alternative paths
-    const alternativePaths = getAlternativeLogoPaths(promo.whopName, imagePath);
-    const currentIndex = alternativePaths.indexOf(imagePath);
-    
-    if (currentIndex < alternativePaths.length - 1) {
-      // Try next alternative
-      const nextPath = alternativePaths[currentIndex + 1];
-      console.log(`Trying alternative path: ${nextPath}`);
-      setImagePath(nextPath);
-    } else {
-      // All alternatives failed, show initials
-      console.log(`All image paths failed for ${promo.whopName}, showing initials`);
-      setImageError(true);
-    }
-  };
-
   // Intersection Observer for prefetching
   useEffect(() => {
     if (!cardRef.current) return;
-    
+
     const cardElement = cardRef.current;
     let didPrefetch = false;
 
@@ -269,51 +189,6 @@ export default function WhopCard({ promo, priority = false }: WhopCardProps) {
     return () => io.disconnect();
   }, []);
 
-  // Determine the best logo path when component mounts
-  useEffect(() => {
-    try {
-      // Check if logoUrl is empty/null/undefined first
-      if (!imageUrl ||
-          imageUrl.trim() === '' ||
-          imageUrl === 'null' ||
-          imageUrl === 'undefined' ||
-          imageUrl === 'NULL' ||
-          imageUrl === 'UNDEFINED') {
-        setImageError(true);
-        setImagePath(''); // Clear the path
-        return;
-      }
-
-      const normalizedPath = normalizeImagePath(imageUrl);
-      
-      // If the path is empty or clearly invalid, go straight to InitialsAvatar
-      if (!normalizedPath || 
-          normalizedPath.trim() === '' ||
-          normalizedPath === '/images/.png' || 
-          normalizedPath === '/images/undefined.png' ||
-          normalizedPath === '/images/Simplified Logo.png' ||
-          normalizedPath === '/images/null.png' ||
-          normalizedPath === '/images/NULL.png' ||
-          normalizedPath === '/images/UNDEFINED.png' ||
-          normalizedPath.endsWith('/.png') ||
-          normalizedPath.includes('/images/undefined') ||
-          normalizedPath.includes('/images/null') ||
-          normalizedPath.includes('Simplified Logo')) {
-        setImageError(true);
-        setImagePath(''); // Clear the path
-        return;
-      }
-      
-      setImagePath(normalizedPath);
-      setImageError(false); // Reset error state when path changes
-      
-    } catch (error) {
-      console.error(`Error setting image path for ${promo.whopName}:`, error);
-      setImageError(true);
-      setImagePath(''); // Clear the path
-    }
-  }, [imageUrl, title]);
-
   return (
     <div ref={cardRef} className="relative">
       <article className="relative p-5 rounded-xl shadow-lg border transition-all hover:shadow-xl hover:border-opacity-50" style={{ background: 'linear-gradient(135deg, var(--background-secondary), var(--background-tertiary))', borderColor: 'var(--border-color)' }}>
@@ -325,27 +200,19 @@ export default function WhopCard({ promo, priority = false }: WhopCardProps) {
         >
           <div className="flex items-start gap-4 mb-4">
             <div className="relative w-16 h-16 rounded-lg overflow-hidden flex-shrink-0 flex items-center justify-center bg-gray-800" style={{ backgroundColor: 'var(--background-color)' }}>
-              {imageError || !imagePath || imagePath.trim() === '' ? (
-                <InitialsAvatar 
-                  name={title} 
-                  size="lg" 
+              {!logoUrl || logoUrl.includes('Simplified Logo') || logoUrl.includes('placeholder') ? (
+                <InitialsAvatar
+                  name={title}
+                  size="lg"
                   shape="square"
                   className="w-full h-full"
                 />
               ) : (
-                <Image
-                  src={imagePath}
-                  alt={`${promo.whopName} Promo Code - ${promo.promoText} (${new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })})`}
+                <WhopLogoSSR
+                  src={logoUrl}
+                  alt={`${promo.whopName} logo`}
                   width={64}
                   height={64}
-                  className="w-full h-full object-contain"
-                  style={{ maxWidth: '100%', maxHeight: '100%' }}
-                  onError={handleImageError}
-                  priority={priority}
-                  unoptimized={imagePath.includes('@avif')}
-                  sizes="(max-width: 768px) 48px, 64px"
-                  placeholder="blur"
-                  blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAEAAQDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyytN5cFrKDsRXSJfAhvT7WinYGCvchOjJAMfNIXGiULZQ8qEzJQdEKKRjFiYqKJKEJxZJXiEH0RRN6mJzN5hJ8tP/Z"
                 />
               )}
             </div>

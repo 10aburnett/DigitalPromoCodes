@@ -2,8 +2,24 @@
 // Server component for FAQ section using native HTML details/summary
 
 import { FaqItem, parseFaqContent } from '@/lib/faq-types';
-import RenderPlain from '@/components/RenderPlain';
+import { RenderPlainServer } from '@/lib/RenderPlainServer';
 import { looksLikeHtml, toPlainText } from '@/lib/textRender';
+
+// Normalize text/HTML so SSR and client use identical bytes
+function normalizeText(s: string) {
+  return String(s)
+    .replace(/\r\n?/g, '\n')          // CRLF -> LF
+    .replace(/\u00a0/g, ' ')          // NBSP -> space
+    .replace(/[\u201C\u201D]/g, '"')  // " " -> "
+    .replace(/[\u2018\u2019]/g, "'")  // ' ' -> '
+    .replace(/\s+/g, ' ')             // collapse whitespace
+    .trim();
+}
+
+// Helper to strip HTML tags and normalize whitespace for stable SSR/CSR hydration
+function stripTags(input: string): string {
+  return input.replace(/<\/?[^>]+(>|$)/g, '');
+}
 
 interface LegacyFAQItem {
   question: string;
@@ -80,6 +96,17 @@ export default function FAQSectionServer({ faqs = [], faqContent, whopName }: FA
     return null; // Don't render if no FAQs
   }
 
+  // Normalize FAQ data to ensure stable SSR/CSR hydration
+  const safeFaqs = displayFaqs.map(f => {
+    const q = normalizeText(stripTags(String(f.question)));
+    return {
+      question: q,
+      // Normalize both HTML and plain text answers so bytes match on client
+      answer: f.isHtml ? normalizeText(String(f.answer)) : normalizeText(String(f.answer)),
+      isHtml: !!f.isHtml,
+    };
+  });
+
   return (
     <>
       {/* JSON-LD for structured FAQs */}
@@ -93,30 +120,18 @@ export default function FAQSectionServer({ faqs = [], faqContent, whopName }: FA
       <section className="rounded-xl px-7 py-6 sm:p-8 border transition-theme" style={{ backgroundColor: 'var(--background-secondary)', borderColor: 'var(--border-color)' }}>
         <h2 className="text-xl sm:text-2xl font-bold mb-4">Frequently Asked Questions</h2>
         <div className="space-y-3">
-          {displayFaqs.map((faq, index) => (
+          {safeFaqs.map((faq) => (
             <details
-              key={index}
-              className="rounded-lg border transition-all duration-200 overflow-hidden group"
+              key={String(faq.question)}
+              className="rounded-lg border transition-all duration-200 overflow-hidden"
               style={{
                 backgroundColor: 'var(--background-color)',
                 borderColor: 'var(--border-color)'
               }}
             >
-              {/* Question Header - Native HTML summary */}
-              <summary
-                className="w-full p-4 text-left flex justify-between items-center cursor-pointer hover:opacity-80 transition-opacity list-none"
-              >
-                <h3 className="font-semibold text-lg pr-4">{faq.question}</h3>
-                <div className="flex-shrink-0">
-                  <svg
-                    className="w-5 h-5 transition-transform duration-200 group-open:rotate-180"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                </div>
+              {/* Question Header - Native HTML summary with ONLY text content for stable hydration */}
+              <summary className="w-full p-4 pr-10 text-left cursor-pointer hover:opacity-80 transition-opacity list-none font-semibold text-lg [&::-webkit-details-marker]:hidden">
+                {faq.question}
               </summary>
 
               {/* Answer Content - Revealed by native details/summary */}
@@ -124,11 +139,12 @@ export default function FAQSectionServer({ faqs = [], faqContent, whopName }: FA
                 {faq.isHtml ? (
                   <div
                     className="leading-relaxed prose prose-sm max-w-none whitespace-break-spaces prose-headings:text-current prose-p:text-current prose-ul:text-current prose-ol:text-current prose-li:text-current prose-strong:text-current prose-em:text-current prose-a:text-blue-600 hover:prose-a:text-blue-700"
+                    suppressHydrationWarning
                     dangerouslySetInnerHTML={{ __html: faq.answer }}
                   />
                 ) : (
-                  <div className="leading-relaxed">
-                    <RenderPlain text={faq.answer} />
+                  <div className="leading-relaxed" suppressHydrationWarning>
+                    <RenderPlainServer text={faq.answer} />
                   </div>
                 )}
               </div>

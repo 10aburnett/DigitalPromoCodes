@@ -10,6 +10,7 @@ import { prisma } from '@/lib/prisma';
 import { unstable_cache } from 'next/cache';
 import Script from 'next/script';
 import { GA_TRACKING_ID } from '@/lib/analytics';
+import ForceDebugClient from './_force-debug-client';
 
 const inter = Inter({ 
   subsets: ['latin'],
@@ -239,8 +240,6 @@ export default async function RootLayout({
           }
         `}} />
         <link rel="preload" href="/logo.png" as="image" />
-        <link rel="preload" href="/api/whops?page=1&limit=15" as="fetch" crossOrigin="anonymous" />
-        <link rel="prefetch" href="/api/statistics" as="fetch" crossOrigin="anonymous" />
         {/* Comprehensive favicon setup for all browsers */}
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
         <link rel="icon" type="image/x-icon" href="/favicon.ico" />
@@ -251,9 +250,13 @@ export default async function RootLayout({
         <link rel="icon" type="image/png" sizes="512x512" href="/android-chrome-512x512.png" />
         <meta name="msapplication-TileColor" content="#4285f4" />
         <meta name="theme-color" content="#4285f4" />
-        <link rel="manifest" href="/site.webmanifest" />
+        {/* Only include manifest in production to avoid 401s on Vercel protected previews */}
+        {process.env.VERCEL_ENV === 'production' && (
+          <link rel="manifest" href="/site.webmanifest" />
+        )}
       </head>
       <body className={`${inter.className} overflow-x-hidden`} style={{ backgroundColor: 'var(--background-color)', color: 'var(--text-color)' }}>
+        <ForceDebugClient />
         {children}
 
         {/* Google Analytics – load once at root */}

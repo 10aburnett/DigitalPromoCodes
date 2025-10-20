@@ -51,10 +51,20 @@ export const getStatisticsCached = () =>
           }
         });
 
+        // Use deterministic seed based on slug hash to ensure stable SSR
+        const getStableClaimCount = (slug: string): number => {
+          let hash = 0;
+          for (let i = 0; i < slug.length; i++) {
+            hash = ((hash << 5) - hash) + slug.charCodeAt(i);
+            hash = hash & hash; // Convert to 32bit integer
+          }
+          return 20 + (Math.abs(hash) % 51); // Range: 20-70 (deterministic)
+        };
+
         const mostClaimedOffer = popularWhop ? {
           name: popularWhop.name,
           slug: popularWhop.slug,
-          claimCount: Math.floor(Math.random() * 50) + 20, // Random between 20-70
+          claimCount: getStableClaimCount(popularWhop.slug),
           logoUrl: popularWhop.logo || undefined
         } : null;
 

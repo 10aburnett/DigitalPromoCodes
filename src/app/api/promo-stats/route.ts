@@ -21,14 +21,41 @@ export async function GET(request: NextRequest) {
     const whopId = searchParams.get('whopId');
     let slug = searchParams.get('slug');
 
-    // If promoCodeId or whopId provided, run ID-based counts first
-    if (promoCodeId || whopId) {
-      const id = Number(promoCodeId || whopId);
+    // If whopId provided, run whopId-based counts first (whopId is a string)
+    if (whopId) {
+      const since = startOfTodayUTC();
+      const whereBase = { whopId: whopId, actionType: 'code_copy' as const };
+
+      const [totalCount, todayCount, lastUsage] = await Promise.all([
+        prisma.offerTracking.count({ where: whereBase }),
+        prisma.offerTracking.count({ where: { ...whereBase, createdAt: { gte: since } } }),
+        prisma.offerTracking.findFirst({
+          where: whereBase,
+          orderBy: { createdAt: 'desc' },
+          select: { createdAt: true }
+        })
+      ]);
+
+      // Return whopId-based stats (even if 0)
+      return NextResponse.json({
+        usage: { todayCount, totalCount, todayClicks: todayCount, lastUsed: lastUsage?.createdAt ?? null },
+        overallStats: { todayClicks: todayCount }
+      }, {
+        headers: {
+          'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0',
+          'Pragma': 'no-cache',
+          'Expires': '0',
+          'Vary': 'Cookie'
+        }
+      });
+    }
+
+    // If promoCodeId provided (numeric), run promoCodeId-based counts
+    if (promoCodeId) {
+      const id = Number(promoCodeId);
       if (Number.isFinite(id)) {
         const since = startOfTodayUTC();
-        const whereBase = promoCodeId 
-          ? { promoCodeId: id, actionType: 'code_copy' as const }
-          : { whopId: id, actionType: 'code_copy' as const };
+        const whereBase = { promoCodeId: id, actionType: 'code_copy' as const };
 
         const [totalCount, todayCount, lastUsage] = await Promise.all([
           prisma.offerTracking.count({ where: whereBase }),
@@ -45,13 +72,13 @@ export async function GET(request: NextRequest) {
           return NextResponse.json({
             usage: { todayCount, totalCount, todayClicks: todayCount, lastUsed: lastUsage?.createdAt ?? null },
             overallStats: { todayClicks: todayCount }
-          }, { 
+          }, {
             headers: {
-          'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0',
-          'Pragma': 'no-cache',
-          'Expires': '0',
-          'Vary': 'Cookie'
-        } 
+              'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0',
+              'Pragma': 'no-cache',
+              'Expires': '0',
+              'Vary': 'Cookie'
+            }
           });
         }
       }
@@ -74,8 +101,7 @@ export async function GET(request: NextRequest) {
         OR: [
           { path: { contains: `/whop/${slug}`, mode: 'insensitive' } },
           { path: { contains: `/en/whop/${slug}`, mode: 'insensitive' } },
-          { path: { contains: `https://whpcodes.com/whop/${slug}`, mode: 'insensitive' } },
-          { path: { contains: 'http://localhost', mode: 'insensitive' } }
+          { path: { contains: `https://whpcodes.com/whop/${slug}`, mode: 'insensitive' } }
         ]
       };
 

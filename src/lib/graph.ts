@@ -27,7 +27,8 @@ export async function loadNeighbors(): Promise<NeighborsMap> {
     (window as any).__WHOP_GRAPH_URL = url;
   }
 
-  const res = await fetch(url, { cache: 'no-store' });
+  // Use 'force-cache' for stable SSR/hydration - Next.js will use same cached data
+  const res = await fetch(url, { cache: 'force-cache' });
   if (!res.ok) throw new Error(`Graph fetch failed ${res.status}`);
 
   const data = await res.json();
