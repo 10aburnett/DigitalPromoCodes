@@ -204,7 +204,10 @@ async function RecommendedSection({ currentWhopSlug }: { currentWhopSlug: string
       slug: w.slug,
       name: w.name,
       logo: w.logo ?? null,
-      description: w.description ?? null
+      description: w.description ?? null,
+      category: w.category ?? null,
+      rating: w.rating ?? null,
+      ratingCount: w.ratingCount ?? 0
     }))
     .sort((a,b) => a.slug.localeCompare(b.slug));
 
@@ -221,13 +224,15 @@ async function AlternativesSection({ currentWhopSlug }: { currentWhopSlug: strin
       slug: w.slug,
       name: w.name,
       logo: w.logo ?? null,
-      blurb: w.description ?? null  // Map description to blurb for AlternativesServer
+      blurb: w.description ?? null,
+      category: w.category ?? null,
+      rating: w.rating ?? null,
+      ratingCount: w.ratingCount ?? 0
     }))
     .sort((a,b) => a.slug.localeCompare(b.slug));
-  const exploreHref = explore ? `/whop/${encodeURIComponent(explore.slug)}` : undefined;
 
   // Server-rendered alternatives with normal React hydration
-  return <AlternativesServer items={frozen} exploreHref={exploreHref} />;
+  return <AlternativesServer items={frozen} explore={explore} />;
 }
 
 async function ReviewsSection({ whopId, whopName, reviews }: { whopId: string; whopName: string; reviews: any[] }) {

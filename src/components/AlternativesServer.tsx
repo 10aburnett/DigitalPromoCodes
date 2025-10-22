@@ -1,55 +1,71 @@
 import 'server-only';
+import WhopMiniPreview from './WhopMiniPreview';
+import { resolveLogoUrl } from '@/lib/image-url';
 
 type Item = {
   slug: string;
   name: string;
   logo?: string | null;
   blurb?: string | null;
+  category?: string | null;
+  rating?: number | null;
+  ratingCount?: number;
 };
 
-export default function AlternativesServer({ items, exploreHref }: { items?: Item[]; exploreHref?: string }) {
+type ExploreLink = {
+  slug: string;
+  name: string;
+  logo?: string | null;
+  category?: string | null;
+  rating?: number | null;
+  ratingCount?: number;
+};
+
+export default function AlternativesServer({
+  items,
+  explore
+}: {
+  items?: Item[];
+  explore?: ExploreLink | null;
+}) {
   const list = (items ?? [])
     .filter((w): w is Item & { slug: string } => !!w && !!w.slug)
     .slice()
     .sort((a, b) => a.slug.localeCompare(b.slug));
 
-  if (!list.length) return null;
+  if (!list.length && !explore) return null;
 
   return (
     <section aria-label="Similar offers" className="mt-8">
       <h2 className="text-xl font-bold mb-4">Similar offers</h2>
       <ul className="flex flex-col gap-4" suppressHydrationWarning>
         {list.map((w, i) => (
-          <li key={`${w.slug}#${i}`} className="block rounded-xl border p-4 hover:border-[var(--accent-color)] transition">
-            <a
-              href={`/whop/${encodeURIComponent(w.slug)}`}
-              className="flex gap-3 items-center focus-visible:ring-2 focus-visible:ring-[var(--accent-color)]"
-            >
-              <img
-                src={w.logo || '/logo.png'}
-                alt={w.name}
-                width={48}
-                height={48}
-                loading="lazy"
-                decoding="async"
-                className="w-12 h-12 rounded object-contain bg-[var(--background-secondary)]"
-              />
-              <div className="min-w-0 flex-1 overflow-hidden">
-                <div className="font-semibold text-base line-clamp-2">{w.name}</div>
-                <div className="text-sm text-[var(--text-secondary)] line-clamp-2">{w.blurb || '\u00A0'}</div>
-              </div>
-            </a>
-          </li>
+          <WhopMiniPreview
+            key={`${w.slug}#${i}`}
+            slug={w.slug}
+            name={w.name}
+            logo={resolveLogoUrl(w.logo)}
+            description={w.blurb}
+            category={w.category}
+            rating={w.rating}
+            ratingCount={w.ratingCount ?? 0}
+          />
         ))}
-      </ul>
 
-      {exploreHref ? (
-        <div className="mt-4">
-          <a href={exploreHref} className="underline hover:opacity-80">
-            Explore more
-          </a>
-        </div>
-      ) : null}
+        {/* Render explore link as a special preview card */}
+        {explore && (
+          <WhopMiniPreview
+            key={`explore-${explore.slug}`}
+            slug={explore.slug}
+            name={explore.name}
+            logo={resolveLogoUrl(explore.logo)}
+            category={explore.category}
+            rating={explore.rating}
+            ratingCount={explore.ratingCount ?? 0}
+            isExploreLink={true}
+          />
+        )}
+      </ul>
     </section>
   );
 }
