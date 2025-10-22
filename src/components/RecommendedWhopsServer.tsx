@@ -1,11 +1,16 @@
 // Server-safe list of recommended whops (no next/link, no client state)
 import 'server-only';
+import WhopMiniPreview from './WhopMiniPreview';
+import { resolveLogoUrl } from '@/lib/image-url';
 
 type Item = {
   slug: string;
   name: string;
   logo?: string | null;
   description?: string | null;
+  category?: string | null;
+  rating?: number | null;
+  ratingCount?: number;
 };
 
 export default function RecommendedWhopsServer({ items }: { items?: Item[] }) {
@@ -21,27 +26,16 @@ export default function RecommendedWhopsServer({ items }: { items?: Item[] }) {
       <h2 className="text-xl font-bold mb-4">Recommended for You</h2>
       <ul className="flex flex-col gap-4" suppressHydrationWarning>
         {list.map((w, i) => (
-          <li key={`${w.slug}#${i}`} className="block rounded-xl border p-4 hover:border-[var(--accent-color)] transition">
-            <a
-              href={`/whop/${encodeURIComponent(w.slug)}`}
-              className="flex gap-3 items-center focus-visible:ring-2 focus-visible:ring-[var(--accent-color)]"
-            >
-              <img
-                src={w.logo || '/logo.png'}
-                alt={w.name}
-                width={48}
-                height={48}
-                loading="lazy"
-                decoding="async"
-                className="w-12 h-12 rounded object-contain bg-[var(--background-secondary)]"
-              />
-              <div className="min-w-0 flex-1 overflow-hidden">
-                <div className="font-semibold text-base line-clamp-2">{w.name}</div>
-                {/* always render this div to keep structure stable */}
-                <div className="text-sm text-[var(--text-secondary)] line-clamp-2">{w.description || '\u00A0'}</div>
-              </div>
-            </a>
-          </li>
+          <WhopMiniPreview
+            key={`${w.slug}#${i}`}
+            slug={w.slug}
+            name={w.name}
+            logo={resolveLogoUrl(w.logo)}
+            description={w.description}
+            category={w.category}
+            rating={w.rating}
+            ratingCount={w.ratingCount ?? 0}
+          />
         ))}
       </ul>
     </section>

@@ -20,13 +20,17 @@ interface WhopItem {
   category: string | null;
   price: string | null;
   rating: number | null;
+  ratingCount: number;
   promoCodes: PromoCode[];
 }
 
 interface ExploreLink {
   slug: string;
   name: string;
-  category?: string;
+  logo?: string | null;
+  category?: string | null;
+  rating?: number | null;
+  ratingCount?: number;
 }
 
 /**
@@ -88,6 +92,7 @@ export async function getRecommendations(currentWhopSlug: string): Promise<{
         category: true,
         price: true,
         rating: true,
+        _count: { select: { Review: true } },
         PromoCode: {
           where: {
             NOT: { id: { startsWith: 'community_' } }
@@ -116,6 +121,7 @@ export async function getRecommendations(currentWhopSlug: string): Promise<{
       category: whop.category,
       price: whop.price,
       rating: whop.rating,
+      ratingCount: whop._count?.Review ?? 0,
       promoCodes: whop.PromoCode || []
     }));
 
@@ -137,7 +143,10 @@ export async function getRecommendations(currentWhopSlug: string): Promise<{
           select: {
             slug: true,
             name: true,
-            category: true
+            logo: true,
+            category: true,
+            rating: true,
+            _count: { select: { Review: true } }
           }
         });
 
@@ -145,7 +154,10 @@ export async function getRecommendations(currentWhopSlug: string): Promise<{
           explore = {
             slug: normalizeSlug(exploreWhop.slug), // Ensure canonical slug
             name: exploreWhop.name,
-            category: exploreWhop.category ?? undefined
+            logo: exploreWhop.logo,
+            category: exploreWhop.category ?? undefined,
+            rating: exploreWhop.rating,
+            ratingCount: exploreWhop._count?.Review ?? 0
           };
         }
       }
@@ -226,6 +238,7 @@ export async function getAlternatives(currentWhopSlug: string): Promise<{
         category: true,
         price: true,
         rating: true,
+        _count: { select: { Review: true } },
         PromoCode: {
           where: {
             NOT: { id: { startsWith: 'community_' } }
@@ -254,6 +267,7 @@ export async function getAlternatives(currentWhopSlug: string): Promise<{
       category: whop.category,
       price: whop.price,
       rating: whop.rating,
+      ratingCount: whop._count?.Review ?? 0,
       promoCodes: whop.PromoCode || []
     }));
 
@@ -275,7 +289,10 @@ export async function getAlternatives(currentWhopSlug: string): Promise<{
           select: {
             slug: true,
             name: true,
-            category: true
+            logo: true,
+            category: true,
+            rating: true,
+            _count: { select: { Review: true } }
           }
         });
 
@@ -283,7 +300,10 @@ export async function getAlternatives(currentWhopSlug: string): Promise<{
           explore = {
             slug: normalizeSlug(exploreWhop.slug), // Ensure canonical slug
             name: exploreWhop.name,
-            category: exploreWhop.category ?? undefined
+            logo: exploreWhop.logo,
+            category: exploreWhop.category ?? undefined,
+            rating: exploreWhop.rating,
+            ratingCount: exploreWhop._count?.Review ?? 0
           };
         }
       }
