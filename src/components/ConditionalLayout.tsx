@@ -66,21 +66,37 @@ function LayoutContent({ children, faviconUrl }: ConditionalLayoutProps) {
       <header className="fixed top-0 w-full transition-theme z-50 pb-0 md:pb-2 lg:pb-1" style={{ backgroundColor: 'var(--background-color)', borderBottom: '2px solid var(--border-color)' }}>
         <div className="container mx-auto px-2 sm:px-4 h-20 md:h-20 lg:h-[72px] xl:h-[72px] flex items-center justify-start md:justify-between gap-2">
           <div className="flex items-center space-x-1 md:space-x-6">
-            <Link href={getLocalizedPath('/')} className="flex items-center transition-all duration-200 hover:translate-y-[-1px] hover:opacity-80">
-              <div className="text-xl md:text-2xl font-bold translate-x-[6px] md:translate-x-0" style={{ color: 'var(--accent-color)' }}>
-                WHP<span style={{ color: 'var(--text-color)' }}>CODES</span>
-              </div>
-            </Link>
-            
+            {useAnchorTags ? (
+              <a href={getLocalizedPath('/')} className="flex items-center transition-all duration-200 hover:translate-y-[-1px] hover:opacity-80">
+                <div className="text-xl md:text-2xl font-bold translate-x-[6px] md:translate-x-0" style={{ color: 'var(--accent-color)' }}>
+                  WHP<span style={{ color: 'var(--text-color)' }}>CODES</span>
+                </div>
+              </a>
+            ) : (
+              <Link href={getLocalizedPath('/')} className="flex items-center transition-all duration-200 hover:translate-y-[-1px] hover:opacity-80">
+                <div className="text-xl md:text-2xl font-bold translate-x-[6px] md:translate-x-0" style={{ color: 'var(--accent-color)' }}>
+                  WHP<span style={{ color: 'var(--text-color)' }}>CODES</span>
+                </div>
+              </Link>
+            )}
+
             {/* Separator line - hidden on mobile */}
             <div className="hidden md:block h-8 w-px" style={{ backgroundColor: 'var(--border-color)' }}></div>
-            
+
             {/* WHPBLOG - hidden on mobile */}
-            <Link href={getLocalizedPath('/blog')} className="hidden md:flex items-center transition-all duration-200 hover:translate-y-[-1px] hover:opacity-80">
-              <div className="text-2xl font-bold">
-                <span style={{ color: 'var(--accent-color)' }}>WHP</span><span style={{ color: 'var(--text-color)' }}>BLOG</span>
-              </div>
-            </Link>
+            {useAnchorTags ? (
+              <a href={getLocalizedPath('/blog')} className="hidden md:flex items-center transition-all duration-200 hover:translate-y-[-1px] hover:opacity-80">
+                <div className="text-2xl font-bold">
+                  <span style={{ color: 'var(--accent-color)' }}>WHP</span><span style={{ color: 'var(--text-color)' }}>BLOG</span>
+                </div>
+              </a>
+            ) : (
+              <Link href={getLocalizedPath('/blog')} className="hidden md:flex items-center transition-all duration-200 hover:translate-y-[-1px] hover:opacity-80">
+                <div className="text-2xl font-bold">
+                  <span style={{ color: 'var(--accent-color)' }}>WHP</span><span style={{ color: 'var(--text-color)' }}>BLOG</span>
+                </div>
+              </Link>
+            )}
           </div>
           
           {/* Navigation and Controls */}
@@ -104,24 +120,49 @@ function LayoutContent({ children, faviconUrl }: ConditionalLayoutProps) {
             {/* Desktop: Full navigation */}
             <div className="hidden md:flex items-center space-x-4">
               <nav className="flex items-center space-x-6">
-                <Link href={getLocalizedPath('/')} className="transition-all duration-200 hover:translate-y-[-1px] hover:opacity-80" style={{ color: 'var(--text-secondary)' }}>
-                  {t('nav.home')}
-                </Link>
-                <GeneralPromoSubmissionButton 
-                  className="transition-all duration-200 hover:translate-y-[-1px] hover:opacity-80 cursor-pointer"
-                  style={{ color: 'var(--text-secondary)' }}
-                >
-                  Submit Code
-                </GeneralPromoSubmissionButton>
-                <Link href="/subscribe" className="transition-all duration-200 hover:translate-y-[-1px] hover:opacity-80" style={{ color: 'var(--text-secondary)' }}>
-                  Subscribe
-                </Link>
-                <Link href={getLocalizedPath('/about')} className="transition-all duration-200 hover:translate-y-[-1px] hover:opacity-80" style={{ color: 'var(--text-secondary)' }}>
-                  {t('nav.about')}
-                </Link>
-                <Link href={getLocalizedPath('/contact')} className="transition-all duration-200 hover:translate-y-[-1px] hover:opacity-80" style={{ color: 'var(--text-secondary)' }}>
-                  {t('nav.contact')}
-                </Link>
+                {useAnchorTags ? (
+                  <>
+                    <a href={getLocalizedPath('/')} className="transition-all duration-200 hover:translate-y-[-1px] hover:opacity-80" style={{ color: 'var(--text-secondary)' }}>
+                      {t('nav.home')}
+                    </a>
+                    <GeneralPromoSubmissionButton
+                      className="transition-all duration-200 hover:translate-y-[-1px] hover:opacity-80 cursor-pointer"
+                      style={{ color: 'var(--text-secondary)' }}
+                    >
+                      Submit Code
+                    </GeneralPromoSubmissionButton>
+                    <a href="/subscribe" className="transition-all duration-200 hover:translate-y-[-1px] hover:opacity-80" style={{ color: 'var(--text-secondary)' }}>
+                      Subscribe
+                    </a>
+                    <a href={getLocalizedPath('/about')} className="transition-all duration-200 hover:translate-y-[-1px] hover:opacity-80" style={{ color: 'var(--text-secondary)' }}>
+                      {t('nav.about')}
+                    </a>
+                    <a href={getLocalizedPath('/contact')} className="transition-all duration-200 hover:translate-y-[-1px] hover:opacity-80" style={{ color: 'var(--text-secondary)' }}>
+                      {t('nav.contact')}
+                    </a>
+                  </>
+                ) : (
+                  <>
+                    <Link href={getLocalizedPath('/')} className="transition-all duration-200 hover:translate-y-[-1px] hover:opacity-80" style={{ color: 'var(--text-secondary)' }}>
+                      {t('nav.home')}
+                    </Link>
+                    <GeneralPromoSubmissionButton
+                      className="transition-all duration-200 hover:translate-y-[-1px] hover:opacity-80 cursor-pointer"
+                      style={{ color: 'var(--text-secondary)' }}
+                    >
+                      Submit Code
+                    </GeneralPromoSubmissionButton>
+                    <Link href="/subscribe" className="transition-all duration-200 hover:translate-y-[-1px] hover:opacity-80" style={{ color: 'var(--text-secondary)' }}>
+                      Subscribe
+                    </Link>
+                    <Link href={getLocalizedPath('/about')} className="transition-all duration-200 hover:translate-y-[-1px] hover:opacity-80" style={{ color: 'var(--text-secondary)' }}>
+                      {t('nav.about')}
+                    </Link>
+                    <Link href={getLocalizedPath('/contact')} className="transition-all duration-200 hover:translate-y-[-1px] hover:opacity-80" style={{ color: 'var(--text-secondary)' }}>
+                      {t('nav.contact')}
+                    </Link>
+                  </>
+                )}
               </nav>
               <div className="flex items-center space-x-3">
                 <LanguageSelector />

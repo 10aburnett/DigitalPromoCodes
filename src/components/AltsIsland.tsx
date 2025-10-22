@@ -1,26 +1,32 @@
-// Server-safe list of recommended whops (no next/link, no client state)
-import 'server-only';
+'use client';
+
+import { useEffect, useState } from 'react';
 
 type Item = {
   slug: string;
   name: string;
   logo?: string | null;
-  description?: string | null;
+  blurb?: string | null;
 };
 
-export default function RecommendedWhopsServer({ items }: { items?: Item[] }) {
-  const list = (items ?? [])
-    .filter((w): w is Item & { slug: string } => !!w && !!w.slug)
-    .slice()
-    .sort((a, b) => a.slug.localeCompare(b.slug));
+export default function AltsIsland({ items, exploreHref, replaceId }: { items: Item[]; exploreHref?: string; replaceId?: string }) {
+  const [ready, setReady] = useState(false);
 
-  if (!list.length) return null;
+  useEffect(() => {
+    // Hide the SSR block so only the client version is visible
+    if (replaceId) {
+      const el = document.getElementById(replaceId);
+      if (el) el.style.display = 'none';
+    }
+    setReady(true);
+  }, [replaceId]);
+
+  if (!ready) return null;
 
   return (
-    <section aria-label="Recommended for you" className="mt-8">
-      <h2 className="text-xl font-bold mb-4">Recommended for You</h2>
-      <ul className="flex flex-col gap-4" suppressHydrationWarning>
-        {list.map((w, i) => (
+    <>
+      <ul className="flex flex-col gap-4">
+        {items.map((w, i) => (
           <li key={`${w.slug}#${i}`} className="block rounded-xl border p-4 hover:border-[var(--accent-color)] transition">
             <a
               href={`/whop/${encodeURIComponent(w.slug)}`}
@@ -37,13 +43,19 @@ export default function RecommendedWhopsServer({ items }: { items?: Item[] }) {
               />
               <div className="min-w-0 flex-1 overflow-hidden">
                 <div className="font-semibold text-base line-clamp-2">{w.name}</div>
-                {/* always render this div to keep structure stable */}
-                <div className="text-sm text-[var(--text-secondary)] line-clamp-2">{w.description || '\u00A0'}</div>
+                <div className="text-sm text-[var(--text-secondary)] line-clamp-2">{w.blurb || '\u00A0'}</div>
               </div>
             </a>
           </li>
         ))}
       </ul>
-    </section>
+      {exploreHref ? (
+        <div className="mt-4">
+          <a href={exploreHref} className="underline hover:opacity-80">
+            Explore more
+          </a>
+        </div>
+      ) : null}
+    </>
   );
 }

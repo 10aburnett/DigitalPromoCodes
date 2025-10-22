@@ -1,119 +1,55 @@
-// src/components/AlternativesServer.tsx
-import Link from 'next/link';
-import { getAlternatives } from '@/data/recommendations';
-import { resolveLogoUrl } from '@/lib/image-url';
+import 'server-only';
 
-interface PromoCode {
-  id: string;
-  title: string;
-  type: string;
-  value: string;
-  code: string | null;
-}
-
-interface AlternativeWhop {
-  id: string;
-  name: string;
+type Item = {
   slug: string;
-  logo: string | null;
-  description: string | null;
-  category: string | null;
-  price: string | null;
-  rating: number | null;
-  promoCodes: PromoCode[];
-}
+  name: string;
+  logo?: string | null;
+  blurb?: string | null;
+};
 
-function getPromoText(whop: AlternativeWhop) {
-  const firstPromo = whop.promoCodes?.[0];
-  if (!firstPromo) return 'Exclusive Access';
+export default function AlternativesServer({ items, exploreHref }: { items?: Item[]; exploreHref?: string }) {
+  const list = (items ?? [])
+    .filter((w): w is Item & { slug: string } => !!w && !!w.slug)
+    .slice()
+    .sort((a, b) => a.slug.localeCompare(b.slug));
 
-  // If there's a promo code and a value > 0, show the discount
-  if (firstPromo.code && firstPromo.value && firstPromo.value !== '0') {
-    // Check if value already contains currency or percentage symbol
-    if (firstPromo.value.includes('$') || firstPromo.value.includes('%') || firstPromo.value.includes('off')) {
-      return firstPromo.value;
-    }
-    return `${firstPromo.value}% Off`;
-  }
-
-  return firstPromo.title || 'Exclusive Access';
-}
-
-function getBaseUrl() {
-  if (process.env.NEXT_PUBLIC_SITE_URL) return process.env.NEXT_PUBLIC_SITE_URL;
-  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
-  if (process.env.SITE_ORIGIN) return process.env.SITE_ORIGIN;
-  return 'https://whpcodes.com';
-}
-
-export default async function AlternativesServer({ currentWhopSlug }: { currentWhopSlug: string }) {
-  const { items: alternatives, explore } = await getAlternatives(currentWhopSlug);
-
-  // Don't show section if no alternatives
-  if (alternatives.length === 0) {
-    return null;
-  }
+  if (!list.length) return null;
 
   return (
-    <section className="mt-8">
-      <h2 className="text-xl sm:text-2xl font-bold mb-1">You might also consider…</h2>
-      <p className="text-sm mb-4" style={{ color: 'var(--text-secondary)' }}>
-        Alternative offers that might interest you
-      </p>
-
-      <div className="space-y-4">
-        {alternatives.map((whop, index) => {
-          const logoUrl = resolveLogoUrl(whop.logo);
-          console.log('[ALT LOGO]', { slug: whop.slug, rawLogo: whop.logo, resolved: logoUrl });
-
-          return (
-            <Link
-              key={whop.id}
-              href={`/whop/${encodeURIComponent(whop.slug)}`}
-              className="block rounded-lg border p-4 hover:opacity-90 transition group"
-              style={{ borderColor: 'var(--border-color)', backgroundColor: 'var(--background-color)' }}
-              prefetch
+    <section aria-label="Similar offers" className="mt-8">
+      <h2 className="text-xl font-bold mb-4">Similar offers</h2>
+      <ul className="flex flex-col gap-4" suppressHydrationWarning>
+        {list.map((w, i) => (
+          <li key={`${w.slug}#${i}`} className="block rounded-xl border p-4 hover:border-[var(--accent-color)] transition">
+            <a
+              href={`/whop/${encodeURIComponent(w.slug)}`}
+              className="flex gap-3 items-center focus-visible:ring-2 focus-visible:ring-[var(--accent-color)]"
             >
-              <div className="flex gap-3 items-center">
-                <div className="w-12 h-12 rounded-md overflow-hidden bg-[var(--background-secondary)] shrink-0">
-                  <img
-                    src={logoUrl}
-                    alt={whop.name}
-                    width={48}
-                    height={48}
-                    loading={index < 2 ? 'eager' : 'lazy'}
-                    decoding="async"
-                    className="w-full h-full object-cover rounded"
-                  />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <div className="font-semibold truncate" style={{ color: 'var(--text-color)' }}>{whop.name}</div>
-                  {whop.description && <div className="text-sm truncate" style={{ color: 'var(--text-secondary)' }}>{whop.description}</div>}
-                  <div className="mt-1 text-xs flex gap-2" style={{ color: 'var(--text-secondary)' }}>
-                    <span className="px-2 py-0.5 rounded-full border" style={{ borderColor: 'var(--border-color)' }}>{getPromoText(whop)}</span>
-                    {whop.category && <span>{whop.category}</span>}
-                    {typeof whop.rating === 'number' && <span>★ {whop.rating.toFixed(1)}</span>}
-                  </div>
-                </div>
+              <img
+                src={w.logo || '/logo.png'}
+                alt={w.name}
+                width={48}
+                height={48}
+                loading="lazy"
+                decoding="async"
+                className="w-12 h-12 rounded object-contain bg-[var(--background-secondary)]"
+              />
+              <div className="min-w-0 flex-1 overflow-hidden">
+                <div className="font-semibold text-base line-clamp-2">{w.name}</div>
+                <div className="text-sm text-[var(--text-secondary)] line-clamp-2">{w.blurb || '\u00A0'}</div>
               </div>
-            </Link>
-          );
-        })}
-      </div>
+            </a>
+          </li>
+        ))}
+      </ul>
 
-      {explore && (
-        <div className="mt-6 rounded-lg border p-4"
-          style={{ borderColor: 'var(--border-color)', backgroundColor: 'var(--background-color)' }}>
-          <div className="flex flex-wrap items-center gap-2 text-sm">
-            <span style={{ color: 'var(--text-secondary)' }}>
-              Explore another{explore.category ? ` in ${explore.category}` : ''}:
-            </span>
-            <Link href={`/whop/${encodeURIComponent(explore.slug)}`} className="font-medium hover:opacity-80 transition-opacity" style={{ color: 'var(--accent-color)' }} prefetch>
-              {explore.name}
-            </Link>
-          </div>
+      {exploreHref ? (
+        <div className="mt-4">
+          <a href={exploreHref} className="underline hover:opacity-80">
+            Explore more
+          </a>
         </div>
-      )}
+      ) : null}
     </section>
   );
 }

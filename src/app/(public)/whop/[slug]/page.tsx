@@ -31,9 +31,11 @@ const WhopReviewSection = dynamicImport(() => import('@/components/WhopReviewSec
 import FAQSectionServer from '@/components/FAQSectionServer'; // Server component for SEO
 import RecommendedWhopsServer from '@/components/RecommendedWhopsServer'; // Server component for recommendations
 import AlternativesServer from '@/components/AlternativesServer'; // Server component for alternatives
+import { getRecommendations, getAlternatives } from '@/data/recommendations'; // Data fetching for recommendations/alternatives
 const CommunityPromoSection = dynamicImport(() => import('@/components/CommunityPromoSection'), {
   loading: () => null, // Keep SSR for SEO-relevant content
 });
+
 import { parseFaqContent } from '@/lib/faq-types';
 import RenderPlain from '@/components/RenderPlain';
 import { looksLikeHtml, isMeaningful, escapeHtml, toPlainText } from '@/lib/textRender';
@@ -193,11 +195,38 @@ function hasTrial(price: string | null): boolean {
 
 // Async component for heavy sections that can be streamed
 async function RecommendedSection({ currentWhopSlug }: { currentWhopSlug: string }) {
-  return <RecommendedWhopsServer currentWhopSlug={currentWhopSlug} />;
+  const { items } = await getRecommendations(currentWhopSlug);
+  // Freeze data to ensure deterministic server/client rendering
+  const frozen = (items ?? [])
+    .filter(Boolean)
+    .map(w => ({
+      slug: w.slug,
+      name: w.name,
+      logo: w.logo ?? null,
+      description: w.description ?? null
+    }))
+    .sort((a,b) => a.slug.localeCompare(b.slug));
+
+  // Server-rendered recommendations with normal React hydration
+  return <RecommendedWhopsServer items={frozen} />;
 }
 
 async function AlternativesSection({ currentWhopSlug }: { currentWhopSlug: string }) {
-  return <AlternativesServer currentWhopSlug={currentWhopSlug} />;
+  const { items, explore } = await getAlternatives(currentWhopSlug);
+  // Freeze data to ensure deterministic server/client rendering
+  const frozen = (items ?? [])
+    .filter(Boolean)
+    .map(w => ({
+      slug: w.slug,
+      name: w.name,
+      logo: w.logo ?? null,
+      blurb: w.description ?? null  // Map description to blurb for AlternativesServer
+    }))
+    .sort((a,b) => a.slug.localeCompare(b.slug));
+  const exploreHref = explore ? `/whop/${encodeURIComponent(explore.slug)}` : undefined;
+
+  // Server-rendered alternatives with normal React hydration
+  return <AlternativesServer items={frozen} exploreHref={exploreHref} />;
 }
 
 async function ReviewsSection({ whopId, whopName, reviews }: { whopId: string; whopName: string; reviews: any[] }) {
@@ -1047,12 +1076,12 @@ export default async function WhopPage({ params, searchParams }: { params: { slu
 
           {/* Back Link */}
           <div className="max-w-2xl mx-auto">
-            <Link href="/" className="hover:opacity-80 flex items-center gap-2 px-1 transition-colors" style={{ color: 'var(--text-secondary)' }}>
+            <a href="/" className="hover:opacity-80 flex items-center gap-2 px-1 transition-colors" style={{ color: 'var(--text-secondary)' }}>
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M19 12H5M12 19l-7-7 7-7"/>
               </svg>
               Back to All Offers
-            </Link>
+            </a>
           </div>
         </div>
       </div>
