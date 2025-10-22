@@ -4,6 +4,8 @@ import { dlog } from '@/lib/debug';
 
 // Domain allow-list for image proxy
 const ALLOWED_DOMAINS = [
+  'whpcodes.com',
+  'localhost',
   'whop.com',
   'cdn.whop.com',
   'images.whop.com',
@@ -33,9 +35,16 @@ export async function GET(req: Request) {
   const src = searchParams.get('src');
   if (!src) return NextResponse.json({ error: 'missing src' }, { status: 400 });
 
-  const srcHost = new URL(src).hostname;
-  const allowed = isAllowedDomain(src);
-  console.log('[DBG:img]', { srcHost, allowed });
+  // Handle relative URLs by converting to absolute
+  const ASSET_ORIGIN = process.env.NODE_ENV === 'production'
+    ? 'https://whpcodes.com'
+    : `http://localhost:${process.env.PORT || 3000}`;
+
+  const absoluteSrc = src.startsWith('http') ? src : `${ASSET_ORIGIN}${src.startsWith('/') ? src : `/${src}`}`;
+
+  const srcHost = new URL(absoluteSrc).hostname;
+  const allowed = isAllowedDomain(absoluteSrc);
+  console.log('[DBG:img]', { srcHost, allowed, original: src, absolute: absoluteSrc });
 
   if (!allowed) {
     dlog('images', `blocked domain: ${srcHost}`, { src });
@@ -47,9 +56,9 @@ export async function GET(req: Request) {
   }
 
   try {
-    const upstream = await fetch(src, { cache: 'no-store' });
+    const upstream = await fetch(absoluteSrc, { cache: 'no-store' });
     if (!upstream.ok) {
-      dlog('images', `proxy fetch failed: ${src}`, { status: upstream.status });
+      dlog('images', `proxy fetch failed: ${absoluteSrc}`, { status: upstream.status });
       // Return fallback instead of 502
       const res = new NextResponse(FALLBACK_PNG, { status: 200 });
       res.headers.set('content-type', 'image/png');
