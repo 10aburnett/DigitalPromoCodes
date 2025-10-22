@@ -3,6 +3,24 @@
 import { useState, useEffect, useImperativeHandle, forwardRef, useRef } from 'react';
 import { usePathname } from 'next/navigation';
 
+// Stable formatters for SSR/CSR hydration (no locale drift)
+const nf = new Intl.NumberFormat('en-US');
+const df = new Intl.DateTimeFormat('en-US', {
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
+  timeZone: 'UTC',
+});
+
+function fmtNum(n?: number | null) {
+  return nf.format(Number(n || 0));
+}
+
+function fmtDate(iso?: string | null) {
+  if (!iso) return '—';
+  return df.format(new Date(iso));
+}
+
 interface PromoStats {
   promoCode: {
     id: string;
@@ -168,8 +186,8 @@ const PromoStatsDisplay = forwardRef<PromoStatsDisplayHandle, PromoStatsDisplayP
         
         const diffInDays = Math.floor(diffInHours / 24);
         if (diffInDays < 7) return `${diffInDays} day${diffInDays !== 1 ? 's' : ''} ago`;
-        
-        return date.toLocaleDateString();
+
+        return fmtDate(dateString);
       } catch (e) {
         return 'Unknown';
       }
@@ -177,12 +195,8 @@ const PromoStatsDisplay = forwardRef<PromoStatsDisplayHandle, PromoStatsDisplayP
 
     const formatVerifiedDate = (dateString: string) => {
       try {
-        const date = new Date(dateString);
-        return date.toLocaleDateString('en-US', { 
-          year: 'numeric', 
-          month: 'short', 
-          day: 'numeric' 
-        });
+        // Use stable formatter for SSR/CSR consistency
+        return fmtDate(dateString);
       } catch (e) {
         return 'Unknown';
       }
