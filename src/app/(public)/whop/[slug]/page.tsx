@@ -32,6 +32,7 @@ import FAQSectionServer from '@/components/FAQSectionServer'; // Server componen
 import RecommendedWhopsServer from '@/components/RecommendedWhopsServer'; // Server component for recommendations
 import AlternativesServer from '@/components/AlternativesServer'; // Server component for alternatives
 import { getRecommendations, getAlternatives } from '@/data/recommendations'; // Data fetching for recommendations/alternatives
+import { getPromoStatsForSlug } from '@/data/promo-stats'; // Server-side promo usage statistics
 const CommunityPromoSection = dynamicImport(() => import('@/components/CommunityPromoSection'), {
   loading: () => null, // Keep SSR for SEO-relevant content
 });
@@ -541,19 +542,8 @@ export default async function WhopPage({ params, searchParams }: { params: { slu
   }
 
 
-  // Normalize usageStats - all Dates to ISO strings for stable SSR/hydration
-  const usageStats = (finalWhopData as any).usageStats
-    ? {
-        todayCount: Number((finalWhopData as any).usageStats.todayCount || 0),
-        totalCount: Number((finalWhopData as any).usageStats.totalCount || 0),
-        lastUsed: (finalWhopData as any).usageStats.lastUsed
-          ? new Date((finalWhopData as any).usageStats.lastUsed).toISOString()
-          : null,
-        verifiedDate: new Date(
-          (finalWhopData as any).usageStats.verifiedDate ?? finalWhopData.updatedAt ?? finalWhopData.createdAt
-        ).toISOString(),
-      }
-    : null;
+  // Fetch promo usage statistics server-side for SEO (SSR/SSG)
+  const usageStats = await getPromoStatsForSlug(dbSlug);
 
   // Use verification data loaded from JSON files (not from database)
   const freshnessData = verificationData
@@ -797,13 +787,11 @@ export default async function WhopPage({ params, searchParams }: { params: { slu
 
           {/* Code Usage Statistics - Server Rendered (immediately after Reveal Code) */}
           <ServerSectionGuard label="PromoUsageStats">
-            {whopFormatted.usageStats && (
-              <PromoStatsDisplay
-                whopId={whopFormatted.id}
-                slug={params.slug}
-                initialStats={whopFormatted.usageStats}
-              />
-            )}
+            <PromoStatsDisplay
+              whopId={whopFormatted.id}
+              slug={params.slug}
+              initialStats={whopFormatted.usageStats}
+            />
           </ServerSectionGuard>
 
           {/* Verification Status - Server Rendered (separate section) */}
