@@ -165,6 +165,23 @@ const nextConfig = {
       },
     ];
   },
+  // Redirects for removed or renamed pages
+  async redirects() {
+    return [
+      // Redirect old Ayecon 1:1 mentorship page to lifetime membership
+      {
+        source: '/whop/ayecon-academy-1:1-mentorship',
+        destination: '/whop/ayecon-academy-lifetime-membership',
+        permanent: true, // 301 redirect
+      },
+      // Also handle URL-encoded version
+      {
+        source: '/whop/ayecon-academy-1%3A1-mentorship',
+        destination: '/whop/ayecon-academy-lifetime-membership',
+        permanent: true, // 301 redirect
+      },
+    ];
+  },
   // Rewrites for data directory and asset proxying
   async rewrites() {
     return [
