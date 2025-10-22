@@ -4,6 +4,8 @@
 const ASSET_ORIGIN = process.env.ASSET_ORIGIN || 'https://whpcodes.com';
 
 const nextConfig = {
+  // Explicitly set output mode for Vercel (not static export)
+  output: 'standalone',
   images: {
     unoptimized: false, // Enable image optimization
     remotePatterns: [
