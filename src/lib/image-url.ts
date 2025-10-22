@@ -16,7 +16,7 @@ export function resolveLogoUrl(input?: string | null): string {
 
   // Handle common relative patterns
   // Remove any accidental leading slashes from paths like "data/logos/foo.png"
-  let cleanPath = input.replace(/^\/+/, ''); // Remove all leading slashes
+  const cleanPath = input.replace(/^\/+/, ''); // Remove all leading slashes
 
   // Ensure we're working with a properly formatted path
   // If it starts with known upload paths, normalize it
