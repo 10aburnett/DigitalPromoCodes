@@ -1,29 +1,43 @@
 // src/lib/image-url.ts
 // Safe, server-friendly logo URL resolver (NO event handlers needed on server)
+
+// Asset origin for production - matches next.config.js ASSET_ORIGIN
+const ASSET_ORIGIN = process.env.NODE_ENV === 'production'
+  ? 'https://whpcodes.com'
+  : '';
+
 export function resolveLogoUrl(input?: string | null): string {
-  if (!input) return '/logo.png'; // local safe fallback
-
-  // Absolute URL? Return as-is (for CDN images like Whop's)
-  if (/^https?:\/\//i.test(input)) return input;
-
-  // Environment-aware base URL
-  // In dev: use relative paths (served from /public)
-  // In prod: use absolute URLs to ensure correct resolution
-  const BASE_URL =
-    process.env.NODE_ENV === 'production'
-      ? 'https://whpcodes.com'
-      : '';
-
-  // Handle common relative patterns
-  // Remove any accidental leading slashes from paths like "data/logos/foo.png"
-  const cleanPath = input.replace(/^\/+/, ''); // Remove all leading slashes
-
-  // Ensure we're working with a properly formatted path
-  // If it starts with known upload paths, normalize it
-  if (cleanPath.startsWith('uploads/') || cleanPath.startsWith('data/')) {
-    return BASE_URL ? `${BASE_URL}/${cleanPath}` : `/${cleanPath}`;
+  // Return fallback for empty/null input
+  if (!input || input.trim() === '') {
+    return '/logo.png';
   }
 
-  // For all other relative paths, ensure proper formatting
-  return BASE_URL ? `${BASE_URL}/${cleanPath}` : `/${cleanPath}`;
+  // Remove leading/trailing whitespace
+  const trimmedInput = input.trim();
+
+  // If it's already a full external URL (http:// or https://), return as-is
+  if (/^https?:\/\//i.test(trimmedInput)) {
+    return trimmedInput;
+  }
+
+  // Remove ALL leading slashes to normalize the path
+  const cleanPath = trimmedInput.replace(/^\/+/, '');
+
+  // Handle empty result after cleaning
+  if (!cleanPath) {
+    return '/logo.png';
+  }
+
+  // If path starts with known directories (uploads/, data/, logos/), build absolute URL
+  if (cleanPath.startsWith('uploads/') ||
+      cleanPath.startsWith('data/') ||
+      cleanPath.startsWith('logos/')) {
+    return ASSET_ORIGIN ? `${ASSET_ORIGIN}/${cleanPath}` : `/${cleanPath}`;
+  }
+
+  // For paths that don't start with known directories, assume they're in data/logos/
+  // This handles cases like "foo.png" -> "https://whpcodes.com/data/logos/foo.png"
+  return ASSET_ORIGIN
+    ? `${ASSET_ORIGIN}/data/logos/${cleanPath}`
+    : `/data/logos/${cleanPath}`;
 }
