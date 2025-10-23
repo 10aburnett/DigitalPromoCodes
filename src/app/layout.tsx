@@ -117,6 +117,13 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
+// Export viewport separately (Next.js 14+ best practice)
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  themeColor: '#6366f1',
+};
+
 export default async function RootLayout({
   children,
 }: {
@@ -135,14 +142,12 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="theme-color" content="#6366f1" />
+        {/* viewport and robots now managed via viewport export and generateMetadata */}
         <meta name="author" content="WHPCodes" />
         <meta name="language" content="en" />
         <meta name="distribution" content="global" />
         <meta name="rating" content="general" />
         <meta name="revisit-after" content="1 days" />
-        <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
         <meta property="og:locale" content="en_US" />
         <meta name="geo.region" content="US" />
         <meta name="geo.placename" content="United States" />

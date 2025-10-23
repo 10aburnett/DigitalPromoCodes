@@ -4,7 +4,7 @@ import { Metadata } from 'next';
 import dynamicImport from 'next/dynamic';
 import { normalizeImagePath } from '@/lib/image-utils';
 import { getWhopBySlugCached } from '@/data/whops'; // NEW: Use cached version
-import { getWhopBySlug } from '@/lib/data'; // Keep for metadata generation
+import { getWhopBySlug, getWhopBySlugUnfiltered } from '@/lib/data'; // Keep for metadata generation
 import { prisma } from '@/lib/prisma';
 import { whereIndexable } from '@/lib/where-indexable';
 import { Suspense } from 'react';
@@ -248,6 +248,12 @@ async function ReviewsSection({ whopId, whopName, reviews }: { whopId: string; w
   );
 }
 
+// Helper to check if a whop is indexable (supports multiple schema conventions)
+const isIndexable = (raw: unknown) => {
+  const v = String(raw ?? "").trim().toUpperCase();
+  return v === "INDEX" || v === "INDEXED" || v === "ALLOW" || raw === true;
+};
+
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   try {
     // Remove unstable_noStore() - rely on route-level revalidate
@@ -257,7 +263,8 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     const dbSlug = decoded.toLowerCase();
     console.log('[WHOP META] Generating metadata for:', { slug: params.slug, dbSlug });
 
-    const whopData = await getWhopBySlug(dbSlug, 'en');
+    // Use unfiltered fetch - show full content for noindex pages with robots meta
+    const whopData = await getWhopBySlugUnfiltered(dbSlug, 'en');
     console.log('[WHOP META] Data fetched:', { found: !!whopData, name: whopData?.name });
 
     if (!whopData) {
@@ -269,20 +276,14 @@ export async function generateMetadata({ params }: { params: { slug: string } })
       };
     }
 
-    // Check if whop is retired or not indexed - return noindex metadata
-    if (whopData.retired || whopData.indexingStatus !== 'INDEXED') {
-      console.warn('[WHOP META] Whop is retired/not indexed:', {
+    // Check if whop should be indexed
+    const shouldIndex = !whopData.retired && isIndexable(whopData.indexingStatus);
+
+    if (!shouldIndex) {
+      console.warn('[WHOP META] Whop is not indexable (but will show full content):', {
         retired: whopData.retired,
         indexingStatus: whopData.indexingStatus
       });
-      return {
-        title: 'Content No Longer Available',
-        description: 'This content has been retired and is no longer available.',
-        robots: {
-          index: false,
-          follow: false
-        }
-      };
     }
 
   // Get current month and year for SEO
@@ -373,7 +374,9 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 
   // Step 8: SEO classification-driven robots flags
   const classification = getPageClassification(canon);
-  const robotsSettings = getRobotsForClassification(classification);
+  const robotsSettings = shouldIndex
+    ? getRobotsForClassification(classification)
+    : { index: false, follow: true }; // noindex but keep follow for noindexable pages
 
   return {
     title,
@@ -382,9 +385,9 @@ export async function generateMetadata({ params }: { params: { slug: string } })
       `${whopData.name} promo code`,
       `${whopData.name} discount`,
       `${whopData.name} coupon`,
-      firstPromo?.value ? 
-        (firstPromo.value.includes('$') || firstPromo.value.includes('%') || firstPromo.value.includes('off') 
-          ? firstPromo.value 
+      firstPromo?.value ?
+        (firstPromo.value.includes('$') || firstPromo.value.includes('%') || firstPromo.value.includes('off')
+          ? firstPromo.value
           : `${firstPromo.value}% off`)
         : 'exclusive access',
       whopData.category,
@@ -406,15 +409,20 @@ export async function generateMetadata({ params }: { params: { slug: string } })
         })()
       })
     },
-    robots: {
-      ...robotsSettings,
-      googleBot: {
-        ...robotsSettings,
-        'max-image-preview': 'large',
-        'max-snippet': -1,
-        'max-video-preview': -1,
-      },
-    },
+    robots: shouldIndex
+      ? {
+          ...robotsSettings,
+          googleBot: {
+            ...robotsSettings,
+            'max-image-preview': 'large',
+            'max-snippet': -1,
+            'max-video-preview': -1,
+          },
+        }
+      : {
+          index: false,
+          follow: true,
+        },
     openGraph: {
       title,
       description,
@@ -505,20 +513,19 @@ export default async function WhopPage({ params, searchParams }: { params: { slu
   }
 
   // 4) Relaxed quality check per ChatGPT fix - only block GONE pages
-  // Accept both 'INDEXED' (production) and 'INDEX' (backup DB)
-  const indexingStatus = String(finalWhopData.indexingStatus || '').toUpperCase();
-  const isIndexable = ['INDEXED', 'INDEX'].includes(indexingStatus);
+  // Use isIndexable helper for consistent indexability checks
+  const pageIsIndexable = !finalWhopData.retired && isIndexable(finalWhopData.indexingStatus);
   const isGone = finalWhopData.retirement === 'GONE';
 
   // T3: Build trace array for future 404 debugging
   const trace: string[] = [];
   trace.push(`slug=${dbSlug}, id=${finalWhopData.id ?? 'null'}`);
-  trace.push(`retired=${finalWhopData.retirement} indexing=${indexingStatus}`);
+  trace.push(`retired=${finalWhopData.retirement} indexing=${finalWhopData.indexingStatus}`);
 
   console.log('[WHOP DETAIL] Quality check (relaxed):', {
     dbSlug,
-    indexingStatus,
-    isIndexable,
+    indexingStatus: finalWhopData.indexingStatus,
+    pageIsIndexable,
     retirement: finalWhopData.retirement,
     isGone,
     nodeEnv: process.env.NODE_ENV
@@ -537,8 +544,8 @@ export default async function WhopPage({ params, searchParams }: { params: { slu
   console.log('[DBG:reasons:page]', new Date().toISOString(), trace);
 
   // Soft warning in dev for non-indexed pages (but don't 404)
-  if (process.env.NODE_ENV !== 'production' && !isIndexable) {
-    dlog('reasons', 'indexingStatus not indexed - still rendering', { dbSlug, indexingStatus });
+  if (process.env.NODE_ENV !== 'production' && !pageIsIndexable) {
+    dlog('reasons', 'indexingStatus not indexed - still rendering', { dbSlug, indexingStatus: finalWhopData.indexingStatus });
   }
 
   // 5) Handle redirects
@@ -716,6 +723,16 @@ export default async function WhopPage({ params, searchParams }: { params: { slu
       )}
 
       <div className="mx-auto w-[90%] md:w-[95%] max-w-6xl">
+        {/* Noindex Notice Banner */}
+        {!pageIsIndexable && (
+          <div className="max-w-2xl mx-auto mb-6">
+            <div className="rounded-lg border px-4 py-3 text-sm" style={{ backgroundColor: 'var(--background-secondary)', borderColor: 'var(--border-color)', opacity: 0.8 }}>
+              <span style={{ color: 'var(--text-secondary)' }}>
+                ℹ️ This page is currently not indexed by search engines, but is available for viewing.
+              </span>
+            </div>
+          </div>
+        )}
         {/* Main Content Container */}
         <div className="max-w-2xl mx-auto space-y-6 mb-8">
           {/* Hero Section */}
