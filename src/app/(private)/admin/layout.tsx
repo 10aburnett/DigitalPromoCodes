@@ -115,7 +115,7 @@ export default function AdminLayout({
   return (
     <div className="min-h-screen bg-[#343541] text-white">
       <nav className="bg-[#292932] shadow-md border-b border-[#404055]">
-        <div className="max-w-7xl mx-auto pl-1 pr-2 sm:pl-1 sm:pr-2 lg:pl-1 lg:pr-2">
+        <div className="max-w-7xl ml-6 pr-2 sm:ml-6 sm:pr-2 lg:ml-6 lg:pr-2">
           <div className="flex justify-between h-16">
             <div className="flex">
               <div className="flex-shrink-0 flex items-center">
@@ -128,10 +128,11 @@ export default function AdminLayout({
                   </div>
                 </button>
               </div>
-              <div className="ml-6 flex space-x-6 items-center">
+              <div className="ml-8 flex space-x-6 items-center">
                 <Link href="/admin" className="text-[#a7a9b4] hover:text-[#68D08B] whitespace-nowrap text-sm">Dashboard</Link>
                 <Link href="/admin/whops" className="text-[#a7a9b4] hover:text-[#68D08B] whitespace-nowrap text-sm">Whops</Link>
                 <Link href="/admin/promo-submissions" className="text-[#a7a9b4] hover:text-[#68D08B] whitespace-nowrap text-sm">Promo Submissions</Link>
+                <Link href="/admin/promos/import" className="text-[#a7a9b4] hover:text-[#68D08B] whitespace-nowrap text-sm">Promo Import</Link>
                 <Link href="/admin/blog" className="text-[#a7a9b4] hover:text-[#68D08B] whitespace-nowrap text-sm">Blog</Link>
                 <Link href="/admin/comments" className="text-[#a7a9b4] hover:text-[#68D08B] whitespace-nowrap text-sm">Comments</Link>
                 <Link href="/admin/mailing-list" className="text-[#a7a9b4] hover:text-[#68D08B] whitespace-nowrap text-sm">Mailing List</Link>
