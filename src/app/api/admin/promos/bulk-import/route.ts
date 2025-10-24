@@ -104,6 +104,46 @@ function generatePromoId(): string {
   return `promo_${timestamp}_${random}`;
 }
 
+/** Fuzzy match Whop by URL variants (handles hyphens, path differences, etc.) */
+async function fuzzyFindWhop(rawUrl: string) {
+  // Normalize, then create relaxed variants
+  let norm = normalizeUrl(rawUrl);
+  // tolerate www differences
+  norm = norm.replace("://www.", "://");
+  const path = (() => {
+    try { return new URL(norm).pathname.replace(/\/+$/, ""); } catch { return ""; }
+  })();
+  const lastSeg = path.split("/").filter(Boolean).pop() || "";
+  const lastSegNoDashes = lastSeg.replace(/-/g, "");
+
+  // Try a few relaxed lookups
+  const candidate = await prisma.whop.findFirst({
+    where: {
+      OR: [
+        { affiliateLink: { equals: norm, mode: "insensitive" } },
+        { website:       { equals: norm, mode: "insensitive" } },
+
+        // endsWith path (helps when you have or lack trailing creator segments)
+        ...(path ? [
+          { affiliateLink: { endsWith: path, mode: "insensitive" } },
+          { website:       { endsWith: path, mode: "insensitive" } },
+        ] : []),
+
+        // match on slug
+        ...(lastSeg ? [{ slug: { equals: lastSeg.toLowerCase() } }] : []),
+
+        // slug with/without hyphens
+        ...(lastSegNoDashes ? [
+          { slug: { equals: lastSegNoDashes.toLowerCase() } },
+        ] : []),
+      ]
+    },
+    select: { id: true, name: true, slug: true, affiliateLink: true, website: true }
+  });
+
+  return candidate;
+}
+
 export async function POST(req: Request) {
   try {
     // Auth (verifyAdminToken uses cookies() directly)
@@ -114,6 +154,7 @@ export async function POST(req: Request) {
 
     const url = new URL(req.url);
     const dry = url.searchParams.get("dry") === "1";
+    const fuzzy = url.searchParams.get("fuzzy") === "1";
     const csv = await req.text();
 
     let rows: any[];
@@ -141,13 +182,33 @@ export async function POST(req: Request) {
         }
 
         const key = normalizeUrl(r.whopUrl);
-        const whop = await prisma.whop.findFirst({
+        let whop = await prisma.whop.findFirst({
           where: { OR: [{ website: key }, { affiliateLink: key }] },
-          select: { id: true, name: true }
+          select: { id: true, name: true, slug: true, affiliateLink: true, website: true }
         });
 
         if (!whop) {
-          summary.missing++; summary.errors.push(`Row ${i + 2}: No Whop match for URL: ${r.whopUrl}`); continue;
+          const fuzzyMatch = await fuzzyFindWhop(r.whopUrl);
+          if (fuzzyMatch) {
+            // In dry run, always use fuzzy match for suggestions
+            // In write mode, only use if user opted-in with ?fuzzy=1
+            if (dry || fuzzy) {
+              whop = fuzzyMatch;
+              if (dry) {
+                summary.errors.push(
+                  `Row ${i + 2}: No exact match; using fuzzy -> slug=${fuzzyMatch.slug} url=${fuzzyMatch.affiliateLink ?? fuzzyMatch.website}`
+                );
+              }
+            } else {
+              summary.missing++;
+              summary.errors.push(`Row ${i + 2}: No exact match. Suggest: slug=${fuzzyMatch.slug} url=${fuzzyMatch.affiliateLink ?? fuzzyMatch.website}`);
+              continue;
+            }
+          } else {
+            summary.missing++;
+            summary.errors.push(`Row ${i + 2}: No Whop match for URL: ${r.whopUrl}`);
+            continue;
+          }
         }
 
         const promoType = mapPromoType(r.discountType);

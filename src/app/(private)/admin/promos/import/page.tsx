@@ -5,6 +5,7 @@ import { useState } from "react";
 export default function PromoImportPage() {
   const [csv, setCsv] = useState("");
   const [dry, setDry] = useState(true);
+  const [allowFuzzy, setAllowFuzzy] = useState(false);
   const [busy, setBusy] = useState(false);
   const [result, setResult] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
@@ -21,7 +22,7 @@ export default function PromoImportPage() {
     setError(null);
     setResult(null);
     try {
-      const res = await fetch(`/api/admin/promos/bulk-import?dry=${dry ? "1" : ""}`, {
+      const res = await fetch(`/api/admin/promos/bulk-import?dry=${dry ? "1" : ""}${!dry && allowFuzzy ? "&fuzzy=1" : ""}`, {
         method: "POST",
         headers: { "Content-Type": "text/plain;charset=utf-8" },
         body: csv
@@ -88,17 +89,31 @@ export default function PromoImportPage() {
 
           {/* Options & Submit */}
           <div className="bg-gray-800 border border-gray-700 rounded-lg p-6">
-            <label className="inline-flex items-center gap-2 mb-4">
-              <input
-                type="checkbox"
-                checked={dry}
-                onChange={() => setDry(v => !v)}
-                className="w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 rounded focus:ring-blue-500"
-              />
-              <span className="text-gray-300">
-                Dry run (preview only, no database writes)
-              </span>
-            </label>
+            <div className="flex gap-6 mb-4">
+              <label className="inline-flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={dry}
+                  onChange={() => setDry(v => !v)}
+                  className="w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 rounded focus:ring-blue-500"
+                />
+                <span className="text-gray-300">
+                  Dry run (preview only, no database writes)
+                </span>
+              </label>
+              <label className="inline-flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={allowFuzzy}
+                  onChange={() => setAllowFuzzy(v => !v)}
+                  disabled={dry}
+                  className="w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 rounded focus:ring-blue-500 disabled:opacity-50"
+                />
+                <span className="text-gray-300">
+                  Allow fuzzy match for writes (dry run always uses fuzzy)
+                </span>
+              </label>
+            </div>
             <div>
               <button
                 onClick={onImport}
