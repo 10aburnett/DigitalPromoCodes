@@ -21,3 +21,28 @@ export function whopAbsoluteUrl(slug: string, locale?: string | null) {
   // Default behavior (same as before when flag is off)
   return absoluteUrl(base); // e.g., /whop/slug
 }
+
+/**
+ * Normalize URL for comparison - removes query params, hash, and trailing slash
+ * Used for matching incoming CSV URLs against database URLs
+ * Tolerates missing scheme, lowercases host, removes default ports
+ */
+export function normalizeUrl(raw: string): string {
+  try {
+    let s = (raw ?? "").trim();
+    // tolerate inputs like "whop.com/creator/product"
+    if (!/^https?:\/\//i.test(s)) s = `https://${s}`;
+    const u = new URL(s);
+    // normalize host, drop default ports
+    u.hostname = u.hostname.toLowerCase();
+    if (u.port === "80" || u.port === "443") u.port = "";
+    // drop query/hash
+    u.search = "";
+    u.hash = "";
+    let out = u.toString();
+    if (out.endsWith("/")) out = out.slice(0, -1);
+    return out;
+  } catch {
+    return (raw ?? "").trim();
+  }
+}
