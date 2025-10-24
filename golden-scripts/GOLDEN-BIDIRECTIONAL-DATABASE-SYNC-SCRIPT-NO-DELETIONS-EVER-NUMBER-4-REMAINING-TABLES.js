@@ -30,6 +30,19 @@
  * Status: BATTLE TESTED STRUCTURE ADAPTED ✅
  */
 
+/** 🚨 SAFETY KILL-SWITCH 🚨
+ * This script may compare by raw database IDs for some tables.
+ * Audit each table sync to ensure it uses natural keys.
+ * Use GOLDEN-SAFE-* versions for critical tables.
+ */
+if (!process.env.ALLOW_UNSAFE_SYNC) {
+  console.error('🚫 This script needs auditing before use.');
+  console.error('   Warning: May create duplicates for some tables');
+  console.error('   Solution: Use natural-key based GOLDEN-SAFE-* scripts');
+  console.error('   Override: Set ALLOW_UNSAFE_SYNC=1 (audit first!)');
+  process.exit(1);
+}
+
 const { PrismaClient } = require('@prisma/client');
 const { randomUUID } = require('crypto');
 

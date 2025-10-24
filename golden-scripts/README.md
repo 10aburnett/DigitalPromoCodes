@@ -148,7 +148,7 @@ Run any script individually when you only need to sync specific data types.
 
 All scripts are pre-configured with the correct database URLs:
 - **Production**: `ep-noisy-hat` (npg_LoKgTrZ9ua8D)
-- **Backup**: `ep-rough-rain` (npg_TKWsI2cv3zki)
+- **Backup**: `ep-rough-rain` (npg_GL1sjBY8oSOb)
 
 ## ⚠️ Important Notes
 
