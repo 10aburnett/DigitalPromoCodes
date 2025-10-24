@@ -13,7 +13,7 @@ const productionPrisma = new PrismaClient({
 const backupPrisma = new PrismaClient({
   datasources: {
     db: {
-      url: "postgresql://neondb_owner:npg_TKWsI2cv3zki@ep-rough-rain-ab2qairk-pooler.eu-west-2.aws.neon.tech/neondb?sslmode=require"
+      url: "postgresql://neondb_owner:npg_GL1sjBY8oSOb@ep-rough-rain-ab2qairk-pooler.eu-west-2.aws.neon.tech/neondb?sslmode=require"
     }
   }
 });

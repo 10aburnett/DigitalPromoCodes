@@ -1,5 +1,18 @@
 #!/usr/bin/env node
 
+/** 🚨 SAFETY KILL-SWITCH 🚨
+ * This script compares by raw database IDs, not natural keys.
+ * It will create duplicates when syncing across databases.
+ * Use GOLDEN-SAFE-* versions instead.
+ */
+if (!process.env.ALLOW_UNSAFE_SYNC) {
+  console.error('🚫 This script is DEPRECATED and UNSAFE.');
+  console.error('   Problem: Matches by raw IDs, creates duplicates');
+  console.error('   Solution: Use natural-key based safe scripts instead');
+  console.error('   Override: Set ALLOW_UNSAFE_SYNC=1 (not recommended)');
+  process.exit(1);
+}
+
 const { PrismaClient } = require('@prisma/client')
 const { randomUUID } = require('crypto')
 
