@@ -116,30 +116,39 @@ async function fuzzyFindWhop(rawUrl: string) {
   const lastSeg = path.split("/").filter(Boolean).pop() || "";
   const lastSegNoDashes = lastSeg.replace(/-/g, "");
 
-  // Try a few relaxed lookups
-  const candidate = await prisma.whop.findFirst({
+  // Try relaxed lookups first (case-insensitive)
+  let candidate = await prisma.whop.findFirst({
     where: {
       OR: [
         { affiliateLink: { equals: norm, mode: "insensitive" } },
         { website:       { equals: norm, mode: "insensitive" } },
 
-        // endsWith path (helps when you have or lack trailing creator segments)
-        ...(path ? [
-          { affiliateLink: { endsWith: path, mode: "insensitive" } },
-          { website:       { endsWith: path, mode: "insensitive" } },
+        // tolerate querystrings after the path
+        ...(lastSeg ? [
+          { affiliateLink: { contains: `/${lastSeg}`, mode: "insensitive" } },
+          { website:       { contains: `/${lastSeg}`, mode: "insensitive" } },
         ] : []),
 
-        // match on slug
+        // exact slug or close variant
         ...(lastSeg ? [{ slug: { equals: lastSeg.toLowerCase() } }] : []),
-
-        // slug with/without hyphens
-        ...(lastSegNoDashes ? [
-          { slug: { equals: lastSegNoDashes.toLowerCase() } },
-        ] : []),
-      ]
+      ],
     },
-    select: { id: true, name: true, slug: true, affiliateLink: true, website: true }
+    select: { id: true, name: true, slug: true, affiliateLink: true, website: true },
   });
+
+  if (!candidate && lastSegNoDashes) {
+    // final fallback: match slug with hyphens ignored
+    // (Prisma can't express REPLACE() natively; safe, parameterized raw SQL)
+    const rows = await prisma.$queryRaw<
+      Array<{ id: string; name: string; slug: string; affiliateLink: string | null; website: string | null }>
+    >`
+      SELECT id, name, slug, "affiliateLink", website
+      FROM "Whop"
+      WHERE REPLACE(slug, '-', '') = ${lastSegNoDashes.toLowerCase()}
+      LIMIT 1
+    `;
+    candidate = rows?.[0] ?? null;
+  }
 
   return candidate;
 }
