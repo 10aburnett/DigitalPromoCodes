@@ -1,14 +1,36 @@
+/** 🚨 DEPRECATION NOTICE (PROMO CODES) 🚨
+ * ========================================
+ * DO NOT USE THIS SCRIPT FOR PROMO CODES!
+ *
+ * ❌ PROBLEM: This script matches PromoCode by raw database IDs, not by the
+ *    natural key (whopId, code). This causes duplicate promo rows when syncing
+ *    across databases because IDs differ between backup and production.
+ *
+ * ✅ SOLUTION: Use GOLDEN-SAFE-PROMO-SYNC-BY-SLUG.mjs instead
+ *    - Resolves Whops by slug (not raw IDs)
+ *    - Upserts by natural key (whopId, code)
+ *    - Prevents duplicates with "only update when better" logic
+ *
+ * 📋 THIS SCRIPT IS STILL SAFE FOR:
+ *    - Whop table sync (marketplace products)
+ *    - DO NOT USE for PromoCode sync
+ *
+ * Last incident: 2025-10-24 - Created 808 duplicate promos on both databases
+ * Fix applied: Unique index on (whopId, code) now prevents this at DB level
+ * ========================================
+ */
+
 /**
  * 🏆 GOLDEN BIDIRECTIONAL DATABASE SYNC SCRIPT #2 - NO DELETIONS EVER 🏆
  * =====================================================================
- * 
+ *
  * ✅ WHAT THIS SCRIPT DOES:
  * - Safely merges Whop and PromoCode data between two Neon PostgreSQL databases
  * - ONLY ADDS data, NEVER deletes anything
- * - Syncs: Whop (with indexing field), PromoCode
+ * - Syncs: Whop (with indexing field), PromoCode ⚠️ DEPRECATED FOR PROMOS
  * - Adds missing schema columns automatically
  * - Shows detailed progress and verification
- * 
+ *
  * ⚠️  SAFETY GUARANTEES:
  * - Zero data loss - only additions
  * - Skips duplicates gracefully
