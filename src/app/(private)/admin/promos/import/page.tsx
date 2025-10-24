@@ -9,6 +9,7 @@ export default function PromoImportPage() {
   const [busy, setBusy] = useState(false);
   const [result, setResult] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
+  const [toast, setToast] = useState<{msg: string; kind: "ok" | "err"} | null>(null);
 
   async function onFile(e: React.ChangeEvent<HTMLInputElement>) {
     const f = e.target.files?.[0];
@@ -33,6 +34,11 @@ export default function PromoImportPage() {
       }
       const json = await res.json();
       setResult(json);
+      setToast({
+        msg: `Imported ✓  created:${json.created}  better:${json.updatedBetter}  touched:${json.touched}  missing:${json.missing}  invalid:${json.invalid}`,
+        kind: "ok"
+      });
+      setTimeout(() => setToast(null), 4000);
     } catch (err: any) {
       setError(err?.message ?? "Import failed");
     } finally {
@@ -42,6 +48,11 @@ export default function PromoImportPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      {toast && (
+        <div className={`fixed top-4 right-4 z-50 px-4 py-3 rounded shadow-lg text-sm ${toast.kind === "ok" ? "bg-green-600 text-white" : "bg-red-600 text-white"}`}>
+          {toast.msg}
+        </div>
+      )}
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-white mb-2">
@@ -114,7 +125,7 @@ export default function PromoImportPage() {
                 </span>
               </label>
             </div>
-            <div>
+            <div className="flex items-center gap-3">
               <button
                 onClick={onImport}
                 disabled={busy || !csv.trim()}
@@ -122,6 +133,11 @@ export default function PromoImportPage() {
               >
                 {busy ? "Importing..." : dry ? "Preview Import (Dry Run)" : "Import CSV"}
               </button>
+              {!dry && allowFuzzy && (
+                <span className="inline-flex items-center text-xs px-2 py-1 rounded bg-yellow-600/20 text-yellow-300 border border-yellow-500">
+                  Fuzzy write ON
+                </span>
+              )}
             </div>
           </div>
 
