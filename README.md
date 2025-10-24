@@ -4,6 +4,45 @@ A modern web application for discovering and comparing cryptocurrency casino bon
 
 <!-- Deployment trigger: Performance optimizations implemented 2025-10-06 -->
 
+## 🔒 Golden Playbooks (Do This, Not That)
+
+### Promo codes (PromoCode table)
+
+**ALWAYS use:** `golden-scripts/GOLDEN-SAFE-PROMO-SYNC-BY-SLUG.mjs`
+**NEVER use:** `GOLDEN-BIDIRECTIONAL-DATABASE-SYNC-SCRIPT-NO-DELETIONS-EVER-NUMBER-2-WHOPS-PROMOCODES.js` (DEPRECATED for promos)
+
+**Why:** Promo sync must use the natural key `(whopId, code)` and resolve whops by `slug`. The old script compared raw IDs and created duplicates.
+
+**DB invariants (now enforced):**
+- Unique index on `("PromoCode"."whopId","code")` — present on **backup** and **production**.
+
+**Standard runbook (backup ➜ production):**
+1. Import new promos (CSV) into **backup** via admin UI.
+2. Dry-run sync:
+   ```bash
+   node golden-scripts/GOLDEN-SAFE-PROMO-SYNC-BY-SLUG.mjs --dry
+   ```
+3. Live sync:
+   ```bash
+   node golden-scripts/GOLDEN-SAFE-PROMO-SYNC-BY-SLUG.mjs
+   ```
+4. Post-checks (both DBs):
+   ```sql
+   -- 0 duplicate groups expected
+   SELECT COUNT(*) FROM (
+     SELECT "whopId","code", COUNT(*) FROM "PromoCode"
+     GROUP BY 1,2 HAVING COUNT(*) > 1
+   ) x;
+   ```
+
+**If duplicates ever appear again (e.g., someone ran an old script):**
+- Use `golden-scripts/sql/cleanup_promocode_duplicates.sql` pattern:
+  - Re-point `OfferTracking.promoCodeId` to the **oldest** `(whopId, code)` survivor
+  - Delete later duplicates
+  - Re-verify duplicate groups = 0
+
+> TL;DR: Safe script only, unique index in place, verify 0 duplicates.
+
 ## Features 
 
 - Browse and search through various cryptocurrency casino bonuses
