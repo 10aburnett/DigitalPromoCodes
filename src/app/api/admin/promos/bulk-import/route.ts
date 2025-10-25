@@ -97,6 +97,27 @@ function isBetter(existingValue: string, incomingValue: string) {
   return false;
 }
 
+/** Sanitize description to prevent promo code leakage (affiliate cookie protection) */
+function sanitizeDescription(desc: string, code?: string, whopName?: string) {
+  if (!desc) return desc;
+
+  // Strip the exact code just in case
+  if (code) {
+    const esc = code.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    desc = desc.replace(new RegExp(`\\b${esc}\\b`, "gi"), "");
+  }
+
+  // Strip generic "promo code …" phrasing
+  desc = desc
+    .replace(/\b(with|using|use|apply|enter)\s+(promo\s*)?code\b[:\-]?\s*/gi, "")
+    .replace(/\b(promo\s*)?code\b[:\-]?\s*/gi, "")
+    .replace(/\s{2,}/g, " ")
+    .replace(/\s+([,.;!?:])/g, "$1")
+    .trim();
+
+  return desc || (whopName ? `Get a discount on ${whopName}` : "Get this discount on the offer.");
+}
+
 /** Generate a unique ID for PromoCode (using timestamp + random) */
 function generatePromoId(): string {
   const timestamp = Date.now().toString(36);
@@ -231,8 +252,16 @@ export async function POST(req: Request) {
 
         const description =
           (r.discountType || "").toLowerCase() === "percent" && r.discountValue
-            ? `Get ${r.discountValue}% off ${whop.name} with promo code ${r.code}`
-            : `Get a discount on ${whop.name} with promo code ${r.code}`;
+            ? `Get ${r.discountValue}% off ${whop.name}`
+            : `Get a discount on ${whop.name}`;
+
+        // Sanitize description to prevent code leakage (affiliate cookie protection)
+        const safeDescription = sanitizeDescription(description, r.code, whop.name);
+
+        // Fail fast if anything slips through
+        if (/\b(promo\s*)?code\b/i.test(safeDescription)) {
+          throw new Error(`Description still references "promo code" for row code=${r.code}`);
+        }
 
         if (dry) { summary.touched++; continue; }
 
@@ -251,7 +280,7 @@ export async function POST(req: Request) {
                   type: promoType as any,
                   value: displayValue,
                   title,
-                  description,
+                  description: safeDescription,
                   updatedAt: new Date()
                 }
               : {
@@ -269,7 +298,7 @@ export async function POST(req: Request) {
               type: promoType as any,
               value: displayValue,
               title,
-              description,
+              description: safeDescription,
               createdAt: new Date(),
               updatedAt: new Date()
             }
