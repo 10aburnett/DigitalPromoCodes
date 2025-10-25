@@ -245,20 +245,22 @@ export async function POST(req: Request) {
         const currency = (r.currency || "").toUpperCase();
         const displayValue = formatValue(r.discountType, r.discountValue, r.amountMinor, currency);
 
-        const title =
-          (r.discountType || "").toLowerCase() === "percent" && r.discountValue
-            ? `${r.code} - ${r.discountValue}% Off`
-            : `${r.code} - Discount`;
+        // Build clean title without code (affiliate cookie protection)
+        const title = displayValue ? `${displayValue} ${whop.name}` : `Discount on ${whop.name}`;
 
         const description =
           (r.discountType || "").toLowerCase() === "percent" && r.discountValue
             ? `Get ${r.discountValue}% off ${whop.name}`
             : `Get a discount on ${whop.name}`;
 
-        // Sanitize description to prevent code leakage (affiliate cookie protection)
+        // Sanitize both title and description to prevent code leakage (affiliate cookie protection)
+        const safeTitle = sanitizeDescription(title, r.code, whop.name);
         const safeDescription = sanitizeDescription(description, r.code, whop.name);
 
-        // Fail fast if anything slips through
+        // Fail fast if anything slips through (check both title and description)
+        if (/\bpromo-[a-z0-9_]+/i.test(safeTitle) || /\b(promo\s*)?code\b/i.test(safeTitle)) {
+          throw new Error(`Title still references a code for row code=${r.code}`);
+        }
         if (/\b(promo\s*)?code\b/i.test(safeDescription)) {
           throw new Error(`Description still references "promo code" for row code=${r.code}`);
         }
@@ -279,7 +281,7 @@ export async function POST(req: Request) {
               ? {
                   type: promoType as any,
                   value: displayValue,
-                  title,
+                  title: safeTitle,
                   description: safeDescription,
                   updatedAt: new Date()
                 }
@@ -297,7 +299,7 @@ export async function POST(req: Request) {
               code: r.code,
               type: promoType as any,
               value: displayValue,
-              title,
+              title: safeTitle,
               description: safeDescription,
               createdAt: new Date(),
               updatedAt: new Date()
