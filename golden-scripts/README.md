@@ -171,6 +171,125 @@ After running all scripts, you should see:
 
 ---
 
+## 🔧 Data Quality & Maintenance Scripts
+
+### GOLDEN-DEDUPE-PROMOCODES-CASEFOLD.mjs ⭐ NEW (Oct 2025)
+**Purpose**: Case-insensitive promo code deduplication with data preservation
+**What it handles**:
+- ✅ Removes duplicates like "PROMO-ABC" and "promo-abc"
+- ✅ Keeps record with most OfferTracking data
+- ✅ Rewires foreign keys before deletion (zero data loss)
+- ✅ Normalizes all codes to lowercase
+- ✅ Creates backup tables + audit trail
+- ✅ Adds guardrail: unique index on `(whopId, lower(code))`
+- ✅ Adds CHECK constraint: `code = lower(code)`
+
+**Usage**:
+```bash
+npm run dedupe:backup:dry  # Dry run on BACKUP
+npm run dedupe:backup      # Live run on BACKUP
+npm run dedupe:prod:dry    # Dry run on PRODUCTION
+npm run dedupe:prod        # Live run on PRODUCTION
+```
+
+**Results**: Removed 17 duplicate groups, rewired 10 OfferTracking records, deleted 225 conflicts
+
+### GOLDEN-FIX-TITLE-FORMAT.sql ⭐ NEW (Oct 2025)
+**Purpose**: Normalize promo code titles to consistent format
+**What it handles**:
+- ✅ Fixes bare-number titles: "15 Name" → "15% Off Name"
+- ✅ Extracts percentage from description or value field
+- ✅ Handles currency titles: "$29.00 off Name"
+- ✅ Normalizes whitespace and punctuation
+- ✅ Removes leaked promo code tokens
+- ✅ Built-in dry-run mode
+
+**Usage**:
+```bash
+npm run titles:fix:backup  # Live run on BACKUP
+npm run titles:fix:prod    # Live run on PRODUCTION
+```
+
+**Results**: Fixed 24-33 bare-number titles, rebuilt 867 titles, 0 malformed remaining
+
+### GOLDEN-VERIFY-TITLE-CODE-CONSISTENCY.sql ⭐ NEW (Oct 2025)
+**Purpose**: Read-only verification of promo code data integrity
+**What it checks**:
+- ✅ All codes are lowercase
+- ✅ No bare-number titles
+- ✅ Currency titles don't have % symbols
+- ✅ Percent titles match their value field
+- ✅ No leaked promo code tokens
+
+**Usage**:
+```bash
+npm run titles:verify:backup  # Verify BACKUP
+npm run titles:verify:prod    # Verify PRODUCTION
+```
+
+**Expected Results** (clean database):
+- `code_not_lower: 0`
+- `malformed_bare_number: 0`
+- `bad_currency_with_percent: 0`
+- `value_percent_title_not_percent: 0`
+
+### GOLDEN-SCRUB-PROMO-DESCRIPTIONS.mjs
+**Purpose**: Remove leaked promo code tokens from descriptions
+**Usage**:
+```bash
+npm run scrub:backup      # Dry run on BACKUP
+npm run scrub:prod:dry    # Dry run on PRODUCTION
+npm run scrub:prod        # Live run on PRODUCTION
+```
+
+### GOLDEN-SCRUB-PROMO-TITLES.mjs
+**Purpose**: Remove leaked promo code tokens from titles
+**Usage**:
+```bash
+npm run scrub:titles:backup     # Dry run on BACKUP
+npm run scrub:titles:prod:dry   # Dry run on PRODUCTION
+npm run scrub:titles:prod       # Live run on PRODUCTION
+```
+
+## 🛡️ Database Guardrails Implemented
+
+Permanent safeguards added to prevent data quality issues:
+
+1. **promo_whop_codelower_uniq** - Unique index on `(whopId, lower(code))`
+   - Prevents case-insensitive duplicates
+
+2. **promo_code_lowercase_chk** - CHECK constraint `code = lower(code)`
+   - Enforces lowercase-only promo codes
+
+3. **Backup Tables**:
+   - `PromoCodeDedupeBackup` - Full records of deleted duplicates
+   - `PromoCodeDedupeMap` - Audit trail mapping duplicate → canonical IDs
+
+## 🔄 Rollback Procedures
+
+### Restore Deleted Duplicates
+```sql
+-- View backup
+SELECT * FROM "PromoCodeDedupeBackup";
+
+-- View mapping
+SELECT * FROM "PromoCodeDedupeMap";
+
+-- Restore specific record
+INSERT INTO "PromoCode" (...)
+SELECT ... FROM "PromoCodeDedupeBackup" WHERE id = 'your-id';
+```
+
+### Revert Title Changes
+Title changes are idempotent - just re-run the script with corrected logic, or manually update:
+```sql
+UPDATE "PromoCode"
+SET title = 'Corrected Title', "updatedAt" = now()
+WHERE id = 'your-id';
+```
+
+---
+
 **Created**: 2025-08-10
-**Last Updated**: 2025-10-24 (Added GOLDEN-SAFE-PROMO-SYNC-BY-SLUG.mjs)
+**Last Updated**: 2025-10-25 (Added dedupe, title normalization, and verification scripts)
 **Status**: Battle Tested & Production Ready ✅
