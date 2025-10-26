@@ -15,7 +15,7 @@ import { dlog } from '@/lib/debug';
 
 // Static generation with ISR for stable SSR/CSR hydration
 export const dynamic = 'force-static';
-export const revalidate = 600; // 10 minute revalidation for freshness
+export const revalidate = 300; // 5 minute revalidation for freshness (optimal SEO balance)
 export const dynamicParams = true; // Enable dynamic params for all slugs
 export const runtime = 'nodejs'; // required for Prisma database access
 
@@ -136,16 +136,16 @@ async function getVerificationData(slug: string) {
     const encoded = fileSlug(slug);
     const base = resolveBaseUrl();
 
-    // main
+    // main - use ISR caching aligned with page revalidation
     let res = await fetch(`${base}/api/data/pages/${encoded}.json`, {
-      cache: "no-store",           // or: next: { revalidate: 0 }
+      next: { revalidate: 300, tags: [`whop:${slug}:verification`] }
     });
 
     // fallback: legacy lowercase %XX if needed
     if (!res.ok) {
       const lower = encoded.replace(/%[0-9A-F]{2}/g, m => m.toLowerCase());
       res = await fetch(`${base}/api/data/pages/${lower}.json`, {
-        cache: "no-store",
+        next: { revalidate: 300, tags: [`whop:${slug}:verification`] }
       });
     }
 
@@ -454,15 +454,15 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   }
 }
 
-export default async function WhopPage({ params, searchParams }: { params: { slug: string }, searchParams?: { debugOnly?: string; __debug?: string } }) {
+export default async function WhopPage({ params }: { params: { slug: string } }) {
   const raw = params.slug || '';
   const decoded = decodeURIComponent(raw);  // Decode before normalizing
   // Use lowercase decoded slug for DB lookup (DB stores literal colons, not %3a)
   const dbSlug = decoded.toLowerCase();
   const canonSlug = canonicalSlugForPath(decoded);
 
-  // Phase 1 instrumentation: Log inputs
-  dlog('whop', 'WhopPage params', { raw, decoded, dbSlug, canonSlug, searchParams });
+  // Phase 1 instrumentation: Log inputs (searchParams removed to allow ISR)
+  dlog('whop', 'WhopPage params', { raw, decoded, dbSlug, canonSlug });
 
   // Step 8: Determine SEO classification for this page
   const classification = getPageClassification(canonSlug);
