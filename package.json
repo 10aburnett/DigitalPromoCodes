@@ -84,7 +84,16 @@
     "freshness:real": "ts-node --transpile-only scripts/add-real-discount-data.ts",
     "sitemap:build": "ts-node --transpile-only scripts/build-sitemaps.ts",
     "freshness:real+site": "npm run freshness:real && npm run sitemap:build",
-    "sync:whpcodes": "node src/sync-ledgers-from-whpcodes.mjs"
+    "sync:whpcodes": "node src/sync-ledgers-from-whpcodes.mjs",
+    "content:convert": "node scripts/convert-neon-export.mjs",
+    "content:jsonify": "node scripts/content-json-array-to-jsonl.mjs",
+    "content:csv": "node scripts/validate-and-csv.mjs",
+    "content:build": "npm run content:jsonify && npm run content:csv",
+    "content:import:backup": "psql \"$SOURCE_DATABASE_URL\" -v ON_ERROR_STOP=1 -f golden-scripts/GOLDEN-IMPORT-WHOP-CONTENT.sql",
+    "content:import:prod": "psql \"$TARGET_DATABASE_URL\" -v ON_ERROR_STOP=1 -f golden-scripts/GOLDEN-IMPORT-WHOP-CONTENT.sql",
+    "content:monitor": "node scripts/monitor-whop-progress.mjs --provider=openai --target=8500 --budget=50",
+    "content:check": "node scripts/check-jsonl.mjs --in=data/neon/whops.jsonl",
+    "content:prep": "npm run content:convert -- --in=data/neon/whops.json && npm run content:check"
   },
   "prisma": {
     "schema": "prisma/schema.prisma",
