@@ -641,7 +641,7 @@ fs.writeFileSync(RUN_META, JSON.stringify({
   model: MODEL,
   strongModel: STRONG_MODEL || null,
   inputFile: IN,
-  batch: BATCH,
+  batch: CONCURRENCY,
   limit: LIMIT,
   budgetUsd: BUDGET_USD || null
 }, null, 2));
