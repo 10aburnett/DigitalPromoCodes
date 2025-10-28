@@ -61,6 +61,11 @@ const SAMPLE_DIR = "data/content/samples";
 if (SAMPLE_EVERY && !fs.existsSync(SAMPLE_DIR)) fs.mkdirSync(SAMPLE_DIR, { recursive: true });
 const CACHE_DIR = "data/content/cache";
 if (!fs.existsSync(CACHE_DIR)) fs.mkdirSync(CACHE_DIR, { recursive: true });
+
+// Ensure data/content directory exists for fingerprints persistence (cold start resilience)
+const CONTENT_DIR = "data/content";
+if (!fs.existsSync(CONTENT_DIR)) fs.mkdirSync(CONTENT_DIR, { recursive: true });
+
 const MAX_REPAIRS = 2; // attempts to repair with same model
 const ESCALATE_ON_FAIL = true;
 const STRONG_MODEL = process.env.STRONG_MODEL || ""; // e.g., "gpt-4o" (optional)
@@ -781,11 +786,8 @@ function countTags(html, tag) {
 }
 
 function countWords(html) {
-  if (!html) return 0;
-  // Strip HTML tags and count words
-  const text = String(html).replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
-  if (!text) return 0;
-  return text.split(/\s+/).filter(Boolean).length;
+  // Use tokenizer logic (same as similarity checks) for accurate word counts
+  return tokens(stripTags(String(html || ""))).length;
 }
 
 function stripTags(s) {
@@ -804,18 +806,40 @@ function nameForSeo(name) {
   return name.replace(/[™®]/g, "").replace(/\s*&\s*/g, " & ").trim();
 }
 
-function mkPrimaryPromoRegex(name) {
-  // Build primary keyword regex: "Brand promo code(s)", handles hyphen/NBSP/tight spacing
-  const n = esc(name);
-  return new RegExp(`\\b${n}\\s*[-\u00A0\\s]?\\s*promo\\s*codes?\\b`, "i");
+function aliasAmpersandAnd(nameRaw) {
+  // Bidirectional & ⇄ and aliasing: works whether literal contains "&" or "and" or neither
+  // Only transforms tokenized "and" (surrounded by whitespace) to avoid hitting names like "AndCo"
+  const n = esc(nameRaw);
+  // Case 1: literal contains "&" → allow "&" OR "and"
+  const hasAmp = /\s*&\s*/.test(nameRaw);
+  // Case 2: literal contains " and " → allow "and" OR "&"
+  const hasAnd = /\sand\s/i.test(nameRaw);
+
+  let nAliased = n;
+  if (hasAmp) {
+    nAliased = nAliased.replace(/\\s\*&\\s\*/g, "(?:\\\\s*&\\\\s*|\\\\s+and\\\\s+)");
+  }
+  if (hasAnd) {
+    // Only replace the tokenized " and " (escaped here) with alternation
+    nAliased = nAliased.replace(/\\sand\\s/gi, "(?:\\\\s+and\\\\s+|\\\\s*&\\\\s*)");
+  }
+  return nAliased;
 }
 
-function mkSecondaryRegexes(name) {
+function mkPrimaryPromoRegex(nameRaw) {
+  // Build primary keyword regex: "Brand promo code(s)", handles hyphen/NBSP/tight spacing
+  // Also handles & ⇄ and aliasing bidirectionally (e.g., "A&B" ⇄ "A and B")
+  const nWithAliasing = aliasAmpersandAnd(nameRaw);
+  return new RegExp(`\\b${nWithAliasing}\\s*[-\u00A0\\s]?\\s*promo\\s*codes?\\b`, "i");
+}
+
+function mkSecondaryRegexes(nameRaw) {
   // Build secondary keyword regexes (discount, save on, current offer, etc.)
-  const n = esc(name);
+  // Also handles & ⇄ and aliasing bidirectionally
+  const nWithAliasing = aliasAmpersandAnd(nameRaw);
   return [
-    new RegExp(`\\bsave\\s+on\\s+${n}\\b`, "i"),
-    new RegExp(`\\b${n}\\s*[-\u00A0\\s]?\\s*discount\\b`, "i"),
+    new RegExp(`\\bsave\\s+on\\s+${nWithAliasing}\\b`, "i"),
+    new RegExp(`\\b${nWithAliasing}\\s*[-\u00A0\\s]?\\s*discount\\b`, "i"),
     /\bcurrent\s+offer\b/i,
     /\bspecial\s+offer\b/i,
     /\bvoucher\s+codes?\b/i,
@@ -934,7 +958,21 @@ const recentFingerprints = (() => {
   if (!fs.existsSync(FINGERPRINTS_FILE)) return [];
   try {
     const content = fs.readFileSync(FINGERPRINTS_FILE, "utf8");
-    const lines = content.split(/\r?\n/).filter(Boolean).slice(-2000); // last 2k lines
+    const allLines = content.split(/\r?\n/).filter(Boolean);
+
+    // Rotate file if it exceeds 250k lines (keep repo tidy)
+    if (allLines.length > 250000) {
+      const keep = allLines.slice(-2000);
+      fs.writeFileSync(FINGERPRINTS_FILE, keep.join("\n") + "\n");
+      console.log(`Rotated fingerprints file: kept last 2k of ${allLines.length.toLocaleString()} lines`);
+      return keep.map(line => {
+        const obj = JSON.parse(line);
+        return { ...obj, fpAbout: new Set(obj.fpAbout) };
+      });
+    }
+
+    // Normal load: last 2k lines
+    const lines = allLines.slice(-2000);
     return lines.map(line => {
       const obj = JSON.parse(line);
       // Reconstruct Set from array (persisted as array for JSON)
@@ -1552,6 +1590,19 @@ async function worker(task) {
             }
           }
         }
+
+        // Option A (strict): Also forbid primary in FAQ questions AND answers (avoid keyword stuffing)
+        if (!preserved?.faq && Array.isArray(obj.faqcontent)) {
+          for (const f of obj.faqcontent) {
+            const combined = `${f.question || ""} ${f.answerHtml || ""}`;
+            if (primaryRe.test(stripTags(combined))) {
+              throw new Error(
+                "faqcontent: primary keyword must not appear in FAQ questions or answers (avoid stuffing). " +
+                "Use secondary keywords like 'discount', 'offer', 'current deal' in FAQs instead."
+              );
+            }
+          }
+        }
       }
 
       // Near-duplicate guard: cross-document originality check (n-gram Jaccard)
@@ -1580,6 +1631,22 @@ async function worker(task) {
         } else {
           // No <p> tags found, append as new paragraph
           obj.aboutcontent = html + `<p>${cta}</p>`;
+        }
+
+        // Post-CTA word-count check: ensure aboutcontent stays within 120-180 words
+        const wordCount = countWords(obj.aboutcontent);
+        if (wordCount > 180) {
+          // Trim last sentence to stay within range
+          const text = stripTags(obj.aboutcontent);
+          const sentences = text.split(/(?<=[.!?])\s+/);
+          if (sentences.length > 3) {
+            // Remove last sentence and rebuild
+            const trimmedSentences = sentences.slice(0, -1);
+            const trimmedText = trimmedSentences.join(" ");
+            // Rebuild HTML with trimmed content (simple paragraph wrapping)
+            obj.aboutcontent = `<p>${trimmedText}</p>`;
+          }
+          // If still over 180, the hard-count validator will catch it and repair
         }
       }
 
