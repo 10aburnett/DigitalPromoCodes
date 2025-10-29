@@ -241,12 +241,13 @@ async function obtainEvidence(url, slug, forceRecrawl = false) {
     }
 
     if (status >= 200 && status < 400 && /<html|<!doctype/i.test(text)) {
-      const ex = extractFromHtml(text, finalUrl);
+      const html1 = text;  // keep raw HTML for link scraping
+      const ex = extractFromHtml(html1, finalUrl);
 
       // Cookie-wall / JS-shell detection
       const textLength = (ex.textSample || "").length;
       if (textLength < 400) {
-        const lowerText = text.toLowerCase();
+        const lowerText = html1.toLowerCase();
         if (lowerText.includes("enable javascript") || lowerText.includes("cookie settings") ||
             lowerText.includes("cookies are required") || lowerText.includes("javascript is disabled")) {
           throw new Error(`Page gated: skeleton DOM (cookie wall or JS required)`);
@@ -254,10 +255,65 @@ async function obtainEvidence(url, slug, forceRecrawl = false) {
       }
 
       // CAPTCHA / bot protection detection
-      const lowerBody = text.toLowerCase();
+      const lowerBody = html1.toLowerCase();
       if (lowerBody.includes("hcaptcha") || lowerBody.includes("recaptcha") ||
           lowerBody.includes("cloudflare") && lowerBody.includes("checking your browser")) {
         throw Object.assign(new Error(`CAPTCHA/bot protection detected`), { retryable: true });
+      }
+
+      // --- Hub drill-down (Option C) ---
+      // Try to drill down to specific product page if this looks like a thin hub
+      let drilled = false;
+      try {
+        const u0 = urlParts(finalUrl || url || "");
+        if (u0 && u0.parts.length >= 1) {
+          // creator path looks like /creator/...
+          const creator = "/" + u0.parts[0] + "/";
+
+          if (isLikelyThinHub(html1, textLength)) {
+            console.log(`hub_probe: slug=${slug} creator=${creator} evidence=${textLength} chars`);
+
+            const candidates = extractProductLinks(html1, creator);
+            const bestPath = chooseBestProductLink(candidates, slug);
+
+            if (bestPath) {
+              // Preserve query params safely using URL API
+              const productUrlObj = new URL(u0.origin + bestPath);
+              // copy all existing params from original URL (if any)
+              if (u0.search) {
+                try {
+                  const origUrl = new URL(u0.href);
+                  origUrl.searchParams.forEach((v, k) => productUrlObj.searchParams.set(k, v));
+                } catch {}
+              }
+              const productUrl = productUrlObj.toString();
+
+              console.log(`hub_drill: slug=${slug} → ${productUrl}`);
+              const r2 = await fetchHttp(productUrl);
+              if (r2.status >= 200 && r2.status < 400 && /<html|<!doctype/i.test(r2.text)) {
+                const ex2 = extractFromHtml(r2.text, r2.url);
+                const chars2 = (ex2.textSample || "").length;  // char count, consistent with textLength
+                // Only replace if it truly improves evidence (char count threshold: 800 min or +200 improvement)
+                if (chars2 >= 800 || chars2 > textLength + 200) {
+                  // Swap to the better evidence
+                  Object.assign(ex, ex2);
+                  textLength = chars2;
+                  finalUrl = r2.url;
+                  drilled = true;
+                  console.log(`hub_success: slug=${slug} improved_chars=${chars2}`);
+                } else {
+                  console.log(`hub_no_gain: slug=${slug} chars2=${chars2}`);
+                }
+              } else {
+                console.log(`hub_fetch_fail: slug=${slug} status=${r2.status}`);
+              }
+            } else {
+              console.log(`hub_no_match: slug=${slug} candidates=${candidates.length}`);
+            }
+          }
+        }
+      } catch (e) {
+        console.log(`hub_error: slug=${slug} err=${(e && e.message) || e}`);
       }
 
       // Thin evidence guard: require minimum signal
@@ -270,7 +326,8 @@ async function obtainEvidence(url, slug, forceRecrawl = false) {
         ...ex,
         finalUrl, // store final URL after redirects
         fetchedAt: new Date().toISOString(),
-        textHash: sha256(ex.textSample || "")
+        textHash: sha256(ex.textSample || ""),
+        drilled // track if hub drill-down was used
       };
       fs.writeFileSync(cachePath, JSON.stringify(evidence, null, 2));
       return evidence;
@@ -863,6 +920,87 @@ function firstParagraphText(html) {
   return words.slice(0, 120).join(" ");
 }
 
+// --- Hub detection & drill-down helpers ---
+
+function urlParts(u) {
+  try {
+    const x = new URL(u);
+    const parts = x.pathname.split("/").filter(Boolean);
+    return { origin: x.origin, parts, href: x.href, search: x.search };
+  } catch { return null; }
+}
+
+// Heuristic hub test: short textual evidence + grid/collection cues
+function isLikelyThinHub(html, evidenceChars) {
+  const text = stripTags(html).toLowerCase();
+  const hubCues = [
+    /products?/i, /memberships?/i, /courses?/i, /bundles?/i, /view\s+all/i,
+    /creator/i, /offers?/i, /plans?/i, /pricing/i, /what's\s+included/i
+  ];
+  const hasCue = hubCues.some(re => re.test(text));
+  // Keep your base min of 800; "thin hub window" 400–800 prevents false positives
+  return evidenceChars >= 400 && evidenceChars < 800 && hasCue;
+}
+
+// Extract candidate product links under same creator prefix
+function extractProductLinks(html, creatorPathPrefix) {
+  // matches href="/creator/product-slug/" or absolute
+  const links = [];
+  const re = /href\s*=\s*"(.*?)"/gi;
+  let m;
+  while ((m = re.exec(html))) {
+    const href = m[1];
+    if (!href) continue;
+    // Normalise
+    let p = href;
+    if (p.startsWith("//")) p = "https:" + p;
+    // Only keep same-creator paths:
+    //  /creator/... or https://whop.com/creator/...
+    if (p.startsWith("/") && p.toLowerCase().startsWith(creatorPathPrefix.toLowerCase())) {
+      links.push(p);
+    } else if (p.startsWith("http") && p.includes(creatorPathPrefix)) {
+      try { links.push(new URL(p).pathname); } catch {}
+    }
+  }
+  // De-dup and keep only /creator/<something>/
+  const uniq = Array.from(new Set(links)).filter(p => p.split("/").filter(Boolean).length >= 2);
+  return uniq;
+}
+
+// Simple slug normaliser
+function normSlug(s) {
+  return String(s || "")
+    .toLowerCase()
+    .replace(/[^\p{L}\p{N}]+/gu, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+// Choose best product link by matching end segment to target slug (or highest token overlap)
+function chooseBestProductLink(candidates, targetSlug) {
+  if (!candidates.length) return null;
+  const t = normSlug(targetSlug.split("/").pop());
+  let best = null, bestScore = -1;
+
+  for (const path of candidates) {
+    const segs = path.split("/").filter(Boolean);
+    const last = normSlug(segs[segs.length - 1] || "");
+    let score = 0;
+    if (last === t) score = 100;                             // exact
+    else if (last.includes(t) || t.includes(last)) score = 70; // contains
+    else {
+      // token overlap fallback
+      const A = new Set(t.split("-").filter(Boolean));
+      const B = new Set(last.split("-").filter(Boolean));
+      const inter = [...A].filter(x => B.has(x)).length;
+      const union = new Set([...A, ...B]).size;
+      score = union ? Math.round((inter / union) * 60) : 0;
+    }
+    if (score > bestScore) { bestScore = score; best = path; }
+  }
+  // require a minimum plausibility
+  return bestScore >= 40 ? best : null;
+}
+
 // --- Originality & human-style helpers ---
 
 // Tokenize text for n-gram analysis
@@ -1377,10 +1515,12 @@ async function worker(task) {
         paras: evidence?.paras?.length || 0,
         bullets: evidence?.bullets?.length || 0,
         faq: evidence?.faq?.length || 0,
+        drilled: evidence?.drilled || false,
         dryRun: true
       }
     };
     fs.appendFileSync(OUT_FILE, JSON.stringify(dryOutput) + "\n");
+    if (evidence?.drilled) drilled++;
     ck.done[slug] = true;
     delete ck.pending[slug];
     fs.writeFileSync(CHECKPOINT, JSON.stringify(ck, null, 2));
@@ -1680,11 +1820,13 @@ ${JSON.stringify(obj)}
         __meta: {
           sourceUrl: url,
           finalUrl: evidence?.finalUrl || url,
-          evidenceHash: evidence?.textHash || null
+          evidenceHash: evidence?.textHash || null,
+          drilled: evidence?.drilled || false
         }
       };
 
       fs.appendFileSync(OUT_FILE, JSON.stringify(output) + "\n");
+      if (evidence?.drilled) drilled++;
       ck.done[slug] = true;
       delete ck.pending[slug];
 
@@ -1758,11 +1900,13 @@ ${JSON.stringify(obj)}
               __meta: {
                 sourceUrl: url,
                 finalUrl: evidence?.finalUrl || url,
-                evidenceHash: evidence?.textHash || null
+                evidenceHash: evidence?.textHash || null,
+                drilled: evidence?.drilled || false
               }
             };
 
             fs.appendFileSync(OUT_FILE, JSON.stringify(output2) + "\n");
+            if (evidence?.drilled) drilled++;
             ck.done[slug] = true;
             delete ck.pending[slug];
             process.env.MODEL = prevModel;
@@ -1785,7 +1929,7 @@ async function run() {
     console.log("🔍 DRY-RUN MODE: Validating fetch/grounding without LLM calls");
   }
   const queue = rows.filter(r => !alreadyDone.has(r.slug));
-  let i = 0, ok = 0, fail = 0;
+  let i = 0, ok = 0, fail = 0, drilled = 0;
   while (i < queue.length) {
     const slice = queue.slice(i, i + CONCURRENCY);
     try {
@@ -1823,6 +1967,7 @@ async function run() {
   }
   console.log(`✅ Completed. Wrote to ${OUT_FILE}. Success=${ok}, batchFails=${fail}`);
   console.log(`Token usage summary: input=${usageTotals.input}, output=${usageTotals.output}`);
+  if (drilled > 0) console.log(`Hub drill-downs: ${drilled} (converted from thin hubs to specific product pages)`);
 
   // Report rejects
   const rejectsCount = fs.existsSync(REJECTS_FILE) ? fs.readFileSync(REJECTS_FILE, "utf8").split(/\r?\n/).filter(Boolean).length : 0;
