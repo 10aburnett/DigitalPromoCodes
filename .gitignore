@@ -132,3 +132,10 @@ public/sitemap.xml
 
 # Content generation artifacts (persisted fingerprints with auto-rotation)
 data/content/.fingerprints.jsonl
+
+# Content gen run artifacts (never bloat the repo)
+data/content/cache/
+data/content/raw/ai-run-*.jsonl
+data/content/raw/rejects-*.jsonl
+data/content/hub-review.csv
+data/content/hub-override-hits.csv

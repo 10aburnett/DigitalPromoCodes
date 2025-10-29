@@ -2136,7 +2136,9 @@ async function run() {
   }
   console.log(`✅ Completed. Wrote to ${OUT_FILE}. Success=${ok}, batchFails=${fail}`);
   console.log(`Token usage summary: input=${usageTotals.input}, output=${usageTotals.output}`);
-  if (drilledCount > 0) console.log(`Hub drill-downs: ${drilledCount} (converted from thin hubs to specific product pages)`);
+  if (drilledCount > 0) {
+    console.log(`Hub drill-downs: ${drilledCount} (min=${PRODUCT_MIN_CHARS}, soft=${PRODUCT_SOFT_MIN}, gain≥300)`);
+  }
 
   // Report rejects
   const rejectsCount = fs.existsSync(REJECTS_FILE) ? fs.readFileSync(REJECTS_FILE, "utf8").split(/\r?\n/).filter(Boolean).length : 0;
