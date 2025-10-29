@@ -226,7 +226,10 @@ async function withHostSlot(u, fn) {
 }
 
 // Obtain evidence with caching and retry logic
-async function obtainEvidence(url, slug, forceRecrawl = false) {
+async function obtainEvidence(url, slug, name, forceRecrawl = false) {
+  // Normalise early so any internal reference is safe
+  const dbName = (name ?? slug);
+
   // Host allowlist check
   if (!isHostAllowed(url)) {
     throw new Error(`Host not in ALLOWED_HOSTS: ${new URL(url).hostname}`);
@@ -295,7 +298,7 @@ async function obtainEvidence(url, slug, forceRecrawl = false) {
           // creator path looks like /creator/...
           const creator = "/" + u0.parts[0] + "/";
           const creatorKey = normSlug(u0.parts[0]);
-          const dbName = name || slug; // fall back to slug if name isn't present
+          // dbName already defined at function top
 
           if (isLikelyThinHub(html1, textLength)) {
             console.log(`hub_probe: slug=${slug} creator=${creator} evidence=${textLength} chars`);
@@ -1631,7 +1634,7 @@ async function worker(task) {
   let evidence;
   try {
     const forceRecrawl = FORCE_RECRAWL || task.forceRecrawl;
-    evidence = await obtainEvidence(url, slug, forceRecrawl);
+    evidence = await obtainEvidence(url, slug, name, forceRecrawl);
   } catch (e) {
     fs.appendFileSync(REJECTS_FILE, JSON.stringify({ slug, error: `Evidence fetch failed: ${e.message}` }) + "\n");
     return;
