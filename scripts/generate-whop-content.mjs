@@ -1035,6 +1035,8 @@ function extractProductCandidates(html, creatorPathPrefix) {
         if (!u.hostname.endsWith("whop.com")) continue;
         p = u.pathname;
       }
+      // Strip query string and fragment from all paths (absolute and relative)
+      p = p.split(/[?#]/)[0];
       if (!p.startsWith("/")) continue; // external or weird
       if (!p.toLowerCase().startsWith(creatorPathPrefix.toLowerCase())) continue;
 
