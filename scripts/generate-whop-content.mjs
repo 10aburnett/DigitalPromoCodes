@@ -58,6 +58,10 @@ const OVERRIDES_FILE = "data/overrides/hub-product-map.json";      // { "<creato
 const REVIEW_CSV     = "data/content/hub-review.csv";              // unresolved hubs
 const OVERRIDE_HITS  = "data/content/hub-override-hits.csv";       // when an override is used
 
+// Product acceptance thresholds (prevents thin product pages from replacing hubs)
+const PRODUCT_MIN_CHARS = 900;   // hard minimum for product pages
+const PRODUCT_SOFT_MIN = 800;    // soft minimum if page clearly has reviews/FAQs
+
 const LIMIT = args.limit ? Number(args.limit) : Infinity;
 const CONCURRENCY = args.batch ? Number(args.batch) : 8;
 const SKIP_FILLED = !!args.skipFilled;
@@ -333,8 +337,8 @@ async function obtainEvidence(url, slug, name, forceRecrawl = false) {
               if (!picks.length) {
                 console.log(`hub_no_match: slug=${slug} candidates=${candidates.length}`);
                 writeCsvRow(REVIEW_CSV,
-                  ["slug","creatorUrl","candidateCount","exampleCandidates"],
-                  [slug, u0.href, String(candidates.length), candidates.slice(0,5).map(c=>c.path).join(" | ")]
+                  ["slug","creatorUrl","candidateCount","exampleCandidates","hubChars"],
+                  [slug, u0.href, String(candidates.length), candidates.slice(0,5).map(c=>c.path).join(" | "), String(textLength)]
                 );
               }
               // construct URLs preserving query params
@@ -362,16 +366,23 @@ async function obtainEvidence(url, slug, name, forceRecrawl = false) {
                 }
                 const ex2 = extractFromHtml(r2.text, r2.url);
                 const chars2 = (ex2.textSample || "").length; // char count consistent with textLength
-                // Accept only if substantive improvement (≥800 or +200 over hub)
-                if (chars2 >= 800 || chars2 > textLength + 200) {
+                // Accept only if the product page is truly richer
+                const useful2 = hasUsefulBlocks(r2.text);
+                const improvesBy = chars2 - textLength;
+
+                if (
+                  chars2 >= PRODUCT_MIN_CHARS ||
+                  (chars2 >= PRODUCT_SOFT_MIN && useful2) ||
+                  improvesBy >= 300 // stronger "+gain" requirement for swaps
+                ) {
                   Object.assign(ex, ex2);
                   textLength = chars2;
                   finalUrl = r2.url;
                   drilled = true;
-                  console.log(`hub_success: slug=${slug} improved_chars=${chars2}`);
+                  console.log(`hub_success: slug=${slug} improved_chars=${chars2}, useful=${useful2}`);
                   break; // stop after a successful drill
                 } else {
-                  console.log(`hub_no_gain: slug=${slug} chars2=${chars2}`);
+                  console.log(`hub_no_gain: slug=${slug} chars2=${chars2}, useful=${useful2}, Δ=${improvesBy}`);
                 }
               } else {
                 console.log(`hub_fetch_fail: slug=${slug} status=${r2.status}`);
@@ -381,8 +392,8 @@ async function obtainEvidence(url, slug, name, forceRecrawl = false) {
             // 3) If we still didn't improve, log to review queue
             if (!drilled) {
               writeCsvRow(REVIEW_CSV,
-                ["slug","creatorUrl","candidateCount","exampleCandidates"],
-                [slug, u0.href, String(toProbe.length), toProbe.slice(0,5).map(p=>p.path).join(" | ")]
+                ["slug","creatorUrl","candidateCount","exampleCandidates","hubChars"],
+                [slug, u0.href, String(toProbe.length), toProbe.slice(0,5).map(p=>p.path).join(" | "), String(textLength)]
               );
             }
           }
@@ -1018,6 +1029,19 @@ function isLikelyThinHub(html, evidenceChars) {
   return evidenceChars >= 400 && evidenceChars < 800 && hasCue;
 }
 
+// Detect substantive product page content (reviews, FAQs, curriculum, etc.)
+function hasUsefulBlocks(html) {
+  const t = html.toLowerCase();
+  // lightweight signals that the page has substance beyond a hero + button
+  return (
+    /reviews?\s*<\/?/.test(t) ||     // Reviews section
+    /faqs?\s*<\/?/.test(t) ||        // FAQs accordion
+    /what(?:'|'|)s\s+included/.test(t) ||
+    /curriculum|syllabus|modules?/.test(t) ||
+    /about\s+the\s+creator/.test(t)
+  );
+}
+
 // Extract candidate product links under same creator prefix
 // Extract anchor text and nearest heading for each candidate under same creator
 function extractProductCandidates(html, creatorPathPrefix) {
@@ -1118,7 +1142,7 @@ function scoreCandidate(cand, targetSlug, dbName) {
   return score;
 }
 
-// Choose 1–2 best candidates to probe (threshold + closeness rule)
+// Choose 1–3 best candidates to probe (threshold + closeness rule)
 function chooseBestProductCandidates(candidates, targetSlug, dbName) {
   if (!candidates.length) return [];
   const scored = candidates
@@ -1129,6 +1153,10 @@ function chooseBestProductCandidates(candidates, targetSlug, dbName) {
   if (scored[0] && scored[0].score >= 45) picked.push(scored[0].c);
   if (scored[1] && scored[0] && (scored[0].score - scored[1].score) <= 15 && scored[1].score >= 45) {
     picked.push(scored[1].c);
+  }
+  // Allow a 3rd probe if it's within 5 points of #2 (helps ties like "two products")
+  if (scored[2] && picked.length === 2 && (scored[1].score - scored[2].score) <= 5 && scored[2].score >= 45) {
+    picked.push(scored[2].c);
   }
   return picked;
 }
