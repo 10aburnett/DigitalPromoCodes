@@ -52,6 +52,12 @@ const IN = args.in || (fs.existsSync("data/neon/whops.jsonl") ? "data/neon/whops
 const OUT_DIR = "data/content/raw";
 const CHECKPOINT = "data/content/.checkpoint.json";
 const FINGERPRINTS_FILE = "data/content/.fingerprints.jsonl";
+
+// === [PATCH] Overrides + CSV logging =========================================
+const OVERRIDES_FILE = "data/overrides/hub-product-map.json";      // { "<creator-slug>": "/creator/product-slug/" }
+const REVIEW_CSV     = "data/content/hub-review.csv";              // unresolved hubs
+const OVERRIDE_HITS  = "data/content/hub-override-hits.csv";       // when an override is used
+
 const LIMIT = args.limit ? Number(args.limit) : Infinity;
 const CONCURRENCY = args.batch ? Number(args.batch) : 8;
 const SKIP_FILLED = !!args.skipFilled;
@@ -61,6 +67,26 @@ const SAMPLE_DIR = "data/content/samples";
 if (SAMPLE_EVERY && !fs.existsSync(SAMPLE_DIR)) fs.mkdirSync(SAMPLE_DIR, { recursive: true });
 const CACHE_DIR = "data/content/cache";
 if (!fs.existsSync(CACHE_DIR)) fs.mkdirSync(CACHE_DIR, { recursive: true });
+
+// Ensure override dirs exist
+fs.mkdirSync("data/overrides", { recursive: true });
+
+// Load override map (safe default)
+function loadHubOverrides() {
+  try {
+    const raw = fs.readFileSync(OVERRIDES_FILE, "utf8");
+    const json = JSON.parse(raw || "{}");
+    return json && typeof json === "object" ? json : {};
+  } catch { return {}; }
+}
+let HUB_OVERRIDES = loadHubOverrides();
+
+// Simple CSV writer (adds header on first use)
+function writeCsvRow(path, headers, row) {
+  const esc = (v) => `"${String(v ?? "").replace(/"/g, '""')}"`;
+  if (!fs.existsSync(path)) fs.writeFileSync(path, headers.map(esc).join(",") + "\n");
+  fs.appendFileSync(path, row.map(esc).join(",") + "\n");
+}
 
 // Ensure data/content directory exists for fingerprints persistence (cold start resilience)
 const CONTENT_DIR = "data/content";
@@ -261,60 +287,105 @@ async function obtainEvidence(url, slug, forceRecrawl = false) {
         throw Object.assign(new Error(`CAPTCHA/bot protection detected`), { retryable: true });
       }
 
-      // --- Hub drill-down (Option C) ---
-      // Try to drill down to specific product page if this looks like a thin hub
+      // --- Hub drill-down (Option C + semantic) ------------------------------------
       let drilled = false;
       try {
         const u0 = urlParts(finalUrl || url || "");
         if (u0 && u0.parts.length >= 1) {
           // creator path looks like /creator/...
           const creator = "/" + u0.parts[0] + "/";
+          const creatorKey = normSlug(u0.parts[0]);
+          const dbName = name || slug; // fall back to slug if name isn't present
 
           if (isLikelyThinHub(html1, textLength)) {
             console.log(`hub_probe: slug=${slug} creator=${creator} evidence=${textLength} chars`);
 
-            const candidates = extractProductLinks(html1, creator);
-            const bestPath = chooseBestProductLink(candidates, slug);
+            // 0) Override map check
+            let overrideUsed = false;
+            const overridePath = HUB_OVERRIDES[creatorKey] || HUB_OVERRIDES[slug];
+            const toProbe = [];
 
-            if (bestPath) {
-              // Preserve query params safely using URL API
-              const productUrlObj = new URL(u0.origin + bestPath);
-              // copy all existing params from original URL (if any)
-              if (u0.search) {
-                try {
+            if (overridePath && overridePath.startsWith(creator)) {
+              try {
+                const productUrlObj = new URL(u0.origin + overridePath);
+                if (u0.search) {
                   const origUrl = new URL(u0.href);
                   origUrl.searchParams.forEach((v, k) => productUrlObj.searchParams.set(k, v));
+                }
+                toProbe.push({ path: overridePath, anchor: "[override]", heading: "" , url: productUrlObj.toString() });
+                overrideUsed = true;
+                writeCsvRow(OVERRIDE_HITS,
+                  ["slug","creator","overridePath","finalUrl"],
+                  [slug, creator, overridePath, productUrlObj.toString()]
+                );
+              } catch {}
+            }
+
+            // 1) No override? Build semantic candidates from the hub HTML
+            if (!overrideUsed) {
+              const candidates = extractProductCandidates(html1, creator);
+              const picks = chooseBestProductCandidates(candidates, slug, dbName);
+              if (!picks.length) {
+                console.log(`hub_no_match: slug=${slug} candidates=${candidates.length}`);
+                writeCsvRow(REVIEW_CSV,
+                  ["slug","creatorUrl","candidateCount","exampleCandidates"],
+                  [slug, u0.href, String(candidates.length), candidates.slice(0,5).map(c=>c.path).join(" | ")]
+                );
+              }
+              // construct URLs preserving query params
+              for (const p of picks) {
+                try {
+                  const u = new URL(u0.origin + p.path);
+                  if (u0.search) {
+                    const origUrl = new URL(u0.href);
+                    origUrl.searchParams.forEach((v, k) => u.searchParams.set(k, v));
+                  }
+                  toProbe.push({ ...p, url: u.toString() });
                 } catch {}
               }
-              const productUrl = productUrlObj.toString();
+            }
 
-              console.log(`hub_drill: slug=${slug} → ${productUrl}`);
-              const r2 = await fetchHttp(productUrl);
+            // 2) Probe 1–2 best candidates
+            for (const cand of toProbe.slice(0, 2)) {
+              console.log(`hub_drill: slug=${slug} → ${cand.url}`);
+              const r2 = await fetchHttp(cand.url);
               if (r2.status >= 200 && r2.status < 400 && /<html|<!doctype/i.test(r2.text)) {
+                // sanity: brand tokens seen in <title>/<h1|h2>
+                if (!brandTokenPresent(r2.text, dbName)) {
+                  console.log(`hub_sanity_fail: slug=${slug} candidate=${cand.path}`);
+                  continue;
+                }
                 const ex2 = extractFromHtml(r2.text, r2.url);
-                const chars2 = (ex2.textSample || "").length;  // char count, consistent with textLength
-                // Only replace if it truly improves evidence (char count threshold: 800 min or +200 improvement)
+                const chars2 = (ex2.textSample || "").length; // char count consistent with textLength
+                // Accept only if substantive improvement (≥800 or +200 over hub)
                 if (chars2 >= 800 || chars2 > textLength + 200) {
-                  // Swap to the better evidence
                   Object.assign(ex, ex2);
                   textLength = chars2;
                   finalUrl = r2.url;
                   drilled = true;
                   console.log(`hub_success: slug=${slug} improved_chars=${chars2}`);
+                  break; // stop after a successful drill
                 } else {
                   console.log(`hub_no_gain: slug=${slug} chars2=${chars2}`);
                 }
               } else {
                 console.log(`hub_fetch_fail: slug=${slug} status=${r2.status}`);
               }
-            } else {
-              console.log(`hub_no_match: slug=${slug} candidates=${candidates.length}`);
+            }
+
+            // 3) If we still didn't improve, log to review queue
+            if (!drilled) {
+              writeCsvRow(REVIEW_CSV,
+                ["slug","creatorUrl","candidateCount","exampleCandidates"],
+                [slug, u0.href, String(toProbe.length), toProbe.slice(0,5).map(p=>p.path).join(" | ")]
+              );
             }
           }
         }
       } catch (e) {
         console.log(`hub_error: slug=${slug} err=${(e && e.message) || e}`);
       }
+      // --- end semantic drill-down --------------------------------------------------
 
       // Thin evidence guard: require minimum signal
       const contentCount = (ex.paras?.length || 0) + (ex.bullets?.length || 0);
@@ -943,28 +1014,55 @@ function isLikelyThinHub(html, evidenceChars) {
 }
 
 // Extract candidate product links under same creator prefix
-function extractProductLinks(html, creatorPathPrefix) {
-  // matches href="/creator/product-slug/" or absolute
-  const links = [];
-  const re = /href\s*=\s*"(.*?)"/gi;
+// Extract anchor text and nearest heading for each candidate under same creator
+function extractProductCandidates(html, creatorPathPrefix) {
+  const out = [];
+  const hrefRe = /<a\b[^>]*href\s*=\s*"([^"]+)"[^>]*>([\s\S]*?)<\/a>/gi;
   let m;
-  while ((m = re.exec(html))) {
-    const href = m[1];
-    if (!href) continue;
-    // Normalise
-    let p = href;
-    if (p.startsWith("//")) p = "https:" + p;
-    // Only keep same-creator paths:
-    //  /creator/... or https://whop.com/creator/...
-    if (p.startsWith("/") && p.toLowerCase().startsWith(creatorPathPrefix.toLowerCase())) {
-      links.push(p);
-    } else if (p.startsWith("http") && p.includes(creatorPathPrefix)) {
-      try { links.push(new URL(p).pathname); } catch {}
-    }
+  while ((m = hrefRe.exec(html))) {
+    let href = m[1] || "";
+    if (!href || href.startsWith("#") || href.startsWith("mailto:") || href.toLowerCase().startsWith("javascript:")) continue;
+
+    // Normalize to pathname, constrain to whop.com and same creator prefix
+    try {
+      let p = href;
+      if (p.startsWith("//")) p = "https:" + p;
+      if (p.startsWith("http")) {
+        const u = new URL(p);
+        if (!u.hostname.endsWith("whop.com")) continue;
+        p = u.pathname;
+      }
+      if (!p.startsWith("/")) continue; // external or weird
+      if (!p.toLowerCase().startsWith(creatorPathPrefix.toLowerCase())) continue;
+
+      // drop creator root only; require /creator/<something>/
+      const segs = p.split("/").filter(Boolean);
+      if (segs.length < 2) continue;
+
+      const anchorHtml = m[2] || "";
+      const anchor = stripTags(anchorHtml).trim();
+
+      // Look for a nearby heading within a small window before the anchor
+      const windowStart = Math.max(0, m.index - 400);
+      const context = html.slice(windowStart, m.index);
+      const headingMatch = context.match(/<(h2|h3)\b[^>]*>([\s\S]*?)<\/\1>\s*$/i);
+      const heading = headingMatch ? stripTags(headingMatch[2]).trim() : "";
+
+      // ensure trailing slash for consistency
+      if (!p.endsWith("/")) p += "/";
+
+      out.push({ path: p, anchor, heading });
+    } catch {}
   }
-  // De-dup and keep only /creator/<something>/
-  const uniq = Array.from(new Set(links)).filter(p => p.split("/").filter(Boolean).length >= 2);
-  return uniq;
+  // de-dup by path, prefer candidate with more text
+  const bestByPath = new Map();
+  for (const c of out) {
+    const prev = bestByPath.get(c.path);
+    const score = (c.anchor?.length || 0) + (c.heading?.length || 0);
+    const prevScore = prev ? (prev.anchor?.length || 0) + (prev.heading?.length || 0) : -1;
+    if (!prev || score > prevScore) bestByPath.set(c.path, c);
+  }
+  return [...bestByPath.values()];
 }
 
 // Simple slug normaliser
@@ -975,30 +1073,66 @@ function normSlug(s) {
     .replace(/^-+|-+$/g, "");
 }
 
-// Choose best product link by matching end segment to target slug (or highest token overlap)
-function chooseBestProductLink(candidates, targetSlug) {
-  if (!candidates.length) return null;
-  const t = normSlug(targetSlug.split("/").pop());
-  let best = null, bestScore = -1;
+// Build simple acronyms like "MF" from "Mondy Friend" or "MF Capital"
+function acronym(str) {
+  return (String(str || "").match(/\b[A-Za-z]/g) || []).join("").toLowerCase();
+}
 
-  for (const path of candidates) {
-    const segs = path.split("/").filter(Boolean);
-    const last = normSlug(segs[segs.length - 1] || "");
-    let score = 0;
-    if (last === t) score = 100;                             // exact
-    else if (last.includes(t) || t.includes(last)) score = 70; // contains
-    else {
-      // token overlap fallback
-      const A = new Set(t.split("-").filter(Boolean));
-      const B = new Set(last.split("-").filter(Boolean));
-      const inter = [...A].filter(x => B.has(x)).length;
-      const union = new Set([...A, ...B]).size;
-      score = union ? Math.round((inter / union) * 60) : 0;
-    }
-    if (score > bestScore) { bestScore = score; best = path; }
+// Semantic score: segment match + title similarity + acronym + depth bias
+function scoreCandidate(cand, targetSlug, dbName) {
+  const t = normSlug(String(targetSlug || "").split("/").pop());
+  const last = normSlug(cand.path.split("/").filter(Boolean).pop() || "");
+
+  let score = 0;
+
+  // 1) URL segment match
+  if (last === t) score += 100;
+  else if (last.includes(t) || t.includes(last)) score += 70;
+
+  // 2) Title similarity (tokens of DB name vs anchor+heading)
+  const nameTokens = new Set(tokens(dbName));
+  const titleTokens = new Set(tokens(`${cand.anchor || ""} ${cand.heading || ""}`));
+  const inter = [...nameTokens].filter(x => titleTokens.has(x)).length;
+  const union = new Set([...nameTokens, ...titleTokens]).size || 1;
+  score += Math.round((inter / union) * 30);
+
+  // 3) Acronym match
+  const aDb = acronym(dbName);
+  const aLast = acronym(last.replace(/-/g, " "));
+  if (aDb && aLast) {
+    if (aDb === aLast) score += 25;
+    else if (aLast.startsWith(aDb) || aDb.startsWith(aLast)) score += 10;
   }
-  // require a minimum plausibility
-  return bestScore >= 40 ? best : null;
+
+  // 4) Path depth bias: /creator/product/ preferred
+  const depth = cand.path.split("/").filter(Boolean).length;
+  if (depth >= 2) score += 10;
+
+  return score;
+}
+
+// Choose 1–2 best candidates to probe (threshold + closeness rule)
+function chooseBestProductCandidates(candidates, targetSlug, dbName) {
+  if (!candidates.length) return [];
+  const scored = candidates
+    .map(c => ({ c, score: scoreCandidate(c, targetSlug, dbName) }))
+    .sort((a, b) => b.score - a.score);
+
+  const picked = [];
+  if (scored[0] && scored[0].score >= 45) picked.push(scored[0].c);
+  if (scored[1] && scored[0] && (scored[0].score - scored[1].score) <= 10 && scored[1].score >= 45) {
+    picked.push(scored[1].c);
+  }
+  return picked;
+}
+
+// Minimal brand-token sanity check on fetched page
+function brandTokenPresent(html, dbName) {
+  const title = (html.match(/<title[^>]*>([\s\S]*?)<\/title>/i) || [])[1] || "";
+  const h = (html.match(/<(h1|h2)\b[^>]*>([\s\S]*?)<\/\1>/i) || [])[2] || "";
+  const hay = stripTags(`${title} ${h}`).toLowerCase();
+  const toks = Array.from(new Set(tokens(dbName)));
+  return toks.some(tk => tk.length >= 3 && hay.includes(tk));
 }
 
 // --- Originality & human-style helpers ---
