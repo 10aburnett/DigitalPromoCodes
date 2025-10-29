@@ -130,6 +130,7 @@ if (!MODEL) {
 }
 
 let usageTotals = { input: 0, output: 0 };
+let drilledCount = 0;  // Track hub drill-down successes
 
 // Evidence helpers
 function sha256(s) { return crypto.createHash("sha256").update(s).digest("hex"); }
@@ -261,7 +262,8 @@ async function obtainEvidence(url, slug, name, forceRecrawl = false) {
   }
 
   const doFetch = async () => {
-    const { status, text, url: finalUrl, headers } = await fetchHttp(url);
+    const { status, text, url: fetchedUrl, headers } = await fetchHttp(url);
+    let finalUrl = fetchedUrl;  // mutable for drill-down reassignment
 
     // Content-Type sanity check (avoid caching non-HTML)
     const ct = (headers?.get?.("content-type") || "").toLowerCase();
@@ -274,7 +276,7 @@ async function obtainEvidence(url, slug, name, forceRecrawl = false) {
       const ex = extractFromHtml(html1, finalUrl);
 
       // Cookie-wall / JS-shell detection
-      const textLength = (ex.textSample || "").length;
+      let textLength = (ex.textSample || "").length;  // mutable for drill-down reassignment
       if (textLength < 400) {
         const lowerText = html1.toLowerCase();
         if (lowerText.includes("enable javascript") || lowerText.includes("cookie settings") ||
@@ -1125,7 +1127,7 @@ function chooseBestProductCandidates(candidates, targetSlug, dbName) {
 
   const picked = [];
   if (scored[0] && scored[0].score >= 45) picked.push(scored[0].c);
-  if (scored[1] && scored[0] && (scored[0].score - scored[1].score) <= 10 && scored[1].score >= 45) {
+  if (scored[1] && scored[0] && (scored[0].score - scored[1].score) <= 15 && scored[1].score >= 45) {
     picked.push(scored[1].c);
   }
   return picked;
@@ -1659,7 +1661,7 @@ async function worker(task) {
       }
     };
     fs.appendFileSync(OUT_FILE, JSON.stringify(dryOutput) + "\n");
-    if (evidence?.drilled) drilled++;
+    if (evidence?.drilled) drilledCount++;
     ck.done[slug] = true;
     delete ck.pending[slug];
     fs.writeFileSync(CHECKPOINT, JSON.stringify(ck, null, 2));
@@ -1965,7 +1967,7 @@ ${JSON.stringify(obj)}
       };
 
       fs.appendFileSync(OUT_FILE, JSON.stringify(output) + "\n");
-      if (evidence?.drilled) drilled++;
+      if (evidence?.drilled) drilledCount++;
       ck.done[slug] = true;
       delete ck.pending[slug];
 
@@ -2045,7 +2047,7 @@ ${JSON.stringify(obj)}
             };
 
             fs.appendFileSync(OUT_FILE, JSON.stringify(output2) + "\n");
-            if (evidence?.drilled) drilled++;
+            if (evidence?.drilled) drilledCount++;
             ck.done[slug] = true;
             delete ck.pending[slug];
             process.env.MODEL = prevModel;
@@ -2068,7 +2070,7 @@ async function run() {
     console.log("🔍 DRY-RUN MODE: Validating fetch/grounding without LLM calls");
   }
   const queue = rows.filter(r => !alreadyDone.has(r.slug));
-  let i = 0, ok = 0, fail = 0, drilled = 0;
+  let i = 0, ok = 0, fail = 0;
   while (i < queue.length) {
     const slice = queue.slice(i, i + CONCURRENCY);
     try {
@@ -2106,7 +2108,7 @@ async function run() {
   }
   console.log(`✅ Completed. Wrote to ${OUT_FILE}. Success=${ok}, batchFails=${fail}`);
   console.log(`Token usage summary: input=${usageTotals.input}, output=${usageTotals.output}`);
-  if (drilled > 0) console.log(`Hub drill-downs: ${drilled} (converted from thin hubs to specific product pages)`);
+  if (drilledCount > 0) console.log(`Hub drill-downs: ${drilledCount} (converted from thin hubs to specific product pages)`);
 
   // Report rejects
   const rejectsCount = fs.existsSync(REJECTS_FILE) ? fs.readFileSync(REJECTS_FILE, "utf8").split(/\r?\n/).filter(Boolean).length : 0;
