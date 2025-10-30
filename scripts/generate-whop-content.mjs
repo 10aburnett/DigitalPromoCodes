@@ -576,7 +576,8 @@ SEO REQUIREMENTS (based on top-ranking coupon pages):
    - Example bullet: "Discounts may vary by creator or course category."
    - Keep tone informative but not restrictive.
 
-5. faqcontent (3-6 FAQs, Schema.org FAQPage optimized):
+5. faqcontent (ARRAY of 4-6 FAQ objects, Schema.org FAQPage optimized):
+   - CRITICAL: Return as JSON array: [{"question": "...", "answerHtml": "..."}, ...]
    - Each answer: 40-70 words, friendly, complete sentences.
    - NEVER single-word replies ("Yes", "No"). Always explain and expand.
    - Cover topics like: "How do I use [name] promo codes?", "Can I stack multiple offers?", "Is this deal legitimate?".
@@ -589,6 +590,7 @@ FORMATTING RULES:
 - Avoid filler words, repetition, and AI-sounding phrasing.
 - Output strictly valid JSON (object only, no markdown).
 - Keys must be exactly: slug, aboutcontent, howtoredeemcontent, promodetailscontent, termscontent, faqcontent.
+- CRITICAL: faqcontent MUST be an array of objects with "question" (string) and "answerHtml" (string) keys.
 
 E-E-A-T SIGNALS:
 - If on whop.com, you may reference it as "a well-known creator platform" or "established marketplace".
@@ -669,7 +671,7 @@ SEO WRITING GUIDELINES:
 - promodetailscontent: Use "current offer", "special offer", or "${safeName} discount" as secondary keywords. ${hasVerified ? 'You may use "verified" if appropriate.' : 'Avoid "verified".'} Focus on value props.
 - howtoredeemcontent: ${isWhopHost ? 'You may mention "Whop.com" once in redemption steps.' : 'Do not mention Whop.com.'}
 - termscontent: Include expiry, usage limits${isWhopHost ? ', or platform terms' : ''}. Optionally use one secondary keyword.
-- faqcontent: Complete 40-70 word answers. Never "Yes"/"No" only. Cover common questions about promo codes, stacking offers, deal legitimacy.
+- faqcontent: MUST be array format: [{"question":"...", "answerHtml":"..."}]. Complete 40-70 word answers. Never "Yes"/"No" only. Cover common questions about promo codes, stacking offers, deal legitimacy.
 - Keyword density: primary ("${safeName} promo code") ≤1 per section; secondary ("discount", "offer", etc.) ≤2 combined per section.
 
 FORMATTING:
@@ -679,6 +681,19 @@ FORMATTING:
 - For fields marked PRESENT, return minimal placeholder. System will preserve existing content.
 
 Return single JSON object with exact keys: slug, aboutcontent, howtoredeemcontent, promodetailscontent, termscontent, faqcontent.
+
+EXAMPLE JSON STRUCTURE:
+{
+  "slug": "example-slug",
+  "aboutcontent": "<p>HTML content...</p>",
+  "howtoredeemcontent": "<ol><li>Step 1</li></ol>",
+  "promodetailscontent": "<ul><li>Benefit 1</li></ul>",
+  "termscontent": "<ul><li>Term 1</li></ul>",
+  "faqcontent": [
+    {"question": "How do I...", "answerHtml": "<p>You can...</p>"},
+    {"question": "What is...", "answerHtml": "<p>It is...</p>"}
+  ]
+}
 `;
 };
 
