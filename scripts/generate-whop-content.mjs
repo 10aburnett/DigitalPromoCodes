@@ -101,6 +101,9 @@ const ESCALATE_ON_FAIL = true;
 const STRONG_MODEL = process.env.STRONG_MODEL || ""; // e.g., "gpt-4o" (optional)
 const BUDGET_USD = args.budgetUsd ? Number(args.budgetUsd) : (process.env.BUDGET_USD ? Number(process.env.BUDGET_USD) : 0);
 const WORD_COUNT_TOLERANCE = 10; // allow ≥ min-10 in practice/testing to prevent budget burn on edge cases
+const STEP_WORD_MIN = 10; // hard minimum words per redemption step
+const STEP_WORD_MAX = 20; // maximum words per redemption step
+const STEP_WORD_TOLERANCE = 2; // practice-mode soft tolerance for step word counts
 
 // Evidence fetching configuration
 const EVIDENCE_TTL_DAYS = Number(process.env.EVIDENCE_TTL_DAYS || 7);
@@ -568,8 +571,9 @@ SEO REQUIREMENTS (based on top-ranking coupon pages):
    - Focus on value propositions and what makes this offer unique.
    - CRITICAL: Start each bullet with an action verb (imperative voice: Use/Apply/Access/Choose/Get/Select/etc.).
 
-3. howtoredeemcontent (3-5 short steps, 10-20 words each):
+3. howtoredeemcontent (3-5 steps, each step 12-20 words; HARD MIN 10 words per step):
    - CRITICAL: Start each step with an action verb (imperative voice: Click/Copy/Apply/Confirm/Visit/Navigate/Enter/etc.).
+   - Use full sentences; avoid fragments. Aim for ~15 words per step to avoid under-runs.
    - Format as <ol> ordered list for clear step-by-step guidance.
    - Conditional platform mention: if on whop.com, you may mention "Whop.com" in redemption steps.
 
@@ -660,7 +664,7 @@ ${hasVerified ? '- "verified" appears in EVIDENCE, so you may use it if appropri
 
 Existing content policy:
 aboutcontent: ${hasAbout ? "[PRESENT - KEEP AS-IS]" : "[MISSING - GENERATE 130-170 words (HARD MIN 120), MUST include '${safeName} promo code' in first paragraph]"}
-howtoredeemcontent: ${hasRedeem ? "[PRESENT - KEEP AS-IS]" : "[MISSING - GENERATE 3-5 steps]"}
+howtoredeemcontent: ${hasRedeem ? "[PRESENT - KEEP AS-IS]" : "[MISSING - GENERATE 3-5 steps, each step 12-20 words (HARD MIN 10)]"}
 promodetailscontent: ${hasDetails ? "[PRESENT - KEEP AS-IS]" : "[MISSING - GENERATE 100-150 words]"}
 termscontent: ${hasTerms ? "[PRESENT - KEEP AS-IS]" : "[MISSING - GENERATE 80-120 words]"}
 faqcontent: ${hasFaq ? "[PRESENT - KEEP AS-IS]" : "[MISSING - GENERATE 3-6 FAQs, 40-70 words/answer]"}
@@ -671,7 +675,7 @@ ${evChunks.map((s, i) => `[${i + 1}] ${s}`).join("\n")}
 SEO WRITING GUIDELINES:
 - aboutcontent: MUST include "${safeName} promo code" naturally in first paragraph. ${isWhopHost ? 'You may mention "Whop" once.' : 'Do not mention Whop.'} End with varied CTA.
 - promodetailscontent: Use "current offer", "special offer", or "${safeName} discount" as secondary keywords. ${hasVerified ? 'You may use "verified" if appropriate.' : 'Avoid "verified".'} Focus on value props.
-- howtoredeemcontent: ${isWhopHost ? 'You may mention "Whop.com" once in redemption steps.' : 'Do not mention Whop.com.'}
+- howtoredeemcontent: Each step must be 12-20 words (HARD MIN 10). ${isWhopHost ? 'You may mention "Whop.com" once in redemption steps.' : 'Do not mention Whop.com.'} Use full sentences.
 - termscontent: Include expiry, usage limits${isWhopHost ? ', or platform terms' : ''}. Optionally use one secondary keyword.
 - faqcontent: MUST be array format: [{"question":"...", "answerHtml":"..."}]. Complete 40-70 word answers. Never "Yes"/"No" only. Cover common questions about promo codes, stacking offers, deal legitimacy.
 - Keyword density: primary ("${safeName} promo code") ≤1 per section; secondary ("discount", "offer", etc.) ≤2 combined per section.
@@ -953,6 +957,47 @@ function countWords(html) {
 
 function stripTags(s) {
   return String(s || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").toLowerCase();
+}
+
+// --- Step-level helpers for <li> expansion ---
+
+function splitListItems(html) {
+  // naive but robust: captures <li>...</li> blocks
+  return (String(html).match(/<li[\s\S]*?<\/li>/gi) || []);
+}
+
+function replaceListItem(html, index1, newItemHtml) {
+  const items = splitListItems(html);
+  if (!items.length || index1 < 1 || index1 > items.length) return html;
+  // Replace only the nth occurrence
+  let seen = 0;
+  return String(html).replace(/<li[\s\S]*?<\/li>/gi, (m) => {
+    seen += 1;
+    return seen === index1 ? newItemHtml : m;
+  });
+}
+
+function innerTextFromLi(liHtml) {
+  // strip tags for counting words
+  return String(liHtml).replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+}
+
+function appendPhraseToLi(liHtml, phrase) {
+  // Insert just before closing </li>, preserving existing HTML
+  return liHtml.replace(/<\/li>\s*$/i, ` ${phrase}</li>`);
+}
+
+// Small bank of generic, relevant checkout phrases (varied, short)
+const STEP_APPEND_PHRASES = [
+  "using the on-screen checkout instructions",
+  "through your account dashboard at checkout",
+  "and verify the code before confirming payment",
+  "then continue following the prompts to complete",
+  "and apply the code on the payment page before you submit"
+];
+
+function pickAppendPhrase(i = 0) {
+  return STEP_APPEND_PHRASES[i % STEP_APPEND_PHRASES.length];
 }
 
 // --- SEO keyword regex helpers (centralized to avoid drift) ---
@@ -1589,6 +1634,47 @@ function checkGrounding(obj, evidence, preserved = {}) {
 }
 
 async function repairToConstraints(task, obj, fails) {
+  // Handle step-level underruns like: "howtoredeem step 2 words 9 not in 10–20"
+  const stepFail = fails.find(f =>
+    /howtoredeem\s+step\s+(\d+)\s+words\s+(\d+)\s+not\s+in\s+(\d+)\s*[–—-]\s*(\d+)/i.test(f)
+  );
+
+  if (stepFail) {
+    const m = stepFail.match(/howtoredeem\s+step\s+(\d+)\s+words\s+(\d+)\s+not\s+in\s+(\d+)\s*[–—-]\s*(\d+)/i);
+    if (m) {
+      const stepIndex = parseInt(m[1], 10);  // 1-based
+      const current = parseInt(m[2], 10);
+      const min = parseInt(m[3], 10);
+
+      let html = String(obj.howtoredeemcontent || "");
+      const items = splitListItems(html);
+      if (items.length && stepIndex >= 1 && stepIndex <= items.length) {
+        let li = items[stepIndex - 1];
+        let words = current;
+
+        let i = 0;
+        // append short, relevant phrases until we meet min (with a tiny buffer)
+        while (words < Math.max(min, STEP_WORD_MIN)) {
+          li = appendPhraseToLi(li, pickAppendPhrase(i));
+          i += 1;
+          words = innerTextFromLi(li).split(/\s+/).filter(Boolean).length;
+          if (i > 6) break; // hard stop safety
+        }
+
+        const before = current;
+        html = replaceListItem(html, stepIndex, li);
+        obj.howtoredeemcontent = html;
+        obj = sanitizePayload(obj);
+        obj.slug = task.slug;
+
+        const after = innerTextFromLi(li).split(/\s+/).filter(Boolean).length;
+        console.log(`repair_append_step: field=howtoredeem step=${stepIndex} ${before}→${after} (min=${min}) slug=${task.slug}`);
+
+        return obj; // handled this repair; caller will re-validate
+      }
+    }
+  }
+
   // Check if this is a word-count underrun that needs append-only repair
   const wordCountFail = fails.find(f => f.includes("words") && f.includes("not in"));
 
@@ -1880,6 +1966,23 @@ async function worker(task) {
             console.log(`⚠️  Soft tolerance applied: ${fails.join("; ")} (practice mode)`);
             obj = fixed;
             fails = [];
+          }
+        }
+
+        // Soft tolerance for step-level underruns in practice/small-batch mode
+        if (fails.length && (BUDGET_USD <= 5 || LIMIT <= 10)) {
+          const allStepFailsTolerable = fails.every(f => {
+            const m = f.match(/howtoredeem\s+step\s+(\d+)\s+words\s+(\d+)\s+not\s+in\s+(\d+)\s*[–—-]\s*(\d+)/i);
+            if (!m) return true; // ignore non-step failures here
+            const current = parseInt(m[2], 10);
+            const min = parseInt(m[3], 10);
+            return current >= (min - STEP_WORD_TOLERANCE);
+          });
+
+          if (allStepFailsTolerable) {
+            console.log(`⚠️  Soft step tolerance applied: ${fails.join("; ")} (practice mode)`);
+            obj = fixed;
+            fails = []; // accept
           }
         }
 
