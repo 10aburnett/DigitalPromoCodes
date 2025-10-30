@@ -100,6 +100,7 @@ const MAX_REPAIRS = 2; // attempts to repair with same model
 const ESCALATE_ON_FAIL = true;
 const STRONG_MODEL = process.env.STRONG_MODEL || ""; // e.g., "gpt-4o" (optional)
 const BUDGET_USD = args.budgetUsd ? Number(args.budgetUsd) : (process.env.BUDGET_USD ? Number(process.env.BUDGET_USD) : 0);
+const WORD_COUNT_TOLERANCE = 10; // allow ≥ min-10 in practice/testing to prevent budget burn on edge cases
 
 // Evidence fetching configuration
 const EVIDENCE_TTL_DAYS = Number(process.env.EVIDENCE_TTL_DAYS || 7);
@@ -552,13 +553,14 @@ CRITICAL FOUNDATION:
 
 SEO REQUIREMENTS (based on top-ranking coupon pages):
 
-1. aboutcontent (120-180 words, 2-3 short paragraphs):
+1. aboutcontent (130-170 words, HARD MIN 120, 2-3 short paragraphs):
    - MUST include "[name] promo code" naturally in the first paragraph (critical for SEO - Whop uses "promo code" terminology).
    - Optionally sprinkle "discount", "offer", or "save on [name]" as secondary keywords (≤2 total).
    - Explain what the course or product is and why it's useful.
    - Conditional platform mention: if on whop.com, you may mention "Whop" once.
    - End with a varied call-to-action (explore/compare/check/start/look pattern - vary phrasing per listing to avoid Google fingerprinting).
    - Use Grade 8-10 English, varied sentence lengths (≥3 sentences with mean 13–22 words, stdev ≥4 for human cadence).
+   - **HARD MINIMUM**: If your draft is under 120 words, continue the paragraph until you reach at least 120 words. Do not end early.
 
 2. promodetailscontent (100-150 words):
    - Include a <ul> list of 3-5 bullet points summarizing key benefits or pricing tiers.
@@ -657,7 +659,7 @@ ${isWhopHost ? '- Conditional platform keyword: "Whop" or "Whop.com" (use once i
 ${hasVerified ? '- "verified" appears in EVIDENCE, so you may use it if appropriate' : '- "verified" not in EVIDENCE: avoid that word'}
 
 Existing content policy:
-aboutcontent: ${hasAbout ? "[PRESENT - KEEP AS-IS]" : "[MISSING - GENERATE 120-180 words, MUST include '${safeName} promo code' in first paragraph]"}
+aboutcontent: ${hasAbout ? "[PRESENT - KEEP AS-IS]" : "[MISSING - GENERATE 130-170 words (HARD MIN 120), MUST include '${safeName} promo code' in first paragraph]"}
 howtoredeemcontent: ${hasRedeem ? "[PRESENT - KEEP AS-IS]" : "[MISSING - GENERATE 3-5 steps]"}
 promodetailscontent: ${hasDetails ? "[PRESENT - KEEP AS-IS]" : "[MISSING - GENERATE 100-150 words]"}
 termscontent: ${hasTerms ? "[PRESENT - KEEP AS-IS]" : "[MISSING - GENERATE 80-120 words]"}
@@ -1587,6 +1589,79 @@ function checkGrounding(obj, evidence, preserved = {}) {
 }
 
 async function repairToConstraints(task, obj, fails) {
+  // Check if this is a word-count underrun that needs append-only repair
+  const wordCountFail = fails.find(f => f.includes("words") && f.includes("not in"));
+
+  if (wordCountFail) {
+    // Extract field name and current count from error message
+    // Format: "aboutcontent words 94 not in 120–180" (robust against hyphen variants)
+    const match = wordCountFail.match(
+      /^(\w+)\s+words\s+(\d+)\s+not\s+in\s+(\d+)\s*[–—-]\s*(\d+)$/i
+    );
+    if (match) {
+      const [, fieldName, currentStr, minStr] = match;
+      const current = parseInt(currentStr);
+      const min = parseInt(minStr);
+
+      if (current < min) {
+        // Append-only repair for under-minimum
+        const missing = min - current;
+        const buffer = 10; // Add buffer to avoid boundary issues
+        const targetWords = missing + buffer;
+
+        // Log before count for observability
+        const before = countWords(obj[fieldName]);
+
+        const appendPrompt = `
+You previously wrote the field "${fieldName}" for slug "${task.slug}".
+It is ${current} words; the hard minimum is ${min}.
+
+TASK: Append approximately ${targetWords} more words to the end, keeping tone/style consistent with existing content.
+Do NOT rewrite or shorten existing text. Only add to the end to reach the minimum.
+Use information from EVIDENCE only. If uncertain, add general helpful context about promo codes or the product category.
+Return ONLY a JSON object with the single key "${fieldName}" containing the COMPLETE updated HTML string (original + appended).
+
+Current ${fieldName}:
+${obj[fieldName]}
+`;
+        const raw = await api.callLLM(appendPrompt);
+        const firstBrace = raw.indexOf("{");
+        const lastBrace = raw.lastIndexOf("}");
+        const jsonStr = (firstBrace >= 0 && lastBrace > firstBrace) ? raw.slice(firstBrace, lastBrace+1) : raw;
+        const updated = JSON.parse(jsonStr);
+
+        // Guard against malformed repair JSON (handle nested or alternate keys)
+        const candidate =
+          updated[fieldName] ??
+          updated?.data?.[fieldName] ??
+          updated?.result?.[fieldName];
+
+        if (typeof candidate === "string" && candidate.length > 0) {
+          obj[fieldName] = candidate;
+        } else {
+          // Ultra-safe fallback: append raw text wrapped in a <p>
+          const extra = (updated.text || updated.content || "").trim();
+          if (extra) {
+            obj[fieldName] = obj[fieldName].replace(/<\/p>\s*$/, '') + ' ' + extra + '</p>';
+          } else {
+            // If no usable content, throw to trigger fallback repair
+            throw new Error(`Repair returned unusable format for ${fieldName}`);
+          }
+        }
+
+        obj = sanitizePayload(obj);
+        obj.slug = task.slug;
+
+        // Log after count for observability
+        const after = countWords(obj[fieldName]);
+        console.log(`repair_append: field=${fieldName} ${before}→${after} (min=${min}) slug=${task.slug}`);
+
+        return obj;
+      }
+    }
+  }
+
+  // Fall back to generic repair for other issues
   const fixPrompt = `
 You are fixing a JSON object that must conform exactly to constraints.
 IMPORTANT: Only use information present in EVIDENCE (same as before). If uncertain, omit or say "confirm at checkout".
@@ -1786,6 +1861,28 @@ async function worker(task) {
             if (tries >= MAX_REPAIRS) throw e;
           }
         }
+
+        // Apply soft tolerance for word-count underruns in practice/small-batch mode
+        if (fails.length && (BUDGET_USD <= 5 || LIMIT <= 10)) {
+          const tolerableFails = fails.filter(f => {
+            const match = f.match(/^(\w+)\s+words\s+(\d+)\s+not\s+in\s+(\d+)\s*[–—-]\s*(\d+)$/i);
+            if (match) {
+              const [, , currentStr, minStr] = match;
+              const current = parseInt(currentStr);
+              const min = parseInt(minStr);
+              return current >= (min - WORD_COUNT_TOLERANCE);
+            }
+            return false;
+          });
+
+          if (tolerableFails.length === fails.length) {
+            // All failures are tolerable underruns - accept with warning
+            console.log(`⚠️  Soft tolerance applied: ${fails.join("; ")} (practice mode)`);
+            obj = fixed;
+            fails = [];
+          }
+        }
+
         if (fails.length) throw new Error(`Count checks failed after repair: ${fails.join("; ")}`);
       }
 
