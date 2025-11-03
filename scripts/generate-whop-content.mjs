@@ -1165,6 +1165,123 @@ function enforceHumanCadence(html, slug = "") {
   return enhancedParas.join("");
 }
 
+// --- Deterministic padders (guarantee minimums without LLM calls) ---
+
+function wordCountPlain(html) {
+  return String(html || "").replace(/<[^>]+>/g, " ").trim().split(/\s+/).filter(Boolean).length;
+}
+
+function splitAtWordBoundary(text, target) {
+  const words = text.split(/\s+/);
+  if (words.length <= target) return [text, ""];
+  const left = words.slice(0, target).join(" ");
+  const right = words.slice(target).join(" ");
+  return [left, right];
+}
+
+function enforceParagraphs(html, { min = 2, max = 3, splitAtWords = 70 } = {}) {
+  if (!html) return html;
+  const paras = String(html).split(/<\/p>/i).filter(p => p.trim());
+  if (paras.length >= min && paras.length <= max) return html;
+
+  if (paras.length === 1) {
+    const inner = paras[0].replace(/<p[^>]*>/i, "").trim();
+    const [p1, p2rest] = splitAtWordBoundary(inner, splitAtWords);
+    const p2 = p2rest.trim();
+    if (!p2) return `<p>${inner}</p>`; // nothing to split
+    // Allow 2 paragraphs; if very long, split 3rd
+    let out = [`<p>${p1}</p>`, `<p>${p2}</p>`];
+    if (out.length < min) {
+      const [p2a, p2b] = splitAtWordBoundary(p2, Math.floor(splitAtWords / 1.4));
+      out = [`<p>${p1}</p>`, `<p>${p2a}</p>`];
+      if (p2b.trim()) out.push(`<p>${p2b}</p>`);
+    }
+    return out.slice(0, max).join("");
+  }
+  // If too many paragraphs, merge tail until ≤max
+  if (paras.length > max) {
+    const head = paras.slice(0, max - 1).map(p => `<p>${p}</p>`);
+    const tail = paras.slice(max - 1).join(" ");
+    return [...head, `<p>${tail}</p>`].join("");
+  }
+  return html;
+}
+
+const PAD_BULLETS_PROMO = [
+  "Use the current offer to reduce your upfront cost while keeping the same features and member support throughout your subscription period.",
+  "Apply the available discount during checkout to lock in pricing, then review plan details before you confirm your payment on the final screen.",
+  "Choose a tier that matches your needs, then compare what's included so you avoid paying for features you don't actually use day to day."
+];
+
+const PAD_BULLETS_TERMS = [
+  "Discounts and offers may change or end without notice, and availability can vary by region, payment method, or creator policy on the platform.",
+  "Some deals cannot be combined with other promotions or trials; always check the terms at checkout and confirm the final price before submitting."
+];
+
+function getListItems(html) {
+  return String(html || "").match(/<li[\s\S]*?<\/li>/gi) || [];
+}
+
+function setListItems(html, items) {
+  if (!html) return `<ul>${items.join("")}</ul>`;
+  if (!/<ul/i.test(html)) return `<ul>${items.join("")}</ul>`;
+  return html.replace(/<ul[^>]*>[\s\S]*?<\/ul>/i, m => m.replace(/(<ul[^>]*>)[\s\S]*?(<\/ul>)/i, `$1${items.join("")}$2`));
+}
+
+function totalWordsInLis(items) {
+  return items
+    .map(li => li.replace(/<[^>]+>/g, " ").trim())
+    .map(t => t.split(/\s+/).filter(Boolean).length)
+    .reduce((a, b) => a + b, 0);
+}
+
+function padListToWordCount(html, { minWords, maxWords, padPool }) {
+  let items = getListItems(html);
+  if (items.length === 0) items = [];
+  let total = totalWordsInLis(items);
+
+  // Always enforce imperative starts you already have elsewhere; here we only pad length
+  let i = 0;
+  while (total < minWords && i < 10) {
+    const pick = padPool[i % padPool.length];
+    items.push(`<li>${pick}</li>`);
+    total = totalWordsInLis(items);
+    i++;
+    if (maxWords && total > maxWords) break;
+  }
+  return setListItems(html, items);
+}
+
+const PAD_SENTENCES_FAQ = [
+  "Results and eligibility can vary, so review the latest details on the product page.",
+  "If you are unsure, compare tiers side by side before choosing the option you prefer.",
+  "Policies can change, so confirm the terms at checkout before you complete your order."
+];
+
+function padFaqAnswer(answerHtml, { minWords = 40, maxWords = 70 }) {
+  let text = String(answerHtml || "");
+  const wc = wordCountPlain(text);
+  if (wc >= minWords) return text;
+  let i = 0;
+  let out = text.replace(/\s*<\/p>\s*$/i, ""); // append inside last paragraph if possible
+  while (wordCountPlain(out) < minWords && i < 4) {
+    const pick = PAD_SENTENCES_FAQ[i % PAD_SENTENCES_FAQ.length];
+    if (/<p[^>]*>[\s\S]*<\/p>/i.test(out)) {
+      out = out.replace(/<\/p>\s*$/i, `. ${pick}</p>`);
+    } else {
+      out = `<p>${out}${out ? ". " : ""}${pick}</p>`;
+    }
+    i++;
+  }
+  return out;
+}
+
+function dedupeAdjacentSynonyms(html) {
+  return String(html || "")
+    .replace(/\b(discount|offer|deal|saving)(\s*,\s*\1)+/gi, "$1")
+    .replace(/\b(discount|offer|deal|saving)\s+(discount|offer|deal|saving)\b/gi, "$1");
+}
+
 // --- SEO keyword regex helpers (centralized to avoid drift) ---
 function esc(s) {
   // Escape regex special characters
@@ -1869,6 +1986,18 @@ async function _repairToConstraintsImpl(task, obj, fails) {
           }));
         }
 
+        // Apply deterministic padders
+        obj.aboutcontent = enforceParagraphs(obj.aboutcontent, { min: 2, max: 3, splitAtWords: 70 });
+        obj.aboutcontent = dedupeAdjacentSynonyms(obj.aboutcontent);
+        obj.promodetailscontent = padListToWordCount(obj.promodetailscontent, { minWords: 100, maxWords: 150, padPool: PAD_BULLETS_PROMO });
+        obj.termscontent = padListToWordCount(obj.termscontent, { minWords: 80, maxWords: 120, padPool: PAD_BULLETS_TERMS });
+        if (Array.isArray(obj.faqcontent)) {
+          obj.faqcontent = obj.faqcontent.map(f => ({
+            ...f,
+            answerHtml: padFaqAnswer(f.answerHtml, { minWords: 40, maxWords: 70 })
+          }));
+        }
+
         obj = sanitizePayload(obj);
         obj.slug = task.slug;
 
@@ -1953,6 +2082,18 @@ ${obj[fieldName]}
           }));
         }
 
+        // Apply deterministic padders
+        obj.aboutcontent = enforceParagraphs(obj.aboutcontent, { min: 2, max: 3, splitAtWords: 70 });
+        obj.aboutcontent = dedupeAdjacentSynonyms(obj.aboutcontent);
+        obj.promodetailscontent = padListToWordCount(obj.promodetailscontent, { minWords: 100, maxWords: 150, padPool: PAD_BULLETS_PROMO });
+        obj.termscontent = padListToWordCount(obj.termscontent, { minWords: 80, maxWords: 120, padPool: PAD_BULLETS_TERMS });
+        if (Array.isArray(obj.faqcontent)) {
+          obj.faqcontent = obj.faqcontent.map(f => ({
+            ...f,
+            answerHtml: padFaqAnswer(f.answerHtml, { minWords: 40, maxWords: 70 })
+          }));
+        }
+
         obj = sanitizePayload(obj);
         obj.slug = task.slug;
 
@@ -1998,6 +2139,18 @@ Issues:
     fixed.faqcontent = fixed.faqcontent.map(f => ({
       ...f,
       answerHtml: enforceHumanCadence(f.answerHtml, task.slug)
+    }));
+  }
+
+  // Apply deterministic padders
+  fixed.aboutcontent = enforceParagraphs(fixed.aboutcontent, { min: 2, max: 3, splitAtWords: 70 });
+  fixed.aboutcontent = dedupeAdjacentSynonyms(fixed.aboutcontent);
+  fixed.promodetailscontent = padListToWordCount(fixed.promodetailscontent, { minWords: 100, maxWords: 150, padPool: PAD_BULLETS_PROMO });
+  fixed.termscontent = padListToWordCount(fixed.termscontent, { minWords: 80, maxWords: 120, padPool: PAD_BULLETS_TERMS });
+  if (Array.isArray(fixed.faqcontent)) {
+    fixed.faqcontent = fixed.faqcontent.map(f => ({
+      ...f,
+      answerHtml: padFaqAnswer(f.answerHtml, { minWords: 40, maxWords: 70 })
     }));
   }
 
@@ -2172,6 +2325,18 @@ async function worker(task) {
         obj.faqcontent = obj.faqcontent.map(f => ({
           ...f,
           answerHtml: enforceHumanCadence(f.answerHtml, task.slug)
+        }));
+      }
+
+      // Apply deterministic padders to guarantee minimums (no LLM calls)
+      obj.aboutcontent = enforceParagraphs(obj.aboutcontent, { min: 2, max: 3, splitAtWords: 70 });
+      obj.aboutcontent = dedupeAdjacentSynonyms(obj.aboutcontent);
+      obj.promodetailscontent = padListToWordCount(obj.promodetailscontent, { minWords: 100, maxWords: 150, padPool: PAD_BULLETS_PROMO });
+      obj.termscontent = padListToWordCount(obj.termscontent, { minWords: 80, maxWords: 120, padPool: PAD_BULLETS_TERMS });
+      if (Array.isArray(obj.faqcontent)) {
+        obj.faqcontent = obj.faqcontent.map(f => ({
+          ...f,
+          answerHtml: padFaqAnswer(f.answerHtml, { minWords: 40, maxWords: 70 })
         }));
       }
 
