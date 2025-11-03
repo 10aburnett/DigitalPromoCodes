@@ -1208,14 +1208,14 @@ function enforceParagraphs(html, { min = 2, max = 3, splitAtWords = 70 } = {}) {
 }
 
 const PAD_BULLETS_PROMO = [
-  "Use the current offer to reduce your upfront cost while keeping the same features and member support throughout your subscription period.",
-  "Apply the available discount during checkout to lock in pricing, then review plan details before you confirm your payment on the final screen.",
-  "Choose a tier that matches your needs, then compare what's included so you avoid paying for features you don't actually use day to day."
+  "Apply the available discount during checkout to lock in pricing, then review plan details before you confirm on the final screen, including renewal cadence and any usage limits.",
+  "Join with the tier that matches your needs, compare what's included across options, and confirm that the features you rely on are part of your selection before you proceed.",
+  "Access the current offer to reduce upfront cost while keeping the same features and support, and verify whether the price is promotional, introductory, or ongoing for renewals."
 ];
 
 const PAD_BULLETS_TERMS = [
-  "Discounts and offers may change or end without notice, and availability can vary by region, payment method, or creator policy on the platform.",
-  "Some deals cannot be combined with other promotions or trials; always check the terms at checkout and confirm the final price before submitting."
+  "Discounts and offers may change or end without notice; availability can vary by region, payment method, or creator policy. Always confirm the final price and renewal cadence at checkout.",
+  "Some deals cannot be combined with other promotions or trials; check eligibility, refund rules, and platform terms so you understand inclusions, limitations, and cancellation windows."
 ];
 
 function getListItems(html) {
@@ -1272,6 +1272,17 @@ function padListToWordCount(
     // If we overshot by words, trim back toward maxItems but never below minItems
     while (totalWordsInLis(items) > maxWords && items.length > minItems) {
       items.pop();
+    }
+  }
+
+  // 4) Last-resort guarantee: if we still haven't hit minWords after maxItems, add one long neutral bullet
+  if (totalWordsInLis(items) < minWords) {
+    const LONG_PAD = "Compare the plan features and renewal terms carefully, then apply the available discount at checkout to lock in today's pricing. Review billing cadence, platform policies, and access details so you understand exactly what's included before confirming the order.";
+    if (items.length < maxItems) {
+      items.push(`<li>${LONG_PAD}</li>`);
+    } else {
+      // replace the last bullet with a longer one to reach the floor
+      items[items.length - 1] = `<li>${LONG_PAD}</li>`;
     }
   }
 
@@ -1370,12 +1381,15 @@ function enforceBulletRange(html, { minItems = 3, maxItems = 5, pool = PAD_BULLE
 }
 
 function ensureImperativeStart(liHtml) {
-  // If a bullet starts with "Enter/Choose/Confirm/Apply/Compare/Review/Select/Join/Access/Start/Explore"
-  // we're fine. If it starts with an article/pronoun, prepend "Review ".
-  return String(liHtml || "").replace(
-    /(<li[^>]*>)\s*(?:The|This|These|You|Your|It|A|An)\b/i,
-    (_m, open) => `${open}Review `
-  );
+  let s = String(liHtml || "");
+
+  // Normalize "Use ..." to an accepted imperative verb
+  s = s.replace(/(<li[^>]*>)\s*Use\b/i, (_m, open) => `${open}Apply`);
+
+  // If bullet starts with an article/pronoun, prepend "Review "
+  s = s.replace(/(<li[^>]*>)\s*(?:The|This|These|You|Your|It|A|An)\b/i, (_m, open) => `${open}Review `);
+
+  return s;
 }
 
 function finalHtmlTidy(obj) {
