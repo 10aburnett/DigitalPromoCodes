@@ -1235,20 +1235,46 @@ function totalWordsInLis(items) {
     .reduce((a, b) => a + b, 0);
 }
 
-function padListToWordCount(html, { minWords, maxWords, padPool }) {
+function padListToWordCount(
+  html,
+  {
+    minWords,
+    maxWords,
+    padPool,
+    minItems = 3,   // Keep lists between 3–5 items by default
+    maxItems = 5
+  }
+) {
   let items = getListItems(html);
   if (items.length === 0) items = [];
-  let total = totalWordsInLis(items);
 
-  // Always enforce imperative starts you already have elsewhere; here we only pad length
+  // 1) Ensure at least minItems bullets before worrying about word count
   let i = 0;
-  while (total < minWords && i < 10) {
+  while (items.length < minItems && i < 10) {
+    const pick = padPool[i % padPool.length];
+    items.push(`<li>${pick}</li>`);
+    i++;
+  }
+
+  // 2) Now raise total words to minWords (but never exceed maxItems)
+  let total = totalWordsInLis(items);
+  i = 0;
+  while (total < minWords && items.length < maxItems && i < 10) {
     const pick = padPool[i % padPool.length];
     items.push(`<li>${pick}</li>`);
     total = totalWordsInLis(items);
     i++;
-    if (maxWords && total > maxWords) break;
   }
+
+  // 3) Hard cap items at maxItems and ensure we don't wildly exceed maxWords
+  if (items.length > maxItems) items = items.slice(0, maxItems);
+  if (maxWords) {
+    // If we overshot by words, trim back toward maxItems but never below minItems
+    while (totalWordsInLis(items) > maxWords && items.length > minItems) {
+      items.pop();
+    }
+  }
+
   return setListItems(html, items);
 }
 
@@ -1260,26 +1286,113 @@ const PAD_SENTENCES_FAQ = [
 
 function padFaqAnswer(answerHtml, { minWords = 40, maxWords = 70 }) {
   let text = String(answerHtml || "");
-  const wc = wordCountPlain(text);
-  if (wc >= minWords) return text;
-  let i = 0;
-  let out = text.replace(/\s*<\/p>\s*$/i, ""); // append inside last paragraph if possible
-  while (wordCountPlain(out) < minWords && i < 4) {
+  const already = new Set(
+    PAD_SENTENCES_FAQ.filter(s => text.includes(s))
+  );
+
+  const wc0 = wordCountPlain(text);
+  if (wc0 >= minWords) return tidyParagraphs(text);
+
+  let out = text.replace(/\s*<\/p>\s*$/i, "");
+  let i = 0, tries = 0;
+
+  while (wordCountPlain(out) < minWords && tries < 6) {
     const pick = PAD_SENTENCES_FAQ[i % PAD_SENTENCES_FAQ.length];
+    i++; tries++;
+    if (already.has(pick)) continue;
+    already.add(pick);
+
     if (/<p[^>]*>[\s\S]*<\/p>/i.test(out)) {
       out = out.replace(/<\/p>\s*$/i, `. ${pick}</p>`);
     } else {
       out = `<p>${out}${out ? ". " : ""}${pick}</p>`;
     }
-    i++;
   }
-  return out;
+
+  // Soft cap if we overshoot maxWords
+  while (wordCountPlain(out) > maxWords) {
+    out = out.replace(/(?:\.|!|\?)\s*[^.?!<]{5,}\s*(<\/p>)?$/, "$1" );
+    if (wordCountPlain(out) <= maxWords) break;
+    break;
+  }
+  return tidyParagraphs(out);
 }
 
 function dedupeAdjacentSynonyms(html) {
   return String(html || "")
     .replace(/\b(discount|offer|deal|saving)(\s*,\s*\1)+/gi, "$1")
     .replace(/\b(discount|offer|deal|saving)\s+(discount|offer|deal|saving)\b/gi, "$1");
+}
+
+function normalizeImperativeLi(liHtml) {
+  // Turn "<li>Use Access ..." into "<li>Access ..."
+  return String(liHtml || "").replace(
+    /(<li[^>]*>)\s*Use\s+([A-Z][a-z]+)/,
+    (_m, open, verb) => `${open}${verb}`
+  );
+}
+
+function mapListItems(html, mapper) {
+  const items = getListItems(html);
+  if (items.length === 0) return html;
+  const mapped = items.map(mapper);
+  return setListItems(html, mapped);
+}
+
+function tidyParagraphs(html) {
+  let out = String(html || "");
+  out = out.replace(/<p>\s*<p>/gi, "<p>");
+  out = out.replace(/<\/p>\s*<\/p>/gi, "</p>");
+  return out;
+}
+
+function keepFirstUl(html) {
+  const m = String(html || "").match(/<ul[\s\S]*?<\/ul>/i);
+  return m ? m[0] : html; // fallback to original if no UL found
+}
+
+function enforceBulletRange(html, { minItems = 3, maxItems = 5, pool = PAD_BULLETS_PROMO }) {
+  let items = getListItems(html);
+  if (items.length < minItems) {
+    let i = 0;
+    while (items.length < minItems && i < 10) {
+      items.push(`<li>${pool[i % pool.length]}</li>`);
+      i++;
+    }
+    html = setListItems(html, items);
+    items = getListItems(html);
+  }
+  if (items.length > maxItems) {
+    items = items.slice(0, maxItems);
+    html = setListItems(html, items);
+  }
+  return html;
+}
+
+function ensureImperativeStart(liHtml) {
+  // If a bullet starts with "Enter/Choose/Confirm/Apply/Compare/Review/Select/Join/Access/Start/Explore"
+  // we're fine. If it starts with an article/pronoun, prepend "Review ".
+  return String(liHtml || "").replace(
+    /(<li[^>]*>)\s*(?:The|This|These|You|Your|It|A|An)\b/i,
+    (_m, open) => `${open}Review `
+  );
+}
+
+function finalHtmlTidy(obj) {
+  const clean = s => String(s || "")
+    .replace(/<p>\s*<\/p>/g, "")           // remove empty paragraphs
+    .replace(/\s+<\/li>/g, "</li>")        // trim LI tails
+    .replace(/\s+<\/p>/g, "</p>");         // trim P tails
+  return {
+    ...obj,
+    aboutcontent: clean(obj.aboutcontent),
+    howtoredeemcontent: clean(obj.howtoredeemcontent),
+    promodetailscontent: clean(obj.promodetailscontent),
+    termscontent: clean(obj.termscontent),
+    faqcontent: Array.isArray(obj.faqcontent)
+      ? obj.faqcontent.map(f => ({ ...f, answerHtml: clean(f.answerHtml) }))
+      : obj.faqcontent
+  };
 }
 
 // --- SEO keyword regex helpers (centralized to avoid drift) ---
@@ -1987,16 +2100,35 @@ async function _repairToConstraintsImpl(task, obj, fails) {
         }
 
         // Apply deterministic padders
+        // aboutcontent: enforceParagraphs → dedupeAdjacentSynonyms → tidyParagraphs
         obj.aboutcontent = enforceParagraphs(obj.aboutcontent, { min: 2, max: 3, splitAtWords: 70 });
         obj.aboutcontent = dedupeAdjacentSynonyms(obj.aboutcontent);
-        obj.promodetailscontent = padListToWordCount(obj.promodetailscontent, { minWords: 100, maxWords: 150, padPool: PAD_BULLETS_PROMO });
-        obj.termscontent = padListToWordCount(obj.termscontent, { minWords: 80, maxWords: 120, padPool: PAD_BULLETS_TERMS });
+        obj.aboutcontent = tidyParagraphs(obj.aboutcontent);
+
+        // promodetails: pad → normalizeImperativeLi → ensureImperativeStart → keepFirstUl → enforceBulletRange
+        obj.promodetailscontent = padListToWordCount(obj.promodetailscontent, { minWords: 100, maxWords: 150, padPool: PAD_BULLETS_PROMO, minItems: 3, maxItems: 5 });
+        obj.promodetailscontent = mapListItems(obj.promodetailscontent, normalizeImperativeLi);
+        obj.promodetailscontent = mapListItems(obj.promodetailscontent, ensureImperativeStart);
+        obj.promodetailscontent = keepFirstUl(obj.promodetailscontent);
+        obj.promodetailscontent = enforceBulletRange(obj.promodetailscontent, { minItems: 3, maxItems: 5, pool: PAD_BULLETS_PROMO });
+
+        // terms: pad → normalizeImperativeLi → ensureImperativeStart → keepFirstUl → enforceBulletRange
+        obj.termscontent = padListToWordCount(obj.termscontent, { minWords: 80, maxWords: 120, padPool: PAD_BULLETS_TERMS, minItems: 3, maxItems: 5 });
+        obj.termscontent = mapListItems(obj.termscontent, normalizeImperativeLi);
+        obj.termscontent = mapListItems(obj.termscontent, ensureImperativeStart);
+        obj.termscontent = keepFirstUl(obj.termscontent);
+        obj.termscontent = enforceBulletRange(obj.termscontent, { minItems: 3, maxItems: 5, pool: PAD_BULLETS_TERMS });
+
+        // faq: padFaqAnswer (already calls tidyParagraphs internally)
         if (Array.isArray(obj.faqcontent)) {
           obj.faqcontent = obj.faqcontent.map(f => ({
             ...f,
             answerHtml: padFaqAnswer(f.answerHtml, { minWords: 40, maxWords: 70 })
           }));
         }
+
+        // Final HTML tidy before sanitize
+        obj = finalHtmlTidy(obj);
 
         obj = sanitizePayload(obj);
         obj.slug = task.slug;
@@ -2083,16 +2215,35 @@ ${obj[fieldName]}
         }
 
         // Apply deterministic padders
+        // aboutcontent: enforceParagraphs → dedupeAdjacentSynonyms → tidyParagraphs
         obj.aboutcontent = enforceParagraphs(obj.aboutcontent, { min: 2, max: 3, splitAtWords: 70 });
         obj.aboutcontent = dedupeAdjacentSynonyms(obj.aboutcontent);
-        obj.promodetailscontent = padListToWordCount(obj.promodetailscontent, { minWords: 100, maxWords: 150, padPool: PAD_BULLETS_PROMO });
-        obj.termscontent = padListToWordCount(obj.termscontent, { minWords: 80, maxWords: 120, padPool: PAD_BULLETS_TERMS });
+        obj.aboutcontent = tidyParagraphs(obj.aboutcontent);
+
+        // promodetails: pad → normalizeImperativeLi → ensureImperativeStart → keepFirstUl → enforceBulletRange
+        obj.promodetailscontent = padListToWordCount(obj.promodetailscontent, { minWords: 100, maxWords: 150, padPool: PAD_BULLETS_PROMO, minItems: 3, maxItems: 5 });
+        obj.promodetailscontent = mapListItems(obj.promodetailscontent, normalizeImperativeLi);
+        obj.promodetailscontent = mapListItems(obj.promodetailscontent, ensureImperativeStart);
+        obj.promodetailscontent = keepFirstUl(obj.promodetailscontent);
+        obj.promodetailscontent = enforceBulletRange(obj.promodetailscontent, { minItems: 3, maxItems: 5, pool: PAD_BULLETS_PROMO });
+
+        // terms: pad → normalizeImperativeLi → ensureImperativeStart → keepFirstUl → enforceBulletRange
+        obj.termscontent = padListToWordCount(obj.termscontent, { minWords: 80, maxWords: 120, padPool: PAD_BULLETS_TERMS, minItems: 3, maxItems: 5 });
+        obj.termscontent = mapListItems(obj.termscontent, normalizeImperativeLi);
+        obj.termscontent = mapListItems(obj.termscontent, ensureImperativeStart);
+        obj.termscontent = keepFirstUl(obj.termscontent);
+        obj.termscontent = enforceBulletRange(obj.termscontent, { minItems: 3, maxItems: 5, pool: PAD_BULLETS_TERMS });
+
+        // faq: padFaqAnswer (already calls tidyParagraphs internally)
         if (Array.isArray(obj.faqcontent)) {
           obj.faqcontent = obj.faqcontent.map(f => ({
             ...f,
             answerHtml: padFaqAnswer(f.answerHtml, { minWords: 40, maxWords: 70 })
           }));
         }
+
+        // Final HTML tidy before sanitize
+        obj = finalHtmlTidy(obj);
 
         obj = sanitizePayload(obj);
         obj.slug = task.slug;
@@ -2143,16 +2294,35 @@ Issues:
   }
 
   // Apply deterministic padders
+  // aboutcontent: enforceParagraphs → dedupeAdjacentSynonyms → tidyParagraphs
   fixed.aboutcontent = enforceParagraphs(fixed.aboutcontent, { min: 2, max: 3, splitAtWords: 70 });
   fixed.aboutcontent = dedupeAdjacentSynonyms(fixed.aboutcontent);
-  fixed.promodetailscontent = padListToWordCount(fixed.promodetailscontent, { minWords: 100, maxWords: 150, padPool: PAD_BULLETS_PROMO });
-  fixed.termscontent = padListToWordCount(fixed.termscontent, { minWords: 80, maxWords: 120, padPool: PAD_BULLETS_TERMS });
+  fixed.aboutcontent = tidyParagraphs(fixed.aboutcontent);
+
+  // promodetails: pad → normalizeImperativeLi → ensureImperativeStart → keepFirstUl → enforceBulletRange
+  fixed.promodetailscontent = padListToWordCount(fixed.promodetailscontent, { minWords: 100, maxWords: 150, padPool: PAD_BULLETS_PROMO, minItems: 3, maxItems: 5 });
+  fixed.promodetailscontent = mapListItems(fixed.promodetailscontent, normalizeImperativeLi);
+  fixed.promodetailscontent = mapListItems(fixed.promodetailscontent, ensureImperativeStart);
+  fixed.promodetailscontent = keepFirstUl(fixed.promodetailscontent);
+  fixed.promodetailscontent = enforceBulletRange(fixed.promodetailscontent, { minItems: 3, maxItems: 5, pool: PAD_BULLETS_PROMO });
+
+  // terms: pad → normalizeImperativeLi → ensureImperativeStart → keepFirstUl → enforceBulletRange
+  fixed.termscontent = padListToWordCount(fixed.termscontent, { minWords: 80, maxWords: 120, padPool: PAD_BULLETS_TERMS, minItems: 3, maxItems: 5 });
+  fixed.termscontent = mapListItems(fixed.termscontent, normalizeImperativeLi);
+  fixed.termscontent = mapListItems(fixed.termscontent, ensureImperativeStart);
+  fixed.termscontent = keepFirstUl(fixed.termscontent);
+  fixed.termscontent = enforceBulletRange(fixed.termscontent, { minItems: 3, maxItems: 5, pool: PAD_BULLETS_TERMS });
+
+  // faq: padFaqAnswer (already calls tidyParagraphs internally)
   if (Array.isArray(fixed.faqcontent)) {
     fixed.faqcontent = fixed.faqcontent.map(f => ({
       ...f,
       answerHtml: padFaqAnswer(f.answerHtml, { minWords: 40, maxWords: 70 })
     }));
   }
+
+  // Final HTML tidy before sanitize
+  fixed = finalHtmlTidy(fixed);
 
   fixed = sanitizePayload(fixed);
   const err = validatePayload(fixed) || checkHardCounts(fixed)[0] || null;
@@ -2329,10 +2499,26 @@ async function worker(task) {
       }
 
       // Apply deterministic padders to guarantee minimums (no LLM calls)
+      // aboutcontent: enforceParagraphs → dedupeAdjacentSynonyms → tidyParagraphs
       obj.aboutcontent = enforceParagraphs(obj.aboutcontent, { min: 2, max: 3, splitAtWords: 70 });
       obj.aboutcontent = dedupeAdjacentSynonyms(obj.aboutcontent);
-      obj.promodetailscontent = padListToWordCount(obj.promodetailscontent, { minWords: 100, maxWords: 150, padPool: PAD_BULLETS_PROMO });
-      obj.termscontent = padListToWordCount(obj.termscontent, { minWords: 80, maxWords: 120, padPool: PAD_BULLETS_TERMS });
+      obj.aboutcontent = tidyParagraphs(obj.aboutcontent);
+
+      // promodetails: pad → normalizeImperativeLi → ensureImperativeStart → keepFirstUl → enforceBulletRange
+      obj.promodetailscontent = padListToWordCount(obj.promodetailscontent, { minWords: 100, maxWords: 150, padPool: PAD_BULLETS_PROMO, minItems: 3, maxItems: 5 });
+      obj.promodetailscontent = mapListItems(obj.promodetailscontent, normalizeImperativeLi);
+      obj.promodetailscontent = mapListItems(obj.promodetailscontent, ensureImperativeStart);
+      obj.promodetailscontent = keepFirstUl(obj.promodetailscontent);
+      obj.promodetailscontent = enforceBulletRange(obj.promodetailscontent, { minItems: 3, maxItems: 5, pool: PAD_BULLETS_PROMO });
+
+      // terms: pad → normalizeImperativeLi → ensureImperativeStart → keepFirstUl → enforceBulletRange
+      obj.termscontent = padListToWordCount(obj.termscontent, { minWords: 80, maxWords: 120, padPool: PAD_BULLETS_TERMS, minItems: 3, maxItems: 5 });
+      obj.termscontent = mapListItems(obj.termscontent, normalizeImperativeLi);
+      obj.termscontent = mapListItems(obj.termscontent, ensureImperativeStart);
+      obj.termscontent = keepFirstUl(obj.termscontent);
+      obj.termscontent = enforceBulletRange(obj.termscontent, { minItems: 3, maxItems: 5, pool: PAD_BULLETS_TERMS });
+
+      // faq: padFaqAnswer (already calls tidyParagraphs internally)
       if (Array.isArray(obj.faqcontent)) {
         obj.faqcontent = obj.faqcontent.map(f => ({
           ...f,
@@ -2343,6 +2529,9 @@ async function worker(task) {
       // Final "promo code" guardrail: ensure no leakage outside aboutcontent (post-merge assert)
       // This makes the rule impossible to fail by doing one final sweep
       obj = sanitizePrimaryKeywordOutsideAbout(obj, task.slug);
+
+      // Final HTML tidy before validation
+      obj = finalHtmlTidy(obj);
 
       // Now validate (operating on merged obj)
       const err = validatePayload(obj);
