@@ -411,8 +411,9 @@ async function obtainEvidence(url, slug, name, forceRecrawl = false) {
 
       // Thin evidence guard: require minimum signal
       const contentCount = (ex.paras?.length || 0) + (ex.bullets?.length || 0);
-      if (contentCount < 6 && textLength < 800) {
-        throw new Error(`Insufficient evidence: ${contentCount} content blocks, ${textLength} chars`);
+      if (contentCount < 2 || textLength < 250) {
+        console.warn(`⚠️  Skipping ${slug}: Insufficient evidence (${contentCount} blocks, ${textLength} chars)`);
+        return null;
       }
 
       const evidence = {
@@ -429,7 +430,9 @@ async function obtainEvidence(url, slug, name, forceRecrawl = false) {
     if (status === 429 || status === 403) {
       throw Object.assign(new Error(`Rate limited (${status})`), { retryable: true });
     }
-    throw new Error(`Unable to fetch evidence (status ${status})`);
+    // Return null for 404s and other non-retryable errors (soft skip)
+    console.warn(`⚠️  Skipping ${slug}: Unable to fetch evidence (status ${status})`);
+    return null;
   };
 
   return await withHostSlot(url, async () => {
@@ -563,14 +566,15 @@ SEO REQUIREMENTS (based on top-ranking coupon pages):
 - **DO NOT** use the exact phrase "promo code" in any other section (howtoredeemcontent, promodetailscontent, termscontent, or faqcontent).
 - In all other sections, use secondary keywords: "discount", "offer", "current deal", "saving", etc.
 
-1. aboutcontent (130-170 words, HARD MIN 120, 2-3 short paragraphs):
+1. aboutcontent (130-170 words, HARD MIN 120, **MUST BE 2-3 paragraphs**):
+   - **CRITICAL**: Write exactly 2–3 complete paragraphs. Do NOT write just 1 paragraph.
    - MUST include "\${safeName} promo code" naturally in the first paragraph (critical for SEO - Whop uses "promo code" terminology). Use this exact phrase ONLY ONCE.
    - Optionally sprinkle "discount", "offer", or "save on \${safeName}" as secondary keywords (≤2 total).
    - Explain what the course or product is and why it's useful.
    - Conditional platform mention: if on whop.com, you may mention "Whop" once.
    - End with a varied call-to-action (explore/compare/check/start/look pattern - vary phrasing per listing to avoid Google fingerprinting).
    - Use Grade 8-10 English, varied sentence lengths (≥3 sentences with mean 13–22 words, stdev ≥4 for human cadence).
-   - **HARD MINIMUM**: If your draft is under 120 words, continue the paragraph until you reach at least 120 words. Do not end early.
+   - **HARD MINIMUM**: If your draft is under 120 words OR only 1 paragraph, continue writing until you have 2–3 paragraphs and at least 120 words. Do not stop early.
 
 2. promodetailscontent (100-150 words):
    - Include a <ul> list of 3-5 bullet points summarizing key benefits or pricing tiers.
@@ -636,6 +640,17 @@ Example (FAIL):
   "AI Video Labs is a course on video editing. It helps you edit videos. It has many tools."
 
 Grade level: 8–10 (readable, not simplistic).
+
+CRITICAL LENGTH REQUIREMENTS - DO NOT STOP EARLY:
+Ensure all prose fields strictly meet the required word counts:
+- aboutcontent: 130–170 words (HARD MINIMUM 120) - Write 2–3 complete paragraphs
+- promodetailscontent: 100–150 words (HARD MINIMUM 100) - Include 3–5 detailed bullet points
+- howtoredeemcontent: 3–5 steps, each step 12–20 words (HARD MINIMUM 10 words per step)
+- termscontent: 80–120 words (HARD MINIMUM 80) - Write 3–5 informative bullets
+- faqcontent: 4–6 FAQ objects, each answer 40–70 words (HARD MINIMUM 40 words per answer)
+
+If you produce fewer words than required, continue writing naturally until you meet the minimum.
+Never stop early for brevity or conciseness. Your output will be validated against these exact thresholds.
 
 SELF-CHECK BEFORE RETURNING JSON:
 At the end of each section, quickly review your writing:
@@ -2063,6 +2078,11 @@ async function worker(task) {
   } catch (e) {
     fs.appendFileSync(REJECTS_FILE, JSON.stringify({ slug, error: `Evidence fetch failed: ${e.message}` }) + "\n");
     return;
+  }
+
+  // Skip gracefully if evidence fetch returned null (404, insufficient evidence, etc.)
+  if (!evidence) {
+    return; // Already logged warning in obtainEvidence
   }
 
   // Dry-run mode: validate fetch/grounding at scale without spend
