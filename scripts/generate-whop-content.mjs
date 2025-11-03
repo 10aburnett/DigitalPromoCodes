@@ -559,13 +559,13 @@ CRITICAL FOUNDATION:
 SEO REQUIREMENTS (based on top-ranking coupon pages):
 
 **CRITICAL KEYWORD PLACEMENT RULE:**
-- Use the exact phrase "${safeName} promo code" **ONLY ONCE, in the first paragraph of aboutcontent**.
+- Use the exact phrase "\${safeName} promo code" **ONLY ONCE, in the first paragraph of aboutcontent**.
 - **DO NOT** use the exact phrase "promo code" in any other section (howtoredeemcontent, promodetailscontent, termscontent, or faqcontent).
 - In all other sections, use secondary keywords: "discount", "offer", "current deal", "saving", etc.
 
 1. aboutcontent (130-170 words, HARD MIN 120, 2-3 short paragraphs):
-   - MUST include "${safeName} promo code" naturally in the first paragraph (critical for SEO - Whop uses "promo code" terminology). Use this exact phrase ONLY ONCE.
-   - Optionally sprinkle "discount", "offer", or "save on ${safeName}" as secondary keywords (≤2 total).
+   - MUST include "\${safeName} promo code" naturally in the first paragraph (critical for SEO - Whop uses "promo code" terminology). Use this exact phrase ONLY ONCE.
+   - Optionally sprinkle "discount", "offer", or "save on \${safeName}" as secondary keywords (≤2 total).
    - Explain what the course or product is and why it's useful.
    - Conditional platform mention: if on whop.com, you may mention "Whop" once.
    - End with a varied call-to-action (explore/compare/check/start/look pattern - vary phrasing per listing to avoid Google fingerprinting).
@@ -596,7 +596,7 @@ SEO REQUIREMENTS (based on top-ranking coupon pages):
    - CRITICAL: Return as JSON array: [{"question": "...", "answerHtml": "..."}, ...]
    - Each answer: 40-70 words, friendly, complete sentences.
    - NEVER single-word replies ("Yes", "No"). Always explain and expand.
-   - Cover topics like: "How do I use ${safeName} discounts?", "Can I stack multiple offers?", "Is this deal legitimate?".
+   - Cover topics like: "How do I use \${safeName} discounts?", "Can I stack multiple offers?", "Is this deal legitimate?".
    - **CRITICAL: NEVER include the exact phrase "promo code" in FAQ questions or answers. Use "discount", "offer", "current deal", "saving" instead to avoid keyword stuffing.**
    - CRITICAL: Vary question openers (≥3 distinct when n≥4: How/What/Can/Where/Is/Do/etc.). Avoid repetitive "How do I..." patterns.
    - Include semantic variations of target keywords naturally.
@@ -642,7 +642,7 @@ At the end of each section, quickly review your writing:
 - Does it sound human and varied (not monotone or repetitive)?
 - Are there both short and long sentences?
 - Did you follow ALL the hard minimums (aboutcontent ≥120 words, each step ≥10 words)?
-- Did you use "${safeName} promo code" ONLY ONCE in aboutcontent and avoid "promo code" everywhere else?
+- Did you use "\${safeName} promo code" ONLY ONCE in aboutcontent and avoid "promo code" everywhere else?
 If not, rewrite that section before returning your JSON.`;
 
 const makeUserPrompt = ({ slug, name, existing, evidence }) => {
