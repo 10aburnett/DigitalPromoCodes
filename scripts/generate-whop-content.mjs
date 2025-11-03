@@ -556,9 +556,14 @@ CRITICAL FOUNDATION:
 
 SEO REQUIREMENTS (based on top-ranking coupon pages):
 
+**CRITICAL KEYWORD PLACEMENT RULE:**
+- Use the exact phrase "${safeName} promo code" **ONLY ONCE, in the first paragraph of aboutcontent**.
+- **DO NOT** use the exact phrase "promo code" in any other section (howtoredeemcontent, promodetailscontent, termscontent, or faqcontent).
+- In all other sections, use secondary keywords: "discount", "offer", "current deal", "saving", etc.
+
 1. aboutcontent (130-170 words, HARD MIN 120, 2-3 short paragraphs):
-   - MUST include "[name] promo code" naturally in the first paragraph (critical for SEO - Whop uses "promo code" terminology).
-   - Optionally sprinkle "discount", "offer", or "save on [name]" as secondary keywords (≤2 total).
+   - MUST include "${safeName} promo code" naturally in the first paragraph (critical for SEO - Whop uses "promo code" terminology). Use this exact phrase ONLY ONCE.
+   - Optionally sprinkle "discount", "offer", or "save on ${safeName}" as secondary keywords (≤2 total).
    - Explain what the course or product is and why it's useful.
    - Conditional platform mention: if on whop.com, you may mention "Whop" once.
    - End with a varied call-to-action (explore/compare/check/start/look pattern - vary phrasing per listing to avoid Google fingerprinting).
@@ -568,17 +573,20 @@ SEO REQUIREMENTS (based on top-ranking coupon pages):
 2. promodetailscontent (100-150 words):
    - Include a <ul> list of 3-5 bullet points summarizing key benefits or pricing tiers.
    - Use "current offer" or "available discount" (avoid "verified" unless evidenced).
+   - **DO NOT use "promo code" here** - use "discount", "offer", "deal" instead.
    - Focus on value propositions and what makes this offer unique.
    - CRITICAL: Start each bullet with an action verb (imperative voice: Use/Apply/Access/Choose/Get/Select/etc.).
 
 3. howtoredeemcontent (3-5 steps, each step 12-20 words; HARD MIN 10 words per step):
    - CRITICAL: Start each step with an action verb (imperative voice: Click/Copy/Apply/Confirm/Visit/Navigate/Enter/etc.).
+   - **DO NOT use "promo code" here** - use "discount", "offer", "code" (without "promo") instead.
    - Use full sentences; avoid fragments. Aim for ~15 words per step to avoid under-runs.
    - Format as <ol> ordered list for clear step-by-step guidance.
    - Conditional platform mention: if on whop.com, you may mention "Whop.com" in redemption steps.
 
 4. termscontent (80-120 words total, 3-5 concise bullets):
    - Include mention of expiry, usage limits, or platform terms (conditional).
+   - **DO NOT use "promo code" here** - use "discount", "offer", "deal" instead.
    - Example bullet: "Discounts may vary by creator or course category."
    - Keep tone informative but not restrictive.
 
@@ -586,7 +594,8 @@ SEO REQUIREMENTS (based on top-ranking coupon pages):
    - CRITICAL: Return as JSON array: [{"question": "...", "answerHtml": "..."}, ...]
    - Each answer: 40-70 words, friendly, complete sentences.
    - NEVER single-word replies ("Yes", "No"). Always explain and expand.
-   - Cover topics like: "How do I use [name] promo codes?", "Can I stack multiple offers?", "Is this deal legitimate?".
+   - Cover topics like: "How do I use ${safeName} discounts?", "Can I stack multiple offers?", "Is this deal legitimate?".
+   - **CRITICAL: NEVER include the exact phrase "promo code" in FAQ questions or answers. Use "discount", "offer", "current deal", "saving" instead to avoid keyword stuffing.**
    - CRITICAL: Vary question openers (≥3 distinct when n≥4: How/What/Can/Where/Is/Do/etc.). Avoid repetitive "How do I..." patterns.
    - Include semantic variations of target keywords naturally.
 
@@ -998,6 +1007,64 @@ const STEP_APPEND_PHRASES = [
 
 function pickAppendPhrase(i = 0) {
   return STEP_APPEND_PHRASES[i % STEP_APPEND_PHRASES.length];
+}
+
+// --- Primary keyword sanitizer (ban "promo code" outside aboutcontent) ---
+
+function sanitizePrimaryKeywordOutsideAbout(obj) {
+  const replacePromo = (html) =>
+    String(html || "").replace(/\bpromo\s+codes?\b/gi, (m) => {
+      // rotate synonyms to avoid repetition
+      const pool = ["discount", "offer", "current deal", "saving"];
+      const pick = pool[Math.floor(Math.random() * pool.length)];
+      return m.toLowerCase().endsWith("s") && pick !== "saving" ? pick + "s" : pick;
+    });
+
+  // only sanitize non-about sections
+  obj.howtoredeemcontent && (obj.howtoredeemcontent = replacePromo(obj.howtoredeemcontent));
+  obj.promodetailscontent && (obj.promodetailscontent = replacePromo(obj.promodetailscontent));
+  obj.termscontent && (obj.termscontent = replacePromo(obj.termscontent));
+
+  if (Array.isArray(obj.faqcontent)) {
+    obj.faqcontent = obj.faqcontent.map(it => ({
+      ...it,
+      answerHtml: replacePromo(it.answerHtml),
+      question: String(it.question || "").replace(/\bpromo\s+codes?\b/gi, "discounts"),
+    }));
+  }
+
+  return obj;
+}
+
+// --- Imperative bullet enforcer (bullets must start with action verbs) ---
+
+const IMPERATIVE_VERBS = [
+  "Use","Copy","Click","Select","Apply","Choose","Check","Redeem","Sign","Create","Start","Join","Open","Visit","Go","Tap","Add"
+];
+
+function enforceImperativeBullets(html) {
+  if (!html) return html;
+  let items = splitListItems(html);
+  if (!items.length) return html;
+
+  const stripHtml = (s) => String(s || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+
+  const startsWithVerb = (text) => {
+    const first = (text.match(/^[A-Za-z']+/) || [""])[0];
+    return IMPERATIVE_VERBS.includes(first.charAt(0).toUpperCase()+first.slice(1));
+  };
+
+  items = items.map((li) => {
+    const raw = stripHtml(li);
+    if (startsWithVerb(raw)) return li;
+    // minimally fix: prepend "Use " without destroying structure
+    return li.replace(/(<li[^>]*>)(\s*)/i, "$1$2Use ");
+  });
+
+  // stitch back
+  let out = html;
+  items.forEach((li, i) => { out = replaceListItem(out, i+1, li); });
+  return out;
 }
 
 // --- SEO keyword regex helpers (centralized to avoid drift) ---
@@ -1664,6 +1731,12 @@ async function repairToConstraints(task, obj, fails) {
         const before = current;
         html = replaceListItem(html, stepIndex, li);
         obj.howtoredeemcontent = html;
+
+        // Apply sanitizers before final validation
+        obj = sanitizePrimaryKeywordOutsideAbout(obj);
+        obj.howtoredeemcontent = enforceImperativeBullets(obj.howtoredeemcontent);
+        obj.promodetailscontent = enforceImperativeBullets(obj.promodetailscontent);
+
         obj = sanitizePayload(obj);
         obj.slug = task.slug;
 
@@ -1735,6 +1808,11 @@ ${obj[fieldName]}
           }
         }
 
+        // Apply sanitizers before final validation
+        obj = sanitizePrimaryKeywordOutsideAbout(obj);
+        obj.howtoredeemcontent = enforceImperativeBullets(obj.howtoredeemcontent);
+        obj.promodetailscontent = enforceImperativeBullets(obj.promodetailscontent);
+
         obj = sanitizePayload(obj);
         obj.slug = task.slug;
 
@@ -1769,6 +1847,12 @@ Issues:
   const lastBrace = raw.lastIndexOf("}");
   const jsonStr = (firstBrace >= 0 && lastBrace > firstBrace) ? raw.slice(firstBrace, lastBrace+1) : raw;
   let fixed = JSON.parse(jsonStr);
+
+  // Apply sanitizers before final validation
+  fixed = sanitizePrimaryKeywordOutsideAbout(fixed);
+  fixed.howtoredeemcontent = enforceImperativeBullets(fixed.howtoredeemcontent);
+  fixed.promodetailscontent = enforceImperativeBullets(fixed.promodetailscontent);
+
   fixed = sanitizePayload(fixed);
   const err = validatePayload(fixed) || checkHardCounts(fixed)[0] || null;
   if (err) throw new Error(`Repair failed: ${err}`);
@@ -1924,6 +2008,11 @@ async function worker(task) {
 
       // Re-sanitize after merge so preserved fields are also cleaned
       obj = sanitizePayload(obj);
+
+      // Apply content sanitizers before validation
+      obj = sanitizePrimaryKeywordOutsideAbout(obj);
+      obj.howtoredeemcontent = enforceImperativeBullets(obj.howtoredeemcontent);
+      obj.promodetailscontent = enforceImperativeBullets(obj.promodetailscontent);
 
       // Now validate (operating on merged obj)
       const err = validatePayload(obj);
