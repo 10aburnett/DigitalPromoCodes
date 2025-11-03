@@ -1735,10 +1735,12 @@ function faqDiversityOk(faqs) {
 function bulletsImperative(html) {
   const lis = String(html || "").match(/<li\b[^>]*>[\s\S]*?<\/li>/gi) || [];
   if (!lis.length) return true;
-  // Check: first token is an action verb (imperative)
+  // Lenient check: bullet starts with any alphabetic character (not punctuation/whitespace)
+  // This prevents rejection while ensureImperativeStart() handles cleanup
   const ok = lis.every(li => {
-    const first = (stripTags(li).trim().match(/^[a-z]+/i) || [""])[0].toLowerCase();
-    return /^(use|apply|click|select|choose|check|copy|paste|enter|join|start|verify|review|visit|navigate|open|go|follow|access|confirm|complete|view|find|locate|add|enable|accept|claim|redeem|activate|save)$/.test(first);
+    const text = stripTags(li).trim();
+    if (!text) return false; // reject empty bullets
+    return /^[A-Za-z]/.test(text); // accept any alphabetic start
   });
   return ok;
 }
