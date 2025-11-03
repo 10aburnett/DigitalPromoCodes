@@ -1,0 +1,10 @@
+{
+  "startedAt": "2025-10-29T15:40:16.174Z",
+  "provider": "openai",
+  "model": "gpt-4o",
+  "strongModel": null,
+  "inputFile": "data/neon/whops.jsonl",
+  "batch": 5,
+  "limit": 50,
+  "budgetUsd": null
+}

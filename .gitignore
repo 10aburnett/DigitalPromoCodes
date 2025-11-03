@@ -139,3 +139,4 @@ data/content/raw/ai-run-*.jsonl
 data/content/raw/rejects-*.jsonl
 data/content/hub-review.csv
 data/content/hub-override-hits.csv
+data/content/cadence-review.csv
