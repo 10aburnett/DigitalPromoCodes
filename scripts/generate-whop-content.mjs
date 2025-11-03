@@ -2405,6 +2405,7 @@ async function worker(task) {
 
   // Skip gracefully if evidence fetch returned null (404, insufficient evidence, etc.)
   if (!evidence) {
+    fs.appendFileSync(REJECTS_FILE, JSON.stringify({ slug, error: "Soft skip: 404 or insufficient evidence" }) + "\n");
     return; // Already logged warning in obtainEvidence
   }
 
