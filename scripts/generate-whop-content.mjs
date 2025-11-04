@@ -149,6 +149,7 @@ function makeBudgetManager(opts) {
     },
     persistRunMeta(meta = {}) {
       const u = loadUsage();
+      if (!u.runs) u.runs = []; // Ensure runs array exists
       u.runs.push({
         at: new Date().toISOString(),
         provider: process.env.PROVIDER || "openai",
@@ -962,7 +963,9 @@ const USAGE_FILE = "data/content/.usage.json";
 
 // Initialize checkpoint (keep legacy structure)
 const FORCE = args.force || args.overwrite || process.env.FORCE_REGENERATE === "1";
+const RETRY_REJECTS = Boolean(args.retryRejects);
 let ck = loadJSON(CHECKPOINT, { done: {}, pending: {} });
+if (!ck.rejected) ck.rejected = {}; // Track rejects separately from done
 
 // Prune stale pending entries (from crashed runs)
 const MAX_PENDING_AGE_MS = 30 * 60 * 1000; // 30 min
@@ -977,6 +980,27 @@ const fingerprints = loadFingerprints();
 // Helper to persist checkpoint
 function persistCheckpoint() {
   saveJSON(CHECKPOINT, ck);
+}
+
+// Helper to reject and persist (separate from done)
+function rejectAndPersist(slug, reason) {
+  ck.rejected[slug] = { reason: String(reason || 'unknown'), ts: Date.now() };
+  delete ck.pending[slug];
+  persistCheckpoint();
+}
+
+// Helper to check if existing content is sufficient (skip token spend)
+function hasSufficientContent(existing) {
+  if (!existing) return false;
+  const textLen = (s) => (typeof s === 'string' ? s.replace(/<[^>]*>/g, '').trim().length : 0);
+  const okAbout = textLen(existing.about || existing.aboutcontent) >= 80;
+  const okRedeem = /<li/i.test(existing.redeem || existing.howtoredeemcontent || '');
+  const okPromo = /<li/i.test(existing.details || existing.promodetailscontent || '');
+  const okTerms = /<li/i.test(existing.terms || existing.termscontent || '');
+  const okFaq = Array.isArray(existing.faq || existing.faqcontent)
+    ? (existing.faq || existing.faqcontent).length >= 3
+    : /\[.*\{/.test(existing.faq || existing.faqcontent || ''); // tolerate stored JSON string
+  return okAbout && okRedeem && okPromo && okTerms && okFaq;
 }
 
 // Save cleaned checkpoint
@@ -2771,6 +2795,7 @@ async function worker(task) {
   // Validate URL exists
   if (!url || !/^https?:\/\//i.test(url)) {
     fs.appendFileSync(REJECTS_FILE, JSON.stringify({ slug, error: "Missing or invalid URL" }) + "\n");
+    rejectAndPersist(slug, "Missing or invalid URL");
     return;
   }
 
@@ -2781,12 +2806,14 @@ async function worker(task) {
     evidence = await obtainEvidence(url, slug, name, forceRecrawl);
   } catch (e) {
     fs.appendFileSync(REJECTS_FILE, JSON.stringify({ slug, error: `Evidence fetch failed: ${e.message}` }) + "\n");
+    rejectAndPersist(slug, `Evidence fetch failed: ${e.message}`);
     return;
   }
 
   // Skip gracefully if evidence fetch returned null (404, insufficient evidence, etc.)
   if (!evidence) {
     fs.appendFileSync(REJECTS_FILE, JSON.stringify({ slug, error: "Soft skip: 404 or insufficient evidence" }) + "\n");
+    rejectAndPersist(slug, "Soft skip: 404 or insufficient evidence");
     return; // Already logged warning in obtainEvidence
   }
 
@@ -3365,26 +3392,50 @@ async function run() {
     console.log("🔍 DRY-RUN MODE: Validating fetch/grounding without LLM calls");
   }
 
-  // Build worklist: honor resume unless FORCE
-  let queue = rows.filter(r => FORCE ? true : !alreadyDone.has(r.slug));
+  // Pre-mark items that already have full content to avoid token spend
+  let premarked = 0;
+  for (const r of rows) {
+    if (!ck.done[r.slug] && !ck.rejected[r.slug] && hasSufficientContent(r)) {
+      ck.done[r.slug] = true;
+      premarked++;
+    }
+  }
+  if (premarked > 0) {
+    persistCheckpoint();
+    console.log(`⏩ Pre-marked ${premarked} whops with sufficient existing content (skipped)`);
+  }
+
+  // Build worklist: honor resume unless FORCE, optionally retry rejects
+  let queue = rows.filter(r => {
+    const done = ck.done[r.slug]; // use ck.done directly (updated by pre-marking)
+    const wasRejected = ck.rejected && ck.rejected[r.slug];
+    if (FORCE) return RETRY_REJECTS ? true : !wasRejected;
+    if (RETRY_REJECTS) return !done;                 // include previous rejects
+    return !done && !wasRejected;                    // default: skip rejects
+  });
 
   // Apply onlySlugs filter if specified
   if (args.onlySlugs) {
     const only = new Set(String(args.onlySlugs).split(",").map(s => s.trim()).filter(Boolean));
-    queue = rows.filter(r => only.has(r.slug) && (FORCE || !alreadyDone.has(r.slug)));
+    queue = queue.filter(r => only.has(r.slug));
+    if (queue.length === 0) {
+      console.error("No valid slugs to process (after onlySlugs + reject filtering).");
+      process.exit(2);
+    }
   }
 
   // Guard against empty workset
   if (queue.length === 0) {
     const completed = Object.keys(ck.done || {}).length;
+    const rejected = Object.keys(ck.rejected || {}).length;
     const inflight = Object.keys(ck.pending || {}).length;
-    const skipped = Math.max(rows.length - completed, 0);
-    console.log(`Nothing to do. Completed=${completed} Inflight=${inflight} SkippedAlreadyComplete=${skipped}`);
+    const skipped = Math.max(rows.length - completed - rejected, 0);
+    console.log(`Nothing to do. Completed=${completed} Rejected=${rejected} Inflight=${inflight} Skipped=${skipped}`);
 
     // Count actual reject lines
     try {
       const rejLines = fs.existsSync(REJECTS_FILE) ? (fs.readFileSync(REJECTS_FILE, "utf8").trim().split("\n").filter(Boolean).length) : 0;
-      console.log(`Rejects so far: ${rejLines} (in ${REJECTS_FILE})`);
+      console.log(`Rejects in file: ${rejLines} (in ${REJECTS_FILE})`);
     } catch {}
 
     process.exit(0);
