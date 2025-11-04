@@ -53,6 +53,57 @@ const OUT_DIR = "data/content/raw";
 const CHECKPOINT = "data/content/.checkpoint.json";
 const FINGERPRINTS_FILE = "data/content/.fingerprints.jsonl";
 
+// --- Checkpoint & fingerprints module ---------------------------------------
+function loadJSON(filePath, fallback) {
+  try { return JSON.parse(fs.readFileSync(filePath, "utf8")); } catch { return fallback; }
+}
+function saveJSON(filePath, obj) {
+  fs.mkdirSync(path.dirname(filePath), { recursive: true });
+  fs.writeFileSync(filePath, JSON.stringify(obj, null, 2));
+}
+
+function loadCheckpoint() {
+  return loadJSON(CHECKPOINT, {
+    version:1, runId:null, outPath:null, rejPath:null,
+    completed:[], rejected:[], inflight:[], fingerprintsPath: FINGERPRINTS_FILE
+  });
+}
+function saveCheckpoint(ck) { saveJSON(CHECKPOINT, ck); }
+
+function appendJsonl(filePath, obj) {
+  fs.mkdirSync(path.dirname(filePath), { recursive: true });
+  fs.appendFileSync(filePath, JSON.stringify(obj) + "\n", "utf8");
+}
+
+// Iterator for fingerprints file
+function* iterFingerprints() {
+  try {
+    const lines = fs.readFileSync(FINGERPRINTS_FILE, "utf8").split("\n");
+    for (const l of lines) if (l.trim()) yield JSON.parse(l);
+  } catch {}
+}
+function loadFingerprints() {
+  const map = new Map();
+  for (const { slug, sha } of iterFingerprints()) map.set(slug, sha);
+  return map;
+}
+function appendFingerprint({ slug, sha }) { appendJsonl(FINGERPRINTS_FILE, { slug, sha }); }
+
+// Deterministic digest of a result row (strip volatile bits)
+function stableDigest(obj) {
+  const shallow = {
+    slug: obj.slug,
+    aboutcontent: obj.aboutcontent,
+    howtoredeemcontent: obj.howtoredeemcontent,
+    promodetailscontent: obj.promodetailscontent,
+    termscontent: obj.termscontent,
+    faqcontent: obj.faqcontent,
+  };
+  const s = JSON.stringify(shallow);
+  return crypto.createHash("sha1").update(s).digest("hex");
+}
+// --- End checkpoint module --------------------------------------------------
+
 // === [PATCH] Overrides + CSV logging =========================================
 const OVERRIDES_FILE = "data/overrides/hub-product-map.json";      // { "<creator-slug>": "/creator/product-slug/" }
 const REVIEW_CSV     = "data/content/hub-review.csv";              // unresolved hubs
@@ -847,32 +898,11 @@ if (!isFinite(LIMIT) || LIMIT < rows.length) rows = rows.slice(0, LIMIT);
 
 console.log(`Found ${rows.length} rows to generate from ${IN} (provider=${PROVIDER}, model=${MODEL}).`);
 
-const stamp = new Date().toISOString().replace(/[-:]/g,"").replace(/\..+/, "");
-const OUT_FILE = path.join(OUT_DIR, `ai-run-${stamp}.jsonl`);
-const REJECTS_FILE = path.join(OUT_DIR, `rejects-${stamp}.jsonl`);
 const USAGE_FILE = "data/content/.usage.json";
-const RUN_META = path.join(OUT_DIR, `ai-run-${stamp}.meta.json`);
 
-fs.writeFileSync(OUT_FILE, ""); // init
-fs.writeFileSync(REJECTS_FILE, ""); // init
-
-// Write run metadata
-fs.writeFileSync(RUN_META, JSON.stringify({
-  startedAt: new Date().toISOString(),
-  provider: PROVIDER,
-  model: MODEL,
-  strongModel: STRONG_MODEL || null,
-  inputFile: IN,
-  batch: CONCURRENCY,
-  limit: LIMIT,
-  budgetUsd: BUDGET_USD || null
-}, null, 2));
-
-// Checkpoint
-let ck = { done: {}, pending: {} };
-if (fs.existsSync(CHECKPOINT)) {
-  try { ck = JSON.parse(fs.readFileSync(CHECKPOINT, "utf8")); } catch {}
-}
+// Initialize checkpoint (keep legacy structure)
+const FORCE = args.force || args.overwrite || process.env.FORCE_REGENERATE === "1";
+let ck = loadJSON(CHECKPOINT, { done: {}, pending: {} });
 
 // Prune stale pending entries (from crashed runs)
 const MAX_PENDING_AGE_MS = 30 * 60 * 1000; // 30 min
@@ -880,9 +910,50 @@ const now = Date.now();
 for (const [slug, ts] of Object.entries(ck.pending || {})) {
   if (!ts || now - Number(ts) > MAX_PENDING_AGE_MS) delete ck.pending[slug];
 }
-fs.writeFileSync(CHECKPOINT, JSON.stringify(ck, null, 2));
 
+// Load fingerprints for deduplication
+const fingerprints = loadFingerprints();
+
+// Helper to persist checkpoint
+function persistCheckpoint() {
+  saveJSON(CHECKPOINT, ck);
+}
+
+// Save cleaned checkpoint
+persistCheckpoint();
+
+// Track already done slugs (for resume logic unless FORCE)
 const alreadyDone = new Set(Object.keys(ck.done || {}));
+
+// Generate output file paths (stable across resumes to avoid file fragmentation)
+if (!ck.outPath || !ck.rejPath) {
+  const stamp = new Date().toISOString().replace(/[-:]/g,"").replace(/\..+/, "");
+  ck.outPath = path.join(OUT_DIR, `ai-run-${stamp}.jsonl`);
+  ck.rejPath = path.join(OUT_DIR, `rejects-${stamp}.jsonl`);
+  ck.runMeta = path.join(OUT_DIR, `ai-run-${stamp}.meta.json`);
+  persistCheckpoint();
+}
+const OUT_FILE = ck.outPath;
+const REJECTS_FILE = ck.rejPath;
+const RUN_META = ck.runMeta || path.join(OUT_DIR, `ai-run-fallback.meta.json`);
+
+// Initialize output files
+if (!fs.existsSync(OUT_FILE)) fs.writeFileSync(OUT_FILE, "");
+if (!fs.existsSync(REJECTS_FILE)) fs.writeFileSync(REJECTS_FILE, "");
+
+// Write run metadata
+if (!fs.existsSync(RUN_META)) {
+  fs.writeFileSync(RUN_META, JSON.stringify({
+    startedAt: new Date().toISOString(),
+    provider: PROVIDER,
+    model: MODEL,
+    strongModel: STRONG_MODEL || null,
+    inputFile: IN,
+    batch: CONCURRENCY,
+    limit: LIMIT,
+    budgetUsd: BUDGET_USD || null
+  }, null, 2));
+}
 
 // Only allow these tags inside any HTML fields
 const ALLOWED_TAGS = new Set(["p","ul","ol","li","strong","em"]);
@@ -2584,11 +2655,28 @@ async function worker(task) {
       }
     };
     delete dryOutput.promodetails;
+
+    // Fingerprint dedupe: avoid duplicate writes (even in dry run for consistency)
+    const drysha = stableDigest(dryOutput);
+    const dryprior = fingerprints.get(slug);
+
+    // If digest unchanged, skip writing but mark done
+    if (dryprior && dryprior === drysha) {
+      ck.done[slug] = true;
+      delete ck.pending[slug];
+      persistCheckpoint();
+      return;
+    }
+
+    // Write output and update fingerprint
     fs.appendFileSync(OUT_FILE, JSON.stringify(dryOutput) + "\n");
+    appendFingerprint({ slug, sha: drysha });
+    fingerprints.set(slug, drysha);
+
     if (evidence?.drilled) drilledCount++;
     ck.done[slug] = true;
     delete ck.pending[slug];
-    fs.writeFileSync(CHECKPOINT, JSON.stringify(ck, null, 2));
+    persistCheckpoint();
     return;
   }
 
@@ -2603,7 +2691,7 @@ async function worker(task) {
 
   const prompt = makeUserPrompt({ slug, name, existing, evidence });
   ck.pending[slug] = Date.now();
-  fs.writeFileSync(CHECKPOINT, JSON.stringify(ck, null, 2));
+  persistCheckpoint();
 
   // Simple exponential backoff with jitter
   for (let attempt=1; attempt<=4; attempt++) {
@@ -2982,7 +3070,24 @@ ${JSON.stringify(obj)}
       };
 
       delete output.promodetails;
+
+      // Fingerprint dedupe: avoid duplicate writes
+      const sha = stableDigest(output);
+      const prior = fingerprints.get(slug);
+
+      // If digest unchanged, skip writing but mark done
+      if (prior && prior === sha) {
+        ck.done[slug] = true;
+        delete ck.pending[slug];
+        persistCheckpoint();
+        return;
+      }
+
+      // Write output and update fingerprint
       fs.appendFileSync(OUT_FILE, JSON.stringify(output) + "\n");
+      appendFingerprint({ slug, sha });
+      fingerprints.set(slug, sha);
+
       if (evidence?.drilled) drilledCount++;
       ck.done[slug] = true;
       delete ck.pending[slug];
@@ -3063,7 +3168,25 @@ ${JSON.stringify(obj)}
             };
 
             delete output2.promodetails;
+
+            // Fingerprint dedupe: avoid duplicate writes
+            const sha2 = stableDigest(output2);
+            const prior2 = fingerprints.get(slug);
+
+            // If digest unchanged, skip writing but mark done
+            if (prior2 && prior2 === sha2) {
+              ck.done[slug] = true;
+              delete ck.pending[slug];
+              persistCheckpoint();
+              process.env.MODEL = prevModel;
+              return;
+            }
+
+            // Write output and update fingerprint
             fs.appendFileSync(OUT_FILE, JSON.stringify(output2) + "\n");
+            appendFingerprint({ slug, sha: sha2 });
+            fingerprints.set(slug, sha2);
+
             if (evidence?.drilled) drilledCount++;
             ck.done[slug] = true;
             delete ck.pending[slug];
@@ -3086,7 +3209,32 @@ async function run() {
   if (DRY_RUN) {
     console.log("🔍 DRY-RUN MODE: Validating fetch/grounding without LLM calls");
   }
-  const queue = rows.filter(r => !alreadyDone.has(r.slug));
+
+  // Build worklist: honor resume unless FORCE
+  let queue = rows.filter(r => FORCE ? true : !alreadyDone.has(r.slug));
+
+  // Apply onlySlugs filter if specified
+  if (args.onlySlugs) {
+    const only = new Set(String(args.onlySlugs).split(",").map(s => s.trim()).filter(Boolean));
+    queue = rows.filter(r => only.has(r.slug) && (FORCE || !alreadyDone.has(r.slug)));
+  }
+
+  // Guard against empty workset
+  if (queue.length === 0) {
+    const completed = Object.keys(ck.done || {}).length;
+    const inflight = Object.keys(ck.pending || {}).length;
+    const skipped = Math.max(rows.length - completed, 0);
+    console.log(`Nothing to do. Completed=${completed} Inflight=${inflight} SkippedAlreadyComplete=${skipped}`);
+
+    // Count actual reject lines
+    try {
+      const rejLines = fs.existsSync(REJECTS_FILE) ? (fs.readFileSync(REJECTS_FILE, "utf8").trim().split("\n").filter(Boolean).length) : 0;
+      console.log(`Rejects so far: ${rejLines} (in ${REJECTS_FILE})`);
+    } catch {}
+
+    process.exit(0);
+  }
+
   let i = 0, ok = 0, fail = 0;
   while (i < queue.length) {
     const slice = queue.slice(i, i + CONCURRENCY);
@@ -3097,7 +3245,7 @@ async function run() {
       console.error("Batch error:", e.message);
       fail += 1;
     } finally {
-      fs.writeFileSync(CHECKPOINT, JSON.stringify(ck, null, 2));
+      persistCheckpoint();
       i += CONCURRENCY;
     }
     // polite pacing
@@ -3150,7 +3298,7 @@ run().catch(err => {
 for (const sig of ["SIGINT", "SIGTERM"]) {
   process.on(sig, () => {
     try {
-      fs.writeFileSync(CHECKPOINT, JSON.stringify(ck, null, 2));
+      persistCheckpoint();
       console.log(`\n🛑 ${sig} received. Checkpoint saved.`);
     } catch {}
     try { fs.unlinkSync(LOCK); } catch {}
