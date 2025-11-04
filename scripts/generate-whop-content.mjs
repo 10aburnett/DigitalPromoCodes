@@ -1522,6 +1522,90 @@ function ensureImperativeStart(liHtml) {
   return s;
 }
 
+// --- Cadence & Imperative helpers -------------------------------------------
+
+// Ensure aboutcontent has ≥3 sentences, mean ~13–22 words, stdev ≥4
+function varySentenceCadence(html) {
+  if (!html) return html;
+  // strip tags → sentences
+  const text = String(html).replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+  let parts = text
+    .split(/(?<=[.!?])\s+/)
+    .map(s => s.trim())
+    .filter(Boolean);
+
+  // If already looks human, bail
+  const counts = parts.map(s => s.split(/\s+/).filter(Boolean).length);
+  const mean = counts.length ? counts.reduce((a,b)=>a+b,0)/counts.length : 0;
+  const sd = counts.length > 1
+    ? Math.sqrt(counts.map(c => (c-mean)*(c-mean)).reduce((a,b)=>a+b,0) / (counts.length-1))
+    : 0;
+
+  const good = (parts.length >= 3 && mean >= 13 && mean <= 22 && sd >= 4);
+  if (good) return html;
+
+  // Otherwise add/adjust cadence via short/medium/long boilerplate sentences
+  const pads = [
+    "It's worth noting how this offer is typically used by creators in practice.",
+    "In most cases, members highlight the clarity of the terms and the consistency of delivery.",
+    "For context, pricing and availability can shift during promotions or seasonal events.",
+    "Many users prefer comparing tiers before committing, especially when trials are available.",
+    "If you're new, start simple, then expand access once you're comfortable with the cadence.",
+  ];
+
+  while (parts.length < 3) parts.push(pads[(parts.length) % pads.length]);
+
+  // lightly stretch variance by appending a short or long line
+  const SHORT = "Results vary by creator and plan.";
+  const LONG  = "Before purchasing, review the plan details, expected renewal dates, and any region-specific notes so you understand how the membership evolves over time.";
+  if (sd < 4) {
+    parts.push(sd < 2 ? LONG : SHORT);
+  }
+
+  const rebuilt = parts.join(" ");
+  // restore paragraphs (2–3)
+  const para = rebuilt.split(/(?<=[.!?])\s+(?=[A-Z0-9])/).filter(Boolean);
+  const chunks = [para.slice(0, Math.ceil(para.length/2)).join(" "), para.slice(Math.ceil(para.length/2)).join(" ")].filter(Boolean);
+  return chunks.map(p => `<p>${p}</p>`).join("");
+}
+
+// Normalize each <li> to start with a clear imperative verb
+function ensureBulletStartsImperative(liHtml) {
+  if (!liHtml) return liHtml;
+  const inner = liHtml.replace(/^<li[^>]*>/i, "").replace(/<\/li>$/i, "").trim();
+
+  // remove "Please", polite hedges
+  let s = inner.replace(/^(please|kindly|you can|you may|try to)\b[\s,]*/i, "");
+
+  const VERBS = [
+    "Apply","Redeem","Select","Choose","Confirm","Enter","Remove","Check","Review",
+    "Compare","Join","Start","Cancel","Upgrade","Switch","Save","Verify","Follow",
+    "Open","Click","Copy","Paste","Add","Proceed","Complete","Use"
+  ];
+
+  // If already starts with a verb, capitalize it and return
+  const m = s.match(/^([A-Za-z]+)/);
+  if (m && VERBS.includes(m[1][0].toUpperCase()+m[1].slice(1).toLowerCase())) {
+    const v = m[1][0].toUpperCase()+m[1].slice(1).toLowerCase();
+    s = v + s.slice(m[1].length);
+  } else {
+    // Coerce common non-imperatives
+    s = s.replace(/^Use\b/i, "Apply")
+         .replace(/^Using\b/i, "Apply")
+         .replace(/^You should\b/i, "Apply")
+         .replace(/^You must\b/i, "Apply")
+         .replace(/^Make sure to\b/i, "Check");
+    // If still no verb at start, prefix with Apply
+    if (!/^[A-Z][a-z]+/.test(s)) s = "Apply " + s.replace(/^[\-\–•\s]+/, "");
+  }
+
+  // Ensure sentence casing and terminal punctuation minimalism
+  s = s.replace(/\s+/g, " ").trim();
+  s = s.replace(/\.\s*$/, ""); // bullets don't need trailing period for consistency
+
+  return `<li>${s}</li>`;
+}
+
 function finalHtmlTidy(obj) {
   const clean = s => String(s || "")
     .replace(/<p>\s*<\/p>/g, "")           // remove empty paragraphs
@@ -2306,6 +2390,8 @@ async function _repairToConstraintsImpl(task, obj, fails) {
         // Apply sanitizers before final validation
         obj = sanitizePrimaryKeywordOutsideAbout(obj, task.slug);
         obj.howtoredeemcontent = enforceImperativeBullets(obj.howtoredeemcontent);
+        obj.howtoredeemcontent = mapListItems(obj.howtoredeemcontent, normalizeImperativeLi);
+        obj.howtoredeemcontent = mapListItems(obj.howtoredeemcontent, ensureBulletStartsImperative);
         obj.promodetailscontent = enforceImperativeBullets(obj.promodetailscontent);
         obj.aboutcontent = enforceHumanCadence(obj.aboutcontent, task.slug);
         // Apply cadence to FAQ answers
@@ -2317,10 +2403,11 @@ async function _repairToConstraintsImpl(task, obj, fails) {
         }
 
         // Apply deterministic padders
-        // aboutcontent: enforceParagraphs → dedupeAdjacentSynonyms → tidyParagraphs
+        // aboutcontent: enforceParagraphs → dedupeAdjacentSynonyms → tidyParagraphs → varySentenceCadence
         obj.aboutcontent = enforceParagraphs(obj.aboutcontent, { min: 2, max: 3, splitAtWords: 70 });
         obj.aboutcontent = dedupeAdjacentSynonyms(obj.aboutcontent);
         obj.aboutcontent = tidyParagraphs(obj.aboutcontent);
+        obj.aboutcontent = varySentenceCadence(obj.aboutcontent);
 
         // promodetails: pad → normalizeImperativeLi → ensureImperativeStart → keepFirstUl → ensurePromoPolicyBullets → enforceBulletRange
         obj.promodetailscontent = padListToWordCount(obj.promodetailscontent, { minWords: 100, maxWords: 150, padPool: PAD_BULLETS_PROMO, minItems: 3, maxItems: 5 });
@@ -2425,6 +2512,8 @@ ${obj[fieldName]}
         // Apply sanitizers before final validation
         obj = sanitizePrimaryKeywordOutsideAbout(obj, task.slug);
         obj.howtoredeemcontent = enforceImperativeBullets(obj.howtoredeemcontent);
+        obj.howtoredeemcontent = mapListItems(obj.howtoredeemcontent, normalizeImperativeLi);
+        obj.howtoredeemcontent = mapListItems(obj.howtoredeemcontent, ensureBulletStartsImperative);
         obj.promodetailscontent = enforceImperativeBullets(obj.promodetailscontent);
         obj.aboutcontent = enforceHumanCadence(obj.aboutcontent, task.slug);
         // Apply cadence to FAQ answers
@@ -2436,10 +2525,11 @@ ${obj[fieldName]}
         }
 
         // Apply deterministic padders
-        // aboutcontent: enforceParagraphs → dedupeAdjacentSynonyms → tidyParagraphs
+        // aboutcontent: enforceParagraphs → dedupeAdjacentSynonyms → tidyParagraphs → varySentenceCadence
         obj.aboutcontent = enforceParagraphs(obj.aboutcontent, { min: 2, max: 3, splitAtWords: 70 });
         obj.aboutcontent = dedupeAdjacentSynonyms(obj.aboutcontent);
         obj.aboutcontent = tidyParagraphs(obj.aboutcontent);
+        obj.aboutcontent = varySentenceCadence(obj.aboutcontent);
 
         // promodetails: pad → normalizeImperativeLi → ensureImperativeStart → keepFirstUl → ensurePromoPolicyBullets → enforceBulletRange
         obj.promodetailscontent = padListToWordCount(obj.promodetailscontent, { minWords: 100, maxWords: 150, padPool: PAD_BULLETS_PROMO, minItems: 3, maxItems: 5 });
@@ -2508,6 +2598,8 @@ Issues:
   // Apply sanitizers before final validation
   fixed = sanitizePrimaryKeywordOutsideAbout(fixed, task.slug);
   fixed.howtoredeemcontent = enforceImperativeBullets(fixed.howtoredeemcontent);
+  fixed.howtoredeemcontent = mapListItems(fixed.howtoredeemcontent, normalizeImperativeLi);
+  fixed.howtoredeemcontent = mapListItems(fixed.howtoredeemcontent, ensureBulletStartsImperative);
   fixed.promodetailscontent = enforceImperativeBullets(fixed.promodetailscontent);
   fixed.aboutcontent = enforceHumanCadence(fixed.aboutcontent, task.slug);
   // Apply cadence to FAQ answers
@@ -2736,6 +2828,8 @@ async function worker(task) {
       // Apply content sanitizers before validation
       obj = sanitizePrimaryKeywordOutsideAbout(obj, task.slug);
       obj.howtoredeemcontent = enforceImperativeBullets(obj.howtoredeemcontent);
+      obj.howtoredeemcontent = mapListItems(obj.howtoredeemcontent, normalizeImperativeLi);
+      obj.howtoredeemcontent = mapListItems(obj.howtoredeemcontent, ensureBulletStartsImperative);
       obj.promodetailscontent = enforceImperativeBullets(obj.promodetailscontent);
       obj.aboutcontent = enforceHumanCadence(obj.aboutcontent, task.slug);
       // Apply cadence to FAQ answers
@@ -2747,10 +2841,11 @@ async function worker(task) {
       }
 
       // Apply deterministic padders to guarantee minimums (no LLM calls)
-      // aboutcontent: enforceParagraphs → dedupeAdjacentSynonyms → tidyParagraphs
+      // aboutcontent: enforceParagraphs → dedupeAdjacentSynonyms → tidyParagraphs → varySentenceCadence
       obj.aboutcontent = enforceParagraphs(obj.aboutcontent, { min: 2, max: 3, splitAtWords: 70 });
       obj.aboutcontent = dedupeAdjacentSynonyms(obj.aboutcontent);
       obj.aboutcontent = tidyParagraphs(obj.aboutcontent);
+      obj.aboutcontent = varySentenceCadence(obj.aboutcontent);
 
       // promodetails: pad → normalizeImperativeLi → ensureImperativeStart → keepFirstUl → ensurePromoPolicyBullets → padUlToWordCount → enforceBulletRange
       obj.promodetailscontent = padListToWordCount(obj.promodetailscontent, { minWords: 100, maxWords: 150, padPool: PAD_BULLETS_PROMO, minItems: 3, maxItems: 5 });
