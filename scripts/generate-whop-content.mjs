@@ -104,6 +104,64 @@ function stableDigest(obj) {
 }
 // --- End checkpoint module --------------------------------------------------
 
+// --- Budget manager ---------------------------------------------------------
+// Defaults (edit if your account pricing differs)
+// Units: USD per 1M tokens
+const PRICE_IN_PER_MTOK  = Number(process.env.PRICE_IN_PER_MTOK  || "5");   // e.g., 4o input
+const PRICE_OUT_PER_MTOK = Number(process.env.PRICE_OUT_PER_MTOK || "15");  // e.g., 4o output
+
+function loadUsage() {
+  try { return JSON.parse(fs.readFileSync("data/content/.usage.json", "utf8")); } catch { return { runs: [] }; }
+}
+function saveUsage(u) {
+  fs.mkdirSync(path.dirname("data/content/.usage.json"), { recursive: true });
+  fs.writeFileSync("data/content/.usage.json", JSON.stringify(u, null, 2));
+}
+
+function estCostUSD(promptTokens, completionTokens) {
+  const inUSD  = (promptTokens     / 1_000_000) * PRICE_IN_PER_MTOK;
+  const outUSD = (completionTokens / 1_000_000) * PRICE_OUT_PER_MTOK;
+  return inUSD + outUSD;
+}
+
+function makeBudgetManager(opts) {
+  const capUSD      = Number(opts.capUSD || 0) || null; // from --budgetUsd
+  const softRatio   = 0.98; // stop slightly early to avoid race conditions
+  let spentUSD      = 0;
+  let promptSoFar   = 0;
+  let completionSoFar = 0;
+
+  return {
+    canAfford(nextPromptTok, nextCompletionTok) {
+      if (!capUSD) return true;
+      const willCost = estCostUSD(nextPromptTok, nextCompletionTok);
+      return (spentUSD + willCost) <= capUSD * softRatio;
+    },
+    record(usage) {
+      // usage: { prompt_tokens, completion_tokens } or { input_tokens, output_tokens }
+      const p = usage?.prompt_tokens ?? usage?.input_tokens ?? 0;
+      const c = usage?.completion_tokens ?? usage?.output_tokens ?? 0;
+      promptSoFar += p; completionSoFar += c;
+      spentUSD += estCostUSD(p, c);
+    },
+    summary() {
+      return { spentUSD: Number(spentUSD.toFixed(4)), promptSoFar, completionSoFar, capUSD };
+    },
+    persistRunMeta(meta = {}) {
+      const u = loadUsage();
+      u.runs.push({
+        at: new Date().toISOString(),
+        provider: process.env.PROVIDER || "openai",
+        model: MODEL,
+        ...this.summary(),
+        ...meta
+      });
+      saveUsage(u);
+    }
+  };
+}
+// --- End budget manager -----------------------------------------------------
+
 // === [PATCH] Overrides + CSV logging =========================================
 const OVERRIDES_FILE = "data/overrides/hub-product-map.json";      // { "<creator-slug>": "/creator/product-slug/" }
 const REVIEW_CSV     = "data/content/hub-review.csv";              // unresolved hubs
@@ -189,6 +247,9 @@ if (!MODEL) {
   console.error("❌ MODEL env is required (e.g., MODEL=gpt-4.x or claude-x).");
   process.exit(1);
 }
+
+// Instantiate budget manager (uses existing BUDGET_USD from line 212)
+const budget = makeBudgetManager({ capUSD: BUDGET_USD });
 
 let usageTotals = { input: 0, output: 0 };
 let drilledCount = 0;  // Track hub drill-down successes
@@ -531,6 +592,7 @@ const api = {
       if (data?.usage) {
         usageTotals.input += data.usage.prompt_tokens || 0;
         usageTotals.output += data.usage.completion_tokens || 0;
+        budget.record(data.usage);
       }
       return data.choices?.[0]?.message?.content ?? "";
     } else if (PROVIDER === "anthropic") {
@@ -560,6 +622,7 @@ const api = {
       if (data?.usage) {
         usageTotals.input += data.usage.input_tokens || 0;
         usageTotals.output += data.usage.output_tokens || 0;
+        budget.record(data.usage);
       }
       const content = (data.content && data.content[0] && data.content[0].text) || "";
       return content;
@@ -572,13 +635,10 @@ const api = {
   async callLLM(prompt) {
     const maxRetries = 3;
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
-      // Budget check before each attempt
-      if (BUDGET_USD > 0) {
-        const p = PRICE[PROVIDER.toLowerCase()] || PRICE.openai;
-        const currentCost = (usageTotals.input * p.in) + (usageTotals.output * p.out);
-        if (currentCost >= BUDGET_USD) {
-          throw new Error(`Budget exceeded: $${currentCost.toFixed(2)} >= $${BUDGET_USD}`);
-        }
+      // Budget check before each attempt using BudgetManager
+      const { spentUSD, capUSD } = budget.summary();
+      if (capUSD && spentUSD >= capUSD * 0.98) {
+        throw new Error(`Budget cap reached: $${spentUSD.toFixed(2)} / $${capUSD.toFixed(2)}`);
       }
 
       try {
@@ -3337,6 +3397,16 @@ async function run() {
       await Promise.all(slice.map(r => worker(r)));
       ok += slice.length;
     } catch (e) {
+      // Check if budget cap reached (graceful stop)
+      if (e.message && e.message.includes("Budget cap reached")) {
+        console.error(`\n⛔ ${e.message}`);
+        console.log(`   Checkpoint saved at ${CHECKPOINT}`);
+        console.log(`   OUT: ${OUT_FILE}`);
+        console.log(`   REJ: ${REJECTS_FILE}`);
+        console.log(`   Run completed items: ${ok}`);
+        budget.persistRunMeta({ reason: "budget_cap_reached", itemsCompleted: ok, itemsFailed: fail });
+        break;
+      }
       console.error("Batch error:", e.message);
       fail += 1;
     } finally {
@@ -3349,21 +3419,8 @@ async function run() {
     // Progress logging every 100 successes
     if ((ok % 100 === 0) && ok > 0) {
       console.log(`Progress: ok=${ok}, batchFails=${fail}, tokens={in:${usageTotals.input}, out:${usageTotals.output}}`);
-      // Export real token usage for monitor (atomic write)
-      writeJsonAtomic(USAGE_FILE, { input: usageTotals.input, output: usageTotals.output });
-    }
-
-    // Budget cap check
-    if (BUDGET_USD) {
-      const p = PRICE[PROVIDER] || PRICE.openai;
-      const spent = usageTotals.input * p.in + usageTotals.output * p.out;
-      // naive projection to total based on completion ratio
-      const ratio = ok / Math.max(1, queue.length);
-      const projected = spent / Math.max(0.01, ratio);
-      if (projected > BUDGET_USD) {
-        console.warn(`⛔ Budget cap hit. Spent so far ~$${spent.toFixed(2)}; projected ~$${projected.toFixed(2)} > $${BUDGET_USD}. Stopping.`);
-        break;
-      }
+      const { spentUSD } = budget.summary();
+      console.log(`Spent so far: $${spentUSD.toFixed(2)}`);
     }
   }
   console.log(`✅ Completed. Wrote to ${OUT_FILE}. Success=${ok}, batchFails=${fail}`);
@@ -3378,6 +3435,9 @@ async function run() {
 
   // Final token usage export for monitor (atomic write)
   writeJsonAtomic(USAGE_FILE, { input: usageTotals.input, output: usageTotals.output });
+
+  // Persist budget usage meta to .usage.json
+  budget.persistRunMeta({ reason: "completed_batch", itemsCompleted: ok, itemsFailed: fail, rejectsCount });
 
   // Release lock on successful completion
   try { fs.unlinkSync(LOCK); } catch {}
