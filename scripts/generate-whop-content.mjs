@@ -1383,11 +1383,15 @@ function enforceBulletRange(html, { minItems = 3, maxItems = 5, pool = PAD_BULLE
 function ensureImperativeStart(liHtml) {
   let s = String(liHtml || "");
 
-  // Normalize "Use ..." to an accepted imperative verb
+  // Normalize "Use ..." → "Apply ...", "Please ..." → drop politeness
   s = s.replace(/(<li[^>]*>)\s*Use\b/i, (_m, open) => `${open}Apply`);
+  s = s.replace(/(<li[^>]*>)\s*Please\s+/i, (_m, open) => `${open}`);
 
   // If bullet starts with an article/pronoun, prepend "Review "
   s = s.replace(/(<li[^>]*>)\s*(?:The|This|These|You|Your|It|A|An)\b/i, (_m, open) => `${open}Review `);
+
+  // Guard empty bullets
+  s = s.replace(/(<li[^>]*>)\s*(<\/li>)/i, (_m, open, close) => `${open}Review details${close}`);
 
   return s;
 }
@@ -1407,6 +1411,77 @@ function finalHtmlTidy(obj) {
       ? obj.faqcontent.map(f => ({ ...f, answerHtml: clean(f.answerHtml) }))
       : obj.faqcontent
   };
+}
+
+// --- Canonical policy bullets (neutral, action-verb phrasing) ----------------
+const PROMO_POLICY_BULLETS = {
+  product: "Identify whether this is a subscription or one-time purchase, and confirm the exact plan or SKU before you apply a code.",
+  scope:   "Confirm code eligibility for the selected tier; if no reduction appears, switch plans or re-apply to ensure the promo covers this SKU.",
+  stacking:"Expect one code per checkout on Whop; remove any prefilled coupon, then re-apply the best code before you confirm.",
+  renewals:"Check whether the promo applies to the first billing cycle only or to ongoing renewals; review renewal cadence on the final screen.",
+  vat:     "Review VAT/GST and currency next to Total at checkout; taxes are calculated by region and may adjust the final amount."
+};
+
+const TERMS_POLICY_BULLETS = {
+  platform:  "Purchases are processed on Whop under the seller's policies; availability, inclusions, and pricing are controlled by the creator.",
+  refunds:   "Submit refund or dispute requests through Whop's Resolution Center; outcomes follow the creator's stated policy and are not guaranteed.",
+  billing:   "For subscriptions, manage cancellations from your Whop account before renewal to avoid the next charge; review renewal cadence at checkout.",
+  stacking:  "Promotions may not stack with other coupons or sales; remove any prefilled coupon before applying a new code.",
+  regional:  "Taxes and currency are determined by region; the final price at checkout reflects VAT/GST and any regional adjustments."
+};
+
+// Parse <li>...</li> items
+function getLis(html) {
+  return String(html || "").match(/<li\b[^>]*>[\s\S]*?<\/li>/gi) || [];
+}
+
+// Loose keyword presence (kept deliberately simple/robust)
+function hasPolicy(items, key) {
+  const text = items.map(s => s.replace(/<[^>]+>/g, "")).join(" || ").toLowerCase();
+  const checks = {
+    product:  /subscription|one[-\s]?time|plan|tier|sku/,
+    scope:    /eligible|eligibility|excluded|appl(y|ies)|tier|sku|plan/,
+    stacking: /stack|one code|single code|remove coupon|prefill/,
+    renewals: /renewal|first billing|ongoing|recurr(ing|ence)|cadence/,
+    vat:      /vat|gst|tax|currency|total/,
+    platform: /whop|platform|seller|creator/,
+    refunds:  /refund|resolution|dispute|policy/,
+    billing:  /cancel|cancellation|renewal|cadence|subscription/,
+    regional: /vat|gst|currency|region|tax/
+  };
+  return (checks[key] || /./).test(text);
+}
+
+function ensurePromoPolicyBullets(html) {
+  let items = getLis(html);
+  const need = [];
+  if (!hasPolicy(items, "product"))  need.push(PROMO_POLICY_BULLETS.product);
+  if (!hasPolicy(items, "scope"))    need.push(PROMO_POLICY_BULLETS.scope);
+  if (!hasPolicy(items, "stacking")) need.push(PROMO_POLICY_BULLETS.stacking);
+  if (!hasPolicy(items, "renewals")) need.push(PROMO_POLICY_BULLETS.renewals);
+  if (!hasPolicy(items, "vat"))      need.push(PROMO_POLICY_BULLETS.vat);
+
+  for (const b of need) {
+    if (items.length < 5) items.push(`<li>${b}</li>`);
+    else items[items.length - 1] = `<li>${b}</li>`;
+  }
+  return setListItems(html, items);
+}
+
+function ensureTermsPolicyBullets(html) {
+  let items = getLis(html);
+  const need = [];
+  if (!hasPolicy(items, "platform")) need.push(TERMS_POLICY_BULLETS.platform);
+  if (!hasPolicy(items, "refunds"))  need.push(TERMS_POLICY_BULLETS.refunds);
+  if (!hasPolicy(items, "billing"))  need.push(TERMS_POLICY_BULLETS.billing);
+  if (!hasPolicy(items, "stacking")) need.push(TERMS_POLICY_BULLETS.stacking);
+  if (!hasPolicy(items, "regional")) need.push(TERMS_POLICY_BULLETS.regional);
+
+  for (const b of need) {
+    if (items.length < 5) items.push(`<li>${b}</li>`);
+    else items[items.length - 1] = `<li>${b}</li>`;
+  }
+  return setListItems(html, items);
 }
 
 // --- SEO keyword regex helpers (centralized to avoid drift) ---
@@ -1735,14 +1810,14 @@ function faqDiversityOk(faqs) {
 function bulletsImperative(html) {
   const lis = String(html || "").match(/<li\b[^>]*>[\s\S]*?<\/li>/gi) || [];
   if (!lis.length) return true;
-  // Lenient check: bullet starts with any alphabetic character (not punctuation/whitespace)
-  // This prevents rejection while ensureImperativeStart() handles cleanup
-  const ok = lis.every(li => {
+  // Expanded imperative verb list (ensureImperativeStart normalizes many cases already)
+  const allowed = /^(apply|compare|confirm|enter|join|access|start|explore|review|select|check|paste|copy|verify|visit|open|follow|redeem|activate|save|choose|view|find|locate|add|remove|reapply|re-apply|refresh|clear|identify|expect|submit|manage)\b/i;
+  return lis.every(li => {
     const text = stripTags(li).trim();
     if (!text) return false; // reject empty bullets
-    return /^[A-Za-z]/.test(text); // accept any alphabetic start
+    const first = (text.match(/^[a-z]+/i) || [""])[0];
+    return allowed.test(first);
   });
-  return ok;
 }
 
 // Rolling window of recent fingerprints (for cross-doc originality)
@@ -2121,18 +2196,20 @@ async function _repairToConstraintsImpl(task, obj, fails) {
         obj.aboutcontent = dedupeAdjacentSynonyms(obj.aboutcontent);
         obj.aboutcontent = tidyParagraphs(obj.aboutcontent);
 
-        // promodetails: pad → normalizeImperativeLi → ensureImperativeStart → keepFirstUl → enforceBulletRange
+        // promodetails: pad → normalizeImperativeLi → ensureImperativeStart → keepFirstUl → ensurePromoPolicyBullets → enforceBulletRange
         obj.promodetailscontent = padListToWordCount(obj.promodetailscontent, { minWords: 100, maxWords: 150, padPool: PAD_BULLETS_PROMO, minItems: 3, maxItems: 5 });
         obj.promodetailscontent = mapListItems(obj.promodetailscontent, normalizeImperativeLi);
         obj.promodetailscontent = mapListItems(obj.promodetailscontent, ensureImperativeStart);
         obj.promodetailscontent = keepFirstUl(obj.promodetailscontent);
+        obj.promodetailscontent = ensurePromoPolicyBullets(obj.promodetailscontent);
         obj.promodetailscontent = enforceBulletRange(obj.promodetailscontent, { minItems: 3, maxItems: 5, pool: PAD_BULLETS_PROMO });
 
-        // terms: pad → normalizeImperativeLi → ensureImperativeStart → keepFirstUl → enforceBulletRange
+        // terms: pad → normalizeImperativeLi → ensureImperativeStart → keepFirstUl → ensureTermsPolicyBullets → enforceBulletRange
         obj.termscontent = padListToWordCount(obj.termscontent, { minWords: 80, maxWords: 120, padPool: PAD_BULLETS_TERMS, minItems: 3, maxItems: 5 });
         obj.termscontent = mapListItems(obj.termscontent, normalizeImperativeLi);
         obj.termscontent = mapListItems(obj.termscontent, ensureImperativeStart);
         obj.termscontent = keepFirstUl(obj.termscontent);
+        obj.termscontent = ensureTermsPolicyBullets(obj.termscontent);
         obj.termscontent = enforceBulletRange(obj.termscontent, { minItems: 3, maxItems: 5, pool: PAD_BULLETS_TERMS });
 
         // faq: padFaqAnswer (already calls tidyParagraphs internally)
@@ -2236,18 +2313,20 @@ ${obj[fieldName]}
         obj.aboutcontent = dedupeAdjacentSynonyms(obj.aboutcontent);
         obj.aboutcontent = tidyParagraphs(obj.aboutcontent);
 
-        // promodetails: pad → normalizeImperativeLi → ensureImperativeStart → keepFirstUl → enforceBulletRange
+        // promodetails: pad → normalizeImperativeLi → ensureImperativeStart → keepFirstUl → ensurePromoPolicyBullets → enforceBulletRange
         obj.promodetailscontent = padListToWordCount(obj.promodetailscontent, { minWords: 100, maxWords: 150, padPool: PAD_BULLETS_PROMO, minItems: 3, maxItems: 5 });
         obj.promodetailscontent = mapListItems(obj.promodetailscontent, normalizeImperativeLi);
         obj.promodetailscontent = mapListItems(obj.promodetailscontent, ensureImperativeStart);
         obj.promodetailscontent = keepFirstUl(obj.promodetailscontent);
+        obj.promodetailscontent = ensurePromoPolicyBullets(obj.promodetailscontent);
         obj.promodetailscontent = enforceBulletRange(obj.promodetailscontent, { minItems: 3, maxItems: 5, pool: PAD_BULLETS_PROMO });
 
-        // terms: pad → normalizeImperativeLi → ensureImperativeStart → keepFirstUl → enforceBulletRange
+        // terms: pad → normalizeImperativeLi → ensureImperativeStart → keepFirstUl → ensureTermsPolicyBullets → enforceBulletRange
         obj.termscontent = padListToWordCount(obj.termscontent, { minWords: 80, maxWords: 120, padPool: PAD_BULLETS_TERMS, minItems: 3, maxItems: 5 });
         obj.termscontent = mapListItems(obj.termscontent, normalizeImperativeLi);
         obj.termscontent = mapListItems(obj.termscontent, ensureImperativeStart);
         obj.termscontent = keepFirstUl(obj.termscontent);
+        obj.termscontent = ensureTermsPolicyBullets(obj.termscontent);
         obj.termscontent = enforceBulletRange(obj.termscontent, { minItems: 3, maxItems: 5, pool: PAD_BULLETS_TERMS });
 
         // faq: padFaqAnswer (already calls tidyParagraphs internally)
@@ -2315,18 +2394,20 @@ Issues:
   fixed.aboutcontent = dedupeAdjacentSynonyms(fixed.aboutcontent);
   fixed.aboutcontent = tidyParagraphs(fixed.aboutcontent);
 
-  // promodetails: pad → normalizeImperativeLi → ensureImperativeStart → keepFirstUl → enforceBulletRange
+  // promodetails: pad → normalizeImperativeLi → ensureImperativeStart → keepFirstUl → ensurePromoPolicyBullets → enforceBulletRange
   fixed.promodetailscontent = padListToWordCount(fixed.promodetailscontent, { minWords: 100, maxWords: 150, padPool: PAD_BULLETS_PROMO, minItems: 3, maxItems: 5 });
   fixed.promodetailscontent = mapListItems(fixed.promodetailscontent, normalizeImperativeLi);
   fixed.promodetailscontent = mapListItems(fixed.promodetailscontent, ensureImperativeStart);
   fixed.promodetailscontent = keepFirstUl(fixed.promodetailscontent);
+  fixed.promodetailscontent = ensurePromoPolicyBullets(fixed.promodetailscontent);
   fixed.promodetailscontent = enforceBulletRange(fixed.promodetailscontent, { minItems: 3, maxItems: 5, pool: PAD_BULLETS_PROMO });
 
-  // terms: pad → normalizeImperativeLi → ensureImperativeStart → keepFirstUl → enforceBulletRange
+  // terms: pad → normalizeImperativeLi → ensureImperativeStart → keepFirstUl → ensureTermsPolicyBullets → enforceBulletRange
   fixed.termscontent = padListToWordCount(fixed.termscontent, { minWords: 80, maxWords: 120, padPool: PAD_BULLETS_TERMS, minItems: 3, maxItems: 5 });
   fixed.termscontent = mapListItems(fixed.termscontent, normalizeImperativeLi);
   fixed.termscontent = mapListItems(fixed.termscontent, ensureImperativeStart);
   fixed.termscontent = keepFirstUl(fixed.termscontent);
+  fixed.termscontent = ensureTermsPolicyBullets(fixed.termscontent);
   fixed.termscontent = enforceBulletRange(fixed.termscontent, { minItems: 3, maxItems: 5, pool: PAD_BULLETS_TERMS });
 
   // faq: padFaqAnswer (already calls tidyParagraphs internally)
@@ -2441,6 +2522,7 @@ async function worker(task) {
         dryRun: true
       }
     };
+    delete dryOutput.promodetails;
     fs.appendFileSync(OUT_FILE, JSON.stringify(dryOutput) + "\n");
     if (evidence?.drilled) drilledCount++;
     ck.done[slug] = true;
@@ -2521,18 +2603,20 @@ async function worker(task) {
       obj.aboutcontent = dedupeAdjacentSynonyms(obj.aboutcontent);
       obj.aboutcontent = tidyParagraphs(obj.aboutcontent);
 
-      // promodetails: pad → normalizeImperativeLi → ensureImperativeStart → keepFirstUl → enforceBulletRange
+      // promodetails: pad → normalizeImperativeLi → ensureImperativeStart → keepFirstUl → ensurePromoPolicyBullets → enforceBulletRange
       obj.promodetailscontent = padListToWordCount(obj.promodetailscontent, { minWords: 100, maxWords: 150, padPool: PAD_BULLETS_PROMO, minItems: 3, maxItems: 5 });
       obj.promodetailscontent = mapListItems(obj.promodetailscontent, normalizeImperativeLi);
       obj.promodetailscontent = mapListItems(obj.promodetailscontent, ensureImperativeStart);
       obj.promodetailscontent = keepFirstUl(obj.promodetailscontent);
+      obj.promodetailscontent = ensurePromoPolicyBullets(obj.promodetailscontent);
       obj.promodetailscontent = enforceBulletRange(obj.promodetailscontent, { minItems: 3, maxItems: 5, pool: PAD_BULLETS_PROMO });
 
-      // terms: pad → normalizeImperativeLi → ensureImperativeStart → keepFirstUl → enforceBulletRange
+      // terms: pad → normalizeImperativeLi → ensureImperativeStart → keepFirstUl → ensureTermsPolicyBullets → enforceBulletRange
       obj.termscontent = padListToWordCount(obj.termscontent, { minWords: 80, maxWords: 120, padPool: PAD_BULLETS_TERMS, minItems: 3, maxItems: 5 });
       obj.termscontent = mapListItems(obj.termscontent, normalizeImperativeLi);
       obj.termscontent = mapListItems(obj.termscontent, ensureImperativeStart);
       obj.termscontent = keepFirstUl(obj.termscontent);
+      obj.termscontent = ensureTermsPolicyBullets(obj.termscontent);
       obj.termscontent = enforceBulletRange(obj.termscontent, { minItems: 3, maxItems: 5, pool: PAD_BULLETS_TERMS });
 
       // faq: padFaqAnswer (already calls tidyParagraphs internally)
@@ -2834,6 +2918,7 @@ ${JSON.stringify(obj)}
         }
       };
 
+      delete output.promodetails;
       fs.appendFileSync(OUT_FILE, JSON.stringify(output) + "\n");
       if (evidence?.drilled) drilledCount++;
       ck.done[slug] = true;
@@ -2914,6 +2999,7 @@ ${JSON.stringify(obj)}
               }
             };
 
+            delete output2.promodetails;
             fs.appendFileSync(OUT_FILE, JSON.stringify(output2) + "\n");
             if (evidence?.drilled) drilledCount++;
             ck.done[slug] = true;
