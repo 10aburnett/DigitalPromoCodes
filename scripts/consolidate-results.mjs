@@ -1,101 +1,147 @@
 #!/usr/bin/env node
-// Consolidate raw batch outputs into master corpus files
-
+// Idempotent consolidation - prevents duplicates across multiple runs
 import fs from "fs";
 import path from "path";
 
 const RAW_DIR = "data/content/raw";
 const MASTER_DIR = "data/content/master";
-const USAGE_FILE = "data/content/.usage.json";
+const SUCCESS_FILE = path.join(MASTER_DIR, "successes.jsonl");
+const REJECT_FILE  = path.join(MASTER_DIR, "rejects.jsonl");
+const META_FILE    = path.join(MASTER_DIR, "meta-runs.jsonl");
+const UPDATES_FILE = path.join(MASTER_DIR, "updates.jsonl");
+const MANIFEST     = path.join(MASTER_DIR, ".processed_raw_files.json");
 
-// Ensure master directory exists
+// ---------- helpers ----------
 fs.mkdirSync(MASTER_DIR, { recursive: true });
 
-const masterSuccess = path.join(MASTER_DIR, "successes.jsonl");
-const masterRejects = path.join(MASTER_DIR, "rejects.jsonl");
-const masterMeta = path.join(MASTER_DIR, "meta-runs.jsonl");
+// File lock to prevent concurrent consolidations
+const LOCK = path.join(MASTER_DIR, ".consolidate.lock");
+if (fs.existsSync(LOCK)) {
+  console.error("❌ Consolidator is already running (lock present).");
+  process.exit(1);
+}
+fs.writeFileSync(LOCK, String(process.pid));
+process.on("exit", () => { try { fs.unlinkSync(LOCK); } catch {} });
 
-// Track what we process
-let successCount = 0;
-let rejectCount = 0;
-let batchesProcessed = [];
-
-// Helper to append safely and count lines
-function appendLines(src, dest, trackCount = false) {
-  if (!fs.existsSync(src)) return 0;
-  const content = fs.readFileSync(src, "utf8").trim();
-  if (!content) return 0;
-
-  const lines = content.split("\n").filter(Boolean);
-  fs.appendFileSync(dest, content + "\n");
-  console.log(`✓ Appended ${lines.length} lines from ${path.basename(src)} → ${path.basename(dest)}`);
-
-  return trackCount ? lines.length : 0;
+function loadJSON(p, def) {
+  try { return JSON.parse(fs.readFileSync(p, "utf8")); }
+  catch { return def; }
 }
 
-// Load usage data for metadata
-function loadUsage() {
-  try {
-    return JSON.parse(fs.readFileSync(USAGE_FILE, "utf8"));
-  } catch {
-    return { runs: [] };
+function saveJSON(p, obj) {
+  fs.writeFileSync(p, JSON.stringify(obj, null, 2));
+}
+
+// Atomic append to avoid partial writes
+function appendAtomic(p, data) {
+  const tmp = p + ".tmp-" + Date.now();
+  fs.writeFileSync(tmp, data);
+  if (!fs.existsSync(p)) fs.writeFileSync(p, ""); // ensure file exists
+  const existing = fs.readFileSync(p, "utf8");
+  fs.writeFileSync(p, existing + data);
+  fs.unlinkSync(tmp);
+}
+
+function fileSig(p) {
+  const s = fs.statSync(p);
+  return `${s.size}-${s.mtimeMs}`; // cheap & stable signature
+}
+
+function* iterLines(p) {
+  const buf = fs.readFileSync(p, "utf8");
+  for (const line of buf.split(/\r?\n/)) {
+    const t = line.trim();
+    if (t) yield t;
   }
 }
 
-console.log("🔄 Consolidating batch results...\n");
+// Build in-memory set of already-seen slugs
+function loadSeenSlugs(file) {
+  const set = new Set();
+  if (!fs.existsSync(file)) return set;
+  for (const line of iterLines(file)) {
+    try {
+      const j = JSON.parse(line);
+      if (j?.slug) set.add(j.slug);
+    } catch {}
+  }
+  return set;
+}
 
-// Get all raw files
-const files = fs.readdirSync(RAW_DIR).sort();
+// Append if slug not seen; if same slug but different content, send to updates file
+function appendIfNewSlug(dest, updatesDest, line, seen) {
+  try {
+    const j = JSON.parse(line);
+    const slug = j?.slug;
+    if (!slug) return;
+    if (seen.has(slug)) {
+      // Content drift - capture as update instead of duplicating
+      appendAtomic(updatesDest, line + "\n");
+      return;
+    }
+    appendAtomic(dest, line + "\n");
+    seen.add(slug);
+  } catch {}
+}
 
-// Process AI run outputs (successes)
-const aiRunFiles = files.filter(f => /^ai-run-.*\.jsonl$/.test(f));
-for (const f of aiRunFiles) {
+// ---------- main ----------
+console.log("🔄 Idempotent consolidation starting...\n");
+
+const manifest = loadJSON(MANIFEST, { processed: {} });
+const seenSuccess = loadSeenSlugs(SUCCESS_FILE);
+const seenRejects = loadSeenSlugs(REJECT_FILE);
+
+let appendedSuccess = 0;
+let appendedRejects = 0;
+let appendedMeta = 0;
+let skippedFiles = 0;
+
+for (const f of fs.readdirSync(RAW_DIR)) {
   const full = path.join(RAW_DIR, f);
-  const count = appendLines(full, masterSuccess, true);
-  successCount += count;
-  batchesProcessed.push(f);
+  if (!fs.statSync(full).isFile()) continue;
+
+  const sig = fileSig(full);
+  if (manifest.processed[f] === sig) {
+    skippedFiles++;
+    continue; // already merged → skip
+  }
+
+  if (/^ai-run-.*\.jsonl$/.test(f)) {
+    let count = 0;
+    for (const line of iterLines(full)) {
+      appendIfNewSlug(SUCCESS_FILE, UPDATES_FILE, line, seenSuccess);
+      count++;
+    }
+    console.log(`✓ Processed ${count} items from ${f}`);
+    appendedSuccess++;
+  } else if (/^rejects-.*\.jsonl$/.test(f)) {
+    let count = 0;
+    for (const line of iterLines(full)) {
+      appendIfNewSlug(REJECT_FILE, UPDATES_FILE, line, seenRejects);
+      count++;
+    }
+    console.log(`✓ Processed ${count} rejects from ${f}`);
+    appendedRejects++;
+  } else if (/meta.*\.json$/i.test(f)) {
+    const content = fs.readFileSync(full, "utf8").trim();
+    if (content) {
+      appendAtomic(META_FILE, content + "\n");
+      appendedMeta++;
+    }
+  }
+
+  manifest.processed[f] = sig;
 }
 
-// Process reject outputs
-const rejectFiles = files.filter(f => /^rejects-.*\.jsonl$/.test(f));
-for (const f of rejectFiles) {
-  const full = path.join(RAW_DIR, f);
-  const count = appendLines(full, masterRejects, true);
-  rejectCount += count;
-}
+saveJSON(MANIFEST, manifest);
 
-// Process meta files
-const metaFiles = files.filter(f => /^ai-run-.*\.meta\.json$/.test(f));
-for (const f of metaFiles) {
-  const full = path.join(RAW_DIR, f);
-  appendLines(full, masterMeta);
-}
+console.log(`\n📊 Consolidation complete:
+  + Success files merged: ${appendedSuccess}
+  + Reject files merged:  ${appendedRejects}
+  + Meta files merged:    ${appendedMeta}
+  - Files skipped (already processed): ${skippedFiles}
 
-// Create consolidated metadata entry
-const usage = loadUsage();
-const latestRun = usage.runs && usage.runs.length > 0 ? usage.runs[usage.runs.length - 1] : null;
+  Master successes: ${seenSuccess.size} unique slugs
+  Master rejects: ${seenRejects.size} unique slugs`);
 
-const metaEntry = {
-  timestamp: new Date().toISOString(),
-  batchesProcessed: batchesProcessed.length,
-  batchNames: batchesProcessed,
-  successCount,
-  rejectCount,
-  latestRunCost: latestRun ? latestRun.spentUSD : 0,
-  latestRunItems: latestRun ? latestRun.itemsCompleted : 0,
-  totalRuns: usage.runs ? usage.runs.length : 0,
-  totalSpentUSD: usage.runs ? usage.runs.reduce((sum, r) => sum + (r.spentUSD || 0), 0) : 0
-};
-
-fs.appendFileSync(masterMeta, JSON.stringify(metaEntry) + "\n");
-
-console.log("\n📊 Consolidation Summary:");
-console.log(`  Successes: ${successCount} items → ${path.basename(masterSuccess)}`);
-console.log(`  Rejects: ${rejectCount} items → ${path.basename(masterRejects)}`);
-console.log(`  Batches: ${batchesProcessed.length} processed`);
-if (latestRun) {
-  console.log(`  Latest cost: $${latestRun.spentUSD.toFixed(4)} (${latestRun.itemsCompleted} items)`);
-}
-console.log(`  Total spent: $${metaEntry.totalSpentUSD.toFixed(2)}\n`);
-
-console.log("✅ Consolidation complete!");
+console.log("\n✅ Idempotent consolidation complete!");
