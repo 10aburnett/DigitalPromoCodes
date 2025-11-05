@@ -49,3 +49,255 @@
   "budgetUsd": 2
 }
 {"timestamp":"2025-11-04T20:50:13.292Z","batchesProcessed":1,"batchNames":["ai-run-20251104T180924.jsonl"],"successCount":133,"rejectCount":41,"latestRunCost":0.3509,"latestRunItems":0,"totalRuns":1,"totalSpentUSD":0.3509}
+{
+  "startedAt": "2025-11-04T17:55:28.706Z",
+  "provider": "openai",
+  "model": "gpt-4o-mini",
+  "strongModel": "gpt-4o",
+  "inputFile": "data/neon/whops.jsonl",
+  "batch": 5,
+  "limit": 10,
+  "budgetUsd": 2
+}
+{
+  "startedAt": "2025-11-04T18:05:30.735Z",
+  "provider": "openai",
+  "model": "gpt-4o-mini",
+  "strongModel": "gpt-4o",
+  "inputFile": "data/neon/whops.jsonl",
+  "batch": 1,
+  "limit": 2,
+  "budgetUsd": 1
+}
+{
+  "startedAt": "2025-11-04T18:06:06.253Z",
+  "provider": "openai",
+  "model": "gpt-4o-mini",
+  "strongModel": "gpt-4o",
+  "inputFile": "data/neon/whops.jsonl",
+  "batch": 1,
+  "limit": 2,
+  "budgetUsd": 1
+}
+{
+  "startedAt": "2025-11-04T18:06:48.898Z",
+  "provider": "openai",
+  "model": "gpt-4o-mini",
+  "strongModel": "gpt-4o",
+  "inputFile": "data/neon/whops.jsonl",
+  "batch": 1,
+  "limit": null,
+  "budgetUsd": 1
+}
+{
+  "startedAt": "2025-11-04T18:09:24.293Z",
+  "provider": "openai",
+  "model": "gpt-4o-mini",
+  "strongModel": "gpt-4o",
+  "inputFile": "data/neon/whops.jsonl",
+  "batch": 5,
+  "limit": null,
+  "budgetUsd": 2
+}
+{"timestamp":"2025-11-04T23:58:00.307Z","batchesProcessed":1,"batchNames":["ai-run-20251104T180924.jsonl"],"successCount":250,"rejectCount":73,"latestRunCost":4.6728,"latestRunItems":70,"totalRuns":1,"totalSpentUSD":4.6728}
+{
+  "startedAt": "2025-11-04T17:55:28.706Z",
+  "provider": "openai",
+  "model": "gpt-4o-mini",
+  "strongModel": "gpt-4o",
+  "inputFile": "data/neon/whops.jsonl",
+  "batch": 5,
+  "limit": 10,
+  "budgetUsd": 2
+}
+{
+  "startedAt": "2025-11-04T18:05:30.735Z",
+  "provider": "openai",
+  "model": "gpt-4o-mini",
+  "strongModel": "gpt-4o",
+  "inputFile": "data/neon/whops.jsonl",
+  "batch": 1,
+  "limit": 2,
+  "budgetUsd": 1
+}
+{
+  "startedAt": "2025-11-04T18:06:06.253Z",
+  "provider": "openai",
+  "model": "gpt-4o-mini",
+  "strongModel": "gpt-4o",
+  "inputFile": "data/neon/whops.jsonl",
+  "batch": 1,
+  "limit": 2,
+  "budgetUsd": 1
+}
+{
+  "startedAt": "2025-11-04T18:06:48.898Z",
+  "provider": "openai",
+  "model": "gpt-4o-mini",
+  "strongModel": "gpt-4o",
+  "inputFile": "data/neon/whops.jsonl",
+  "batch": 1,
+  "limit": null,
+  "budgetUsd": 1
+}
+{
+  "startedAt": "2025-11-04T18:09:24.293Z",
+  "provider": "openai",
+  "model": "gpt-4o-mini",
+  "strongModel": "gpt-4o",
+  "inputFile": "data/neon/whops.jsonl",
+  "batch": 5,
+  "limit": null,
+  "budgetUsd": 2
+}
+{"timestamp":"2025-11-05T09:00:13.894Z","batchesProcessed":1,"batchNames":["ai-run-20251104T180924.jsonl"],"successCount":250,"rejectCount":73,"latestRunCost":4.6728,"latestRunItems":70,"totalRuns":1,"totalSpentUSD":4.6728}
+{
+  "startedAt": "2025-11-04T17:55:28.706Z",
+  "provider": "openai",
+  "model": "gpt-4o-mini",
+  "strongModel": "gpt-4o",
+  "inputFile": "data/neon/whops.jsonl",
+  "batch": 5,
+  "limit": 10,
+  "budgetUsd": 2
+}
+{
+  "startedAt": "2025-11-04T18:05:30.735Z",
+  "provider": "openai",
+  "model": "gpt-4o-mini",
+  "strongModel": "gpt-4o",
+  "inputFile": "data/neon/whops.jsonl",
+  "batch": 1,
+  "limit": 2,
+  "budgetUsd": 1
+}
+{
+  "startedAt": "2025-11-04T18:06:06.253Z",
+  "provider": "openai",
+  "model": "gpt-4o-mini",
+  "strongModel": "gpt-4o",
+  "inputFile": "data/neon/whops.jsonl",
+  "batch": 1,
+  "limit": 2,
+  "budgetUsd": 1
+}
+{
+  "startedAt": "2025-11-04T18:06:48.898Z",
+  "provider": "openai",
+  "model": "gpt-4o-mini",
+  "strongModel": "gpt-4o",
+  "inputFile": "data/neon/whops.jsonl",
+  "batch": 1,
+  "limit": null,
+  "budgetUsd": 1
+}
+{
+  "startedAt": "2025-11-04T18:09:24.293Z",
+  "provider": "openai",
+  "model": "gpt-4o-mini",
+  "strongModel": "gpt-4o",
+  "inputFile": "data/neon/whops.jsonl",
+  "batch": 5,
+  "limit": null,
+  "budgetUsd": 2
+}
+{
+  "startedAt": "2025-11-04T17:55:28.706Z",
+  "provider": "openai",
+  "model": "gpt-4o-mini",
+  "strongModel": "gpt-4o",
+  "inputFile": "data/neon/whops.jsonl",
+  "batch": 5,
+  "limit": 10,
+  "budgetUsd": 2
+}
+{
+  "startedAt": "2025-11-04T18:05:30.735Z",
+  "provider": "openai",
+  "model": "gpt-4o-mini",
+  "strongModel": "gpt-4o",
+  "inputFile": "data/neon/whops.jsonl",
+  "batch": 1,
+  "limit": 2,
+  "budgetUsd": 1
+}
+{
+  "startedAt": "2025-11-04T18:06:06.253Z",
+  "provider": "openai",
+  "model": "gpt-4o-mini",
+  "strongModel": "gpt-4o",
+  "inputFile": "data/neon/whops.jsonl",
+  "batch": 1,
+  "limit": 2,
+  "budgetUsd": 1
+}
+{
+  "startedAt": "2025-11-04T18:06:48.898Z",
+  "provider": "openai",
+  "model": "gpt-4o-mini",
+  "strongModel": "gpt-4o",
+  "inputFile": "data/neon/whops.jsonl",
+  "batch": 1,
+  "limit": null,
+  "budgetUsd": 1
+}
+{
+  "startedAt": "2025-11-04T18:09:24.293Z",
+  "provider": "openai",
+  "model": "gpt-4o-mini",
+  "strongModel": "gpt-4o",
+  "inputFile": "data/neon/whops.jsonl",
+  "batch": 5,
+  "limit": null,
+  "budgetUsd": 2
+}
+{
+  "startedAt": "2025-11-04T17:55:28.706Z",
+  "provider": "openai",
+  "model": "gpt-4o-mini",
+  "strongModel": "gpt-4o",
+  "inputFile": "data/neon/whops.jsonl",
+  "batch": 5,
+  "limit": 10,
+  "budgetUsd": 2
+}
+{
+  "startedAt": "2025-11-04T18:05:30.735Z",
+  "provider": "openai",
+  "model": "gpt-4o-mini",
+  "strongModel": "gpt-4o",
+  "inputFile": "data/neon/whops.jsonl",
+  "batch": 1,
+  "limit": 2,
+  "budgetUsd": 1
+}
+{
+  "startedAt": "2025-11-04T18:06:06.253Z",
+  "provider": "openai",
+  "model": "gpt-4o-mini",
+  "strongModel": "gpt-4o",
+  "inputFile": "data/neon/whops.jsonl",
+  "batch": 1,
+  "limit": 2,
+  "budgetUsd": 1
+}
+{
+  "startedAt": "2025-11-04T18:06:48.898Z",
+  "provider": "openai",
+  "model": "gpt-4o-mini",
+  "strongModel": "gpt-4o",
+  "inputFile": "data/neon/whops.jsonl",
+  "batch": 1,
+  "limit": null,
+  "budgetUsd": 1
+}
+{
+  "startedAt": "2025-11-04T18:09:24.293Z",
+  "provider": "openai",
+  "model": "gpt-4o-mini",
+  "strongModel": "gpt-4o",
+  "inputFile": "data/neon/whops.jsonl",
+  "batch": 5,
+  "limit": null,
+  "budgetUsd": 2
+}
