@@ -136,7 +136,18 @@ PID: ${process.pid}
 `);
 
   try {
-    // Step 0: Refresh needs-content list once at start
+    // Step 0: Clean stale artifacts from previous runs
+    console.log("🧹 Cleaning stale artifacts...");
+    try {
+      fs.unlinkSync("/tmp/next-batch.txt");
+      fs.unlinkSync("/tmp/next-batch.csv");
+      fs.unlinkSync("/tmp/preflight-summary.json");
+      console.log("✅ Stale artifacts removed");
+    } catch {
+      console.log("✅ No stale artifacts to remove");
+    }
+
+    // Step 1: Refresh needs-content list once at start
     console.log("📊 Refreshing initial needs-content list...");
     run(`node scripts/query-whops-needing-content.mjs > ${NEEDS_FILE}`);
 

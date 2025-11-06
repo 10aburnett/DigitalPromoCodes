@@ -13,12 +13,11 @@
 3-days-free-luxury-picks
 3-leaf-clover
 333picks
-3m-trading-vip-group-access
-4-leaf-clover
-4orte-tiktok-upgrade
-6-figure-wash-system
-60-day-ab-strength-for-golfers
-a-z-trading-guide-
+3m-tradin
+All 848 slugs saved to:
+  data/promo-whop-slugs.txt (one per line)
+  data/promo-whop-slugs-comma.txt (comma-separated)
+ide-
 aa-trading
 abhey-takes-down-vegas-free
 academy
