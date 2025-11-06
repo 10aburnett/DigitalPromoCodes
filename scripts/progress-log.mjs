@@ -7,16 +7,30 @@ const ck = JSON.parse(fs.readFileSync("data/content/.checkpoint.json","utf8"));
 const done = Object.keys(ck.done||{}).length;
 const rejected = Object.keys(ck.rejected||{}).length;
 
-// If you already compute "eligible" and "queue" in preflight,
-// you can have preflight emit a JSON blob to /tmp/preflight.json and read it here.
-// For a minimal version, just log done/rejected; preflight prints the rest.
+// Read queue/eligible from preflight summary
+let queue = "";
+let eligible = "";
+try {
+  const s = JSON.parse(fs.readFileSync("/tmp/preflight-summary.json","utf8"));
+  queue = String(s.unaccounted ?? "");
+  // Eligible = remaining work candidates; for now we just mirror queue (simple, monotonic)
+  eligible = queue;
+} catch {}
+
+// Create logs directory and TSV header if needed
+if (!fs.existsSync("logs")) fs.mkdirSync("logs", { recursive: true });
+if (!fs.existsSync("logs/progress.tsv")) {
+  fs.writeFileSync("logs/progress.tsv", "ts\tscope\tdone\trejected\teligible\tqueue\n");
+}
+
 const line = [
   new Date().toISOString(),
   scope,
   done,
-  rejected
+  rejected,
+  eligible,
+  queue
 ].join("\t") + "\n";
 
-fs.mkdirSync("logs", { recursive: true });
 fs.appendFileSync("logs/progress.tsv", line);
 console.log("Appended:", line.trim());

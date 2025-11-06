@@ -7,10 +7,8 @@
 import fs from "fs";
 import path from "path";
 import { execSync } from "child_process";
+import { loadState, isValidSlug, writeFileAtomic, PROMO_FILE } from "./lib/sets.mjs";
 
-const PROMO_FILE = "data/promo-whop-slugs.txt";
-const CHECKPOINT = "data/content/.checkpoint.json";
-const NEEDS_FILE = "/tmp/needs-content.csv";
 const OUT_TXT = "/tmp/next-batch.txt";
 const OUT_CSV = "/tmp/next-batch.csv";
 
@@ -57,34 +55,21 @@ function readLines(p) {
   }
 }
 
-// ALWAYS load fresh promo list from file for promo scope
-let promo = null;
-if (SCOPE === 'promo') {
-  if (!fs.existsSync(PROMO_FILE)) {
-    console.error(`❌ Promo scope requires ${PROMO_FILE} - run scripts/query-promo-whops.mjs first`);
-    process.exit(1);
-  }
-  promo = new Set(readLines(PROMO_FILE));
-  console.log(`📋 Loaded ${promo.size} promo whops from ${PROMO_FILE}`);
-}
-
-const needs = new Set(readLines(NEEDS_FILE));
+// Unified state load (needs, promo, manual, deny, done, rejected)
+const { needs, promo, manual, deny, done, rejected } = loadState();
+console.log(`📋 Loaded ${promo.size} promo whops from ${PROMO_FILE}`);
 console.log(`📊 Loaded ${needs.size} whops needing content`);
-
-const checkpoint = JSON.parse(fs.readFileSync(CHECKPOINT, "utf8"));
-const done = new Set(Object.keys(checkpoint.done || {}));
-const rejected = new Set(Object.keys(checkpoint.rejected || {}));
-const MANUAL_FILE = "data/manual/promo-manual-content.txt";
-const manual = new Set(readLines(MANUAL_FILE));
-const DENY_FILE = "data/manual/denylist.txt";
-const deny = new Set(readLines(DENY_FILE));
 console.log(`✅ Already done: ${done.size}, rejected: ${rejected.size}, manual: ${manual.size}, denied: ${deny.size}`);
 
 // compute live set:
 //   promo:   (promo ∩ needs) − (done ∪ rejected ∪ manual ∪ deny)
-//   all:     (needs) − (done ∪ rejected ∪ manual ∪ deny)
-let candidates = SCOPE === 'promo' ? [...needs].filter(s => promo.has(s)) : [...needs];
-candidates = candidates.filter(s => !done.has(s) && !rejected.has(s) && !manual.has(s) && !deny.has(s));
+//   all:     (needs − promo) − (done ∪ rejected ∪ manual ∪ deny)
+let candidates = SCOPE === 'promo'
+  ? [...needs].filter(s => promo.has(s))   // Include only promo items
+  : [...needs].filter(s => !promo.has(s)); // Exclude all promo items
+candidates = candidates
+  .filter(isValidSlug)
+  .filter(s => !done.has(s) && !rejected.has(s) && !manual.has(s) && !deny.has(s));
 
 console.log(`🔢 Candidates before filtering: ${candidates.length}`);
 
@@ -120,12 +105,13 @@ if (SCOPE === 'promo') {
   }
 }
 
-fs.writeFileSync(OUT_TXT, nextBatch.join("\n"));
-fs.writeFileSync(OUT_CSV, nextBatch.join(","));
+// Atomic writes to prevent half-written files if process dies
+writeFileAtomic(OUT_TXT, nextBatch.join("\n"));
+writeFileAtomic(OUT_CSV, nextBatch.join(","));
 
 // Validate written batch (catch stale/malformed slugs)
-const builtBatch = readLines(OUT_TXT);  // Read TXT file (newline-separated)
-const invalidSlugs = builtBatch.filter(s => !s || s === "-" || /\s/.test(s));
+const builtBatch = readLines(OUT_TXT);
+const invalidSlugs = builtBatch.filter(s => !isValidSlug(s));
 if (invalidSlugs.length > 0) {
   console.error(`❌ Built batch contains ${invalidSlugs.length} invalid slugs`);
   console.error(`First 10 invalid: ${invalidSlugs.slice(0, 10).join(", ")}`);
