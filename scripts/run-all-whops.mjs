@@ -4,46 +4,54 @@
  *
  * Autonomous full-run controller for content generation.
  * Loops through batches until all eligible whops are complete.
+ * NOW WITH: PID lock, preflight/postflight checks, progress audit trail
  */
 
 import { execSync } from "child_process";
 import fs from "fs";
 import path from "path";
+import { acquireLock, releaseLock } from "./lib/lock.js";
 
-// === CONFIG ===
-const BATCH_SIZE = 150;       // number of whops per batch
-const BUDGET_USD = 10;        // per-batch cost cap
+// === ARGUMENT PARSING ===
+function getFlag(name, def) {
+  const arg = process.argv.find(x => x.startsWith(name + "="));
+  return arg ? arg.split("=")[1] : def;
+}
+
+const SCOPE = getFlag("--scope", "promo");  // 'promo' or 'all'
+const BATCH_SIZE = Number(getFlag("--limit", "150"));
+const BUDGET_USD = Number(getFlag("--budgetUsd", "10"));
 const BATCH_DELAY_MS = 20_000; // wait between batches (20s)
 const MAX_RUNTIME_HOURS = 6;  // watchdog timeout
-const SCOPE = process.env.SCOPE || 'all'; // 'promo' or 'all' (env override)
-const ENV_SCRIPT = "/tmp/prod-cost-optimized-env.sh"; // your env file
+const ENV_SCRIPT = "/tmp/prod-cost-optimized-env.sh";
 const NEEDS_FILE = "/tmp/needs-content.csv";
-const NEXT_BATCH_TXT = "/tmp/next-batch.txt";
 const NEXT_BATCH_CSV = "/tmp/next-batch.csv";
 const CRASH_LOG = "logs/crash.log";
-const RUN_LOG = "logs/full-run.log";
+
+// Validate arguments
+if (!['promo', 'all'].includes(SCOPE)) {
+  console.error('❌ Invalid scope. Use --scope=promo or --scope=all');
+  process.exit(1);
+}
+
+if (isNaN(BATCH_SIZE) || BATCH_SIZE < 1) {
+  console.error('❌ Invalid batch size. Use --limit=<positive number>');
+  process.exit(1);
+}
+
+if (isNaN(BUDGET_USD) || BUDGET_USD <= 0) {
+  console.error('❌ Invalid budget. Use --budgetUsd=<positive number>');
+  process.exit(1);
+}
 
 function run(cmd) {
   console.log(`\n$ ${cmd}`);
   try {
-    const result = execSync(cmd, { stdio: "inherit", encoding: "utf8" });
-    return result || "";
+    execSync(cmd, { stdio: "inherit", encoding: "utf8" });
   } catch (err) {
     console.error(`⚠️ Command failed: ${cmd}\n`, err.message);
     throw err;
   }
-}
-
-function fileLineCount(p) {
-  try {
-    return fs.readFileSync(p, "utf8").split(/\r?\n/).filter(Boolean).length;
-  } catch {
-    return 0;
-  }
-}
-
-function fileExists(p) {
-  return fs.existsSync(p);
 }
 
 function logCrash(err, batchNum) {
@@ -68,7 +76,49 @@ Stack: ${err.stack}
   }
 }
 
+function runBatch({ scope, limit, budgetUsd }) {
+  // A) Preflight validation (blocks on any mismatch)
+  console.log("🔒 PRE-FLIGHT: Validating state...");
+  run(`node scripts/preflight.mjs --scope=${scope} --limit=${limit}`);
+
+  // B) Build fresh batch
+  console.log("🎯 Building next batch...");
+  run(`node scripts/build-next-batch.mjs --scope=${scope} --limit=${limit}`);
+
+  // C) Verify promo batches (DB safety check)
+  if (scope === "promo") {
+    console.log("🔐 Verifying promo batch against DB...");
+    run(`node scripts/verify-promo-slugs.mjs "$(cat ${NEXT_BATCH_CSV})"`);
+  }
+
+  // D) Generate content
+  console.log("🤖 Running generator...");
+  run(
+    `bash -c "rm -f data/content/raw/.run.lock && source ${ENV_SCRIPT} && node scripts/generate-whop-content.mjs --in=data/neon/whops.jsonl --onlySlugs=\\"$(cat ${NEXT_BATCH_CSV})\\" --batch=${Math.min(10, limit)} --budgetUsd=${budgetUsd}"`
+  );
+
+  // E) Consolidate results idempotently
+  console.log("📦 Consolidating results...");
+  run("node scripts/consolidate-results.mjs");
+
+  // F) Postflight validation (prove queue shrank or reached zero)
+  console.log("🔓 POST-FLIGHT: Re-validating state...");
+  run(`node scripts/preflight.mjs --scope=${scope} --limit=${limit}`);
+
+  // G) Append audit trail
+  console.log("📊 Logging progress...");
+  run(`node scripts/progress-log.mjs --scope=${scope}`);
+}
+
 async function main() {
+  // Acquire PID lock (prevents concurrent runs)
+  acquireLock({ role: "controller" });
+
+  // Release lock on exit
+  process.on("exit", releaseLock);
+  process.on("SIGINT", () => { releaseLock(); process.exit(130); });
+  process.on("SIGTERM", () => { releaseLock(); process.exit(143); });
+
   const startTime = Date.now();
   let batchNum = 0;
 
@@ -81,10 +131,21 @@ Batch size: ${BATCH_SIZE}
 Budget per batch: $${BUDGET_USD}
 Max runtime: ${MAX_RUNTIME_HOURS}h
 Environment: ${ENV_SCRIPT}
+PID: ${process.pid}
 ======================================================
 `);
 
   try {
+    // Step 0: Refresh needs-content list once at start
+    console.log("📊 Refreshing initial needs-content list...");
+    run(`node scripts/query-whops-needing-content.mjs > ${NEEDS_FILE}`);
+
+    // Guardrail: promo identity must balance before any ALL-scope run
+    if (SCOPE === "all") {
+      console.log("🧮 Validating promo identity before ALL-scope run...");
+      run(`node scripts/preflight.mjs --scope=promo --limit=1`);
+    }
+
     while (true) {
       batchNum++;
 
@@ -97,49 +158,20 @@ Environment: ${ENV_SCRIPT}
 
       console.log(`\n=== Batch ${batchNum} ===\n`);
 
-      // Step 1: Refresh needs-content list
-      console.log("📊 Step 1: Refreshing needs-content list...");
-      run(`node scripts/query-whops-needing-content.mjs > ${NEEDS_FILE}`);
-
-      // Step 2: Build the next live batch
-      console.log("🎯 Step 2: Building next live batch...");
-      run(`node scripts/build-next-batch.mjs ${BATCH_SIZE} --scope=${SCOPE}`);
-
-      if (!fileExists(NEXT_BATCH_TXT)) {
-        console.log("⚠️ Could not find next batch file, exiting.");
-        break;
+      try {
+        runBatch({ scope: SCOPE, limit: BATCH_SIZE, budgetUsd: BUDGET_USD });
+      } catch (e) {
+        // If preflight says "NO-ELIGIBLE-ITEMS" or batch is empty, stop cleanly
+        if (String(e?.message || e).includes("NO-ELIGIBLE-ITEMS") ||
+            String(e?.message || e).includes("No new whops")) {
+          console.log("\n✅ All eligible items processed!");
+          break;
+        }
+        // Otherwise re-throw the error
+        throw e;
       }
 
-      const remaining = fileLineCount(NEXT_BATCH_TXT);
-      if (remaining === 0) {
-        console.log("\n🎉 All whops successfully processed! No remaining items.\n");
-        break;
-      }
-
-      console.log(`🧠 Next batch ready: ${remaining} items`);
-
-      // Step 3: Run the generator with cost cap
-      console.log("🤖 Step 3: Running generator...");
-      run(
-        `bash -c "rm -f data/content/raw/.run.lock && source ${ENV_SCRIPT} && node scripts/generate-whop-content.mjs --in=data/neon/whops.jsonl --onlySlugs=\\"$(cat ${NEXT_BATCH_CSV})\\" --batch=10 --budgetUsd=${BUDGET_USD}"`
-      );
-
-      // Step 4: Consolidate results idempotently
-      console.log("📦 Step 4: Consolidating results...");
-      run("node scripts/consolidate-results.mjs");
-
-      // Step 5: Check whether more items remain
-      console.log("🔍 Step 5: Checking for remaining items...");
-      run(`node scripts/build-next-batch.mjs ${BATCH_SIZE} --scope=${SCOPE}`);
-      const nextCount = fileLineCount(NEXT_BATCH_TXT);
-
-      console.log(`\n✅ Batch ${batchNum} complete. Remaining whops: ${nextCount}`);
-
-      if (nextCount === 0) {
-        console.log("\n🎉 All whops successfully processed!\n");
-        break;
-      }
-
+      console.log(`\n✅ Batch ${batchNum} complete.`);
       console.log(`⏳ Waiting ${BATCH_DELAY_MS / 1000}s before next batch...\n`);
       await new Promise((r) => setTimeout(r, BATCH_DELAY_MS));
     }
@@ -150,12 +182,16 @@ Environment: ${ENV_SCRIPT}
     console.error("\n🔥 Fatal error occurred!");
     console.error(err);
     logCrash(err, batchNum);
+    releaseLock();
     process.exit(1);
+  } finally {
+    releaseLock();
   }
 }
 
 // Run with crash recovery
 main().catch(err => {
   console.error("Unhandled error in main:", err);
+  releaseLock();
   process.exit(1);
 });

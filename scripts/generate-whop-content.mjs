@@ -29,6 +29,13 @@ import path from "path";
 import readline from "readline";
 import os from "os";
 import crypto from "crypto";
+import { acquireLock, releaseLock } from "./lib/lock.js";
+
+// Acquire PID lock to prevent concurrent runs
+acquireLock({ role: "generator" });
+process.on("exit", releaseLock);
+process.on("SIGINT", () => { releaseLock(); process.exit(130); });
+process.on("SIGTERM", () => { releaseLock(); process.exit(143); });
 
 // Ensure fetch is available (Node <18 compatibility)
 if (typeof fetch !== "function") {
@@ -3417,6 +3424,16 @@ async function run() {
   // Apply onlySlugs filter if specified
   if (args.onlySlugs) {
     const only = new Set(String(args.onlySlugs).split(",").map(s => s.trim()).filter(Boolean));
+
+    // Strict-only guard: verify all requested slugs are eligible
+    const inQueue = new Set(queue.map(r => r.slug));
+    const missing = [...only].filter(s => !inQueue.has(s));
+    if (missing.length > 0) {
+      console.error(`❌ Strict-only guard: ${missing.length} requested slugs are not eligible (already done/rejected or missing). Aborting.`);
+      console.error("Examples:", missing.slice(0, 10).join(", "));
+      process.exit(2);
+    }
+
     queue = queue.filter(r => only.has(r.slug));
     if (queue.length === 0) {
       console.error("No valid slugs to process (after onlySlugs + reject filtering).");
