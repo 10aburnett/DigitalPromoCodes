@@ -151,6 +151,12 @@ PID: ${process.pid}
     console.log("📊 Refreshing initial needs-content list...");
     run(`node scripts/query-whops-needing-content.mjs > ${NEEDS_FILE}`);
 
+    // Step 1b: Refresh promo list to prevent staleness check failure
+    if (SCOPE === "promo" || SCOPE === "all") {
+      console.log("📋 Refreshing promo list...");
+      run(`node scripts/query-promo-whops.mjs > data/promo-whop-slugs.txt`);
+    }
+
     // Guardrail: promo identity must balance before any ALL-scope run
     if (SCOPE === "all") {
       console.log("🧮 Validating promo identity before ALL-scope run...");
