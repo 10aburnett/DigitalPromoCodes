@@ -165,3 +165,61 @@
 {"slug":"aementorship-basic-mentorship","error":"Grounding check failed: faq answer not grounded"}
 {"slug":"virality","error":"Grounding check failed: faq answer not grounded"}
 {"slug":"live-trading-sessions-m-f","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"1-on-1-elite-mentorship","error":"Grounding check failed: faq answer not grounded"}
+{"slug":"2urn","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"1be-coach-compound","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"1000-events","error":"Count checks failed after repair: aboutcontent words 118 not in 120–180; howtoredeemcontent must use <ol> for steps; howtoredeem step 3 words 9 not in 10–20; howtoredeem step 5 words 7 not in 10–20; howtoredeemcontent bullets should start with an action verb (imperative); promodetailscontent bullets should start with an action verb (imperative)"}
+{"slug":"1day-crypto-group","error":"Grounding check failed: faq answer not grounded"}
+{"slug":"1-cold-caller","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"1-recession-proof-mastermind","error":"Repair failed: howtoredeemcontent must use <ol> for steps"}
+{"slug":"242-just-picks","error":"Grounding check failed: faq answer not grounded"}
+{"slug":"1-1-inner-circle-access","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"007-closer","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"2-cold-callers","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"11-mentorship","error":"Grounding check failed: faq answer not grounded"}
+{"slug":"11800-atn","error":"Primary keyword (\"$11800 ATN promo code\") missing in aboutcontent first paragraph (min presence rule)"}
+{"slug":"1-influence","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"3-cold-callers","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"1-appointment-setter","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"100k-accelerator","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"1x-nepq-sales-coaching-call","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"25-balance-250-tokens","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"10-balance-100-tokens","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"2-million-dollar-dna-insider","error":"Grounding check failed: faq answer not grounded"}
+{"slug":"1-car-rental-course","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"2000","error":"Primary keyword (\"$2000 promo code\") missing in aboutcontent first paragraph (min presence rule)"}
+{"slug":"100-balance-1050-tokens","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"1-on-1-private-ecom-mentorship","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"2000month","error":"Grounding check failed: faq answer not grounded"}
+{"slug":"2global-private-mentorship","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"1-1-strategy-audit","error":"Grounding check failed: faq answer not grounded"}
+{"slug":"200-balance-2200-tokens","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"20-domains-black-friday-promo","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"1-on-1-mentorshipp","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"-the-ofm-incubator-","error":"Primary keyword (\"🔷 The OFM Incubator 🔷 promo code\") missing in aboutcontent first paragraph (min presence rule)"}
+{"slug":"-elite-plan","error":"Primary keyword (\"🏆 Elite Plan promo code\") missing in aboutcontent first paragraph (min presence rule)"}
+{"slug":"1","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"-basic-access","error":"Count checks failed after repair: howtoredeemcontent must use <ol> for steps; howtoredeem step 4 words 7 not in 10–20; howtoredeem step 5 words 8 not in 10–20; promodetailscontent bullets should start with an action verb (imperative)"}
+{"slug":"-cometleads-tier-1-shuffled","error":"Primary keyword (\"🌟 CometLeads Tier 1: Shuffled promo code\") missing in aboutcontent first paragraph (min presence rule)"}
+{"slug":"-silver-tier-fyndit","error":"Primary keyword (\"🪙 Silver Tier | Fyndit promo code\") missing in aboutcontent first paragraph (min presence rule)"}
+{"slug":"-basic-access","error":"promo_cleanup: defer for final retry pass"}
+{"slug":"-cometleads-tier-1-shuffled","error":"promo_cleanup: defer for final retry pass"}
+{"slug":"-elite-plan","error":"promo_cleanup: defer for final retry pass"}
+{"slug":"-silver-tier-fyndit","error":"promo_cleanup: defer for final retry pass"}
+{"slug":"-the-ofm-incubator-","error":"promo_cleanup: defer for final retry pass"}
+{"slug":"100-creative","error":"promo_cleanup: defer for final retry pass"}
+{"slug":"333picks","error":"promo_cleanup: defer for final retry pass"}
+{"slug":"aementorship-basic-mentorship","error":"promo_cleanup: defer for final retry pass"}
+{"slug":"bullish-premium-chat","error":"promo_cleanup: defer for final retry pass"}
+{"slug":"crypto-capital-vip","error":"promo_cleanup: defer for final retry pass"}
+{"slug":"cryptopro","error":"promo_cleanup: defer for final retry pass"}
+{"slug":"geno-elite","error":"promo_cleanup: defer for final retry pass"}
+{"slug":"itsbucketsnba-vip-telegram","error":"promo_cleanup: defer for final retry pass"}
+{"slug":"limitless-ai-sport-picks","error":"promo_cleanup: defer for final retry pass"}
+{"slug":"lite-pro-","error":"promo_cleanup: defer for final retry pass"}
+{"slug":"parlaycapital-premium","error":"promo_cleanup: defer for final retry pass"}
+{"slug":"rfb-exclusivevip-package","error":"promo_cleanup: defer for final retry pass"}
+{"slug":"rr-lounge","error":"promo_cleanup: defer for final retry pass"}
+{"slug":"slam-dunk-bets","error":"promo_cleanup: defer for final retry pass"}
+{"slug":"solo-vintedseekers","error":"promo_cleanup: defer for final retry pass"}
+{"slug":"taxes-are-voluntary-w-oto","error":"promo_cleanup: defer for final retry pass"}
