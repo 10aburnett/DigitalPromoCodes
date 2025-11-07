@@ -69,7 +69,7 @@ export async function PUT(
       where: { id: params.id },
       data: { verified: true },
       include: {
-        whop: {
+        Whop: {
           select: {
             id: true,
             name: true,

@@ -95,7 +95,7 @@ export default function MailingListPopup({
       >
         {showSuccess ? (
           /* Success Message */
-          <div className="text-center">{console.log('Rendering success message')}
+          <div className="text-center">
             {/* Close Button */}
             <button
               onClick={() => {

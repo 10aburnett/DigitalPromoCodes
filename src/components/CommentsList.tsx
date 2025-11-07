@@ -274,10 +274,10 @@ export default function CommentsList({ blogPostId, refreshTrigger, onReply }: Co
               {onReply && (
                 <button
                   onClick={() => onReply(comment.id, comment.authorName)}
-                  className="text-sm font-medium transition-colors"
+                  className="text-sm font-medium transition-colors hover:opacity-80"
                   style={{ color: 'var(--text-muted)' }}
-                  onMouseEnter={(e) => e.target.style.color = 'var(--accent-color)'}
-                  onMouseLeave={(e) => e.target.style.color = 'var(--text-muted)'}
+                  onMouseEnter={(e) => (e.currentTarget as HTMLElement).style.color = 'var(--accent-color)'}
+                  onMouseLeave={(e) => (e.currentTarget as HTMLElement).style.color = 'var(--text-muted)'}
                 >
                   Reply
                 </button>

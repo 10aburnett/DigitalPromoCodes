@@ -26,7 +26,7 @@ export async function GET(
     const review = await prisma.review.findUnique({
       where: { id: params.id },
       include: {
-        whop: {
+        Whop: {
           select: {
             id: true,
             name: true,
@@ -130,7 +130,7 @@ export async function PUT(
         whopId: data.whopId,
       },
       include: {
-        whop: {
+        Whop: {
           select: {
             id: true,
             name: true,

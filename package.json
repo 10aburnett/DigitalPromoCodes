@@ -45,6 +45,8 @@
     "build:guarded": "npm run build && npm run assert:seo",
     "warm:whops": "node scripts/warm-top-whops.mjs",
     "schema:guard": "NODE_OPTIONS='-r ./scripts/shims/next-build-shims.cjs -r tsconfig-paths/register' tsx scripts/schema-guard.ts",
+    "typecheck": "tsc --noEmit",
+    "prepush": "npm run typecheck",
     "test": "playwright test",
     "test:headed": "playwright test --headed",
     "test:seo": "playwright test tests/seo.spec.ts",

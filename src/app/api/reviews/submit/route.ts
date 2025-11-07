@@ -7,7 +7,7 @@ const reviewSchema = z.object({
   author: z.string().min(1, "Name is required"),
   content: z.string().min(3, "Review content must be at least 3 characters"),
   rating: z.number().min(1).max(5),
-  casinoId: z.string().min(1, "Casino ID is required"),
+  whopId: z.string().min(1, "Whop ID is required"),
 });
 
 export async function POST(request: Request) {
@@ -24,26 +24,28 @@ export async function POST(request: Request) {
       }, { status: 400 });
     }
     
-    // Check if the casino exists
-    const casino = await prisma.casino.findUnique({
-      where: { id: data.casinoId },
+    // Check if the whop exists
+    const whop = await prisma.whop.findUnique({
+      where: { id: data.whopId },
     });
-    
-    if (!casino) {
+
+    if (!whop) {
       return NextResponse.json({
-        error: "Casino not found",
+        error: "Whop not found",
       }, { status: 404 });
     }
-    
+
     // Create the review directly - these will show up in admin for moderation
     // In a real system, you might use a separate pending_reviews table
     const review = await prisma.review.create({
       data: {
+        id: require('crypto').randomUUID(),
         author: data.author,
         content: data.content,
         rating: data.rating,
-        casinoId: data.casinoId,
+        whopId: data.whopId,
         verified: false,
+        updatedAt: new Date()
       },
     });
     

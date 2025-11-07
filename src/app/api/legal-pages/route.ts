@@ -31,8 +31,14 @@ export async function POST(request: NextRequest) {
     // Upsert the legal page (create or update)
     const legalPage = await prisma.legalPage.upsert({
       where: { slug },
-      update: { title, content },
-      create: { slug, title, content }
+      update: { title, content, updatedAt: new Date() },
+      create: {
+        id: require('crypto').randomUUID(),
+        slug,
+        title,
+        content,
+        updatedAt: new Date()
+      }
     });
     
     return NextResponse.json(legalPage);

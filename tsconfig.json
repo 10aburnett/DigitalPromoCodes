@@ -41,7 +41,13 @@
     "golden-scripts",
     "data",
     "prisma/migrations",
-    "**/*.sql"
+    "**/*.sql",
+    "src/app/__locale_disabled/**",
+    "**/*.old.ts",
+    "**/*.old.tsx",
+    "**/*.backup.*",
+    "**/*.bak.*",
+    "**/*.disabled"
   ],
   "ts-node": {
     "compilerOptions": {

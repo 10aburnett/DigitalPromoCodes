@@ -166,10 +166,9 @@ export default function StatisticsSection() {
     const animatedValue = typeof value === 'number' ? counterValue : value;
     
     const content = (
-      <div className="w-full h-[164px] md:h-auto rounded-2xl border p-4 md:p-6 flex flex-col items-center justify-center text-center overflow-hidden transition-all duration-300 hover:scale-[1.02] hover:shadow-lg" style={{ 
-        backgroundColor: 'var(--background-color)', 
-        borderColor: 'var(--border-color)',
-        ':hover': { borderColor: 'var(--accent-color)' }
+      <div className="w-full h-[164px] md:h-auto rounded-2xl border p-4 md:p-6 flex flex-col items-center justify-center text-center overflow-hidden transition-all duration-300 hover:scale-[1.02] hover:shadow-lg hover:border-[var(--accent-color)]" style={{
+        backgroundColor: 'var(--background-color)',
+        borderColor: 'var(--border-color)'
       }}>
         {showLogo && logoUrl ? (
           <div className="w-8 h-8 mx-auto mb-1 rounded-md overflow-hidden flex items-center justify-center shrink-0" style={{ backgroundColor: 'var(--background-secondary)' }}>

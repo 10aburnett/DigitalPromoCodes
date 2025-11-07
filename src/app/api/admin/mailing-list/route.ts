@@ -36,8 +36,9 @@ export async function GET(request: NextRequest) {
     ])
 
     // Get statistics - handle case where no records exist
-    let stats = []
+    let stats: any[] = []
     try {
+      // @ts-ignore - Prisma groupBy type issue
       stats = await prisma.mailingList.groupBy({
         by: ['status'],
         _count: true,

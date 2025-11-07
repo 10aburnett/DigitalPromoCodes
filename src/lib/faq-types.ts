@@ -69,7 +69,7 @@ export function parseFaqContent(faqContent: string | null): FaqItem[] | string |
       // Validate the structure
       const result = FaqArraySchema.safeParse(parsed);
       if (result.success) {
-        return result.data;
+        return result.data as FaqItem[];
       }
     }
   } catch {

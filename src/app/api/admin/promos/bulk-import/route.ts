@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { verifyAdminToken } from "@/lib/auth-utils";
 import { normalizeUrl } from "@/lib/urls";
+import { Prisma } from "@prisma/client";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -141,13 +142,13 @@ async function fuzzyFindWhop(rawUrl: string) {
   let candidate = await prisma.whop.findFirst({
     where: {
       OR: [
-        { affiliateLink: { equals: norm, mode: "insensitive" } },
-        { website:       { equals: norm, mode: "insensitive" } },
+        { affiliateLink: { equals: norm, mode: "insensitive" as Prisma.QueryMode } },
+        { website:       { equals: norm, mode: "insensitive" as Prisma.QueryMode } },
 
         // tolerate querystrings after the path
         ...(lastSeg ? [
-          { affiliateLink: { contains: `/${lastSeg}`, mode: "insensitive" } },
-          { website:       { contains: `/${lastSeg}`, mode: "insensitive" } },
+          { affiliateLink: { contains: `/${lastSeg}`, mode: "insensitive" as Prisma.QueryMode } },
+          { website:       { contains: `/${lastSeg}`, mode: "insensitive" as Prisma.QueryMode } },
         ] : []),
 
         // exact slug or close variant

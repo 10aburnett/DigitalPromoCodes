@@ -143,14 +143,16 @@ export async function POST(request: NextRequest) {
 
     console.log('Creating review for whop:', whop.id, whop.name);
 
-    // Create review - DO NOT pass id, let Prisma auto-generate it
+    // Create review
     const review = await prisma.review.create({
       data: {
+        id: require('crypto').randomUUID(),
         author: author.trim(),
         content: content.trim(),
         rating: rating,
         whopId: whop.id,
-        verified: false
+        verified: false,
+        updatedAt: new Date()
       },
       select: {
         id: true,

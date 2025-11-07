@@ -342,11 +342,10 @@ export default function PromoCodeSubmissionForm({
                     }}
                     placeholder="Type to search for a course..."
                     className="w-full px-3 py-2 pr-10 border rounded-md focus:outline-none focus:ring-2 transition-colors"
-                    style={{ 
-                      backgroundColor: 'var(--background-secondary)', 
-                      borderColor: 'var(--border-color)', 
-                      color: 'var(--text-color)',
-                      focusRingColor: 'var(--accent-color)'
+                    style={{
+                      backgroundColor: 'var(--background-secondary)',
+                      borderColor: 'var(--border-color)',
+                      color: 'var(--text-color)'
                     }}
                     required={!formData.isGeneral}
                     autoComplete="off"
@@ -391,12 +390,11 @@ export default function PromoCodeSubmissionForm({
                             type="button"
                             onClick={() => handleCourseSelect(whop)}
                             className="w-full px-3 py-2 text-left focus:outline-none transition-colors"
-                            style={{ 
-                              color: 'var(--text-color)',
-                              ':hover': { backgroundColor: 'var(--background-secondary)' }
+                            style={{
+                              color: 'var(--text-color)'
                             }}
-                            onMouseEnter={(e) => e.target.style.backgroundColor = 'var(--background-secondary)'}
-                            onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
+                            onMouseEnter={(e) => (e.currentTarget as HTMLElement).style.backgroundColor = 'var(--background-secondary)'}
+                            onMouseLeave={(e) => (e.currentTarget as HTMLElement).style.backgroundColor = 'transparent'}
                           >
                             <div className="truncate">{whop.name}</div>
                           </button>

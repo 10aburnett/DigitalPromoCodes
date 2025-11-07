@@ -262,11 +262,10 @@ const WhopReviewSection: React.FC<WhopReviewSectionProps> = ({ whopId, whopName,
                 onChange={handleInputChange}
                 placeholder="Your name"
                 className="w-full px-3 py-2 rounded-md border focus:outline-none focus:ring-1 transition-colors"
-                style={{ 
-                  backgroundColor: 'var(--background-secondary)', 
+                style={{
+                  backgroundColor: 'var(--background-secondary)',
                   borderColor: 'var(--border-color)',
-                  color: 'var(--text-color)',
-                  focusRingColor: 'var(--accent-color)'
+                  color: 'var(--text-color)'
                 }}
               />
             </div>

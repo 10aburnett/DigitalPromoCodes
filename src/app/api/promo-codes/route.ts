@@ -5,7 +5,7 @@ export async function GET() {
   try {
     const promoCodes = await prisma.promoCode.findMany({
       include: {
-        whop: {
+        Whop: {
           select: {
             id: true,
             name: true,
@@ -81,7 +81,7 @@ export async function POST(request: NextRequest) {
         updatedAt: new Date()
       },
       include: {
-        whop: {
+        Whop: {
           select: {
             id: true,
             name: true,

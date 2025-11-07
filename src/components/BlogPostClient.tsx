@@ -206,13 +206,13 @@ export default function BlogPostClient({ post }: BlogPostClientProps) {
                        borderColor: 'var(--card-border)',
                        boxShadow: 'var(--promo-shadow)'
                      }}>
-                  <div 
+                  <div
                     className="prose prose-lg max-w-none blog-content"
-                    style={{ 
+                    style={{
                       color: 'var(--text-color)',
                       '--tw-prose-headings': 'var(--text-color)',
                       '--tw-prose-links': 'var(--accent-color)',
-                    }}
+                    } as React.CSSProperties}
                     dangerouslySetInnerHTML={{ __html: post.content }}
                   />
                 </div>

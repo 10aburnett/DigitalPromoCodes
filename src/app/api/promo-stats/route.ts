@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { unstable_noStore as noStore } from 'next/cache';
+import { Prisma } from '@prisma/client';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -50,44 +51,41 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    // If promoCodeId provided (numeric), run promoCodeId-based counts
+    // If promoCodeId provided (string), run promoCodeId-based counts
     if (promoCodeId) {
-      const id = Number(promoCodeId);
-      if (Number.isFinite(id)) {
-        const since = startOfTodayUTC();
-        const whereBase = { promoCodeId: id, actionType: 'code_copy' as const };
+      const since = startOfTodayUTC();
+      const whereBase = { promoCodeId: promoCodeId, actionType: 'code_copy' as const };
 
-        const [totalCount, todayCount, lastUsage] = await Promise.all([
-          prisma.offerTracking.count({ where: whereBase }),
-          prisma.offerTracking.count({ where: { ...whereBase, createdAt: { gte: since } } }),
-          prisma.offerTracking.findFirst({
-            where: whereBase,
-            orderBy: { createdAt: 'desc' },
-            select: { createdAt: true }
-          })
-        ]);
+      const [totalCount, todayCount, lastUsage] = await Promise.all([
+        prisma.offerTracking.count({ where: whereBase }),
+        prisma.offerTracking.count({ where: { ...whereBase, createdAt: { gte: since } } }),
+        prisma.offerTracking.findFirst({
+          where: whereBase,
+          orderBy: { createdAt: 'desc' },
+          select: { createdAt: true }
+        })
+      ]);
 
-        // If ID-based counts > 0, return immediately
-        if (totalCount > 0) {
-          return NextResponse.json({
-            usage: { todayCount, totalCount, todayClicks: todayCount, lastUsed: lastUsage?.createdAt ?? null },
-            overallStats: { todayClicks: todayCount }
-          }, {
-            headers: {
-              'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0',
-              'Pragma': 'no-cache',
-              'Expires': '0',
-              'Vary': 'Cookie'
-            }
-          });
-        }
+      // If ID-based counts > 0, return immediately
+      if (totalCount > 0) {
+        return NextResponse.json({
+          usage: { todayCount, totalCount, todayClicks: todayCount, lastUsed: lastUsage?.createdAt ?? null },
+          overallStats: { todayClicks: todayCount }
+        }, {
+          headers: {
+            'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0',
+            'Pragma': 'no-cache',
+            'Expires': '0',
+            'Vary': 'Cookie'
+          }
+        });
       }
     }
 
     // Resolve slug if not provided but we have whopId
     if (!slug && whopId) {
       const whop = await prisma.whop.findUnique({
-        where: { id: Number(whopId) },
+        where: { id: whopId },
         select: { slug: true }
       });
       slug = whop?.slug ?? null;
@@ -99,9 +97,9 @@ export async function GET(request: NextRequest) {
       const whereBase = {
         actionType: 'code_copy' as const,
         OR: [
-          { path: { contains: `/whop/${slug}`, mode: 'insensitive' } },
-          { path: { contains: `/en/whop/${slug}`, mode: 'insensitive' } },
-          { path: { contains: `https://whpcodes.com/whop/${slug}`, mode: 'insensitive' } }
+          { path: { contains: `/whop/${slug}`, mode: 'insensitive' as Prisma.QueryMode } },
+          { path: { contains: `/en/whop/${slug}`, mode: 'insensitive' as Prisma.QueryMode } },
+          { path: { contains: `https://whpcodes.com/whop/${slug}`, mode: 'insensitive' as Prisma.QueryMode } }
         ]
       };
 

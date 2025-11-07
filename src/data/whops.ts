@@ -33,31 +33,25 @@ async function fetchWhopDirect(slug: string) {
  * Tags: whop:<slug>
  * NOTE: Does NOT apply whereIndexable() - page.tsx applies relaxed gate allowing NOINDEX
  */
-export const getWhopBySlugCached = unstable_cache(
-  async (slug: string) => {
-    logCache('MISS fetchWhopDirect', { slug });
-    const whop = await fetchWhopDirect(slug);
+export const getWhopBySlugCached = (slug: string) =>
+  unstable_cache(
+    async () => {
+      logCache('MISS fetchWhopDirect', { slug });
+      const whop = await fetchWhopDirect(slug);
 
-    // Preview debugging log
-    if (process.env.VERCEL_ENV === 'preview') {
-      console.log('[preview] whop data has usageStats?', !!(whop as any)?.usageStats, 'freshness?', !!(whop as any)?.freshnessData);
-    }
+      // Preview debugging log
+      if (process.env.VERCEL_ENV === 'preview') {
+        console.log('[preview] whop data has usageStats?', !!(whop as any)?.usageStats, 'freshness?', !!(whop as any)?.freshnessData);
+      }
 
-    return whop;
-  },
-  // cache key must include slug for uniqueness - use decoded lowercase for consistency
-  (slug: string) => {
-    const decoded = decodeURIComponent(slug);
-    return [`whop:${decoded.toLowerCase()}`];
-  },
-  {
-    tags: (slug: string) => {
-      const decoded = decodeURIComponent(slug);
-      return [`whop:${decoded.toLowerCase()}`];
+      return whop;
     },
-    revalidate: 300 // 5 minutes
-  }
-);
+    // cache key must include slug for uniqueness - use decoded lowercase for consistency
+    [`whop:${decodeURIComponent(slug).toLowerCase()}`],
+    {
+      revalidate: 300 // 5 minutes
+    }
+  )();
 
 /**
  * Cached, tagged fetch for homepage/hubs list.

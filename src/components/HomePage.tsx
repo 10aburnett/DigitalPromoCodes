@@ -3,6 +3,7 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { FilterState } from '@/types/whop';
+import { WhopCategory } from '@prisma/client';
 import WhopCard from '@/components/WhopCard';
 import FilterControls from '@/components/FilterControls';
 import StatisticsSection from '@/components/StatisticsSection';
@@ -79,9 +80,9 @@ export default function HomePage({ initialWhops, initialTotal, totalUsers, key }
       setFilters({
         searchTerm: searchParams.get('search') || '',
         promoType: '',
-        whopCategory: searchParams.get('whopCategory') || '',
+        whopCategory: (searchParams.get('whopCategory') || '') as WhopCategory | "",
         whop: searchParams.get('whop') || '',
-        sortBy: searchParams.get('sortBy') || ''
+        sortBy: (searchParams.get('sortBy') || '') as "" | "highest" | "lowest" | "alpha-asc" | "alpha-desc" | "newest" | "highest-rated"
       });
       setWhops(initialWhops);
       setPagination({
@@ -195,12 +196,12 @@ export default function HomePage({ initialWhops, initialTotal, totalUsers, key }
   // Initialize with URL parameters on mount
   useEffect(() => {
     if (!isInitialized) {
-      const urlFilters = {
+      const urlFilters: FilterState = {
         searchTerm: searchParams.get('search') || '',
         promoType: '',
-        whopCategory: searchParams.get('whopCategory') || '',
+        whopCategory: (searchParams.get('whopCategory') || '') as WhopCategory | "",
         whop: searchParams.get('whop') || '',
-        sortBy: searchParams.get('sortBy') || ''
+        sortBy: (searchParams.get('sortBy') || '') as "" | "highest" | "lowest" | "alpha-asc" | "alpha-desc" | "newest" | "highest-rated"
       };
       
       const urlPage = parseInt(searchParams.get('page') || '1');
