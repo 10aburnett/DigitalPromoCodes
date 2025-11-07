@@ -1,0 +1,19 @@
+{
+  "input": 1057370,
+  "output": 243068,
+  "runs": [
+    {
+      "at": "2025-11-05T17:42:41.770Z",
+      "provider": "openai",
+      "model": "gpt-4o-mini",
+      "spentUSD": 5.0741,
+      "promptSoFar": 1057370,
+      "completionSoFar": 243068,
+      "capUSD": 10,
+      "reason": "completed_batch",
+      "itemsCompleted": 0,
+      "itemsFailed": 11,
+      "rejectsCount": 221
+    }
+  ]
+}

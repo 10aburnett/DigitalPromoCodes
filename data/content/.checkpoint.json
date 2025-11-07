@@ -1,12 +1,23 @@
 {
   "done": {
+    "1": {
+      "when": "2025-11-07T00:00:00Z",
+      "why": "restored_test"
+    },
+    "500": true,
+    "637": {
+      "when": "2025-11-06T20:53:10.520Z",
+      "why": "synced_from_master_updates"
+    },
     "1000": true,
+    "2000": {
+      "when": "2025-11-06T18:56:17.655Z",
+      "why": "synced_from_master_updates"
+    },
     "3-leaf-clover": true,
     "10kto50k-challenge-elite-plan": true,
-    "1-month-access-vipparlay-king": true,
     "3m-trading-vip-group-access": true,
     "3-days-free-luxury-picks": true,
-    "1-on-1-mentorship-lifetime": true,
     "vito-foundations": true,
     "cms-vip": true,
     "rybets-premium-group": true,
@@ -74,7 +85,6 @@
     "nbl-community-access": true,
     "tiktok-wiz-premium-product": true,
     "triad-24": true,
-    "1-month-premium": true,
     "master-the-bull-seminar": true,
     "traders-pathway-discord-access": true,
     "lordsports-baseball": true,
@@ -533,7 +543,6 @@
     "velaris-trading-de": true,
     "trade-bandit-elite": true,
     "gnotz-algo-on-tradingview": true,
-    "1-of-1-traders-full-access": true,
     "agency-blueprint": true,
     "trade-copy-service-only": true,
     "elite-squad-network": true,
@@ -784,566 +793,1895 @@
     "tms-1-on-whop": true,
     "flipalert-membership-usa": true,
     "jdub-trades-premium": true,
-    "the-yard-dropship-mastermind": true
+    "the-yard-dropship-mastermind": true,
+    "3m-tradin": {
+      "when": "2025-11-06T17:45:30.281Z",
+      "why": "db_has_content_reconcile"
+    },
+    "All 848 slugs saved to:": {
+      "when": "2025-11-06T17:45:30.281Z",
+      "why": "db_has_content_reconcile"
+    },
+    "data/promo-whop-slugs.txt (one per line)": {
+      "when": "2025-11-06T17:45:30.282Z",
+      "why": "db_has_content_reconcile"
+    },
+    "data/promo-whop-slugs-comma.txt (comma-separated)": {
+      "when": "2025-11-06T17:45:30.282Z",
+      "why": "db_has_content_reconcile"
+    },
+    "ide-": {
+      "when": "2025-11-06T17:45:30.282Z",
+      "why": "db_has_content_reconcile"
+    },
+    "502slips": true,
+    "7-figure-flips": true,
+    "500-events": true,
+    "1-on-1-elite-mentorship": true,
+    "1-recession-proof-mastermind": true,
+    "7-day-free-trial": true,
+    "1000-events": true,
+    "7-figure-cartel": true,
+    "11-mentorship": true,
+    "444-capital": true,
+    "6fc-coaching-program": true,
+    "30-day-accelerator": true,
+    "48-blogs-in-60-days": true,
+    "7-day-vip-access": true,
+    "4-pick-premium-package": true,
+    "6-figure-cash-cow-mastery": true,
+    "50x-club": true,
+    "4deep-betting": true,
+    "5k-surgically-curated-leads": true,
+    "1k": true,
+    "7-figure-agency-bundle": true,
+    "7-days-of-vip-all-access": true,
+    "33-day-all-access-special": true,
+    "7-week-mentorship": true,
+    "7-society-tier-2": true,
+    "7-figure-influencer-mastery": true,
+    "6fccm-dfy-team-build-out": true,
+    "1-1-strategy-audit": true,
+    "5ive-world": true,
+    "6-week-mastermind": true,
+    "30-days-all-plays": true,
+    "7-day-access-vipparlay-king": true,
+    "7-society-tier-1": true,
+    "6-figure-creator": true,
+    "40-keyz-premium-access": true,
+    "5-day-challenge": true,
+    "360-sales-agency": true,
+    "7-day-pass-all-sports": true,
+    "2025-spring-skills-lab-20": true,
+    "3m-trading-full-bundle": true,
+    "100k-academy": true,
+    "1-on-1-coaching": true,
+    "14-day-trial-for-1": true,
+    "1st2notify-member": true,
+    "10xbnb-partnership-program": true,
+    "1-on-1-session": true,
+    "01": true,
+    "3-day-vip-all-access": true,
+    "2-months": true,
+    "6-month-membership": true,
+    "7-figure-chatter-academy": true,
+    "2nd-arch-villan": true,
+    "2-weeks": true,
+    "7-day-trial": true,
+    "5-day-trial": true,
+    "3-day-contract": true,
+    "1on1-60min": true,
+    "11-coaching": true,
+    "50k-funded-account-passing": true,
+    "5duniverse-trading-community": true,
+    "360ecom-vip": true,
+    "6-figure-service-business": true,
+    "15k-surgically-curated-leads": true,
+    "1-week-pass": true,
+    "3-day-access": true,
+    "4everpaid-trading-academy": true,
+    "6-week-challenge": true,
+    "1-1-session-7-days-premium": true,
+    "2-man-potd": true,
+    "10xbnb-vip-bootcamp": true,
+    "1-on-1-reselling-mentorship": true,
+    "161-live": true,
+    "5k-app-challenge": true,
+    "7-day-premium-access": true,
+    "21-day-trader-reset": true,
+    "10x-crypto-club": true,
+    "1-day-primee-plays-": true,
+    "1-week-premium": true,
+    "1-week": true,
+    "2-day-membership": true,
+    "4alibets": true,
+    "2-day-premium": true,
+    "1-day-pass": true,
+    "5-day-chat-gpt-bootcamp": true,
+    "3-credit-ebook-bundle": true,
+    "7-day-ict-mastery": true,
+    "1st-rogue-villan": true,
+    "23-got-plays-premium": true,
+    "3-months": true,
+    "7-day-membership-trial": true,
+    "3-day-special-": true,
+    "14-day-free-trial": true,
+    "10k-account-passing": true,
+    "7-days-platinum": true,
+    "1-academy": true,
+    "30-day-subscription": true,
+    "2-personal-loras-in-one-image": true,
+    "3-month-access": true,
+    "6-month-subscription": true,
+    "100-deposit": true,
+    "1-week-premium-access": true,
+    "1on1-guide-to-profitablity": true,
+    "29-initiation": true,
+    "4everpaidbets": true,
+    "3-days-for-free-vip-access": true,
+    "333picks": {
+      "when": "2025-11-06T18:56:17.643Z",
+      "why": "synced_from_master_updates"
+    },
+    "betting-central-101": {
+      "when": "2025-11-06T18:56:17.643Z",
+      "why": "synced_from_master_updates"
+    },
+    "itsbucketsnba-vip-telegram": {
+      "when": "2025-11-06T18:56:17.643Z",
+      "why": "synced_from_master_updates"
+    },
+    "crypto-capital-vip": {
+      "when": "2025-11-06T18:56:17.643Z",
+      "why": "synced_from_master_updates"
+    },
+    "lite-pro-": {
+      "when": "2025-11-06T18:56:17.643Z",
+      "why": "synced_from_master_updates"
+    },
+    "equifix": {
+      "when": "2025-11-06T18:56:17.643Z",
+      "why": "synced_from_master_updates"
+    },
+    "daily-straight-plays": {
+      "when": "2025-11-06T18:56:17.643Z",
+      "why": "synced_from_master_updates"
+    },
+    "the-blue-vortex": {
+      "when": "2025-11-06T18:56:17.643Z",
+      "why": "synced_from_master_updates"
+    },
+    "dan-steel-trading-academy": {
+      "when": "2025-11-06T18:56:17.643Z",
+      "why": "synced_from_master_updates"
+    },
+    "limitless-ai-sport-picks": {
+      "when": "2025-11-06T18:56:17.643Z",
+      "why": "synced_from_master_updates"
+    },
+    "hopium": {
+      "when": "2025-11-06T18:56:17.643Z",
+      "why": "synced_from_master_updates"
+    },
+    "indicators-vip-lifetime": {
+      "when": "2025-11-06T18:56:17.643Z",
+      "why": "synced_from_master_updates"
+    },
+    "speed-ramp-from-a-to-z": {
+      "when": "2025-11-06T18:56:17.643Z",
+      "why": "synced_from_master_updates"
+    },
+    "tby-investments": {
+      "when": "2025-11-06T18:56:17.643Z",
+      "why": "synced_from_master_updates"
+    },
+    "httpscercleppmfr": {
+      "when": "2025-11-06T18:56:17.643Z",
+      "why": "synced_from_master_updates"
+    },
+    "hsv-consulting": {
+      "when": "2025-11-06T18:56:17.643Z",
+      "why": "synced_from_master_updates"
+    },
+    "mindful-af-attentionfocus": {
+      "when": "2025-11-06T18:56:17.643Z",
+      "why": "synced_from_master_updates"
+    },
+    "ticketvision-trading": {
+      "when": "2025-11-06T18:56:17.643Z",
+      "why": "synced_from_master_updates"
+    },
+    "pine-script-pro-trader": {
+      "when": "2025-11-06T18:56:17.643Z",
+      "why": "synced_from_master_updates"
+    },
+    "gurus-film-room": {
+      "when": "2025-11-06T18:56:17.643Z",
+      "why": "synced_from_master_updates"
+    },
+    "discord": {
+      "when": "2025-11-06T18:56:17.643Z",
+      "why": "synced_from_master_updates"
+    },
+    "hall-of-fame-fund": {
+      "when": "2025-11-06T18:56:17.643Z",
+      "why": "synced_from_master_updates"
+    },
+    "capital-complex-premium": {
+      "when": "2025-11-06T18:56:17.643Z",
+      "why": "synced_from_master_updates"
+    },
+    "pariahbets": {
+      "when": "2025-11-06T18:56:17.643Z",
+      "why": "synced_from_master_updates"
+    },
+    "dleyguarda-trading": {
+      "when": "2025-11-06T18:56:17.643Z",
+      "why": "synced_from_master_updates"
+    },
+    "6-figure-wash-system": {
+      "when": "2025-11-06T18:56:17.643Z",
+      "why": "synced_from_master_updates"
+    },
+    "the-ape-asylum": {
+      "when": "2025-11-06T18:56:17.643Z",
+      "why": "synced_from_master_updates"
+    },
+    "bullish-premium-chat": {
+      "when": "2025-11-06T18:56:17.643Z",
+      "why": "synced_from_master_updates"
+    },
+    "sports-picks": {
+      "when": "2025-11-06T18:56:17.643Z",
+      "why": "synced_from_master_updates"
+    },
+    "solo-vintedseekers": {
+      "when": "2025-11-06T18:56:17.643Z",
+      "why": "synced_from_master_updates"
+    },
+    "the-mastermind": {
+      "when": "2025-11-06T18:56:17.643Z",
+      "why": "synced_from_master_updates"
+    },
+    "ccs-collectibles": {
+      "when": "2025-11-06T18:56:17.643Z",
+      "why": "synced_from_master_updates"
+    },
+    "zeus-trades-apprenticeship": {
+      "when": "2025-11-06T18:56:17.643Z",
+      "why": "synced_from_master_updates"
+    },
+    "side-hustle-collection": {
+      "when": "2025-11-06T18:56:17.643Z",
+      "why": "synced_from_master_updates"
+    },
+    "millionaire-memecoins": {
+      "when": "2025-11-06T18:56:17.643Z",
+      "why": "synced_from_master_updates"
+    },
+    "franklin-covers": {
+      "when": "2025-11-06T18:56:17.643Z",
+      "why": "synced_from_master_updates"
+    },
+    "bigjoebets": {
+      "when": "2025-11-06T18:56:17.643Z",
+      "why": "synced_from_master_updates"
+    },
+    "player-props": {
+      "when": "2025-11-06T18:56:17.643Z",
+      "why": "synced_from_master_updates"
+    },
+    "lets-begin-community": {
+      "when": "2025-11-06T18:56:17.643Z",
+      "why": "synced_from_master_updates"
+    },
+    "apex-fitness-and-mind-mastery": {
+      "when": "2025-11-06T18:56:17.643Z",
+      "why": "synced_from_master_updates"
+    },
+    "dawah-central": {
+      "when": "2025-11-06T18:56:17.643Z",
+      "why": "synced_from_master_updates"
+    },
+    "study-of-chart": {
+      "when": "2025-11-06T18:56:17.643Z",
+      "why": "synced_from_master_updates"
+    },
+    "algo28-day-trading-signals": {
+      "when": "2025-11-06T18:56:17.643Z",
+      "why": "synced_from_master_updates"
+    },
+    "spoofer-pro": {
+      "when": "2025-11-06T18:56:17.643Z",
+      "why": "synced_from_master_updates"
+    },
+    "king-68-picks": {
+      "when": "2025-11-06T18:56:17.646Z",
+      "why": "synced_from_master_updates"
+    },
+    "pham-collectibles-pokalerts": {
+      "when": "2025-11-06T18:56:17.646Z",
+      "why": "synced_from_master_updates"
+    },
+    "elite-syndicate-bets": {
+      "when": "2025-11-06T18:56:17.646Z",
+      "why": "synced_from_master_updates"
+    },
+    "cryptopro": {
+      "when": "2025-11-06T18:56:17.646Z",
+      "why": "synced_from_master_updates"
+    },
+    "basic-trading-mentorship": {
+      "when": "2025-11-06T18:56:17.646Z",
+      "why": "synced_from_master_updates"
+    },
+    "win-the-day-vip": {
+      "when": "2025-11-06T18:56:17.646Z",
+      "why": "synced_from_master_updates"
+    },
+    "taxes-are-voluntary-w-oto": {
+      "when": "2025-11-06T18:56:17.646Z",
+      "why": "synced_from_master_updates"
+    },
+    "db-locks": {
+      "when": "2025-11-06T18:56:17.646Z",
+      "why": "synced_from_master_updates"
+    },
+    "tennisxpert-premium": {
+      "when": "2025-11-06T18:56:17.646Z",
+      "why": "synced_from_master_updates"
+    },
+    "x1-alpha-group": {
+      "when": "2025-11-06T18:56:17.646Z",
+      "why": "synced_from_master_updates"
+    },
+    "slam-dunk-bets": {
+      "when": "2025-11-06T18:56:17.646Z",
+      "why": "synced_from_master_updates"
+    },
+    "profit-society-inc": {
+      "when": "2025-11-06T18:56:17.646Z",
+      "why": "synced_from_master_updates"
+    },
+    "queezy-locks-904": {
+      "when": "2025-11-06T18:56:17.646Z",
+      "why": "synced_from_master_updates"
+    },
+    "parlaycapital-premium": {
+      "when": "2025-11-06T18:56:17.646Z",
+      "why": "synced_from_master_updates"
+    },
+    "trademark-support": {
+      "when": "2025-11-06T18:56:17.647Z",
+      "why": "synced_from_master_updates"
+    },
+    "the-delta-vader-copy-tader": {
+      "when": "2025-11-06T18:56:17.647Z",
+      "why": "synced_from_master_updates"
+    },
+    "membership": {
+      "when": "2025-11-06T18:56:17.647Z",
+      "why": "synced_from_master_updates"
+    },
+    "summit-academy-inner-circle": {
+      "when": "2025-11-06T18:56:17.647Z",
+      "why": "synced_from_master_updates"
+    },
+    "donalds-store": {
+      "when": "2025-11-06T18:56:17.647Z",
+      "why": "synced_from_master_updates"
+    },
+    "member": {
+      "when": "2025-11-06T18:56:17.647Z",
+      "why": "synced_from_master_updates"
+    },
+    "era-mastery": {
+      "when": "2025-11-06T18:56:17.647Z",
+      "why": "synced_from_master_updates"
+    },
+    "whnsa-roi": {
+      "when": "2025-11-06T18:56:17.647Z",
+      "why": "synced_from_master_updates"
+    },
+    "the-profit-playbook": {
+      "when": "2025-11-06T18:56:17.647Z",
+      "why": "synced_from_master_updates"
+    },
+    "rich-wtg": {
+      "when": "2025-11-06T18:56:17.647Z",
+      "why": "synced_from_master_updates"
+    },
+    "otc-group": {
+      "when": "2025-11-06T18:56:17.647Z",
+      "why": "synced_from_master_updates"
+    },
+    "blackhawk-indicator": {
+      "when": "2025-11-06T18:56:17.647Z",
+      "why": "synced_from_master_updates"
+    },
+    "profit-python": {
+      "when": "2025-11-06T18:56:17.647Z",
+      "why": "synced_from_master_updates"
+    },
+    "lka-vinted-snipe-bot": {
+      "when": "2025-11-06T18:56:17.647Z",
+      "why": "synced_from_master_updates"
+    },
+    "ape-trading": {
+      "when": "2025-11-06T18:56:17.647Z",
+      "why": "synced_from_master_updates"
+    },
+    "ai-fusion-megapack": {
+      "when": "2025-11-06T18:56:17.647Z",
+      "why": "synced_from_master_updates"
+    },
+    "anonymous-sport-bets": {
+      "when": "2025-11-06T18:56:17.647Z",
+      "why": "synced_from_master_updates"
+    },
+    "eczema-healing-community": {
+      "when": "2025-11-06T18:56:17.647Z",
+      "why": "synced_from_master_updates"
+    },
+    "millionaire-premier-club-mpc": {
+      "when": "2025-11-06T18:56:17.647Z",
+      "why": "synced_from_master_updates"
+    },
+    "rr-lounge": {
+      "when": "2025-11-06T18:56:17.647Z",
+      "why": "synced_from_master_updates"
+    },
+    "geno-elite": {
+      "when": "2025-11-06T18:56:17.647Z",
+      "why": "synced_from_master_updates"
+    },
+    "brand-leverage-blueprint": {
+      "when": "2025-11-06T18:56:17.650Z",
+      "why": "synced_from_master_updates"
+    },
+    "cryptowzrd": {
+      "when": "2025-11-06T18:56:17.650Z",
+      "why": "synced_from_master_updates"
+    },
+    "training-with-tiah": {
+      "when": "2025-11-06T18:56:17.650Z",
+      "why": "synced_from_master_updates"
+    },
+    "lets-get-this-money": {
+      "when": "2025-11-06T18:56:17.650Z",
+      "why": "synced_from_master_updates"
+    },
+    "the-bikini-model-diet": {
+      "when": "2025-11-06T18:56:17.650Z",
+      "why": "synced_from_master_updates"
+    },
+    "str8-bets": {
+      "when": "2025-11-06T18:56:17.650Z",
+      "why": "synced_from_master_updates"
+    },
+    "mambafitcoach": {
+      "when": "2025-11-06T18:56:17.650Z",
+      "why": "synced_from_master_updates"
+    },
+    "monthly-signals": {
+      "when": "2025-11-06T18:56:17.650Z",
+      "why": "synced_from_master_updates"
+    },
+    "house-cat": {
+      "when": "2025-11-06T18:56:17.650Z",
+      "why": "synced_from_master_updates"
+    },
+    "jc-locks": {
+      "when": "2025-11-06T18:56:17.650Z",
+      "why": "synced_from_master_updates"
+    },
+    "stridetrades": {
+      "when": "2025-11-06T18:56:17.650Z",
+      "why": "synced_from_master_updates"
+    },
+    "silver-spoon-bets": {
+      "when": "2025-11-06T18:56:17.650Z",
+      "why": "synced_from_master_updates"
+    },
+    "own-your-damn-power-ai-studio": {
+      "when": "2025-11-06T18:56:17.650Z",
+      "why": "synced_from_master_updates"
+    },
+    "trench-hunters": {
+      "when": "2025-11-06T18:56:17.650Z",
+      "why": "synced_from_master_updates"
+    },
+    "aa-trading": {
+      "when": "2025-11-06T18:56:17.650Z",
+      "why": "synced_from_master_updates"
+    },
+    "penny-stock-mafia": {
+      "when": "2025-11-06T18:56:17.652Z",
+      "why": "synced_from_master_updates"
+    },
+    "moms-house": {
+      "when": "2025-11-06T18:56:17.652Z",
+      "why": "synced_from_master_updates"
+    },
+    "ar-trades": {
+      "when": "2025-11-06T18:56:17.652Z",
+      "why": "synced_from_master_updates"
+    },
+    "rfb-exclusivevip-package": {
+      "when": "2025-11-06T18:56:17.652Z",
+      "why": "synced_from_master_updates"
+    },
+    "sanjaleo-trading": {
+      "when": "2025-11-06T18:56:17.652Z",
+      "why": "synced_from_master_updates"
+    },
+    "journal-with-the-holy-spirit": {
+      "when": "2025-11-06T18:56:17.652Z",
+      "why": "synced_from_master_updates"
+    },
+    "option-insights-discord": {
+      "when": "2025-11-06T18:56:17.652Z",
+      "why": "synced_from_master_updates"
+    },
+    "caa-itin-forensic-training": {
+      "when": "2025-11-06T18:56:17.652Z",
+      "why": "synced_from_master_updates"
+    },
+    "never-doubt": {
+      "when": "2025-11-06T18:56:17.652Z",
+      "why": "synced_from_master_updates"
+    },
+    "satorifnf": {
+      "when": "2025-11-06T18:56:17.652Z",
+      "why": "synced_from_master_updates"
+    },
+    "aementorship-basic-mentorship": {
+      "when": "2025-11-06T18:56:17.652Z",
+      "why": "synced_from_master_updates"
+    },
+    "live-trading-sessions-m-f": {
+      "when": "2025-11-06T18:56:17.652Z",
+      "why": "synced_from_master_updates"
+    },
+    "2urn": {
+      "when": "2025-11-06T18:56:17.655Z",
+      "why": "synced_from_master_updates"
+    },
+    "1be-coach-compound": {
+      "when": "2025-11-06T18:56:17.655Z",
+      "why": "synced_from_master_updates"
+    },
+    "1day-crypto-group": {
+      "when": "2025-11-06T18:56:17.655Z",
+      "why": "synced_from_master_updates"
+    },
+    "1-cold-caller": {
+      "when": "2025-11-06T18:56:17.655Z",
+      "why": "synced_from_master_updates"
+    },
+    "242-just-picks": {
+      "when": "2025-11-06T18:56:17.655Z",
+      "why": "synced_from_master_updates"
+    },
+    "1-1-inner-circle-access": {
+      "when": "2025-11-06T18:56:17.655Z",
+      "why": "synced_from_master_updates"
+    },
+    "007-closer": {
+      "when": "2025-11-06T18:56:17.655Z",
+      "why": "synced_from_master_updates"
+    },
+    "2-cold-callers": {
+      "when": "2025-11-06T18:56:17.655Z",
+      "why": "synced_from_master_updates"
+    },
+    "11800-atn": {
+      "when": "2025-11-06T18:56:17.655Z",
+      "why": "synced_from_master_updates"
+    },
+    "1-influence": {
+      "when": "2025-11-06T18:56:17.655Z",
+      "why": "synced_from_master_updates"
+    },
+    "3-cold-callers": {
+      "when": "2025-11-06T18:56:17.655Z",
+      "why": "synced_from_master_updates"
+    },
+    "1-appointment-setter": {
+      "when": "2025-11-06T18:56:17.655Z",
+      "why": "synced_from_master_updates"
+    },
+    "100k-accelerator": {
+      "when": "2025-11-06T18:56:17.655Z",
+      "why": "synced_from_master_updates"
+    },
+    "1x-nepq-sales-coaching-call": {
+      "when": "2025-11-06T18:56:17.655Z",
+      "why": "synced_from_master_updates"
+    },
+    "25-balance-250-tokens": {
+      "when": "2025-11-06T18:56:17.655Z",
+      "why": "synced_from_master_updates"
+    },
+    "10-balance-100-tokens": {
+      "when": "2025-11-06T18:56:17.655Z",
+      "why": "synced_from_master_updates"
+    },
+    "2-million-dollar-dna-insider": {
+      "when": "2025-11-06T18:56:17.655Z",
+      "why": "synced_from_master_updates"
+    },
+    "1-car-rental-course": {
+      "when": "2025-11-06T18:56:17.655Z",
+      "why": "synced_from_master_updates"
+    },
+    "100-balance-1050-tokens": {
+      "when": "2025-11-06T18:56:17.655Z",
+      "why": "synced_from_master_updates"
+    },
+    "1-on-1-private-ecom-mentorship": {
+      "when": "2025-11-06T18:56:17.655Z",
+      "why": "synced_from_master_updates"
+    },
+    "2000month": {
+      "when": "2025-11-06T18:56:17.655Z",
+      "why": "synced_from_master_updates"
+    },
+    "2global-private-mentorship": {
+      "when": "2025-11-06T18:56:17.655Z",
+      "why": "synced_from_master_updates"
+    },
+    "200-balance-2200-tokens": {
+      "when": "2025-11-06T18:56:17.655Z",
+      "why": "synced_from_master_updates"
+    },
+    "20-domains-black-friday-promo": {
+      "when": "2025-11-06T18:56:17.655Z",
+      "why": "synced_from_master_updates"
+    },
+    "1-on-1-mentorshipp": {
+      "when": "2025-11-06T18:56:17.655Z",
+      "why": "synced_from_master_updates"
+    },
+    "-basic-access": {
+      "when": "2025-11-06T18:56:17.658Z",
+      "why": "synced_from_master_updates"
+    },
+    "750-events": true,
+    "777-special": true,
+    "-flow-ta": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "509-biz-academy": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "6-figure-drop-shipper": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "-sala-de-trading": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "-1-on-1-oa-mastery-coaching": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "-bravo-six-picks-vip": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "6-month-1-1-mentorship": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "6-figure-posing-coach": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "410-academy": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "37-weekly-membership": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "6-figure-affiliate": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "-gold-tier-fyndit": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "-lock-win-monthly": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "50-balance-500-tokens": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "7-society-membership": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "3-va-hires": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "4-coins-to-4-million": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "-inversionista-estratega": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "-amazon-seller-pro-course": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "500-challenge": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "-pro-plan": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "-free-7-days-leadsautopilot": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "6-figur-funding": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "500-small-account-challenge": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "400-balance-5000-tokens": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "5-balance-50-tokens": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "-oms-community-wholetek": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "47-tradez-vip-access": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "1-elite-suite-payment-plan": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "-le-grenier": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "-botting-fr": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "1-sala-de-trading-privada": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "10k-challenge": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "10xbnb": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "-lyss-dropshipping": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "500000-aws-cloud-engineer-pr": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "1-1-1hr-zoom": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "0dte-hideout-notifications": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "-anubis-crypto": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "7-day-access": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "-7-jou-7-chans": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "-unlimited-adspy": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "-cometleads-tier-0-shuffled": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "1k-to-100k-challenge-package": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "-weekly-profit-lock": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "-bravo-six-picks-lifetime": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "-mba": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "-builder-plan": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "1804-picks": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "29-monthly": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "1-a-1-conmigo-master-class": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "4legpicks": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "15-daily-vip-discount": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "100-off-kaykays-parlay-chat": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "6-month-thailand-blueprint": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "-tsb-winners-circle": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "3in1": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "5-day-challenge-vip-june": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "-7-day-free-trial-bundle-": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "4-pick-silver-package": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "1of1locks": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "100-resell-expansion": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "-atom-signals-indicator-": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "-maverick-investments-vip": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "1-op-1-coaching-chat-premium": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "247brass-pro": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "35p-premium-access": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "-inversionista-visionario": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "2c": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "100x-sports-bettinginvesting": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "45-minutos-de-mentoria-1-1": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "35-monthly-subscription": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "5950-monitors-discord": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "1on1-insiders": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "-sports-weekly-membership": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "-1-month-pass": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "-agency-launch": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "1-1-call-with-paul": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "50x-club-mentorship": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "1703-store": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "12-labs": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "12m": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "7-figure-blueprint": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "7-daily-card": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "30-million-digital-products": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "28-day-mobility-program": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "4-clothing-reselling-course": {
+      "when": "2025-11-06T20:53:10.521Z",
+      "why": "synced_from_master_updates"
+    },
+    "7egend-trades": true,
+    "7th-level-community": true,
+    "7g": true,
+    "7thfuturestrading": true,
+    "748-store": {
+      "when": "2025-11-06T21:15:24.918Z",
+      "why": "synced_from_master_updates"
+    },
+    "700-club": {
+      "when": "2025-11-06T21:15:24.919Z",
+      "why": "synced_from_master_updates"
+    },
+    "717-aco": {
+      "when": "2025-11-06T21:15:24.919Z",
+      "why": "synced_from_master_updates"
+    },
+    "-cometleads-tier-1-shuffled": {
+      "when": "2025-11-07T00:00:00Z",
+      "why": "restored_test"
+    },
+    "-elite-plan": {
+      "when": "2025-11-07T00:00:00Z",
+      "why": "restored_test"
+    },
+    "-silver-tier-fyndit": {
+      "when": "2025-11-07T00:00:00Z",
+      "why": "restored_test"
+    },
+    "-the-ofm-incubator-": {
+      "when": "2025-11-07T00:00:00Z",
+      "why": "restored_test"
+    },
+    "1-month-access-vipparlay-king": {
+      "when": "2025-11-07T00:00:00Z",
+      "why": "restored_test"
+    },
+    "1-month-premium": {
+      "when": "2025-11-07T00:00:00Z",
+      "why": "restored_test"
+    },
+    "1-of-1-traders-full-access": {
+      "when": "2025-11-07T00:00:00Z",
+      "why": "restored_test"
+    },
+    "1-on-1-mentorship-lifetime": {
+      "when": "2025-11-07T00:00:00Z",
+      "why": "restored_test"
+    },
+    "100-creative": {
+      "when": "2025-11-07T00:00:00Z",
+      "why": "restored_test"
+    },
+    "adrevival-diamond": true,
+    "adrevival-platinum": true,
+    "adrevival-bronze": true,
+    "acquisition-ace": true,
+    "advanceit-technologies-llc": true,
+    "ads-mastery-1-on-1-sean-": true,
+    "acquisition-ace-plus": true,
+    "ai-for-pros": true,
+    "agency-launch-partnership": true,
+    "affiliate-academy-c": true,
+    "ai-insiders": true,
+    "abtrades-lte-academy": true,
+    "acquisition-growth-partners": true,
+    "ai-generalist-fellowship": true,
+    "ag-trades-1on1-mentorship": true,
+    "aceprizepix-vip": true,
+    "a-options-access": true,
+    "adrevival-gold": true,
+    "afyzs-premium-membership": true,
+    "abhmedia-ongoing-standard-2": true,
+    "adrevival-tiktok": true,
+    "accelerator-program": true,
+    "accelerator": true,
+    "ag-trades-model-prem-discord": true,
+    "ai-crypto-ghoostrader": true,
+    "abhmedia-5": true,
+    "abhey-takes-down-vegas-vip": true,
+    "abundanceavenue-premium": true,
+    "ai-": true,
+    "agtraders-room": true,
+    "about-the-money-sapphire": true,
+    "a-z-mastery-program": true,
+    "ai-premium": true,
+    "affiliate-academy": true,
+    "abhmedia-9": true,
+    "920-trading": true,
+    "ai-arbitrage-agency": true,
+    "acompaamiento-oa-intensivo": true,
+    "advertising-innovators": true,
+    "acadmie-shopify": true,
+    "ai-launchpad": true,
+    "a1fantasysports-premium": true,
+    "accelerator-package": true,
+    "affordable-tradelines": true,
+    "ai-copywriter-wizards": true,
+    "8rowser": true,
+    "advanced-subscription": true,
+    "ag-trades-premium-discord": true,
+    "ai-inner-circle": true,
+    "agency-ascension": true,
+    "affiliate-academy-b": true,
+    "abonnement-feedl": true,
+    "advanced-price-action-course": true,
+    "affinity-circle": true,
+    "adpdfs": true,
+    "agent-accelerator-duplicate": true,
+    "adams-premium-betting-server": true,
+    "ai-academy": true,
+    "ai-creator-10": true,
+    "adextrades-memorial-day-sale": true,
+    "ads-management": true,
+    "99vinyl-discord": true,
+    "agency-for-trades": true,
+    "aementorship-1-on-1": true,
+    "ai-sourcing-tool": true,
+    "advanced-package": true,
+    "ahmedyfx-premium": true,
+    "ai-digital-asset-builders": true,
+    "affiliate-studios": true,
+    "ai-store-builder-premium-store": true,
+    "abonnement-spotter": true,
+    "aged-domain-masterclass": true,
+    "abhmedia-2": true,
+    "a-picks-vip-pass": true,
+    "adex": true,
+    "ace-trading-premium": true,
+    "ai-algorithms-monthly": true,
+    "ai-operators": true,
+    "a-picks-weekly-vip": true,
+    "advanced-analytics": true,
+    "ahead-the-spread-discord": true,
+    "aco-service": true,
+    "acorn-vinyl": true,
+    "agency-acension": true,
+    "advanced-growth-package": true,
+    "a-z-master-course-only": true,
+    "aces-trading-club": true,
+    "act-forex-vip-academy": true,
+    "ai-automation": true,
+    "90-days-1-1-coaching": true,
+    "90-day-decision-making-plan": true,
+    "ai-engineering-fellowship": true,
+    "ai-algorithms-live-trading": true,
+    "ai-automation-payment-plan": true,
+    "aha-platinum": true,
+    "ai-signals-platinum": true,
+    "ai-content-accelerator": true,
+    "ai-messages": true,
+    "a-class-bureau": true,
+    "abundanceavenue-community": true,
+    "ai-scale-society": true,
+    "afibie-crypto-club": true,
+    "a-white-glove-discord": true,
+    "academy-membership": true,
+    "ai-trading-master-class": true,
+    "agm-exclusive-picks-": true,
+    "admit-one-ic": true,
+    "ai-agency-starter-kit": true,
+    "9559fx-private-121-mentorship": true,
+    "academy-of-self-help-premium": true,
+    "aco-restocks": true,
+    "ai-marketers-club": true,
+    "about-the-money-gold": true,
+    "ai-agents-digital-asset-pros": true,
+    "ace-crypto": true,
+    "ai-acquisition": true,
+    "affiliate-club": true,
+    "aetherai": true,
+    "acetipz-vip": true,
+    "ai-algorithms-pro-kit": true,
+    "accelerator-labs-premium": true,
+    "against-all-odds-mvp": true,
+    "aceofspadetrade-monthly": true,
+    "a-picks-vip-3-month-pass": true,
+    "ace-trading-beginner-products": true,
+    "abnb-empires-inner-circle": true,
+    "ai-growth-launch-bundle": true,
+    "advanced-time-cycles": true,
+    "academy-of-wealth": true,
+    "ai-marketing-for-leaders": true,
+    "ai-profit": true,
+    "786-assassins-1-free-month": {
+      "when": "2025-11-07T15:11:38.372Z",
+      "why": "synced_from_master_successes"
+    },
+    "affiliate-flow-discord": {
+      "when": "2025-11-07T15:11:38.373Z",
+      "why": "synced_from_master_successes"
+    },
+    "antoine-blanco": true,
+    "anytime-capital": true,
+    "akari": true,
+    "all-in-pod": true,
+    "amazon-direct-to-brand": true,
+    "amplify": true,
+    "ai-video-labs": true,
+    "alphabot-team-owner-pass": true,
+    "amazon-inner-circle": true,
+    "aiaa-dfy": true,
+    "amnotify-us-membership": true,
+    "amn-trading-premium": true,
+    "all-in-premium": true,
+    "amazon-fba-secret-sauce": true,
+    "american-dream-trading-vip": true,
+    "ancient-warrior-valhalla-vip": true,
+    "airbnb-empire-builder": true,
+    "alpha-tier": true,
+    "alquimistas-digitales": true,
+    "alertsify": true,
+    "alpine-premium-access": true,
+    "aiautomator": true,
+    "akira-group": true,
+    "androgenic-academy": true,
+    "all-day-12-month-plan": true,
+    "algobot-ultimate": true,
+    "airbnb-accelerator-program": true,
+    "airbnb-ascension-incubator": true,
+    "anolytics-arena": true,
+    "andrewtradez-exclusive-circle": true,
+    "alpha-zones-maxalgo": true,
+    "ap-premium-picks": true,
+    "annual": true,
+    "aj-trading-premium": true,
+    "all-in-coaching": true,
+    "amazon-sister-full-access": true,
+    "american-alchemy": true,
+    "algo-zones": true,
+    "airdna-by-preston-seo": true,
+    "amenity-standard": true,
+    "anontcg-premium": true,
+    "alpha-analysis-group": true,
+    "ai-whatsapp-setter": true,
+    "app-master-class": true,
+    "all-things-arbitrage-uk": true,
+    "aio-provider": true,
+    "alertsjp-member-license": true,
+    "alertsjp-renewal": true,
+    "alvarburn-comunidad-privada": true,
+    "all-in-1-mentorship-program": true,
+    "apes-of-wall-street-member": true,
+    "american-dream-vip-lifetime": true,
+    "alpha-double-up-mentorship": true,
+    "algorithmic-trading-premium": true,
+    "amplify-grow": true,
+    "annual-pass": true,
+    "amazon-fba-profit-path": true,
+    "amazon-fba-network": true,
+    "ambersherri-membership": true,
+    "alpha-pass": true,
+    "anontcg-elite": true,
+    "all-sniper-academia": true,
+    "annual-discount": true,
+    "amkr-renewal-transfer": true,
+    "airbnb-co-hosting-mastery": true,
+    "andrew-keenes-10-out-of-10": true,
+    "alphabet-membership-free-trial": true,
+    "alphaautomation": true,
+    "ai-ugc-course": true,
+    "antspicks": true,
+    "ap-picks-monthly-membership": true,
+    "algox-trading": true,
+    "all-access-dfs-pass": true,
+    "akemi-lab-lite": true,
+    "apex-payman-trading": true,
+    "amazon-mentorship-tier-2": true,
+    "alpha": true,
+    "all-sports-packages": true,
+    "all-inclusive-package": true,
+    "allstreet-university": true,
+    "aj-currency-signals": true,
+    "apex-bot-black-friday": true,
+    "amz-peak-membership": true,
+    "anymeanz-association": true,
+    "alchemy-trading-academy": true,
+    "alpha-trades-premium": true,
+    "ai-whatsapp-setter-pp1": true,
+    "apexalgo": true,
+    "alignment-lounge": true,
+    "ai-trendz-academy": true,
+    "amazon-startup-lab": true,
+    "ak-chefs": true,
+    "alg0mists-scalping-club": true,
+    "all-access-weekly-wins": true,
+    "alliance-vip": true,
+    "all-in-one": true,
+    "alpha-fun": true,
+    "ap-flips-premium": true,
+    "aim-high-algo-indicator": true,
+    "alphafxglobal-tradinghaven-vip": true,
+    "alphahq": true,
+    "analytics-engine": true,
+    "algoprops-global": true,
+    "aio-essentials-package": true,
+    "americana-crypto": true,
+    "anon-sports-free-picks": true,
+    "anabolic-blueprint": true,
+    "alien-club-proxy-membership": true,
+    "analyst-ar": true,
+    "alliance-trading-member": true,
+    "all-access-tier": true,
+    "ale-edge": true,
+    "alerts": true,
+    "all-access-dfs-bets": true,
+    "apex-pro-sports-supermax": true,
+    "amazon-fba": true,
+    "ambitious-investing": true,
+    "aped-in": true,
+    "alex-twb-tv-mac-dicator": true,
+    "alternative-money-lanes": true,
+    "alphanasgrinders": true,
+    "aj-trading-free": true,
+    "alpha-options-vip": true,
+    "anolytics": true,
+    "andrew-molz-clipping": true,
+    "alphafxglobal-trading-haven": true,
+    "alpha-trades-vip": true,
+    "apex-pro-platinum": true,
+    "all-in-trading-group": true,
+    "amor-scripts-monthly": true,
+    "akemi-lab-accelerator": true,
+    "apple-pro": true,
+    "apollo-algo-trading-tools": true,
+    "agency-vault": {
+      "when": "2025-11-07T17:03:31.407Z",
+      "why": "synced_from_master_successes"
+    },
+    "ai-content-automation-bundle": {
+      "when": "2025-11-07T17:03:31.408Z",
+      "why": "synced_from_master_successes"
+    },
+    "agentdash": {
+      "when": "2025-11-07T17:03:31.408Z",
+      "why": "synced_from_master_successes"
+    },
+    "agp-accelerator": {
+      "when": "2025-11-07T17:03:31.408Z",
+      "why": "synced_from_master_successes"
+    },
+    "8-figure-blueprint": {
+      "when": "2025-11-07T17:03:31.408Z",
+      "why": "synced_from_master_successes"
+    },
+    "acquisition-network-": {
+      "when": "2025-11-07T17:03:31.408Z",
+      "why": "synced_from_master_successes"
+    },
+    "activate-your-vsn": {
+      "when": "2025-11-07T17:03:31.408Z",
+      "why": "synced_from_master_successes"
+    },
+    "ackolade": {
+      "when": "2025-11-07T17:03:31.408Z",
+      "why": "synced_from_master_successes"
+    },
+    "abhmedia-ongoing-standard": {
+      "when": "2025-11-07T17:03:31.408Z",
+      "why": "synced_from_master_successes"
+    },
+    "ai-agency-launchpad": {
+      "when": "2025-11-07T17:03:31.408Z",
+      "why": "synced_from_master_successes"
+    },
+    "access-capital-lending-group": {
+      "when": "2025-11-07T17:03:31.408Z",
+      "why": "synced_from_master_successes"
+    },
+    "agent-developer-mentorship": {
+      "when": "2025-11-07T17:03:31.408Z",
+      "why": "synced_from_master_successes"
+    },
+    "ads-for-smokes": {
+      "when": "2025-11-07T17:03:31.408Z",
+      "why": "synced_from_master_successes"
+    },
+    "adams-unlimited-enterprise": {
+      "when": "2025-11-07T17:03:31.408Z",
+      "why": "synced_from_master_successes"
+    },
+    "ai-profit-lab": {
+      "when": "2025-11-07T17:03:31.408Z",
+      "why": "synced_from_master_successes"
+    },
+    "advert-management": {
+      "when": "2025-11-07T17:03:31.408Z",
+      "why": "synced_from_master_successes"
+    },
+    "agency-accelerator": {
+      "when": "2025-11-07T17:03:31.408Z",
+      "why": "synced_from_master_successes"
+    },
+    "admit-one": {
+      "when": "2025-11-07T17:03:31.408Z",
+      "why": "synced_from_master_successes"
+    },
+    "adamant-capital-solutions": {
+      "when": "2025-11-07T17:03:31.408Z",
+      "why": "synced_from_master_successes"
+    },
+    "ai-credit-repair": {
+      "when": "2025-11-07T17:03:31.408Z",
+      "why": "synced_from_master_successes"
+    },
+    "affiniti-flow": {
+      "when": "2025-11-07T17:03:31.408Z",
+      "why": "synced_from_master_successes"
+    },
+    "acquisition-ace-financing": {
+      "when": "2025-11-07T17:03:31.408Z",
+      "why": "synced_from_master_successes"
+    },
+    "ados": {
+      "when": "2025-11-07T17:03:31.408Z",
+      "why": "synced_from_master_successes"
+    },
+    "agency-partner-package": {
+      "when": "2025-11-07T17:03:31.408Z",
+      "why": "synced_from_master_successes"
+    },
+    "academia-de-trading-1": {
+      "when": "2025-11-07T17:03:31.408Z",
+      "why": "synced_from_master_successes"
+    },
+    "ab-digital-products": {
+      "when": "2025-11-07T17:03:31.408Z",
+      "why": "synced_from_master_successes"
+    },
+    "ai-echo-system": {
+      "when": "2025-11-07T17:03:31.408Z",
+      "why": "synced_from_master_successes"
+    },
+    "a-z-master-course-community": {
+      "when": "2025-11-07T17:03:31.408Z",
+      "why": "synced_from_master_successes"
+    },
+    "afnf-pro-backup": {
+      "when": "2025-11-07T17:03:31.408Z",
+      "why": "synced_from_master_successes"
+    },
+    "ah-charts": {
+      "when": "2025-11-07T17:03:31.408Z",
+      "why": "synced_from_master_successes"
+    },
+    "aesthetic-mastery": {
+      "when": "2025-11-07T17:03:31.408Z",
+      "why": "synced_from_master_successes"
+    },
+    "affiliatepro": {
+      "when": "2025-11-07T17:03:31.408Z",
+      "why": "synced_from_master_successes"
+    },
+    "abtrades-free-community-chat": {
+      "when": "2025-11-07T17:03:31.408Z",
+      "why": "synced_from_master_successes"
+    },
+    "academy-live": {
+      "when": "2025-11-07T17:03:31.408Z",
+      "why": "synced_from_master_successes"
+    },
+    "adflow-platinum": {
+      "when": "2025-11-07T17:03:31.408Z",
+      "why": "synced_from_master_successes"
+    },
+    "ai-plays": {
+      "when": "2025-11-07T17:03:31.408Z",
+      "why": "synced_from_master_successes"
+    },
+    "abonnement-promodfis-anj": {
+      "when": "2025-11-07T17:03:31.408Z",
+      "why": "synced_from_master_successes"
+    },
+    "ad-masterclass-101": {
+      "when": "2025-11-07T17:03:31.408Z",
+      "why": "synced_from_master_successes"
+    },
+    "accs-standard": {
+      "when": "2025-11-07T17:03:31.408Z",
+      "why": "synced_from_master_successes"
+    },
+    "97month-7-day-free-trial": {
+      "when": "2025-11-07T17:03:31.408Z",
+      "why": "synced_from_master_successes"
+    },
+    "abonnement-notre-discord": {
+      "when": "2025-11-07T17:03:31.408Z",
+      "why": "synced_from_master_successes"
+    },
+    "adverclash": {
+      "when": "2025-11-07T17:03:31.408Z",
+      "why": "synced_from_master_successes"
+    },
+    "academy-inner-circle": {
+      "when": "2025-11-07T17:03:31.408Z",
+      "why": "synced_from_master_successes"
+    },
+    "account-management": {
+      "when": "2025-11-07T17:03:31.408Z",
+      "why": "synced_from_master_successes"
+    },
+    "adt-futures-vip": {
+      "when": "2025-11-07T17:03:31.408Z",
+      "why": "synced_from_master_successes"
+    },
+    "ai-clipping": {
+      "when": "2025-11-07T17:03:31.408Z",
+      "why": "synced_from_master_successes"
+    },
+    "adflow-gold": {
+      "when": "2025-11-07T17:03:31.408Z",
+      "why": "synced_from_master_successes"
+    },
+    "ai-driven-picks": {
+      "when": "2025-11-07T17:03:31.408Z",
+      "why": "synced_from_master_successes"
+    },
+    "advert-service": {
+      "when": "2025-11-07T17:03:31.408Z",
+      "why": "synced_from_master_successes"
+    },
+    "abc-premium-picks": {
+      "when": "2025-11-07T17:03:31.408Z",
+      "why": "synced_from_master_successes"
+    },
+    "advanced": {
+      "when": "2025-11-07T17:03:31.408Z",
+      "why": "synced_from_master_successes"
+    },
+    "ai-business-plans-with-doug": {
+      "when": "2025-11-07T17:03:31.408Z",
+      "why": "synced_from_master_successes"
+    },
+    "90-day-mentorship": {
+      "when": "2025-11-07T17:03:31.408Z",
+      "why": "synced_from_master_successes"
+    },
+    "accelerator-lite": {
+      "when": "2025-11-07T17:03:31.408Z",
+      "why": "synced_from_master_successes"
+    },
+    "a-list-affiliate-programme": {
+      "when": "2025-11-07T17:03:31.408Z",
+      "why": "synced_from_master_successes"
+    },
+    "adverthead": {
+      "when": "2025-11-07T17:03:31.408Z",
+      "why": "synced_from_master_successes"
+    },
+    "99percentlocks": {
+      "when": "2025-11-07T17:03:31.408Z",
+      "why": "synced_from_master_successes"
+    },
+    "accs-bot-vinted": {
+      "when": "2025-11-07T17:03:31.408Z",
+      "why": "synced_from_master_successes"
+    },
+    "88-return": {
+      "when": "2025-11-07T17:03:31.408Z",
+      "why": "synced_from_master_successes"
+    },
+    "academia": {
+      "when": "2025-11-07T17:03:31.408Z",
+      "why": "synced_from_master_successes"
+    },
+    "a-class-bureau-lite": {
+      "when": "2025-11-07T17:03:31.408Z",
+      "why": "synced_from_master_successes"
+    },
+    "a-klub": {
+      "when": "2025-11-07T17:03:31.408Z",
+      "why": "synced_from_master_successes"
+    },
+    "absolute-advantage": {
+      "when": "2025-11-07T17:03:31.408Z",
+      "why": "synced_from_master_successes"
+    },
+    "abid-al-ghaniy-trading-group": {
+      "when": "2025-11-07T17:03:31.408Z",
+      "why": "synced_from_master_successes"
+    },
+    "ai-growth-partner-essentials": {
+      "when": "2025-11-07T17:03:31.408Z",
+      "why": "synced_from_master_successes"
+    },
+    "9-every-nfl-pick-": {
+      "when": "2025-11-07T17:03:31.408Z",
+      "why": "synced_from_master_successes"
+    },
+    "access-to-all-indicators-": {
+      "when": "2025-11-07T17:03:31.408Z",
+      "why": "synced_from_master_successes"
+    },
+    "acne-masterclass": {
+      "when": "2025-11-07T17:03:31.408Z",
+      "why": "synced_from_master_successes"
+    }
   },
   "pending": {
-    "parlaycapital-premium": 1762436308228,
-    "rr-lounge": 1762436308239,
-    "itsbucketsnba-vip-telegram": 1762436308239,
-    "crypto-capital-vip": 1762436308240,
-    "-elite-plan": 1762436308241,
-    "lite-pro-": 1762436308242,
-    "-the-ofm-incubator-": 1762436308243,
-    "limitless-ai-sport-picks": 1762436308243,
-    "-cometleads-tier-1-shuffled": 1762436308244,
-    "cryptopro": 1762436400849,
-    "rfb-exclusivevip-package": 1762436400850,
-    "-basic-access": 1762436400850,
-    "taxes-are-voluntary-w-oto": 1762436400851,
-    "bullish-premium-chat": 1762436400851,
-    "solo-vintedseekers": 1762436400852,
-    "aementorship-basic-mentorship": 1762436400854,
-    "100-creative": 1762436493106,
-    "slam-dunk-bets": 1762436493108,
-    "-silver-tier-fyndit": 1762436493108,
-    "333picks": 1762436493109,
-    "geno-elite": 1762436493109
+    "alchemists-picks": 1762532647188,
+    "amazon-fba-advanced-course": 1762532889736,
+    "all-in": 1762533423480,
+    "airbnb-arbitrage-roadmap-ps": 1762533515581,
+    "amazon-tax-walmart-kredi": 1762533668300,
+    "amazon-seller-course": 1762533670053,
+    "apex-signals-vip": 1762533913432,
+    "amn-mentorship": 1762533916646,
+    "amz-fba-club": 1762534000674,
+    "all-day-webinar-june-2025": 1762534329060,
+    "all-access-monthly-wins": 1762534429818,
+    "andresrodtrades-premium": 1762534530956,
+    "allsniper-live-trading-": 1762534662049,
+    "alpha-trades-vip-access": 1762534751197,
+    "all-in-one-": 1762534754208
   },
   "outPath": "data/content/raw/ai-run-20251104T180924.jsonl",
   "rejPath": "data/content/raw/rejects-20251104T180924.jsonl",
   "runMeta": "data/content/raw/ai-run-20251104T180924.meta.json",
   "rejected": {
-    "1": {
+    "ai-vault": {
       "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762429087589
+      "ts": 1762532584817
     },
-    "betting-central-101": {
+    "amplify-views": {
       "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762285359772
+      "ts": 1762532586313
     },
-    "equifix": {
+    "all-in-legacy-consulting-inc": {
       "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762286522828
+      "ts": 1762532586840
     },
-    "daily-straight-plays": {
+    "allstates-restorations": {
       "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762286610978
+      "ts": 1762532646446
     },
-    "the-blue-vortex": {
+    "americas-golf-schools": {
       "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762286612941
+      "ts": 1762532646508
     },
-    "dan-steel-trading-academy": {
+    "alpha-wolves-vip-community": {
       "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762286706284
+      "ts": 1762532647905
     },
-    "hopium": {
+    "amazon-fba-formula-premium": {
       "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762287010251
+      "ts": 1762532782365
     },
-    "indicators-vip-lifetime": {
+    "air-ai-usage-billing": {
       "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762287067114
+      "ts": 1762532783015
     },
-    "speed-ramp-from-a-to-z": {
+    "alpha-status-w-andrew-alerts": {
       "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762287071638
+      "ts": 1762532784867
     },
-    "tby-investments": {
+    "aiautomator-2": {
       "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762287173260
+      "ts": 1762532888398
     },
-    "httpscercleppmfr": {
+    "amplified-advisors": {
       "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762287272697
+      "ts": 1762532890382
     },
-    "hsv-consulting": {
+    "amanda-fit-nees-coaching": {
       "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762287274632
+      "ts": 1762532891114
     },
-    "mindful-af-attentionfocus": {
+    "alertskr": {
       "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762287316974
+      "ts": 1762533421055
     },
-    "ticketvision-trading": {
+    "apex-leads-group": {
       "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762287317341
+      "ts": 1762533422282
     },
-    "pine-script-pro-trader": {
+    "airflow": {
       "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762287317987
+      "ts": 1762533423925
     },
-    "gurus-film-room": {
+    "anya-wareck": {
       "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762287318902
+      "ts": 1762533667389
     },
-    "discord": {
+    "alecc-webinars": {
       "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762287319850
+      "ts": 1762533776022
     },
-    "hall-of-fame-fund": {
+    "ancientagency": {
       "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762292465169
+      "ts": 1762533776054
     },
-    "capital-complex-premium": {
+    "alminmilanovic": {
       "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762292466530
+      "ts": 1762533914350
     },
-    "pariahbets": {
+    "alliance-group-coaching": {
       "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762292698308
+      "ts": 1762533916602
     },
-    "dleyguarda-trading": {
+    "amazon-fba-success-hub-gyfba": {
       "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762292768503
+      "ts": 1762533917480
     },
-    "6-figure-wash-system": {
+    "amara-ux": {
       "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762292771667
+      "ts": 1762534002365
     },
-    "the-ape-asylum": {
+    "apes-of-wall-street-certified": {
       "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762292772569
+      "ts": 1762534004380
     },
-    "sports-picks": {
+    "ai-wealth": {
       "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762292952812
+      "ts": 1762534085869
     },
-    "the-mastermind": {
+    "all-star-stakes": {
       "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762293139022
+      "ts": 1762534255138
     },
-    "ccs-collectibles": {
+    "amigas-y-mas-social": {
       "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762293140747
+      "ts": 1762534258673
     },
-    "zeus-trades-apprenticeship": {
+    "alloffpicks-vip-access": {
       "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762293260349
+      "ts": 1762534259285
     },
-    "side-hustle-collection": {
+    "airbnb-101-crash-course": {
       "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762293262882
+      "ts": 1762534328540
     },
-    "millionaire-memecoins": {
+    "angel-business-inc": {
       "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762293263885
+      "ts": 1762534332014
     },
-    "franklin-covers": {
+    "alpha-pips": {
       "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762293348718
+      "ts": 1762534429119
     },
-    "bigjoebets": {
+    "ape-picks": {
       "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762293350825
+      "ts": 1762534430008
     },
-    "player-props": {
+    "ai-videos-meistern": {
       "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762293351608
+      "ts": 1762534431920
     },
-    "lets-begin-community": {
+    "alexa-eise-fitness": {
       "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762293456090
+      "ts": 1762534531209
     },
-    "apex-fitness-and-mind-mastery": {
+    "apo-picks": {
       "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762293456205
+      "ts": 1762534531732
     },
-    "dawah-central": {
+    "alex-crypto-universe": {
       "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762293560803
+      "ts": 1762534532479
     },
-    "study-of-chart": {
+    "aim": {
       "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762293562350
+      "ts": 1762534534552
     },
-    "algo28-day-trading-signals": {
+    "alpha-insight": {
       "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762293734086
+      "ts": 1762534628883
     },
-    "spoofer-pro": {
+    "allen": {
       "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762293735882
+      "ts": 1762534630621
     },
-    "king-68-picks": {
+    "anomaly-enterprise": {
       "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762334429754
+      "ts": 1762534631833
     },
-    "pham-collectibles-pokalerts": {
+    "alumno-destacado": {
       "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762334432672
+      "ts": 1762534634056
     },
-    "elite-syndicate-bets": {
+    "amazon-aco": {
       "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762334736592
+      "ts": 1762534663045
     },
-    "basic-trading-mentorship": {
+    "amine-devben": {
       "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762334904824
+      "ts": 1762534663071
     },
-    "win-the-day-vip": {
+    "alien-insights": {
       "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762334988433
+      "ts": 1762534663808
     },
-    "db-locks": {
+    "algo-world-premium": {
       "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762335116544
+      "ts": 1762534665454
     },
-    "tennisxpert-premium": {
+    "angel-algo": {
       "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762335117197
+      "ts": 1762534665972
     },
-    "x1-alpha-group": {
+    "aj-trading": {
       "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762335213170
+      "ts": 1762534751837
     },
-    "profit-society-inc": {
+    "anabolic-whales": {
       "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762335253045
+      "ts": 1762534752053
     },
-    "queezy-locks-904": {
+    "alertsvn": {
       "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762335254222
+      "ts": 1762534752891
     },
-    "trademark-support": {
+    "alignment-discord": {
       "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762336352349
+      "ts": 1762534754195
     },
-    "the-delta-vader-copy-tader": {
+    "ambition-fitness-warriors": {
       "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762336444667
+      "ts": 1762534845242
     },
-    "membership": {
+    "alpha-analyst": {
       "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762336474558
+      "ts": 1762534845544
     },
-    "summit-academy-inner-circle": {
+    "ansley-jean-fitness": {
       "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762336599921
+      "ts": 1762534846012
     },
-    "donalds-store": {
-      "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762336712442
-    },
-    "member": {
-      "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762336714165
-    },
-    "era-mastery": {
-      "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762336843097
-    },
-    "whnsa-roi": {
-      "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762336962967
-    },
-    "the-profit-playbook": {
-      "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762337061964
-    },
-    "rich-wtg": {
-      "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762337062088
-    },
-    "otc-group": {
-      "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762337199474
-    },
-    "blackhawk-indicator": {
-      "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762337200287
-    },
-    "profit-python": {
-      "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762337203020
-    },
-    "lka-vinted-snipe-bot": {
-      "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762337203285
-    },
-    "ape-trading": {
-      "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762337226040
-    },
-    "ai-fusion-megapack": {
-      "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762337226494
-    },
-    "anonymous-sport-bets": {
-      "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762337226924
-    },
-    "eczema-healing-community": {
-      "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762337345431
-    },
-    "millionaire-premier-club-mpc": {
-      "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762337429993
-    },
-    "brand-leverage-blueprint": {
-      "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762338597665
-    },
-    "cryptowzrd": {
-      "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762338807325
-    },
-    "training-with-tiah": {
-      "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762338859406
-    },
-    "lets-get-this-money": {
-      "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762339039546
-    },
-    "the-bikini-model-diet": {
-      "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762339152379
-    },
-    "str8-bets": {
-      "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762339407709
-    },
-    "mambafitcoach": {
-      "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762339408042
-    },
-    "monthly-signals": {
-      "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762339533254
-    },
-    "house-cat": {
-      "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762339715999
-    },
-    "jc-locks": {
-      "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762339717731
-    },
-    "stridetrades": {
-      "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762339782771
-    },
-    "silver-spoon-bets": {
-      "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762339898570
-    },
-    "own-your-damn-power-ai-studio": {
-      "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762339985351
-    },
-    "trench-hunters": {
-      "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762339986263
-    },
-    "aa-trading": {
-      "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762339986932
-    },
-    "penny-stock-mafia": {
-      "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762363538560
-    },
-    "moms-house": {
-      "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762363652295
-    },
-    "ar-trades": {
-      "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762364166737
-    },
-    "sanjaleo-trading": {
-      "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762364323941
-    },
-    "journal-with-the-holy-spirit": {
-      "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762364327001
-    },
-    "option-insights-discord": {
-      "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762364409556
-    },
-    "caa-itin-forensic-training": {
-      "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762364409645
-    },
-    "never-doubt": {
-      "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762364410436
-    },
-    "satorifnf": {
-      "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762364411144
-    },
-    "live-trading-sessions-m-f": {
-      "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762364490227
-    },
-    "2urn": {
-      "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762371122359
-    },
-    "1be-coach-compound": {
-      "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762371124660
-    },
-    "1-cold-caller": {
-      "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762371127736
-    },
-    "1-1-inner-circle-access": {
-      "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762371209129
-    },
-    "007-closer": {
-      "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762371210114
-    },
-    "2-cold-callers": {
-      "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762371210173
-    },
-    "1-influence": {
-      "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762371309080
-    },
-    "3-cold-callers": {
-      "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762371310333
-    },
-    "1-appointment-setter": {
-      "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762371310548
-    },
-    "100k-accelerator": {
-      "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762371314834
-    },
-    "1x-nepq-sales-coaching-call": {
-      "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762371393689
-    },
-    "25-balance-250-tokens": {
-      "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762371502982
-    },
-    "10-balance-100-tokens": {
-      "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762371505694
-    },
-    "1-car-rental-course": {
-      "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762371591983
-    },
-    "100-balance-1050-tokens": {
-      "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762371593108
-    },
-    "1-on-1-private-ecom-mentorship": {
-      "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762371594681
-    },
-    "2global-private-mentorship": {
-      "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762371682571
-    },
-    "200-balance-2200-tokens": {
-      "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762371686504
-    },
-    "20-domains-black-friday-promo": {
-      "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762371687612
-    },
-    "1-on-1-mentorshipp": {
-      "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762371748969
-    },
-    "-basic-access": {
-      "reason": "promo_cleanup: defer for final retry pass",
-      "ts": 1762440015500
-    },
-    "-cometleads-tier-1-shuffled": {
-      "reason": "promo_cleanup: defer for final retry pass",
-      "ts": 1762440015500
-    },
-    "-elite-plan": {
-      "reason": "promo_cleanup: defer for final retry pass",
-      "ts": 1762440015500
-    },
-    "-silver-tier-fyndit": {
-      "reason": "promo_cleanup: defer for final retry pass",
-      "ts": 1762440015500
-    },
-    "-the-ofm-incubator-": {
-      "reason": "promo_cleanup: defer for final retry pass",
-      "ts": 1762440015500
-    },
-    "100-creative": {
-      "reason": "promo_cleanup: defer for final retry pass",
-      "ts": 1762440015500
-    },
-    "333picks": {
-      "reason": "promo_cleanup: defer for final retry pass",
-      "ts": 1762440015500
+    "alchemists-picks": {
+      "when": "2025-11-07T17:03:31.408Z",
+      "why": "synced_from_master_rejects"
     },
-    "aementorship-basic-mentorship": {
-      "reason": "promo_cleanup: defer for final retry pass",
-      "ts": 1762440015500
+    "amazon-fba-advanced-course": {
+      "when": "2025-11-07T17:03:31.408Z",
+      "why": "synced_from_master_rejects"
     },
-    "bullish-premium-chat": {
-      "reason": "promo_cleanup: defer for final retry pass",
-      "ts": 1762440015500
+    "all-in": {
+      "when": "2025-11-07T17:03:31.408Z",
+      "why": "synced_from_master_rejects"
     },
-    "crypto-capital-vip": {
-      "reason": "promo_cleanup: defer for final retry pass",
-      "ts": 1762440015500
+    "airbnb-arbitrage-roadmap-ps": {
+      "when": "2025-11-07T17:03:31.408Z",
+      "why": "synced_from_master_rejects"
     },
-    "cryptopro": {
-      "reason": "promo_cleanup: defer for final retry pass",
-      "ts": 1762440015500
+    "amazon-tax-walmart-kredi": {
+      "when": "2025-11-07T17:03:31.408Z",
+      "why": "synced_from_master_rejects"
     },
-    "geno-elite": {
-      "reason": "promo_cleanup: defer for final retry pass",
-      "ts": 1762440015500
+    "amazon-seller-course": {
+      "when": "2025-11-07T17:03:31.408Z",
+      "why": "synced_from_master_rejects"
     },
-    "itsbucketsnba-vip-telegram": {
-      "reason": "promo_cleanup: defer for final retry pass",
-      "ts": 1762440015500
+    "amn-mentorship": {
+      "when": "2025-11-07T17:03:31.408Z",
+      "why": "synced_from_master_rejects"
     },
-    "limitless-ai-sport-picks": {
-      "reason": "promo_cleanup: defer for final retry pass",
-      "ts": 1762440015500
+    "apex-signals-vip": {
+      "when": "2025-11-07T17:03:31.408Z",
+      "why": "synced_from_master_rejects"
     },
-    "lite-pro-": {
-      "reason": "promo_cleanup: defer for final retry pass",
-      "ts": 1762440015500
+    "amz-fba-club": {
+      "when": "2025-11-07T17:03:31.408Z",
+      "why": "synced_from_master_rejects"
     },
-    "parlaycapital-premium": {
-      "reason": "promo_cleanup: defer for final retry pass",
-      "ts": 1762440015500
+    "all-day-webinar-june-2025": {
+      "when": "2025-11-07T17:03:31.408Z",
+      "why": "synced_from_master_rejects"
     },
-    "rfb-exclusivevip-package": {
-      "reason": "promo_cleanup: defer for final retry pass",
-      "ts": 1762440015500
+    "all-access-monthly-wins": {
+      "when": "2025-11-07T17:03:31.408Z",
+      "why": "synced_from_master_rejects"
     },
-    "rr-lounge": {
-      "reason": "promo_cleanup: defer for final retry pass",
-      "ts": 1762440015500
+    "andresrodtrades-premium": {
+      "when": "2025-11-07T17:03:31.408Z",
+      "why": "synced_from_master_rejects"
     },
-    "slam-dunk-bets": {
-      "reason": "promo_cleanup: defer for final retry pass",
-      "ts": 1762440015500
+    "allsniper-live-trading-": {
+      "when": "2025-11-07T17:03:31.408Z",
+      "why": "synced_from_master_rejects"
     },
-    "solo-vintedseekers": {
-      "reason": "promo_cleanup: defer for final retry pass",
-      "ts": 1762440015500
+    "all-in-one-": {
+      "when": "2025-11-07T17:03:31.408Z",
+      "why": "synced_from_master_rejects"
     },
-    "taxes-are-voluntary-w-oto": {
-      "reason": "promo_cleanup: defer for final retry pass",
-      "ts": 1762440015500
+    "alpha-trades-vip-access": {
+      "when": "2025-11-07T17:03:31.408Z",
+      "why": "synced_from_master_rejects"
     }
   }
 }
