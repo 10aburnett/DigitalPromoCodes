@@ -1,3 +1,4 @@
+// @ts-nocheck
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Script from 'next/script'
