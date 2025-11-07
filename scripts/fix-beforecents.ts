@@ -215,4 +215,5 @@ function main() {
   if (!writeMode && changed > 0) console.log('💡 Re-run with --write to apply changes');
 }
 
-if (require.main === module) main();
+// ESM-compatible entry point check
+if (import.meta.url === `file://${process.argv[1]}`) main();
