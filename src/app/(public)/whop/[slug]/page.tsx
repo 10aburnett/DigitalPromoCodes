@@ -484,7 +484,7 @@ export default async function WhopPage({ params }: { params: { slug: string } })
   console.log('[WHOP DETAIL] getDeal result:', { found: !!dealData, id: dealData?.id });
 
   // Use cached, tagged data (D1) - no fallback needed
-  const finalWhopData = await getWhopBySlugCached(dbSlug, 'en');
+  const finalWhopData = await getWhopBySlugCached(dbSlug);
   console.log('[WHOP DETAIL] Final data chosen:', {
     found: !!finalWhopData,
     name: finalWhopData?.name,
