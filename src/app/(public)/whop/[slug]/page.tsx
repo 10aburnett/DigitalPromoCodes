@@ -1069,7 +1069,6 @@ export default async function WhopPage({ params }: { params: { slug: string } })
 
           {/* Alternatives Section - Server-rendered for JS-off compatibility */}
           <div className="max-w-2xl mx-auto">
-            {/* @ts-expect-error Async Server Component */}
             <AlternativesSection currentWhopSlug={dbSlug} />
           </div>
 
