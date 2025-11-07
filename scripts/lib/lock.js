@@ -1,7 +1,16 @@
 import fs from "fs";
-const LOCK = "run.lock";
+import path from "path";
+
+const LOCK_DIR = "/tmp";
+const lockFiles = new Map(); // Track which lock file this process owns
+
+function getLockPath(role) {
+  return path.join(LOCK_DIR, `.${role}.lock`);
+}
 
 export function acquireLock({ role }) {
+  const LOCK = getLockPath(role);
+
   if (fs.existsSync(LOCK)) {
     try {
       const { pid, role: r, t } = JSON.parse(fs.readFileSync(LOCK, "utf8"));
@@ -9,7 +18,7 @@ export function acquireLock({ role }) {
       try { process.kill(pid, 0); alive = true; } catch { alive = false; }
 
       if (alive) {
-        die(`Another ${r || "process"} (PID ${pid}) holds ${LOCK} since ${t}`);
+        die(`Another ${r || "process"} (PID ${pid}) holds ${role}.lock since ${t}`);
       } else {
         // stale
         fs.unlinkSync(LOCK);
@@ -20,10 +29,15 @@ export function acquireLock({ role }) {
     }
   }
   fs.writeFileSync(LOCK, JSON.stringify({ pid: process.pid, role, t: new Date().toISOString() }));
+  lockFiles.set(role, LOCK);
 }
 
 export function releaseLock() {
-  try { if (fs.existsSync(LOCK)) fs.unlinkSync(LOCK); } catch {}
+  // Release all locks held by this process
+  for (const [role, lockPath] of lockFiles.entries()) {
+    try { if (fs.existsSync(lockPath)) fs.unlinkSync(lockPath); } catch {}
+  }
+  lockFiles.clear();
 }
 
 function die(msg) { console.error(`❌ ${msg}`); process.exit(5); }

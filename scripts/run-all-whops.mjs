@@ -94,20 +94,23 @@ function runBatch({ scope, limit, budgetUsd }) {
   // D) Generate content
   console.log("🤖 Running generator...");
   run(
-    `bash -c "rm -f data/content/raw/.run.lock && source ${ENV_SCRIPT} && node scripts/generate-whop-content.mjs --in=data/neon/whops.jsonl --onlySlugs=\\"$(cat ${NEXT_BATCH_CSV})\\" --batch=${Math.min(10, limit)} --budgetUsd=${budgetUsd}"`
+    `bash -c "source ${ENV_SCRIPT} && node scripts/generate-whop-content.mjs --in=data/neon/whops.jsonl --onlySlugs=\\"$(cat ${NEXT_BATCH_CSV})\\" --batch=${Math.min(10, limit)} --budgetUsd=${budgetUsd}"`
   );
 
   // E) Consolidate results idempotently
   console.log("📦 Consolidating results...");
   run("node scripts/consolidate-results.mjs");
 
-  // F) Postflight validation (prove queue shrank or reached zero)
-  console.log("🔓 POST-FLIGHT: Re-validating state...");
-  run(`node scripts/preflight.mjs --scope=${scope} --limit=${limit}`);
+  // F) Sync checkpoint from master (CRITICAL: ensures next batch sees latest state)
+  console.log("🔄 Syncing checkpoint from master...");
+  run("node scripts/sync-checkpoint-from-master.mjs");
 
   // G) Append audit trail
   console.log("📊 Logging progress...");
   run(`node scripts/progress-log.mjs --scope=${scope}`);
+
+  // Note: Post-flight validation removed - the next batch's pre-flight will validate
+  // state after checkpoint sync. This prevents false positives from stale batch files.
 }
 
 async function main() {

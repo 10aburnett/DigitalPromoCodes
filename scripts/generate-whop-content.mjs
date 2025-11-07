@@ -60,6 +60,34 @@ const OUT_DIR = "data/content/raw";
 const CHECKPOINT = "data/content/.checkpoint.json";
 const FINGERPRINTS_FILE = "data/content/.fingerprints.jsonl";
 
+// --- Write-once guard: Load master indices to prevent duplicate writes -----
+const MASTER_ALL = "data/content/master/_master-all-slugs.txt";
+const masterAllSlugs = fs.existsSync(MASTER_ALL)
+  ? new Set(fs.readFileSync(MASTER_ALL, "utf8").trim().split(/\r?\n/).filter(x => x))
+  : new Set();
+const writtenThisRun = new Set();  // Track slugs written during this run
+
+// Helper to enforce write-once-by-slug for OUT_FILE
+function appendOnce(filePath, obj) {
+  const slug = obj?.slug?.trim();
+  if (!slug) {
+    // No slug - write anyway (shouldn't happen in normal flow)
+    fs.appendFileSync(filePath, JSON.stringify(obj) + "\n", "utf8");
+    return;
+  }
+
+  // Skip if already written (this run or in master)
+  if (writtenThisRun.has(slug) || masterAllSlugs.has(slug)) {
+    console.log(`[Write-once guard] Skipped duplicate: ${slug}`);
+    return;
+  }
+
+  // Write and track
+  fs.appendFileSync(filePath, JSON.stringify(obj) + "\n", "utf8");
+  writtenThisRun.add(slug);
+}
+// ----------------------------------------------------------------------------
+
 // --- Checkpoint & fingerprints module ---------------------------------------
 function loadJSON(filePath, fallback) {
   try { return JSON.parse(fs.readFileSync(filePath, "utf8")); } catch { return fallback; }
@@ -240,14 +268,7 @@ const PRICE = {
 if (!fs.existsSync(OUT_DIR)) fs.mkdirSync(OUT_DIR, { recursive: true });
 if (!fs.existsSync("data/neon")) fs.mkdirSync("data/neon", { recursive: true });
 
-// Guard against concurrent runs
-const LOCK = path.join(OUT_DIR, ".run.lock");
-if (fs.existsSync(LOCK)) {
-  console.error("❌ Another run appears active (lock present).");
-  console.error("   If no other process is running, remove: data/content/raw/.run.lock");
-  process.exit(1);
-}
-fs.writeFileSync(LOCK, String(process.pid));
+// Concurrency guard handled by PID-based lock at top of file (line 35)
 
 const PROVIDER = process.env.PROVIDER || "openai"; // or "anthropic"
 const MODEL = process.env.MODEL || "";
@@ -1016,9 +1037,14 @@ persistCheckpoint();
 // Track already done slugs (for resume logic unless FORCE)
 const alreadyDone = new Set(Object.keys(ck.done || {}));
 
-// Generate output file paths (stable across resumes to avoid file fragmentation)
+// Generate output file paths (collision-proof with timestamp + pid + random suffix)
 if (!ck.outPath || !ck.rejPath) {
-  const stamp = new Date().toISOString().replace(/[-:]/g,"").replace(/\..+/, "");
+  // Create unique, collision-proof run ID: YYYYMMDDhhmmss-pid-random
+  const ts = new Date().toISOString().replace(/[-:TZ.]/g, "").slice(0, 14); // YYYYMMDDhhmmss
+  const pid = process.pid;
+  const rnd = crypto.randomBytes(4).toString("hex");
+  const stamp = `${ts}-${pid}-${rnd}`;
+
   ck.outPath = path.join(OUT_DIR, `ai-run-${stamp}.jsonl`);
   ck.rejPath = path.join(OUT_DIR, `rejects-${stamp}.jsonl`);
   ck.runMeta = path.join(OUT_DIR, `ai-run-${stamp}.meta.json`);
@@ -1028,9 +1054,25 @@ const OUT_FILE = ck.outPath;
 const REJECTS_FILE = ck.rejPath;
 const RUN_META = ck.runMeta || path.join(OUT_DIR, `ai-run-fallback.meta.json`);
 
-// Initialize output files
-if (!fs.existsSync(OUT_FILE)) fs.writeFileSync(OUT_FILE, "");
-if (!fs.existsSync(REJECTS_FILE)) fs.writeFileSync(REJECTS_FILE, "");
+// Initialize output files with exclusive create (fail if file exists - collision prevention)
+try {
+  if (!fs.existsSync(OUT_FILE)) {
+    const fd = fs.openSync(OUT_FILE, "wx"); // Exclusive create - throws if exists
+    fs.closeSync(fd);
+  }
+  if (!fs.existsSync(REJECTS_FILE)) {
+    const fd = fs.openSync(REJECTS_FILE, "wx"); // Exclusive create - throws if exists
+    fs.closeSync(fd);
+  }
+} catch (err) {
+  if (err.code === "EEXIST") {
+    console.error(`❌ Fatal: Output file collision detected. File already exists.`);
+    console.error(`   This should never happen with collision-proof naming.`);
+    console.error(`   OUT_FILE: ${OUT_FILE}`);
+    process.exit(99);
+  }
+  throw err;
+}
 
 // Write run metadata
 if (!fs.existsSync(RUN_META)) {
@@ -3272,8 +3314,8 @@ ${JSON.stringify(obj)}
         return;
       }
 
-      // Write output and update fingerprint
-      fs.appendFileSync(OUT_FILE, JSON.stringify(output) + "\n");
+      // Write output and update fingerprint (with write-once guard)
+      appendOnce(OUT_FILE, output);
       appendFingerprint({ slug, sha });
       fingerprints.set(slug, sha);
 
