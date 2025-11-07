@@ -290,7 +290,7 @@ export default async function WhopPage({ params }: { params: { slug: string, loc
           </section>
 
           {/* Recommended Whops Section */}
-          <RecommendedWhops currentWhopId={whop.id} />
+          <RecommendedWhops currentWhopSlug={whop.slug ?? params.slug} />
 
           {/* Reviews Section */}
           <WhopReviewSection 
