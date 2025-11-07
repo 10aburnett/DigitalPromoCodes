@@ -72,7 +72,7 @@ if (scope === 'promo') {
 
   // exclude manual from D and R to avoid double counting
   const D = new Set([...D_raw].filter(s => !M.has(s)));
-  const R = new Set([...R_raw].filter(s => !M.has(s)));
+  const R = new Set([...R_raw].filter(s => !M.has(s) && !D.has(s))); // belt-and-braces: exclude D from R
 
   // unaccounted = promo − (D ∪ R ∪ M ∪ DenyP)
   const accounted = new Set([...D, ...R, ...M, ...DenyP]);

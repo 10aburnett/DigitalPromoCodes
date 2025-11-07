@@ -12,6 +12,16 @@ import { loadState, isValidSlug, writeFileAtomic, PROMO_FILE } from "./lib/sets.
 const OUT_TXT = "/tmp/next-batch.txt";
 const OUT_CSV = "/tmp/next-batch.csv";
 
+// Load master indices to prevent re-processing already-done or rejected slugs
+const MASTER_PROCESSED = "data/content/master/_processed-master-slugs.txt";
+const MASTER_REJECTED  = "data/content/master/_rejected-master-slugs.txt";
+const masterProcessed  = fs.existsSync(MASTER_PROCESSED)
+  ? new Set(fs.readFileSync(MASTER_PROCESSED, "utf8").trim().split(/\r?\n/).filter(x => x))
+  : new Set();
+const masterRejected   = fs.existsSync(MASTER_REJECTED)
+  ? new Set(fs.readFileSync(MASTER_REJECTED, "utf8").trim().split(/\r?\n/).filter(x => x))
+  : new Set();
+
 // Parse args: --scope=promo|all --limit=<n> [positional batch size for backwards compat]
 const args = process.argv.slice(2);
 
@@ -60,6 +70,7 @@ const { needs, promo, manual, deny, done, rejected } = loadState();
 console.log(`📋 Loaded ${promo.size} promo whops from ${PROMO_FILE}`);
 console.log(`📊 Loaded ${needs.size} whops needing content`);
 console.log(`✅ Already done: ${done.size}, rejected: ${rejected.size}, manual: ${manual.size}, denied: ${deny.size}`);
+console.log(`🔒 Master indices: ${masterProcessed.size} processed, ${masterRejected.size} rejected`);
 
 // compute live set:
 //   promo:   (promo ∩ needs) − (done ∪ rejected ∪ manual ∪ deny)
@@ -69,9 +80,20 @@ let candidates = SCOPE === 'promo'
   : [...needs].filter(s => !promo.has(s)); // Exclude all promo items
 candidates = candidates
   .filter(isValidSlug)
-  .filter(s => !done.has(s) && !rejected.has(s) && !manual.has(s) && !deny.has(s));
+  .filter(s => !done.has(s) && !rejected.has(s) && !manual.has(s) && !deny.has(s))
+  .filter(s => !masterProcessed.has(s) && !masterRejected.has(s)); // NEVER pick anything master already has
 
-console.log(`🔢 Candidates before filtering: ${candidates.length}`);
+// Candidate audit: Belt-and-braces check for ghost slugs that somehow slipped through
+const candidatesBeforeAudit = candidates.length;
+const ghostSlugs = candidates.filter(s => masterProcessed.has(s) || masterRejected.has(s));
+if (ghostSlugs.length > 0) {
+  console.warn(`⚠️  Candidate audit caught ${ghostSlugs.length} ghost slugs that exist in master index. Excluding.`);
+  const ghostSet = new Set(ghostSlugs);
+  candidates = candidates.filter(s => !ghostSet.has(s));
+}
+console.log(`🔍 Candidate audit: before=${candidatesBeforeAudit}, after=${candidates.length}, removed=${candidatesBeforeAudit - candidates.length}`);
+
+console.log(`🔢 Candidates after audit: ${candidates.length}`);
 
 const targets = [];
 for (const s of candidates) {
