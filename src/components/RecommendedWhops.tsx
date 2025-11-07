@@ -29,7 +29,7 @@ interface RecommendedWhop {
   similarityScore?: number; // Optional since it's added by the API but not needed in display
 }
 
-interface RecommendedWhopsProps {
+export interface RecommendedWhopsProps {
   currentWhopSlug: string;
 }
 
