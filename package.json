@@ -28,7 +28,7 @@
     "build:graph-chatgpt": "ts-node --transpile-only scripts/build-graph-chatgpt.ts",
     "graph:publish": "ts-node --transpile-only scripts/build-and-publish-graph.ts",
     "graph:publish-optimized": "ts-node --transpile-only scripts/build-and-publish-graph-optimized.ts",
-    "fix:beforecents": "ts-node scripts/fix-beforecents.ts --write",
+    "fix:beforecents": "tsx --tsconfig tsconfig.cjs.json scripts/fix-beforecents.ts --write",
     "prebuild": "test \"$SKIP_SEO_BUILD\" = \"1\" && echo '⏭️  Skipping SEO builds (SKIP_SEO_BUILD=1)' || (tsx scripts/build-seo-indexes.ts && tsx scripts/build-sitemaps.ts)",
     "prebuild:with-graph": "ts-node --transpile-only scripts/build-seo-indexes.ts && ts-node --transpile-only scripts/build-sitemaps.ts && npm run build:graph",
     "prebuild:guard": "test ! -f public/sitemap.xml || (echo '❌ Remove public/sitemap.xml; /sitemap.xml is served by app route' && exit 1) && test ! -f public/robots.txt || (echo '❌ Remove public/robots.txt; /robots.txt is served by app route' && exit 1)",
