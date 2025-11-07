@@ -202,24 +202,230 @@
 {"slug":"-basic-access","error":"Count checks failed after repair: howtoredeemcontent must use <ol> for steps; howtoredeem step 4 words 7 not in 10–20; howtoredeem step 5 words 8 not in 10–20; promodetailscontent bullets should start with an action verb (imperative)"}
 {"slug":"-cometleads-tier-1-shuffled","error":"Primary keyword (\"🌟 CometLeads Tier 1: Shuffled promo code\") missing in aboutcontent first paragraph (min presence rule)"}
 {"slug":"-silver-tier-fyndit","error":"Primary keyword (\"🪙 Silver Tier | Fyndit promo code\") missing in aboutcontent first paragraph (min presence rule)"}
-{"slug":"-basic-access","error":"promo_cleanup: defer for final retry pass"}
-{"slug":"-cometleads-tier-1-shuffled","error":"promo_cleanup: defer for final retry pass"}
-{"slug":"-elite-plan","error":"promo_cleanup: defer for final retry pass"}
-{"slug":"-silver-tier-fyndit","error":"promo_cleanup: defer for final retry pass"}
-{"slug":"-the-ofm-incubator-","error":"promo_cleanup: defer for final retry pass"}
-{"slug":"100-creative","error":"promo_cleanup: defer for final retry pass"}
-{"slug":"333picks","error":"promo_cleanup: defer for final retry pass"}
-{"slug":"aementorship-basic-mentorship","error":"promo_cleanup: defer for final retry pass"}
-{"slug":"bullish-premium-chat","error":"promo_cleanup: defer for final retry pass"}
-{"slug":"crypto-capital-vip","error":"promo_cleanup: defer for final retry pass"}
-{"slug":"cryptopro","error":"promo_cleanup: defer for final retry pass"}
-{"slug":"geno-elite","error":"promo_cleanup: defer for final retry pass"}
-{"slug":"itsbucketsnba-vip-telegram","error":"promo_cleanup: defer for final retry pass"}
-{"slug":"limitless-ai-sport-picks","error":"promo_cleanup: defer for final retry pass"}
-{"slug":"lite-pro-","error":"promo_cleanup: defer for final retry pass"}
-{"slug":"parlaycapital-premium","error":"promo_cleanup: defer for final retry pass"}
-{"slug":"rfb-exclusivevip-package","error":"promo_cleanup: defer for final retry pass"}
-{"slug":"rr-lounge","error":"promo_cleanup: defer for final retry pass"}
-{"slug":"slam-dunk-bets","error":"promo_cleanup: defer for final retry pass"}
-{"slug":"solo-vintedseekers","error":"promo_cleanup: defer for final retry pass"}
-{"slug":"taxes-are-voluntary-w-oto","error":"promo_cleanup: defer for final retry pass"}
+{"slug":"637","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"-flow-ta","error":"Primary keyword (\"💎 Flow & TA promo code\") missing in aboutcontent first paragraph (min presence rule)"}
+{"slug":"509-biz-academy","error":"Grounding check failed: faq answer not grounded"}
+{"slug":"6-figure-drop-shipper","error":"Style guard: aboutcontent needs more varied sentence length (human cadence). Require ≥3 sentences, mean 13–22 words/sentence, stdev ≥4 for natural variation."}
+{"slug":"-sala-de-trading","error":"Grounding check failed: faq answer not grounded"}
+{"slug":"-1-on-1-oa-mastery-coaching","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"-bravo-six-picks-vip","error":"Repair failed: howtoredeemcontent must use <ol> for steps"}
+{"slug":"6-month-1-1-mentorship","error":"Grounding check failed: faq answer not grounded"}
+{"slug":"6-figure-posing-coach","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"410-academy","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"37-weekly-membership","error":"Primary keyword (\"$37 Weekly Membership promo code\") missing in aboutcontent first paragraph (min presence rule)"}
+{"slug":"6-figure-affiliate","error":"Grounding check failed: faq answer not grounded"}
+{"slug":"-gold-tier-fyndit","error":"Primary keyword (\"⭐️ Gold Tier | Fyndit promo code\") missing in aboutcontent first paragraph (min presence rule)"}
+{"slug":"-lock-win-monthly","error":"Grounding check failed: faq answer not grounded"}
+{"slug":"50-balance-500-tokens","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"7-society-membership","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"3-va-hires","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"4-coins-to-4-million","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"-inversionista-estratega","error":"Grounding check failed: faq answer not grounded"}
+{"slug":"-amazon-seller-pro-course","error":"Grounding check failed: faq answer not grounded"}
+{"slug":"500-challenge","error":"Repair failed: aboutcontent words 114 not in 120–180"}
+{"slug":"-pro-plan","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"-free-7-days-leadsautopilot","error":"Primary keyword (\"🎁 FREE 7 DAYS 🎁 LeadsAutopilot promo code\") missing in aboutcontent first paragraph (min presence rule)"}
+{"slug":"6-figur-funding","error":"Repair failed: howtoredeemcontent must use <ol> for steps"}
+{"slug":"500-small-account-challenge","error":"Primary keyword (\"$500 Small Account Challenge promo code\") missing in aboutcontent first paragraph (min presence rule)"}
+{"slug":"400-balance-5000-tokens","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"5-balance-50-tokens","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"-oms-community-wholetek","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"47-tradez-vip-access","error":"Primary keyword (\"47 Tradez™ VIP Access promo code\") missing in aboutcontent first paragraph (min presence rule)"}
+{"slug":"1-elite-suite-payment-plan","error":"Grounding check failed: faq answer not grounded"}
+{"slug":"-le-grenier","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"-botting-fr","error":"Grounding check failed: faq answer not grounded"}
+{"slug":"1-sala-de-trading-privada","error":"Primary keyword (\"#1 SALA DE TRADING - PRIVADA🥇 promo code\") missing in aboutcontent first paragraph (min presence rule)"}
+{"slug":"10k-challenge","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"10xbnb","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"-lyss-dropshipping","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"500000-aws-cloud-engineer-pr","error":"Primary keyword (\"$500,000 AWS Cloud Engineer Pr promo code\") missing in aboutcontent first paragraph (min presence rule)"}
+{"slug":"1-1-1hr-zoom","error":"Grounding check failed: faq answer not grounded"}
+{"slug":"0dte-hideout-notifications","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"-anubis-crypto","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"7-day-access","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"-7-jou-7-chans","error":"Primary keyword (\"🔥 7 Jou 7 Chans promo code\") missing in aboutcontent first paragraph (min presence rule)"}
+{"slug":"-unlimited-adspy","error":"Primary keyword (\"👁️ Unlimited AdSpy promo code\") missing in aboutcontent first paragraph (min presence rule)"}
+{"slug":"-cometleads-tier-0-shuffled","error":"Primary keyword (\"⭐ CometLeads Tier 0: Shuffled promo code\") missing in aboutcontent first paragraph (min presence rule)"}
+{"slug":"1k-to-100k-challenge-package","error":"Repair failed: howtoredeemcontent must use <ol> for steps"}
+{"slug":"-weekly-profit-lock","error":"Primary keyword (\"🤑 Weekly Profit Lock promo code\") missing in aboutcontent first paragraph (min presence rule)"}
+{"slug":"-bravo-six-picks-lifetime","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"-mba","error":"Grounding check failed: faq answer not grounded"}
+{"slug":"-builder-plan","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"1804-picks","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"29-monthly","error":"Count checks failed after repair: aboutcontent words 110 not in 120–180; howtoredeemcontent must use <ol> for steps; howtoredeem steps 50 not in 3–5; howtoredeem step 3 words 8 not in 10–20; howtoredeem step 4 words 6 not in 10–20; howtoredeem step 5 words 7 not in 10–20; howtoredeem step 6 words 8 not in 10–20; howtoredeem step 7 words 6 not in 10–20; howtoredeem step 8 words 7 not in 10–20; howtoredeem step 9 words 8 not in 10–20; howtoredeem step 10 words 6 not in 10–20; howtoredeem step 11 words 7 not in 10–20; howtoredeem step 12 words 8 not in 10–20; howtoredeem step 13 words 6 not in 10–20; howtoredeem step 14 words 7 not in 10–20; howtoredeem step 15 words 8 not in 10–20; howtoredeem step 16 words 6 not in 10–20; howtoredeem step 17 words 8 not in 10–20; howtoredeem step 18 words 8 not in 10–20; howtoredeem step 19 words 6 not in 10–20; howtoredeem step 20 words 8 not in 10–20; howtoredeem step 21 words 8 not in 10–20; howtoredeem step 22 words 6 not in 10–20; howtoredeem step 23 words 8 not in 10–20; howtoredeem step 24 words 8 not in 10–20; howtoredeem step 25 words 6 not in 10–20; howtoredeem step 26 words 8 not in 10–20; howtoredeem step 27 words 8 not in 10–20; howtoredeem step 28 words 6 not in 10–20; howtoredeem step 29 words 7 not in 10–20; howtoredeem step 30 words 8 not in 10–20; howtoredeem step 31 words 6 not in 10–20; howtoredeem step 32 words 7 not in 10–20; howtoredeem step 33 words 8 not in 10–20; howtoredeem step 34 words 6 not in 10–20; howtoredeem step 35 words 7 not in 10–20; howtoredeem step 36 words 8 not in 10–20; howtoredeem step 37 words 6 not in 10–20; howtoredeem step 38 words 7 not in 10–20; howtoredeem step 39 words 8 not in 10–20; howtoredeem step 40 words 6 not in 10–20; howtoredeem step 41 words 8 not in 10–20; howtoredeem step 42 words 8 not in 10–20; howtoredeem step 43 words 6 not in 10–20; howtoredeem step 44 words 8 not in 10–20; howtoredeem step 45 words 8 not in 10–20; howtoredeem step 46 words 6 not in 10–20; howtoredeem step 47 words 8 not in 10–20; howtoredeem step 48 words 8 not in 10–20; howtoredeem step 49 words 6 not in 10–20; howtoredeem step 50 words 8 not in 10–20; Avoid chaining multiple synonyms back-to-back in aboutcontent; howtoredeemcontent bullets should start with an action verb (imperative); promodetailscontent bullets should start with an action verb (imperative)"}
+{"slug":"1-a-1-conmigo-master-class","error":"Grounding check failed: faq answer not grounded"}
+{"slug":"4legpicks","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"15-daily-vip-discount","error":"Primary keyword (\"$15 DAILY VIP DISCOUNT🔥🔥🔥 promo code\") missing in aboutcontent first paragraph (min presence rule)"}
+{"slug":"100-off-kaykays-parlay-chat","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"6-month-thailand-blueprint","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"-tsb-winners-circle","error":"Primary keyword (\"👑 TSB + Winners Circle promo code\") missing in aboutcontent first paragraph (min presence rule)"}
+{"slug":"3in1","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"5-day-challenge-vip-june","error":"Grounding check failed: faq answer not grounded"}
+{"slug":"-7-day-free-trial-bundle-","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"4-pick-silver-package","error":"Count checks failed after repair: aboutcontent words 118 not in 120–180; howtoredeemcontent must use <ol> for steps; howtoredeem step 3 words 7 not in 10–20; howtoredeem step 4 words 8 not in 10–20; howtoredeem step 5 words 7 not in 10–20; Over-certain claim language detected (avoid guarantees); howtoredeemcontent bullets should start with an action verb (imperative); promodetailscontent bullets should start with an action verb (imperative)"}
+{"slug":"1of1locks","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"100-resell-expansion","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"-atom-signals-indicator-","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"-maverick-investments-vip","error":"Primary keyword (\"💎 Maverick Investments VIP promo code\") missing in aboutcontent first paragraph (min presence rule)"}
+{"slug":"1-op-1-coaching-chat-premium","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"247brass-pro","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"35p-premium-access","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"-inversionista-visionario","error":"Grounding check failed: faq answer not grounded"}
+{"slug":"2c","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"100x-sports-bettinginvesting","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"45-minutos-de-mentoria-1-1","error":"Grounding check failed: faq answer not grounded"}
+{"slug":"35-monthly-subscription","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"5950-monitors-discord","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"1on1-insiders","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"-sports-weekly-membership","error":"Primary keyword (\"⭐ Sports Weekly Membership promo code\") missing in aboutcontent first paragraph (min presence rule)"}
+{"slug":"-1-month-pass","error":"Primary keyword (\"🏆 1-MONTH PASS promo code\") missing in aboutcontent first paragraph (min presence rule)"}
+{"slug":"-agency-launch","error":"Primary keyword (\"💠 Agency Launch promo code\") missing in aboutcontent first paragraph (min presence rule)"}
+{"slug":"1-1-call-with-paul","error":"Grounding check failed: faq answer not grounded"}
+{"slug":"50x-club-mentorship","error":"Grounding check failed: faq answer not grounded"}
+{"slug":"1703-store","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"12-labs","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"12m","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"7-figure-blueprint","error":"Grounding check failed: faq answer not grounded"}
+{"slug":"7-daily-card","error":"Primary keyword (\"$7 DAILY CARD promo code\") missing in aboutcontent first paragraph (min presence rule)"}
+{"slug":"30-million-digital-products","error":"Primary keyword (\"+30 Million Digital Products promo code\") missing in aboutcontent first paragraph (min presence rule)"}
+{"slug":"28-day-mobility-program","error":"Count checks failed after repair: howtoredeemcontent must use <ol> for steps; howtoredeem step 3 words 7 not in 10–20; howtoredeem step 4 words 8 not in 10–20; howtoredeem step 5 words 8 not in 10–20; howtoredeemcontent bullets should start with an action verb (imperative); promodetailscontent bullets should start with an action verb (imperative)"}
+{"slug":"4-clothing-reselling-course","error":"Count checks failed after repair: howtoredeemcontent must use <ol> for steps; howtoredeem step 4 words 7 not in 10–20; howtoredeemcontent bullets should start with an action verb (imperative); promodetailscontent bullets should start with an action verb (imperative)"}
+{"slug":"748-store","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"700-club","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"717-aco","error":"Grounding check failed: faq answer not grounded"}
+{"slug":"786-assassins-1-free-month","error":"Primary keyword (\".786 Assassins + 1 Free Month promo code\") missing in aboutcontent first paragraph (min presence rule)"}
+{"slug":"agency-vault","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"ai-content-automation-bundle","error":"Repair failed: howtoredeemcontent must use <ol> for steps"}
+{"slug":"agentdash","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"agp-accelerator","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"8-figure-blueprint","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"acquisition-network-","error":"Count checks failed after repair: howtoredeemcontent must use <ol> for steps; howtoredeem step 4 words 7 not in 10–20; howtoredeem step 5 words 9 not in 10–20; Avoid chaining multiple synonyms back-to-back in aboutcontent; howtoredeemcontent bullets should start with an action verb (imperative); promodetailscontent bullets should start with an action verb (imperative)"}
+{"slug":"activate-your-vsn","error":"Grounding check failed: faq answer not grounded"}
+{"slug":"ackolade","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"abhmedia-ongoing-standard","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"ai-agency-launchpad","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"access-capital-lending-group","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"agent-developer-mentorship","error":"Grounding check failed: faq answer not grounded"}
+{"slug":"ads-for-smokes","error":"Primary keyword (\"Ads For Smokes™ promo code\") missing in aboutcontent first paragraph (min presence rule)"}
+{"slug":"adams-unlimited-enterprise","error":"Grounding check failed: faq answer not grounded"}
+{"slug":"ai-profit-lab","error":"Repair failed: howtoredeemcontent must use <ol> for steps"}
+{"slug":"advert-management","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"agency-accelerator","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"admit-one","error":"Grounding check failed: faq answer not grounded"}
+{"slug":"adamant-capital-solutions","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"ai-credit-repair","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"affiniti-flow","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"acquisition-ace-financing","error":"Repair failed: howtoredeemcontent must use <ol> for steps"}
+{"slug":"ados","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"agency-partner-package","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"academia-de-trading-1","error":"Grounding check failed: faq answer not grounded"}
+{"slug":"ab-digital-products","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"ai-echo-system","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"a-z-master-course-community","error":"Grounding check failed: faq answer not grounded"}
+{"slug":"afnf-pro-backup","error":"Grounding check failed: faq answer not grounded"}
+{"slug":"ah-charts","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"aesthetic-mastery","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"affiliatepro","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"abtrades-free-community-chat","error":"Repair failed: aboutcontent words 118 not in 120–180"}
+{"slug":"academy-live","error":"Repair failed: howtoredeemcontent must use <ol> for steps"}
+{"slug":"adflow-platinum","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"ai-plays","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"abonnement-promodfis-anj","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"ad-masterclass-101","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"accs-standard","error":"Grounding check failed: faq answer not grounded"}
+{"slug":"97month-7-day-free-trial","error":"Repair failed: aboutcontent words 110 not in 120–180"}
+{"slug":"abonnement-notre-discord","error":"Grounding check failed: faq answer not grounded"}
+{"slug":"adverclash","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"academy-inner-circle","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"account-management","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"adt-futures-vip","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"ai-clipping","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"adflow-gold","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"ai-driven-picks","error":"Grounding check failed: faq answer not grounded"}
+{"slug":"advert-service","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"abc-premium-picks","error":"Grounding check failed: faq answer not grounded"}
+{"slug":"advanced","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"ai-business-plans-with-doug","error":"Repair failed: howtoredeemcontent must use <ol> for steps"}
+{"slug":"90-day-mentorship","error":"Repair failed: howtoredeemcontent must use <ol> for steps"}
+{"slug":"accelerator-lite","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"a-list-affiliate-programme","error":"Repair failed: howtoredeemcontent must use <ol> for steps"}
+{"slug":"adverthead","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"99percentlocks","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"accs-bot-vinted","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"88-return","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"academia","error":"Grounding check failed: faq answer not grounded"}
+{"slug":"a-class-bureau-lite","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"a-klub","error":"Grounding check failed: faq answer not grounded"}
+{"slug":"absolute-advantage","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"abid-al-ghaniy-trading-group","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"ai-growth-partner-essentials","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"9-every-nfl-pick-","error":"Primary keyword (\"$9 EVERY NFL PICK 🏈 promo code\") missing in aboutcontent first paragraph (min presence rule)"}
+{"slug":"access-to-all-indicators-","error":"Grounding check failed: faq answer not grounded"}
+{"slug":"acne-masterclass","error":"Count checks failed after repair: aboutcontent words 119 not in 120–180; howtoredeemcontent must use <ol> for steps; howtoredeem step 4 words 9 not in 10–20; howtoredeem step 5 words 7 not in 10–20; Over-certain claim language detected (avoid guarantees); howtoredeemcontent bullets should start with an action verb (imperative); promodetailscontent bullets should start with an action verb (imperative)"}
+{"slug":"ai-vault","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"amplify-views","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"all-in-legacy-consulting-inc","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"allstates-restorations","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"americas-golf-schools","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"alpha-wolves-vip-community","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"alchemists-picks","error":"Repair failed: howtoredeemcontent must use <ol> for steps"}
+{"slug":"amazon-fba-formula-premium","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"air-ai-usage-billing","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"alpha-status-w-andrew-alerts","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"aiautomator-2","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"amplified-advisors","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"amanda-fit-nees-coaching","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"amazon-fba-advanced-course","error":"fetch failed"}
+{"slug":"alertskr","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"apex-leads-group","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"airflow","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"all-in","error":"Grounding check failed: faq answer not grounded"}
+{"slug":"airbnb-arbitrage-roadmap-ps","error":"Repair failed: howtoredeemcontent must use <ol> for steps"}
+{"slug":"anya-wareck","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"amazon-tax-walmart-kredi","error":"Primary keyword (\"Amazon , Tax , Walmart , kredi promo code\") missing in aboutcontent first paragraph (min presence rule)"}
+{"slug":"alecc-webinars","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"ancientagency","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"amazon-seller-course","error":"Repair failed: howtoredeemcontent must use <ol> for steps"}
+{"slug":"alminmilanovic","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"alliance-group-coaching","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"amazon-fba-success-hub-gyfba","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"amn-mentorship","error":"Grounding check failed: faq answer not grounded"}
+{"slug":"amara-ux","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"apes-of-wall-street-certified","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"apex-signals-vip","error":"Grounding check failed: faq answer not grounded"}
+{"slug":"amz-fba-club","error":"Grounding check failed: faq answer not grounded"}
+{"slug":"ai-wealth","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"all-star-stakes","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"amigas-y-mas-social","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"alloffpicks-vip-access","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"airbnb-101-crash-course","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"angel-business-inc","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"all-day-webinar-june-2025","error":"Style guard: aboutcontent needs more varied sentence length (human cadence). Require ≥3 sentences, mean 13–22 words/sentence, stdev ≥4 for natural variation."}
+{"slug":"alpha-pips","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"ape-picks","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"ai-videos-meistern","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"all-access-monthly-wins","error":"Grounding check failed: faq answer not grounded"}
+{"slug":"alexa-eise-fitness","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"apo-picks","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"alex-crypto-universe","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"aim","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"andresrodtrades-premium","error":"Grounding check failed: faq answer not grounded"}
+{"slug":"alpha-insight","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"allen","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"anomaly-enterprise","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"alumno-destacado","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"amazon-aco","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"amine-devben","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"alien-insights","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"algo-world-premium","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"angel-algo","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"allsniper-live-trading-","error":"Grounding check failed: faq answer not grounded"}
+{"slug":"aj-trading","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"anabolic-whales","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"alertsvn","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"alignment-discord","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"all-in-one-","error":"Primary keyword (\"⚡️All in One !⚡️ promo code\") missing in aboutcontent first paragraph (min presence rule)"}
+{"slug":"ambition-fitness-warriors","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"alpha-analyst","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"ansley-jean-fitness","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"alpha-trades-vip-access","error":"Repair failed: howtoredeemcontent must use <ol> for steps"}
