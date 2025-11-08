@@ -44,6 +44,19 @@ if (isNaN(BUDGET_USD) || BUDGET_USD <= 0) {
   process.exit(1);
 }
 
+// Budget ceiling guard: estimate minimum viable budget
+// Rough estimate: $0.25 per item for gpt-4o-mini (conservative)
+const COST_PER_ITEM_USD = 0.25;
+const MIN_BUDGET = BATCH_SIZE * COST_PER_ITEM_USD;
+if (BUDGET_USD < MIN_BUDGET) {
+  console.error(`❌ Budget too low for batch size.`);
+  console.error(`   Batch size: ${BATCH_SIZE} items`);
+  console.error(`   Budget: $${BUDGET_USD}`);
+  console.error(`   Minimum recommended: $${MIN_BUDGET.toFixed(2)} (at ~$${COST_PER_ITEM_USD}/item)`);
+  console.error(`   Either increase --budgetUsd or reduce --limit`);
+  process.exit(1);
+}
+
 function run(cmd) {
   console.log(`\n$ ${cmd}`);
   try {
