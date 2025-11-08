@@ -10,7 +10,7 @@
 import { execSync } from "child_process";
 import fs from "fs";
 import path from "path";
-import { acquireLock, releaseLock } from "./lib/lock.js";
+import { acquireLock, releaseLock } from "./lib/lock.mjs";
 
 // === ARGUMENT PARSING ===
 function getFlag(name, def) {
@@ -101,9 +101,17 @@ function runBatch({ scope, limit, budgetUsd }) {
   console.log("📦 Consolidating results...");
   run("node scripts/consolidate-results.mjs");
 
+  // E2) Audit invariants (CRITICAL: abort if data corruption detected)
+  console.log("🔍 Auditing invariants...");
+  run("node scripts/audit-invariants.mjs");
+
   // F) Sync checkpoint from master (CRITICAL: ensures next batch sees latest state)
   console.log("🔄 Syncing checkpoint from master...");
   run("node scripts/sync-checkpoint-from-master.mjs");
+
+  // F2) Audit again after sync (ensure sync didn't break invariants)
+  console.log("🔍 Re-auditing after sync...");
+  run("node scripts/audit-invariants.mjs");
 
   // G) Append audit trail
   console.log("📊 Logging progress...");

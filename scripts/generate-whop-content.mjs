@@ -29,7 +29,7 @@ import path from "path";
 import readline from "readline";
 import os from "os";
 import crypto from "crypto";
-import { acquireLock, releaseLock } from "./lib/lock.js";
+import { acquireLock, releaseLock } from "./lib/lock.mjs";
 
 // Acquire PID lock to prevent concurrent runs
 acquireLock({ role: "generator" });
@@ -1039,11 +1039,17 @@ const alreadyDone = new Set(Object.keys(ck.done || {}));
 
 // Generate output file paths (collision-proof with timestamp + pid + random suffix)
 if (!ck.outPath || !ck.rejPath) {
-  // Create unique, collision-proof run ID: YYYYMMDDhhmmss-pid-random
-  const ts = new Date().toISOString().replace(/[-:TZ.]/g, "").slice(0, 14); // YYYYMMDDhhmmss
-  const pid = process.pid;
-  const rnd = crypto.randomBytes(4).toString("hex");
-  const stamp = `${ts}-${pid}-${rnd}`;
+  // Use RUN_ID from env if provided (for run-scoped naming), otherwise generate unique ID
+  let stamp;
+  if (process.env.RUN_ID) {
+    stamp = process.env.RUN_ID;
+  } else {
+    // Create unique, collision-proof run ID: YYYYMMDDhhmmss-pid-random
+    const ts = new Date().toISOString().replace(/[-:TZ.]/g, "").slice(0, 14); // YYYYMMDDhhmmss
+    const pid = process.pid;
+    const rnd = crypto.randomBytes(4).toString("hex");
+    stamp = `${ts}-${pid}-${rnd}`;
+  }
 
   ck.outPath = path.join(OUT_DIR, `ai-run-${stamp}.jsonl`);
   ck.rejPath = path.join(OUT_DIR, `rejects-${stamp}.jsonl`);
