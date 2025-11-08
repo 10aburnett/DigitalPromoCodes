@@ -23,7 +23,7 @@ export function loadCheckpoint() {
   try {
     return JSON.parse(fs.readFileSync(CHECKPOINT_FILE, "utf8"));
   } catch {
-    return { done: {}, rejected: {}, deferred: {} };
+    return { done: {}, rejected: {}, deferred: {}, queued: {} };
   }
 }
 
@@ -41,7 +41,8 @@ export function loadState() {
   const ck = loadCheckpoint();
   const done = toSet(Object.keys(ck.done || {}));
   const rejected = toSet(Object.keys(ck.rejected || {}));
-  return { needs, promo, manual, deny, done, rejected };
+  const queued = toSet(Object.keys(ck.queued || {}));
+  return { needs, promo, manual, deny, done, rejected, queued };
 }
 
 /** Hygiene predicate used everywhere (builder + preflight). */

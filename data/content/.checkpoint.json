@@ -2683,5 +2683,32 @@
       "when": "2025-11-07T17:03:31.408Z",
       "why": "synced_from_master_rejects"
     }
+  },
+  "queued": {
+    "appointment-setting": {
+      "batchId": "20251108T124925Z-36c0",
+      "queuedAt": "2025-11-08T12:49:25.525Z",
+      "scope": "all"
+    },
+    "appointment-setting-training": {
+      "batchId": "20251108T124925Z-36c0",
+      "queuedAt": "2025-11-08T12:49:25.525Z",
+      "scope": "all"
+    },
+    "appointmentsettercom": {
+      "batchId": "20251108T124925Z-36c0",
+      "queuedAt": "2025-11-08T12:49:25.525Z",
+      "scope": "all"
+    },
+    "apprentice": {
+      "batchId": "20251108T124925Z-36c0",
+      "queuedAt": "2025-11-08T12:49:25.525Z",
+      "scope": "all"
+    },
+    "ar-collective-membership": {
+      "batchId": "20251108T124925Z-36c0",
+      "queuedAt": "2025-11-08T12:49:25.525Z",
+      "scope": "all"
+    }
   }
 }
