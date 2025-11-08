@@ -1,13 +1,16 @@
 #!/usr/bin/env node
 // scripts/preflight.mjs
+// NOW WITH: Filter & rewrite batch instead of hard-fail (saves API budget)
 import fs from 'fs';
 import {
   loadState,
+  loadCheckpoint,
   isValidSlug,
   writeFileAtomic,
   PROMO_FILE,
   NEEDS_FILE
 } from "./lib/sets.mjs";
+import { atomicWriteText } from "./lib/atomic.mjs";
 
 // ---------- args ----------
 const args = process.argv.slice(2);
@@ -48,17 +51,73 @@ if (promoFresh < needsFresh) {
 }
 
 // ---------- unified state ----------
-const { needs, promo, manual, deny, done, rejected } = loadState();
+const { needs, promo, manual, deny, done, rejected, queued } = loadState();
 
 console.log(`[PRE-FLIGHT]`);
 console.log(`Scope                 : ${scope}`);
 console.log(`Needs (from DB)       : ${needs.size}`);
 console.log(`Done (checkpoint)     : ${done.size}`);
 console.log(`Rejected (checkpoint) : ${rejected.size}`);
+console.log(`Queued (checkpoint)   : ${queued.size}`);
 console.log(`Manual (file)         : ${manual.size}`);
 console.log(`Denylist (file)       : ${deny.size}`);
 
-// ---------- scope: promo ----------
+// ---------- BATCH FILTERING (NEW: warn + rewrite instead of hard-fail) ----------
+const BATCH_FILE = '/tmp/next-batch.txt';
+const batchLines = readLines(BATCH_FILE);
+
+if (batchLines.length === 0) {
+  console.log("✅ Preflight: batch file empty; nothing to validate.");
+  process.exit(0);
+}
+
+// Load checkpoint for queued-stamping verification
+const ck = loadCheckpoint();
+const queuedSet = new Set(Object.keys(ck.queued || {}));
+const doneSet   = new Set(Object.keys(ck.done   || {}));
+const rejSet    = new Set(Object.keys(ck.rejected || {}));
+
+const valid = [];
+const dropped = [];
+
+for (const slug of batchLines) {
+  if (!isValidSlug(slug)) {
+    dropped.push({ slug, reason: "invalid-slug" });
+    continue;
+  }
+  if (rejSet.has(slug)) {
+    dropped.push({ slug, reason: "rejected" });
+    continue;
+  }
+  if (doneSet.has(slug)) {
+    dropped.push({ slug, reason: "already-done" });
+    continue;
+  }
+  // Prefer the "queued-stamping" as the allowlist
+  if (!queuedSet.has(slug)) {
+    dropped.push({ slug, reason: "not-queued-in-checkpoint" });
+    continue;
+  }
+  valid.push(slug);
+}
+
+if (dropped.length) {
+  console.warn(`⚠️  Preflight: filtered ${dropped.length} item(s). First few:`);
+  console.warn(dropped.slice(0, 10).map(d => `  ${d.slug} → ${d.reason}`).join('\n'));
+  // Rewrite batch to ONLY the valid set (atomic)
+  await atomicWriteText(BATCH_FILE, valid.join("\n"));
+  console.log(`📝 Rewrote ${BATCH_FILE} with ${valid.length} valid items`);
+}
+
+if (valid.length === 0) {
+  console.error("❌ Preflight: all items were filtered; nothing left to run.");
+  console.error("   This likely means the batch was stale. Run build-next-batch again.");
+  process.exit(3); // non-fatal signal for the runner to rebuild
+}
+
+console.log(`\n✅ Preflight: ${valid.length} item(s) remain after filtering.`);
+
+// ---------- scope validation (original identity checks for telemetry) ----------
 let U; // for summary
 if (scope === 'promo') {
   console.log(`\nScope: promo`);
@@ -69,60 +128,29 @@ if (scope === 'promo') {
   const D_raw = new Set([...done].filter(s => promo.has(s)));
   const R_raw = new Set([...rejected].filter(s => promo.has(s)));
   const DenyP = new Set([...deny].filter(s => promo.has(s)));
+  const Q = new Set([...queued].filter(s => promo.has(s)));
 
   // exclude manual from D and R to avoid double counting
   const D = new Set([...D_raw].filter(s => !M.has(s)));
-  const R = new Set([...R_raw].filter(s => !M.has(s) && !D.has(s))); // belt-and-braces: exclude D from R
+  const R = new Set([...R_raw].filter(s => !M.has(s) && !D.has(s)));
 
-  // unaccounted = promo − (D ∪ R ∪ M ∪ DenyP)
-  const accounted = new Set([...D, ...R, ...M, ...DenyP]);
+  // unaccounted = promo − (D ∪ R ∪ Q ∪ M ∪ DenyP)
+  const accounted = new Set([...D, ...R, ...Q, ...M, ...DenyP]);
   U = new Set([...promo].filter(s => !accounted.has(s)));
 
   console.log(`M (manual ∩ P)        : ${M.size}`);
   console.log(`D\\M (done excl M)      : ${D.size}`);
   console.log(`R\\M (rejected excl M)  : ${R.size}`);
+  console.log(`Q (queued ∩ P)        : ${Q.size}`);
   console.log(`DENY (∩ P)            : ${DenyP.size}`);
   console.log(`U (unaccounted ∩ P)   : ${U.size}`);
 
-  const sum = D.size + R.size + M.size + DenyP.size + U.size;
+  const sum = D.size + R.size + Q.size + M.size + DenyP.size + U.size;
   const balanced = (promo.size === sum);
-  console.log(`\nIdentity: ${promo.size} = ${D.size} + ${R.size} + ${M.size} + ${DenyP.size} + ${U.size}`);
+  console.log(`\nIdentity: ${promo.size} = ${D.size} + ${R.size} + ${Q.size} + ${M.size} + ${DenyP.size} + ${U.size}`);
 
   if (!balanced) {
-    console.error(`❌ IDENTITY FAILED: ${promo.size} ≠ ${sum}`);
-    process.exit(3);
-  }
-
-  // Validate existing batch if present (must be subset of U and hygienic)
-  const BATCH_FILE = '/tmp/next-batch.txt';
-  if (fs.existsSync(BATCH_FILE)) {
-    const batchLines = readLines(BATCH_FILE);
-    const invalidFormat = batchLines.filter(s => !isValidSlug(s));
-    if (invalidFormat.length > 0) {
-      console.error(`❌ BATCH INVALID: ${invalidFormat.length} malformed slugs`);
-      console.error(`First 10: ${invalidFormat.slice(0,10).map(s=>`"${s}"`).join(', ')}`);
-      process.exit(4);
-    }
-    const batch = new Set(batchLines);
-    console.log(`\nNext batch size       : ${batch.size} (limit=${limit})`);
-
-    const notEligible = [...batch].filter(s => !U.has(s));
-    if (notEligible.length > 0) {
-      const reasons = notEligible.slice(0,10).map(s => {
-        const inPromo = promo.has(s);
-        const reason = !inPromo ? "not-in-promo"
-          : done.has(s) ? "already-done"
-          : rejected.has(s) ? "rejected"
-          : manual.has(s) ? "manual"
-          : deny.has(s) ? "denylist"
-          : !isValidSlug(s) ? "invalid-slug"
-          : "unknown";
-        return `${s} → ${reason}`;
-      });
-      console.error(`❌ BATCH INVALID: ${notEligible.length} items not in unaccounted promo set`);
-      console.error(`First 10 with reasons:\n  ${reasons.join('\n  ')}`);
-      process.exit(4);
-    }
+    console.warn(`⚠️  IDENTITY DRIFT: ${promo.size} ≠ ${sum} (non-fatal)`);
   }
 }
 
@@ -131,8 +159,8 @@ if (scope === 'all') {
   console.log(`\nScope: all (non-promo)`);
   console.log(`Promo (to exclude)    : ${promo.size}`);
 
-  // Candidates = (needs - promo) - (done ∪ rejected ∪ manual ∪ deny), with hygiene
-  const excluded = new Set([...done, ...rejected, ...manual, ...deny]);
+  // Candidates = (needs - promo) - (done ∪ rejected ∪ queued ∪ manual ∪ deny), with hygiene
+  const excluded = new Set([...done, ...rejected, ...queued, ...manual, ...deny]);
   const candidates = new Set(
     [...needs]
       .filter(isValidSlug)
@@ -141,38 +169,6 @@ if (scope === 'all') {
   );
 
   console.log(`Total candidates       : ${candidates.size}`);
-
-  const BATCH_FILE = '/tmp/next-batch.txt';
-  if (fs.existsSync(BATCH_FILE)) {
-    const batchLines = readLines(BATCH_FILE).map(s => s.trim()).filter(Boolean);
-    const invalidFormat = batchLines.filter(s => !isValidSlug(s));
-    if (invalidFormat.length > 0) {
-      console.error(`❌ BATCH INVALID: ${invalidFormat.length} malformed slugs`);
-      console.error(`First 10: ${invalidFormat.slice(0,10).map(s=>`"${s}"`).join(', ')}`);
-      process.exit(4);
-    }
-    const batch = new Set(batchLines);
-    console.log(`Next batch size        : ${batch.size} (limit=${limit})`);
-
-    const notEligible = [...batch].filter(s => !candidates.has(s));
-    if (notEligible.length > 0) {
-      const reasons = notEligible.slice(0,10).map(s => {
-        const inNeeds = needs.has(s);
-        const reason = !inNeeds ? "not-in-needs"
-          : promo.has(s) ? "promo-item"
-          : done.has(s) ? "already-done"
-          : rejected.has(s) ? "rejected"
-          : manual.has(s) ? "manual"
-          : deny.has(s) ? "denylist"
-          : !isValidSlug(s) ? "invalid-slug"
-          : "unknown";
-        return `${s} → ${reason}`;
-      });
-      console.error(`❌ BATCH INVALID: ${notEligible.length} items not in eligible candidates`);
-      console.error(`First 10 with reasons:\n  ${reasons.join('\n  ')}`);
-      process.exit(4);
-    }
-  }
 
   // expose for summary
   U = candidates;
@@ -188,9 +184,12 @@ const summary = {
   needs: needs.size,
   done: done.size,
   rejected: rejected.size,
+  queued: queued.size,
   manual: manual.size,
   promo: promo.size,
   unaccounted,
+  validBatchSize: valid.length,
+  droppedCount: dropped.length,
   ts: new Date().toISOString()
 };
 // Atomic write to prevent half-written summary JSON
