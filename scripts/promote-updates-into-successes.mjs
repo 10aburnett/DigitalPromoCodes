@@ -26,7 +26,13 @@ function readJsonl(file) {
     const t = line.trim();
     if (!t) continue;
     try {
-      out.push({ obj: JSON.parse(t), raw: t, src: path.basename(file) });
+      const obj = JSON.parse(t);
+      // CRITICAL: Skip items with "error" field (they belong in rejects, not successes)
+      if (obj?.error) {
+        console.log(`  ⚠️  Skipping ${obj.slug} from ${path.basename(file)} (has error field)`);
+        continue;
+      }
+      out.push({ obj, raw: t, src: path.basename(file) });
     } catch {}
   }
   return out;

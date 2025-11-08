@@ -384,3 +384,10 @@
 {"slug":"aue","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"aurum-ai","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"ats-learning","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"b","error":"Grounding check failed: faq answer not grounded"}
+{"slug":"ayoub-community","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"avery-bets","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"avis-store","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"babafinder-2-whop-dxb","error":"Primary keyword (\"BabaFinder  2 - WHOP DXB promo code\") missing in aboutcontent first paragraph (min presence rule)"}
+{"slug":"awasaka-corporation","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"b-millionaires-membership","error":"Soft skip: 404 or insufficient evidence"}

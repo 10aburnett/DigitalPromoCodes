@@ -1,19 +1,19 @@
 {
-  "input": 113000,
-  "output": 26781,
+  "input": 114756,
+  "output": 25611,
   "runs": [
     {
-      "at": "2025-11-08T13:18:22.655Z",
+      "at": "2025-11-08T13:30:48.737Z",
       "provider": "openai",
       "model": "gpt-4o-mini",
-      "spentUSD": 0.5503,
-      "promptSoFar": 113000,
-      "completionSoFar": 26781,
+      "spentUSD": 0.543,
+      "promptSoFar": 114756,
+      "completionSoFar": 25611,
       "capUSD": 5,
       "reason": "completed_batch",
-      "itemsCompleted": 20,
-      "itemsFailed": 0,
-      "rejectsCount": 580
+      "itemsCompleted": 0,
+      "itemsFailed": 2,
+      "rejectsCount": 593
     }
   ]
 }
