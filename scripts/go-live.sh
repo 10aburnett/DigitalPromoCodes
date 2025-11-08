@@ -40,17 +40,14 @@ BUDGET_USD="$BUDGET" LIMIT="$LIMIT" SCOPE="$SCOPE" RUN_ID="$RUN_ID" \
 echo "✅ Content generation complete"
 echo ""
 
-# 3) Consolidate → audit → sync → audit (must pass)
+# 3) Consolidate → sync → audit (must pass)
 echo "📦 Step 3: Consolidating and auditing..."
 node scripts/consolidate-results.mjs
-echo ""
-echo "🔍 First audit (pre-sync)..."
-node scripts/audit-invariants.mjs
 echo ""
 echo "🔄 Syncing checkpoint..."
 node scripts/sync-checkpoint-from-master.mjs
 echo ""
-echo "🔍 Second audit (post-sync)..."
+echo "🔍 Auditing invariants..."
 node scripts/audit-invariants.mjs
 echo ""
 
