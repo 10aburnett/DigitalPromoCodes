@@ -1477,18 +1477,29 @@
     "1-1-strategy-audit": {
       "when": "2025-11-08T13:31:00.183Z",
       "why": "synced_from_master_successes"
-    }
+    },
+    "beami": true,
+    "beami-for-brands": true,
+    "bb-vip-2025": true,
+    "bbr-locks-weekly": true,
+    "bay-street-bulls-trial": true,
+    "bba": true,
+    "bay-street-bulls-traders": true,
+    "bax-trading-member": true,
+    "bc-premium-bettingcord": true,
+    "beacon-": true,
+    "bbr-summer-sale-monthly": true,
+    "baus-trading-group-indicators": true,
+    "bbb-nrl-premium-2025": true
   },
   "pending": {
-    "ascension-incubator-12-mo": 1762607151618,
-    "ascend-university-access": 1762607257802,
-    "assinatura-diamante-": 1762607258760,
-    "astro-os-pro": 1762607427007,
     "babafinder-2-whop-dxb": 1762608357109,
     "b": 1762608358833,
     "badz-fx-session-live-trading": 1762608497166,
     "babaspace-verified": 1762608576718,
-    "bag28-sports-picks": 1762608577513
+    "bag28-sports-picks": 1762608577513,
+    "bdt-trading-course": 1762609896959,
+    "bbff-starter-fantasy-diy": 1762609898986
   },
   "outPath": "data/content/raw/ai-run-20251104T180924.jsonl",
   "rejPath": "data/content/raw/rejects-20251104T180924.jsonl",
@@ -3066,21 +3077,33 @@
       "when": "2025-11-08T13:27:51.430Z",
       "why": "synced_from_master_rejects"
     },
-    "babybirkn-blueprint": {
+    "bba-1-payment": {
       "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762608496561
+      "ts": 1762609848201
     },
-    "bando-picks-305": {
+    "bbr-summer-sale": {
       "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762608574530
+      "ts": 1762609893943
     },
-    "baby-steps": {
+    "bayou-bandits": {
       "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762608575347
+      "ts": 1762609894818
     },
-    "bandify": {
+    "bdl-premium-monthly": {
       "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762608576158
+      "ts": 1762609895704
+    },
+    "be-elite-a-la-carte-4momo": {
+      "reason": "Soft skip: 404 or insufficient evidence",
+      "ts": 1762609895709
+    },
+    "bbff-starter-fantasy-diy": {
+      "when": "2025-11-08T13:55:22.063Z",
+      "why": "synced_from_master_rejects"
+    },
+    "bdt-trading-course": {
+      "when": "2025-11-08T13:55:22.063Z",
+      "why": "synced_from_master_rejects"
     }
   },
   "queued": {
@@ -3907,6 +3930,206 @@
     "bando-picks-305": {
       "batchId": "20251108T132811Z-1912",
       "queuedAt": "2025-11-08T13:28:11.522Z",
+      "scope": "all"
+    },
+    "bandomoneybets": {
+      "batchId": "20251108T135025Z-5589",
+      "queuedAt": "2025-11-08T13:50:25.756Z",
+      "scope": "all"
+    },
+    "bands-vip-signals-chat-access": {
+      "batchId": "20251108T135025Z-5589",
+      "queuedAt": "2025-11-08T13:50:25.756Z",
+      "scope": "all"
+    },
+    "bankroll-bandits": {
+      "batchId": "20251108T135025Z-5589",
+      "queuedAt": "2025-11-08T13:50:25.756Z",
+      "scope": "all"
+    },
+    "bankrolls-bets": {
+      "batchId": "20251108T135025Z-5589",
+      "queuedAt": "2025-11-08T13:50:25.756Z",
+      "scope": "all"
+    },
+    "banks-trading-elite": {
+      "batchId": "20251108T135025Z-5589",
+      "queuedAt": "2025-11-08T13:50:25.756Z",
+      "scope": "all"
+    },
+    "barber-accelerator": {
+      "batchId": "20251108T135025Z-5589",
+      "queuedAt": "2025-11-08T13:50:25.756Z",
+      "scope": "all"
+    },
+    "bardi-bet": {
+      "batchId": "20251108T135025Z-5589",
+      "queuedAt": "2025-11-08T13:50:25.756Z",
+      "scope": "all"
+    },
+    "barkworthy-private-session": {
+      "batchId": "20251108T135025Z-5589",
+      "queuedAt": "2025-11-08T13:50:25.756Z",
+      "scope": "all"
+    },
+    "barkworthy-watchlist-access": {
+      "batchId": "20251108T135025Z-5589",
+      "queuedAt": "2025-11-08T13:50:25.756Z",
+      "scope": "all"
+    },
+    "baron-trades-june-mentorship": {
+      "batchId": "20251108T135025Z-5589",
+      "queuedAt": "2025-11-08T13:50:25.756Z",
+      "scope": "all"
+    },
+    "baron-trades-premium": {
+      "batchId": "20251108T135025Z-5589",
+      "queuedAt": "2025-11-08T13:50:25.756Z",
+      "scope": "all"
+    },
+    "barracca81-indicators": {
+      "batchId": "20251108T135025Z-5589",
+      "queuedAt": "2025-11-08T13:50:25.756Z",
+      "scope": "all"
+    },
+    "barracca81-lifetime": {
+      "batchId": "20251108T135025Z-5589",
+      "queuedAt": "2025-11-08T13:50:25.756Z",
+      "scope": "all"
+    },
+    "bartoresell-starter": {
+      "batchId": "20251108T135025Z-5589",
+      "queuedAt": "2025-11-08T13:50:25.756Z",
+      "scope": "all"
+    },
+    "basic": {
+      "batchId": "20251108T135025Z-5589",
+      "queuedAt": "2025-11-08T13:50:25.756Z",
+      "scope": "all"
+    },
+    "basic-editucation": {
+      "batchId": "20251108T135025Z-5589",
+      "queuedAt": "2025-11-08T13:50:25.756Z",
+      "scope": "all"
+    },
+    "basic-membership": {
+      "batchId": "20251108T135025Z-5589",
+      "queuedAt": "2025-11-08T13:50:25.756Z",
+      "scope": "all"
+    },
+    "basic-package": {
+      "batchId": "20251108T135025Z-5589",
+      "queuedAt": "2025-11-08T13:50:25.756Z",
+      "scope": "all"
+    },
+    "basic-subscription": {
+      "batchId": "20251108T135025Z-5589",
+      "queuedAt": "2025-11-08T13:50:25.756Z",
+      "scope": "all"
+    },
+    "basics-package": {
+      "batchId": "20251108T135025Z-5589",
+      "queuedAt": "2025-11-08T13:50:25.756Z",
+      "scope": "all"
+    },
+    "baus-trading-group-indicators": {
+      "batchId": "20251108T135046Z-4573",
+      "queuedAt": "2025-11-08T13:50:46.796Z",
+      "scope": "all"
+    },
+    "bax-trading-member": {
+      "batchId": "20251108T135046Z-4573",
+      "queuedAt": "2025-11-08T13:50:46.796Z",
+      "scope": "all"
+    },
+    "bay-street-bulls-traders": {
+      "batchId": "20251108T135046Z-4573",
+      "queuedAt": "2025-11-08T13:50:46.796Z",
+      "scope": "all"
+    },
+    "bay-street-bulls-trial": {
+      "batchId": "20251108T135046Z-4573",
+      "queuedAt": "2025-11-08T13:50:46.796Z",
+      "scope": "all"
+    },
+    "bayou-bandits": {
+      "batchId": "20251108T135046Z-4573",
+      "queuedAt": "2025-11-08T13:50:46.796Z",
+      "scope": "all"
+    },
+    "bb-vip-2025": {
+      "batchId": "20251108T135046Z-4573",
+      "queuedAt": "2025-11-08T13:50:46.796Z",
+      "scope": "all"
+    },
+    "bba": {
+      "batchId": "20251108T135046Z-4573",
+      "queuedAt": "2025-11-08T13:50:46.796Z",
+      "scope": "all"
+    },
+    "bba-1-payment": {
+      "batchId": "20251108T135046Z-4573",
+      "queuedAt": "2025-11-08T13:50:46.796Z",
+      "scope": "all"
+    },
+    "bbb-nrl-premium-2025": {
+      "batchId": "20251108T135046Z-4573",
+      "queuedAt": "2025-11-08T13:50:46.796Z",
+      "scope": "all"
+    },
+    "bbff-starter-fantasy-diy": {
+      "batchId": "20251108T135046Z-4573",
+      "queuedAt": "2025-11-08T13:50:46.796Z",
+      "scope": "all"
+    },
+    "bbr-locks-weekly": {
+      "batchId": "20251108T135046Z-4573",
+      "queuedAt": "2025-11-08T13:50:46.796Z",
+      "scope": "all"
+    },
+    "bbr-summer-sale": {
+      "batchId": "20251108T135046Z-4573",
+      "queuedAt": "2025-11-08T13:50:46.796Z",
+      "scope": "all"
+    },
+    "bbr-summer-sale-monthly": {
+      "batchId": "20251108T135046Z-4573",
+      "queuedAt": "2025-11-08T13:50:46.796Z",
+      "scope": "all"
+    },
+    "bc-premium-bettingcord": {
+      "batchId": "20251108T135046Z-4573",
+      "queuedAt": "2025-11-08T13:50:46.796Z",
+      "scope": "all"
+    },
+    "bdl-premium-monthly": {
+      "batchId": "20251108T135046Z-4573",
+      "queuedAt": "2025-11-08T13:50:46.796Z",
+      "scope": "all"
+    },
+    "bdt-trading-course": {
+      "batchId": "20251108T135046Z-4573",
+      "queuedAt": "2025-11-08T13:50:46.796Z",
+      "scope": "all"
+    },
+    "be-elite-a-la-carte-4momo": {
+      "batchId": "20251108T135046Z-4573",
+      "queuedAt": "2025-11-08T13:50:46.796Z",
+      "scope": "all"
+    },
+    "beacon-": {
+      "batchId": "20251108T135046Z-4573",
+      "queuedAt": "2025-11-08T13:50:46.796Z",
+      "scope": "all"
+    },
+    "beami": {
+      "batchId": "20251108T135046Z-4573",
+      "queuedAt": "2025-11-08T13:50:46.796Z",
+      "scope": "all"
+    },
+    "beami-for-brands": {
+      "batchId": "20251108T135046Z-4573",
+      "queuedAt": "2025-11-08T13:50:46.796Z",
       "scope": "all"
     }
   }
