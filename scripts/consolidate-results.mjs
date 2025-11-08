@@ -101,6 +101,11 @@ for (const f of fs.readdirSync(RAW_DIR)) {
   const full = path.join(RAW_DIR, f);
   if (!fs.statSync(full).isFile()) continue;
 
+  // Skip archives and backups
+  if (f.includes('_archive') || f.includes('backup')) {
+    continue;
+  }
+
   const sig = fileSig(full);
   if (manifest.processed[f] === sig) {
     skippedFiles++;

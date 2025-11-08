@@ -391,3 +391,10 @@
 {"slug":"babafinder-2-whop-dxb","error":"Primary keyword (\"BabaFinder  2 - WHOP DXB promo code\") missing in aboutcontent first paragraph (min presence rule)"}
 {"slug":"awasaka-corporation","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"b-millionaires-membership","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"bba-1-payment","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"bbr-summer-sale","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"bayou-bandits","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"bdl-premium-monthly","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"be-elite-a-la-carte-4momo","error":"Soft skip: 404 or insufficient evidence"}
+{"slug":"bbff-starter-fantasy-diy","error":"Grounding check failed: faq answer not grounded"}
+{"slug":"bdt-trading-course","error":"Count checks failed after repair: howtoredeemcontent must use <ol> for steps; howtoredeem step 3 words 8 not in 10–20; howtoredeem step 4 words 7 not in 10–20; Over-certain claim language detected (avoid guarantees); howtoredeemcontent bullets should start with an action verb (imperative); promodetailscontent bullets should start with an action verb (imperative)"}

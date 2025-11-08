@@ -137,6 +137,12 @@ data/content/.fingerprints.jsonl
 data/content/cache/
 data/content/raw/ai-run-*.jsonl
 data/content/raw/rejects-*.jsonl
+data/content/raw/_archive/
 data/content/hub-review.csv
 data/content/hub-override-hits.csv
 data/content/cadence-review.csv
+
+# Lock files and process control
+data/locks/
+data/content/master/.consolidate.lock
+*.backup*.jsonl
