@@ -114,19 +114,22 @@ function runBatch({ scope, limit, budgetUsd }) {
   console.log("📦 Consolidating results...");
   run("node scripts/consolidate-results.mjs");
 
-  // E2) Audit invariants (CRITICAL: abort if data corruption detected)
-  console.log("🔍 Auditing invariants...");
-  run("node scripts/audit-invariants.mjs");
-
-  // F) Sync checkpoint from master (CRITICAL: ensures next batch sees latest state)
+  // F) Sync checkpoint from master (bring checkpoint in line with new successes/rejects)
   console.log("🔄 Syncing checkpoint from master...");
   run("node scripts/sync-checkpoint-from-master.mjs");
 
-  // F2) Audit again after sync (ensure sync didn't break invariants)
-  console.log("🔍 Re-auditing after sync...");
-  run("node scripts/audit-invariants.mjs");
+  // G) Audit invariants (after sync to avoid transient drift)
+  try {
+    console.log("🔍 Auditing invariants...");
+    run("node scripts/audit-invariants.mjs");
+  } catch (e) {
+    console.warn("⚠️ Audit failed — attempting emergency restore…");
+    run("bash scripts/emergency-restore.sh");
+    console.log("🔍 Re-auditing after emergency restore…");
+    run("node scripts/audit-invariants.mjs");
+  }
 
-  // G) Append audit trail
+  // H) Append audit trail (telemetry)
   console.log("📊 Logging progress...");
   run(`node scripts/progress-log.mjs --scope=${scope}`);
 
