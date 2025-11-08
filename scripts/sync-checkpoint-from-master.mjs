@@ -63,10 +63,16 @@ for (const file of [MASTER_UPDATES, MASTER_SUCCESSES]) {
   }
 }
 
-// Sync rejects → rejected (only if NOT already done)
+// Sync rejects → rejected
+// CRITICAL: Remove from done if in rejects (fix for misplaced rejects bug)
 for (const slug of iterSlugs(MASTER_REJECTS)) {
-  if (!ck.done[slug] && !ck.rejected[slug]) {
+  if (!ck.rejected[slug]) {
     ck.rejected[slug] = { when: new Date().toISOString(), why: "synced_from_master_rejects" };
+  }
+  // Remove from done if mistakenly marked as done
+  if (ck.done[slug]) {
+    delete ck.done[slug];
+    console.log(`  ⚠️  Moved ${slug} from done → rejected (was misplaced)`);
   }
 }
 

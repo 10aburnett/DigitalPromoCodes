@@ -109,11 +109,23 @@ for (const f of fs.readdirSync(RAW_DIR)) {
 
   if (/^ai-run-.*\.jsonl$/.test(f)) {
     let count = 0;
+    let rejCount = 0;
     for (const line of iterLines(full)) {
-      appendIfNewSlug(SUCCESS_FILE, UPDATES_FILE, line, seenSuccess);
-      count++;
+      try {
+        const j = JSON.parse(line);
+        // If it has an error field, it's a reject - send to rejects file
+        if (j?.error) {
+          appendIfNewSlug(REJECT_FILE, UPDATES_FILE, line, seenRejects);
+          rejCount++;
+        } else {
+          appendIfNewSlug(SUCCESS_FILE, UPDATES_FILE, line, seenSuccess);
+          count++;
+        }
+      } catch {
+        // If can't parse, skip it
+      }
     }
-    console.log(`✓ Processed ${count} items from ${f}`);
+    console.log(`✓ Processed ${count} successes, ${rejCount} rejects from ${f}`);
     appendedSuccess++;
   } else if (/^rejects-.*\.jsonl$/.test(f)) {
     let count = 0;
