@@ -77,13 +77,13 @@ Stack: ${err.stack}
 }
 
 function runBatch({ scope, limit, budgetUsd }) {
-  // A) Preflight validation (blocks on any mismatch)
-  console.log("🔒 PRE-FLIGHT: Validating state...");
-  run(`node scripts/preflight.mjs --scope=${scope} --limit=${limit}`);
-
-  // B) Build fresh batch
+  // A) Build fresh batch FIRST (before validation)
   console.log("🎯 Building next batch...");
   run(`node scripts/build-next-batch.mjs --scope=${scope} --limit=${limit}`);
+
+  // B) Preflight validation against newly-built batch
+  console.log("🔒 PRE-FLIGHT: Validating state...");
+  run(`node scripts/preflight.mjs --scope=${scope} --limit=${limit}`);
 
   // C) Verify promo batches (DB safety check)
   if (scope === "promo") {
