@@ -1,23 +1,7 @@
-export type WhopCategory = 
-  | 'PERSONAL_DEVELOPMENT'
-  | 'SOCIAL_MEDIA'
-  | 'LANGUAGES'
-  | 'CAREERS'
-  | 'GAMING'
-  | 'AI'
-  | 'TRADING'
-  | 'RECREATION'
-  | 'FITNESS'
-  | 'REAL_ESTATE'
-  | 'TRAVEL'
-  | 'SPORTS_BETTING'
-  | 'ECOMMERCE'
-  | 'BUSINESS'
-  | 'RESELLING'
-  | 'DATING'
-  | 'COMPUTER_SCIENCE'
-  | 'PERSONAL_FINANCE'
-  | 'OTHER';
+// Import WhopCategory from Prisma to ensure consistency
+import { WhopCategory as PrismaWhopCategory } from '@prisma/client';
+
+export type WhopCategory = PrismaWhopCategory;
 
 export type PromoType = 'discount' | 'free_trial' | 'exclusive_access' | 'bundle_deal' | 'limited_time' | 'other';
 

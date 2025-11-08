@@ -106,7 +106,7 @@ export default function FaqEditor({ initialFaqs, onChange, className = "" }: Faq
         const imported = JSON.parse(event.target?.result as string);
         const result = FaqArraySchema.safeParse(imported);
         if (result.success) {
-          setFaqs(result.data);
+          setFaqs(result.data as FaqItem[]);
         } else {
           alert("Invalid FAQ format in JSON file");
         }

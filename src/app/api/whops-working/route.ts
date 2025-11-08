@@ -18,7 +18,7 @@ export async function GET(request: Request) {
       skip: offset,
       orderBy: { createdAt: 'asc' },
       include: {
-        promoCodes: true
+        PromoCode: true
       }
     });
     
@@ -34,12 +34,12 @@ export async function GET(request: Request) {
       rating: whop.rating || 0,
       price: whop.price || 'Free',
       promoText: whop.description || 'N/A',
-      promoCode: whop.promoCodes?.[0]?.code || null,
-      promoType: whop.promoCodes?.[0]?.type || null,
-      promoValue: whop.promoCodes?.[0]?.value || null,
+      promoCode: whop.PromoCode?.[0]?.code || null,
+      promoType: whop.PromoCode?.[0]?.type || null,
+      promoValue: whop.PromoCode?.[0]?.value || null,
       affiliateLink: whop.affiliateLink,
       createdAt: whop.createdAt,
-      promoCodes: whop.promoCodes || [],
+      promoCodes: whop.PromoCode || [],
       website: whop.website,
       category: whop.category
     }));

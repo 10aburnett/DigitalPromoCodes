@@ -161,11 +161,13 @@ export async function POST(request: Request) {
     // Create bulk import record
     const bulkImport = await prisma.bulkImport.create({
       data: {
+        id: require('crypto').randomUUID(),
         filename: file.name,
         totalRows: lines.length - 1,
         successRows: 0,
         failedRows: 0,
-        status: 'PROCESSING'
+        status: 'PROCESSING',
+        updatedAt: new Date()
       }
     });
 
@@ -240,6 +242,7 @@ export async function POST(request: Request) {
         // Create whop
         const whop = await prisma.whop.create({
           data: {
+            id: require('crypto').randomUUID(),
             name: rowData.name,
             slug: slug,
             description: rowData.description || null,
@@ -249,7 +252,8 @@ export async function POST(request: Request) {
             affiliateLink: rowData.affiliatelink,
             website: null,
             price: processedPrice,
-            category: null
+            category: null,
+            updatedAt: new Date()
           }
         });
 

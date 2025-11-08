@@ -24,7 +24,9 @@ export async function GET() {
     if (!settings) {
       settings = await prisma.settings.create({
         data: {
-          faviconUrl: '/favicon.ico' // Default favicon
+          id: require('crypto').randomUUID(),
+          faviconUrl: '/favicon.ico', // Default favicon
+          updatedAt: new Date()
         }
       });
     }
@@ -91,7 +93,9 @@ export async function PUT(request: Request) {
       // Create new settings
       settings = await prisma.settings.create({
         data: {
-          faviconUrl: data.faviconUrl
+          id: require('crypto').randomUUID(),
+          faviconUrl: data.faviconUrl,
+          updatedAt: new Date()
         }
       });
     }

@@ -141,6 +141,13 @@ export async function POST(req: Request) {
     if (dup) return NextResponse.json({ error: 'Slug already exists', code: 'SLUG_EXISTS' }, { status: 409 });
 
     const now = new Date();
+
+    // Get the author's name dynamically
+    const authorUser = await prisma.user.findUnique({
+      where: { id: adminUser.id },
+      select: { name: true, email: true }
+    });
+
     const data: any = {
       id: randomUUID(), // ✅ Required by production DB
       title: body.title,
@@ -151,7 +158,7 @@ export async function POST(req: Request) {
       publishedAt: body.published ? now : null,
       pinned: body.pinned ?? false,
       pinnedAt: body.pinned ? now : null,
-      authorName: body.authorName ?? adminUser.name ?? 'Admin',
+      authorName: body.authorName ?? authorUser?.name ?? adminUser.email ?? 'Admin',
       createdAt: now,
       updatedAt: now, // ✅ Required by production DB
     };

@@ -89,12 +89,11 @@ export default function ContactClient() {
                   value={formData.name}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-1 focus:ring-opacity-50 transition-colors duration-200"
+                  className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-1 focus:ring-opacity-50 transition-colors duration-200 focus:border-[var(--accent-color)]"
                   style={{
                     backgroundColor: 'var(--background-secondary)',
                     borderColor: 'var(--border-color)',
-                    color: 'var(--text-color)',
-                    ':focus': { borderColor: 'var(--accent-color)' }
+                    color: 'var(--text-color)'
                   }}
                   placeholder={t('contact.name')}
                 />
@@ -111,12 +110,11 @@ export default function ContactClient() {
                   value={formData.email}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-1 focus:ring-opacity-50 transition-colors duration-200"
+                  className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-1 focus:ring-opacity-50 transition-colors duration-200 focus:border-[var(--accent-color)]"
                   style={{
                     backgroundColor: 'var(--background-secondary)',
                     borderColor: 'var(--border-color)',
-                    color: 'var(--text-color)',
-                    ':focus': { borderColor: 'var(--accent-color)' }
+                    color: 'var(--text-color)'
                   }}
                   placeholder={t('contact.email')}
                 />
@@ -133,12 +131,11 @@ export default function ContactClient() {
                   value={formData.subject}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-1 focus:ring-opacity-50 transition-colors duration-200"
+                  className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-1 focus:ring-opacity-50 transition-colors duration-200 focus:border-[var(--accent-color)]"
                   style={{
                     backgroundColor: 'var(--background-secondary)',
                     borderColor: 'var(--border-color)',
-                    color: 'var(--text-color)',
-                    ':focus': { borderColor: 'var(--accent-color)' }
+                    color: 'var(--text-color)'
                   }}
                   placeholder={t('contact.subject')}
                 />
@@ -155,12 +152,11 @@ export default function ContactClient() {
                   onChange={handleChange}
                   required
                   rows={6}
-                  className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-1 focus:ring-opacity-50 transition-colors duration-200 resize-vertical"
+                  className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-1 focus:ring-opacity-50 transition-colors duration-200 resize-vertical focus:border-[var(--accent-color)]"
                   style={{
                     backgroundColor: 'var(--background-secondary)',
                     borderColor: 'var(--border-color)',
-                    color: 'var(--text-color)',
-                    ':focus': { borderColor: 'var(--accent-color)' }
+                    color: 'var(--text-color)'
                   }}
                   placeholder={t('contact.message')}
                 />
