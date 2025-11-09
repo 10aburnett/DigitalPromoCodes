@@ -55,6 +55,18 @@ const args = Object.fromEntries(process.argv.slice(2).map(a => {
   return m ? [m[1], m[2] ?? true] : [a, true];
 }));
 
+// Support --onlySlugsFile for file-based slug filtering (avoids command substitution)
+if (args.onlySlugsFile && !args.onlySlugs) {
+  try {
+    const content = fs.readFileSync(args.onlySlugsFile, "utf8").trim();
+    args.onlySlugs = content.split(/\r?\n/).map(s => s.trim()).filter(Boolean).join(",");
+    console.log(`📄 Loaded ${args.onlySlugs.split(",").length} slugs from ${args.onlySlugsFile}`);
+  } catch (err) {
+    console.error(`❌ Failed to read --onlySlugsFile: ${args.onlySlugsFile}`, err.message);
+    process.exit(1);
+  }
+}
+
 const IN = args.in || (fs.existsSync("data/neon/whops.jsonl") ? "data/neon/whops.jsonl" : "data/neon/whops.csv");
 const OUT_DIR = "data/content/raw";
 const CHECKPOINT = "data/content/.checkpoint.json";
