@@ -1,39 +1,70 @@
 // scripts/lib/withFileLock.mjs
-// File-based exclusive lock helper for atomic batch construction
-import { open, writeFile, rm, mkdir } from 'node:fs/promises';
-import path from 'node:path';
+// File-based exclusive lock helper with stale-lock detection
+import fs from "fs/promises";
+import { readFileSync, rmSync } from "fs";
+import process from "process";
+import path from "path";
+
+const LOCK_DIR = "data/locks";
+await fs.mkdir(LOCK_DIR, { recursive: true });
 
 /**
  * Execute a function with an exclusive file lock
- * @param {string} lockPath - Path to the lock file
+ * Automatically detects and cleans stale locks (>10min or dead PID)
+ * @param {string} lockName - Name of the lock (e.g., "build-next-batch")
  * @param {Function} fn - Async function to execute while holding the lock
- * @param {Object} options - Options
- * @param {number} options.ttlMs - Time-to-live in ms (auto-release after timeout)
  * @returns {Promise<any>} Result of fn()
  */
-export async function withFileLock(lockPath, fn, { ttlMs = 120000 } = {}) {
-  // Ensure lock directory exists
-  const lockDir = path.dirname(lockPath);
-  await mkdir(lockDir, { recursive: true });
+export async function withFileLock(lockName, fn) {
+  // Accept any input (basename, full path, with/without .lock)
+  const base = path.basename(String(lockName)).replace(/\.lock$/i, "");
+  const lockPath = path.join(LOCK_DIR, `${base}.lock`);
+  const now = Date.now();
 
-  let fd;
+  // Try to acquire
   try {
-    // Best-effort lock via O_EXCL semantics - throws if exists
-    fd = await open(lockPath, 'wx');
-    await writeFile(fd, String(Date.now()));
+    const fh = await fs.open(lockPath, "wx"); // exclusive create
+    await fh.writeFile(JSON.stringify({ pid: process.pid, at: new Date().toISOString() }));
+    await fh.close();
+  } catch (e) {
+    // If exists, check staleness
+    if (e.code === "EEXIST") {
+      try {
+        const meta = JSON.parse(readFileSync(lockPath, "utf8"));
+        const ageMs = now - new Date(meta.at).getTime();
+        const STALE_MS = 10 * 60 * 1000; // 10 minutes
 
-    // Auto-cleanup stale lock after TTL
-    const timer = setTimeout(async () => {
-      try { await rm(lockPath); } catch {}
-    }, ttlMs);
+        // is owner alive?
+        const ownerAlive = (() => {
+          try { return process.kill(meta.pid, 0), true; } catch { return false; }
+        })();
 
-    try {
-      return await fn();
-    } finally {
-      clearTimeout(timer);
+        if (!ownerAlive || ageMs > STALE_MS) {
+          // stale: remove and re-acquire
+          console.warn(`🔓 Removing stale lock: ${lockName} (age=${Math.round(ageMs/1000)}s, ownerAlive=${ownerAlive})`);
+          rmSync(lockPath, { force: true });
+          const fh2 = await fs.open(lockPath, "wx");
+          await fh2.writeFile(JSON.stringify({ pid: process.pid, at: new Date().toISOString() }));
+          await fh2.close();
+        } else {
+          throw e; // legit contention
+        }
+      } catch (parseErr) {
+        // If we can't parse, treat as stale
+        console.warn(`🔓 Removing unparseable lock: ${lockName}`);
+        rmSync(lockPath, { force: true });
+        const fh2 = await fs.open(lockPath, "wx");
+        await fh2.writeFile(JSON.stringify({ pid: process.pid, at: new Date().toISOString() }));
+        await fh2.close();
+      }
+    } else {
+      throw e;
     }
+  }
+
+  try {
+    return await fn();
   } finally {
-    try { if (fd) await fd.close(); } catch {}
-    try { await rm(lockPath); } catch {}
+    try { await fs.unlink(lockPath); } catch {}
   }
 }
