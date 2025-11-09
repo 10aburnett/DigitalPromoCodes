@@ -79,6 +79,16 @@ for (const slug of iterSlugs(MASTER_REJECTS)) {
 const afterDone = Object.keys(ck.done).length;
 const afterRejected = Object.keys(ck.rejected).length;
 
+// Clean queued items that are already in done or rejected
+ck.queued ||= {};
+let queuedCleaned = 0;
+for (const slug of Object.keys(ck.queued)) {
+  if (ck.done[slug] || ck.rejected[slug]) {
+    delete ck.queued[slug];
+    queuedCleaned++;
+  }
+}
+
 // Write back atomically
 writeFileAtomic(CHECKPOINT_PATH, JSON.stringify(ck, null, 2));
 
@@ -86,4 +96,5 @@ console.log(`✅ Checkpoint synced (success-wins + atomic)!
   Done: ${beforeDone} → ${afterDone} (+${afterDone - beforeDone})
   Rejected: ${beforeRejected} → ${afterRejected} (${afterRejected - beforeRejected >= 0 ? "+" : ""}${afterRejected - beforeRejected})
   Promoted from reject: ${promotedFromReject}
+  Queued cleaned: ${queuedCleaned}
 `);

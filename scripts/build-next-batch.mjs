@@ -15,7 +15,7 @@ import { atomicWriteJson, atomicWriteText } from "./lib/atomic.mjs";
 
 const OUT_TXT = "/tmp/next-batch.txt";
 const OUT_CSV = "/tmp/next-batch.csv";
-const LOCK_FILE = "data/locks/build-next-batch.lock";
+const LOCK_FILE = "build-next-batch";
 
 // Load master indices to prevent re-processing already-done or rejected slugs
 const MASTER_PROCESSED = "data/content/master/_processed-master-slugs.txt";
