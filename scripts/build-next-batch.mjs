@@ -119,10 +119,31 @@ await withFileLock(LOCK_FILE, async () => {
   }
 
   targets.sort(); // deterministic order
-  const nextBatch = targets.slice(0, batchSize);
+  let nextBatch = targets.slice(0, batchSize);
 
+  // FALLBACK: If candidates yielded nothing but checkpoint.queued has items, use those
   if (nextBatch.length === 0) {
-    console.log("✅ No new whops needing content.");
+    const checkpoint = loadCheckpoint();
+    const queuedSlugs = Object.keys(checkpoint.queued || {});
+    if (queuedSlugs.length > 0) {
+      const pick = queuedSlugs.slice(0, batchSize);
+      console.log(`🧰 Fallback: taking ${pick.length} slugs directly from checkpoint.queued`);
+
+      // Write batch files immediately for fallback path
+      await atomicWriteText(OUT_TXT, pick.join("\n"));
+      await atomicWriteText(OUT_CSV, pick.join(","));
+
+      console.log(`📝 Wrote ${pick.length} slugs → ${OUT_CSV} (fallback mode)`);
+      console.log(
+        `\n🎯 Built next batch (FALLBACK): scope=${SCOPE} size=${pick.length}\n` +
+        `   → ${OUT_TXT}\n` +
+        pick.slice(0, 10).join("\n") +
+        (pick.length > 10 ? "\n…" : "")
+      );
+      return; // Exit early, files already written
+    }
+
+    console.log("✅ No new whops needing content (neither candidates nor checkpoint.queued had items).");
     process.exit(0);
   }
 
