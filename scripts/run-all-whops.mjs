@@ -106,8 +106,25 @@ function runBatch({ scope, limit, budgetUsd }) {
 
   // D) Generate content
   console.log("🤖 Running generator...");
+
+  // Verify batch file exists and has content
+  if (!fs.existsSync(NEXT_BATCH_CSV)) {
+    console.error(`❌ Missing ${NEXT_BATCH_CSV} — aborting generation.`);
+    throw new Error("NO-ELIGIBLE-ITEMS");
+  }
+
+  const csvContent = fs.readFileSync(NEXT_BATCH_CSV, "utf8").trim();
+  if (!csvContent) {
+    console.error(`❌ Empty ${NEXT_BATCH_CSV} — aborting generation.`);
+    throw new Error("NO-ELIGIBLE-ITEMS");
+  }
+
+  // Optional env sourcing (only if present)
+  const maybeSource = fs.existsSync(ENV_SCRIPT) ? `source ${ENV_SCRIPT} && ` : "";
+
+  // Use file-based argument to avoid command substitution
   run(
-    `bash -c "source ${ENV_SCRIPT} && node scripts/generate-whop-content.mjs --in=data/neon/whops.jsonl --onlySlugs=\\"$(cat ${NEXT_BATCH_CSV})\\" --batch=${Math.min(10, limit)} --budgetUsd=${budgetUsd}"`
+    `bash -lc '${maybeSource}node scripts/generate-whop-content.mjs --in=data/neon/whops.jsonl --onlySlugsFile="${NEXT_BATCH_CSV}" --batch=${Math.min(10, limit)} --budgetUsd=${budgetUsd}'`
   );
 
   // E) Consolidate results idempotently
