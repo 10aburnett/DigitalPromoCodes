@@ -10,7 +10,7 @@ import path from "path";
 import crypto from "crypto";
 import { execSync } from "child_process";
 import { loadState, isValidSlug, loadCheckpoint, PROMO_FILE, CHECKPOINT_FILE } from "./lib/sets.mjs";
-import { withFileLock } from "./lib/withFileLock.mjs";
+import withFileLock from "./lib/withFileLock.mjs";
 import { atomicWriteJson, atomicWriteText } from "./lib/atomic.mjs";
 
 const OUT_TXT = "/tmp/next-batch.txt";
