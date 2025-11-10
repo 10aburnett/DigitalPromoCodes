@@ -41,38 +41,34 @@ function iterSlugs(file) {
 
 // Load checkpoint
 const ck = JSON.parse(fs.readFileSync(CHECKPOINT_PATH, "utf8"));
-ck.done ||= {};
-ck.rejected ||= {};
+ck.queued ||= {};
 
-const beforeDone = Object.keys(ck.done).length;
-const beforeRejected = Object.keys(ck.rejected).length;
+const beforeDone = Object.keys(ck.done || {}).length;
+const beforeRejected = Object.keys(ck.rejected || {}).length;
+
+// AUTHORITATIVE SYNC: master files are source of truth
+// Build sets from master files
+const succSlugs = new Set([...iterSlugs(MASTER_UPDATES), ...iterSlugs(MASTER_SUCCESSES)]);
+const rejSlugs = new Set(iterSlugs(MASTER_REJECTS));
+
+// Rebuild done/rejected maps from scratch (authoritative)
+ck.done = {};
+ck.rejected = {};
 let promotedFromReject = 0;
 
-// Sync updates + successes → done (SUCCESS WINS)
-for (const file of [MASTER_UPDATES, MASTER_SUCCESSES]) {
-  const source = file.includes("updates") ? "updates" : "successes";
-  for (const slug of iterSlugs(file)) {
-    if (!ck.done[slug]) {
-      ck.done[slug] = { when: new Date().toISOString(), why: `synced_from_master_${source}` };
-    }
-    // SUCCESS WINS: Remove from rejected if present
-    if (ck.rejected[slug]) {
-      delete ck.rejected[slug];
-      promotedFromReject++;
-    }
+// Master successes become done (SUCCESS WINS)
+for (const slug of succSlugs) {
+  ck.done[slug] = { when: new Date().toISOString(), why: "synced_from_master" };
+  // If it was previously rejected but now succeeded, that's a promotion
+  if (rejSlugs.has(slug)) {
+    promotedFromReject++;
   }
 }
 
-// Sync rejects → rejected
-// CRITICAL: Remove from done if in rejects (fix for misplaced rejects bug)
-for (const slug of iterSlugs(MASTER_REJECTS)) {
-  if (!ck.rejected[slug]) {
+// Master rejects become rejected (unless already in done - success wins)
+for (const slug of rejSlugs) {
+  if (!ck.done[slug]) {
     ck.rejected[slug] = { when: new Date().toISOString(), why: "synced_from_master_rejects" };
-  }
-  // Remove from done if mistakenly marked as done
-  if (ck.done[slug]) {
-    delete ck.done[slug];
-    console.log(`  ⚠️  Moved ${slug} from done → rejected (was misplaced)`);
   }
 }
 
