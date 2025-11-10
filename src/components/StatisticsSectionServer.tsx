@@ -1,6 +1,5 @@
 // src/components/StatisticsSectionServer.tsx
 import Link from 'next/link';
-import Image from 'next/image';
 import type { StatisticsData } from '@/data/statistics';
 
 interface StatisticsServerProps {
@@ -43,12 +42,13 @@ export default function StatisticsSectionServer({ stats }: StatisticsServerProps
       }}>
         {showLogo && logoUrl ? (
           <div className="w-8 h-8 mx-auto mb-1 rounded-md overflow-hidden flex items-center justify-center shrink-0" style={{ backgroundColor: 'var(--background-secondary)' }}>
-            <Image
-              src={logoUrl}
+            <img
+              src={logoUrl.startsWith('http') ? `/api/img?src=${encodeURIComponent(logoUrl)}` : logoUrl}
               alt={`${value} logo`}
               width={32}
               height={32}
               className="w-full h-full object-cover"
+              loading="lazy"
             />
           </div>
         ) : (
