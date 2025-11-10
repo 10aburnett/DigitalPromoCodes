@@ -1,6 +1,8 @@
 // src/lib/image-url.ts
 // Safe, server-friendly logo URL resolver (NO event handlers needed on server)
 
+import { coerceWhopLogoUrl } from './whopImage';
+
 // Asset origin for production - matches next.config.js ASSET_ORIGIN
 const ASSET_ORIGIN = process.env.NODE_ENV === 'production'
   ? 'https://whpcodes.com'
@@ -15,9 +17,11 @@ export function resolveLogoUrl(input?: string | null): string {
   // Remove leading/trailing whitespace
   const trimmedInput = input.trim();
 
-  // If it's already a full external URL (http:// or https://), return as-is
+  // If it's already a full external URL (http:// or https://), coerce ImgProxy URLs and return
   if (/^https?:\/\//i.test(trimmedInput)) {
-    return trimmedInput;
+    // Handle Whop's ImgProxy CDN URLs by extracting the real asset URL
+    const coerced = coerceWhopLogoUrl(trimmedInput);
+    return coerced || trimmedInput;
   }
 
   // Remove ALL leading slashes to normalize the path

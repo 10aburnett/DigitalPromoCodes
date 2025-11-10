@@ -1000,6 +1000,13 @@ const USAGE_FILE = "data/content/.usage.json";
 // Initialize checkpoint (keep legacy structure)
 const FORCE = args.force || args.overwrite || process.env.FORCE_REGENERATE === "1";
 const RETRY_REJECTS = Boolean(args.retryRejects);
+
+// Toggles for targeted retry runs (bypass normal guards)
+const IGNORE_CHECKPOINT = process.env.IGNORE_CHECKPOINT === "1";
+const ALLOW_OVERWRITE = process.env.ALLOW_OVERWRITE === "1";
+const EVIDENCE_ONLY = process.env.EVIDENCE_ONLY === "1";
+const EVIDENCE_MIN_CHARS = +(process.env.EVIDENCE_MIN_CHARS || 600);
+
 let ck = loadJSON(CHECKPOINT, { done: {}, pending: {} });
 if (!ck.rejected) ck.rejected = {}; // Track rejects separately from done
 
@@ -1023,6 +1030,17 @@ function rejectAndPersist(slug, reason) {
   ck.rejected[slug] = { reason: String(reason || 'unknown'), ts: Date.now() };
   delete ck.pending[slug];
   persistCheckpoint();
+
+  // IMMEDIATE APPEND to master rejects (crash-safe)
+  // Skip if in EVIDENCE_ONLY mode (we're just probing, not finalizing)
+  if (!EVIDENCE_ONLY) {
+    try {
+      const rejectEntry = { slug, error: String(reason || 'unknown'), ts: new Date().toISOString() };
+      fs.appendFileSync("data/content/master/rejects.jsonl", JSON.stringify(rejectEntry) + "\n");
+    } catch (err) {
+      console.error(`⚠️  Failed to append reject to master: ${err.message}`);
+    }
+  }
 }
 
 // Helper to check if existing content is sufficient (skip token spend)
@@ -2880,6 +2898,26 @@ async function worker(task) {
     return; // Already logged warning in obtainEvidence
   }
 
+  // Evidence-only mode: cheap probe without model spend
+  if (EVIDENCE_ONLY) {
+    const len = (evidence?.textSample || "").length;
+    const ok = len >= EVIDENCE_MIN_CHARS;
+    // Log minimal CSV row (slug, status, chars)
+    try {
+      const row = [slug, ok ? "READY" : "SKIP_NO_EVIDENCE", len].join(",");
+      fs.appendFileSync("logs/retry-191-evidence.csv", row + "\n");
+    } catch (csvErr) {
+      console.error(`⚠️  Failed to log evidence CSV: ${csvErr.message}`);
+    }
+    if (!ok) {
+      // Persist as reject with clear reason
+      rejectAndPersist(slug, `evidence-only probe: insufficient content (${len} chars)`);
+    } else {
+      console.log(`✅ Evidence ready: ${slug} (${len} chars)`);
+    }
+    return; // Never call the model in evidence-only mode
+  }
+
   // Dry-run mode: validate fetch/grounding at scale without spend
   if (DRY_RUN) {
     const dryOutput = {
@@ -3333,6 +3371,13 @@ ${JSON.stringify(obj)}
       appendFingerprint({ slug, sha });
       fingerprints.set(slug, sha);
 
+      // IMMEDIATE APPEND to master updates (crash-safe)
+      try {
+        fs.appendFileSync("data/content/master/updates.jsonl", JSON.stringify(output) + "\n");
+      } catch (err) {
+        console.error(`⚠️  Failed to append success to master: ${err.message}`);
+      }
+
       if (evidence?.drilled) drilledCount++;
       ck.done[slug] = true;
       delete ck.pending[slug];
@@ -3472,6 +3517,15 @@ async function run() {
   let queue = rows.filter(r => {
     const done = ck.done[r.slug]; // use ck.done directly (updated by pre-marking)
     const wasRejected = ck.rejected && ck.rejected[r.slug];
+
+    // IGNORE_CHECKPOINT mode: allow reattempts for targeted retry runs
+    if (IGNORE_CHECKPOINT) {
+      if (done || wasRejected) {
+        console.warn(`⚠️  Reattempting ${r.slug} (IGNORE_CHECKPOINT=1)`);
+      }
+      return true; // process everything in the input list
+    }
+
     if (FORCE) return RETRY_REJECTS ? true : !wasRejected;
     if (RETRY_REJECTS) return !done;                 // include previous rejects
     return !done && !wasRejected;                    // default: skip rejects
@@ -3481,13 +3535,15 @@ async function run() {
   if (args.onlySlugs) {
     const only = new Set(String(args.onlySlugs).split(",").map(s => s.trim()).filter(Boolean));
 
-    // Strict-only guard: verify all requested slugs are eligible
-    const inQueue = new Set(queue.map(r => r.slug));
-    const missing = [...only].filter(s => !inQueue.has(s));
-    if (missing.length > 0) {
-      console.error(`❌ Strict-only guard: ${missing.length} requested slugs are not eligible (already done/rejected or missing). Aborting.`);
-      console.error("Examples:", missing.slice(0, 10).join(", "));
-      process.exit(2);
+    // Strict-only guard: verify all requested slugs are eligible (unless IGNORE_CHECKPOINT)
+    if (!IGNORE_CHECKPOINT) {
+      const inQueue = new Set(queue.map(r => r.slug));
+      const missing = [...only].filter(s => !inQueue.has(s));
+      if (missing.length > 0) {
+        console.error(`❌ Strict-only guard: ${missing.length} requested slugs are not eligible (already done/rejected or missing). Aborting.`);
+        console.error("Examples:", missing.slice(0, 10).join(", "));
+        process.exit(2);
+      }
     }
 
     queue = queue.filter(r => only.has(r.slug));

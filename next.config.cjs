@@ -17,6 +17,27 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'cdn.prod.website-files.com',
       },
+      // Whop ImgProxy CDN hosts (primary fix for img-v2-prod errors)
+      {
+        protocol: 'https',
+        hostname: 'img-v2-prod.whop.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'img-v2-stage.whop.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'img.whop.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'assets.whop.com',
+        pathname: '/**',
+      },
       // Common CDN hosts for whop logos
       {
         protocol: 'https',

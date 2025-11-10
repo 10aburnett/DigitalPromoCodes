@@ -7,8 +7,15 @@ const ALLOWED_DOMAINS = [
   'whpcodes.com',
   'localhost',
   'whop.com',
+  // Whop ImgProxy CDN hosts (fix for img-v2-prod errors)
+  'img-v2-prod.whop.com',
+  'img-v2-stage.whop.com',
+  'img.whop.com',
+  'assets.whop.com',
   'cdn.whop.com',
   'images.whop.com',
+  'static.whop.xyz',
+  // External CDNs
   'pbs.twimg.com',
   'i.imgur.com',
   'cdn.discordapp.com',
