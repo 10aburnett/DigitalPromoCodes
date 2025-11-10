@@ -283,11 +283,7 @@ if (!fs.existsSync("data/neon")) fs.mkdirSync("data/neon", { recursive: true });
 // Concurrency guard handled by PID-based lock at top of file (line 35)
 
 const PROVIDER = process.env.PROVIDER || "openai"; // or "anthropic"
-const MODEL = process.env.MODEL || "";
-if (!MODEL) {
-  console.error("❌ MODEL env is required (e.g., MODEL=gpt-4.x or claude-x).");
-  process.exit(1);
-}
+const MODEL = process.env.MODEL || "gpt-4o-mini"; // Default to cost-effective model
 
 // Instantiate budget manager (uses existing BUDGET_USD from line 212)
 const budget = makeBudgetManager({ capUSD: BUDGET_USD });

@@ -14,8 +14,9 @@ export default async function withFileLock(lockName, fn) {
   const lockDir = path.resolve('data/locks');
   await fs.mkdir(lockDir, { recursive: true });
 
-  // Always pass just a NAME like "build-next-batch"
-  const lockFile = path.join(lockDir, `${lockName}.lock`);
+  // Sanitize input: strip any paths and .lock extension to prevent double-prefixing
+  const base = path.basename(String(lockName)).replace(/\.lock$/, '');
+  const lockFile = path.join(lockDir, `${base}.lock`);
 
   let handle;
   try {
