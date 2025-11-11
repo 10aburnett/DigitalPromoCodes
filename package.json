@@ -133,6 +133,7 @@
     "zod": "^3.24.3"
   },
   "devDependencies": {
+    "@next/bundle-analyzer": "^16.0.1",
     "@playwright/test": "^1.54.2",
     "@types/bcryptjs": "^2.4.6",
     "@types/jsonwebtoken": "^9.0.9",
@@ -143,8 +144,10 @@
     "@types/seedrandom": "^3.0.8",
     "autoprefixer": "^10.0.1",
     "bcryptjs": "^3.0.2",
+    "chrome-launcher": "^1.2.1",
     "eslint": "^8",
     "eslint-config-next": "14.2.3",
+    "lighthouse": "^12.8.2",
     "postcss": "^8",
     "prisma": "^5.10.0",
     "server-only": "^0.0.1",

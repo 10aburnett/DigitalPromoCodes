@@ -1,5 +1,9 @@
 /** @type {import('next').NextConfig} */
 
+const withBundleAnalyzer = require('@next/bundle-analyzer')({
+  enabled: process.env.ANALYZE === 'true',
+});
+
 // Asset origin for proxying uploads in dev
 const ASSET_ORIGIN = process.env.ASSET_ORIGIN || 'https://whpcodes.com';
 
@@ -226,4 +230,4 @@ const nextConfig = {
   // },
 };
 
-module.exports = nextConfig;
+module.exports = withBundleAnalyzer(nextConfig);
