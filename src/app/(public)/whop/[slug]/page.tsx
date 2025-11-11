@@ -468,23 +468,30 @@ export default async function WhopPage({ params }: { params: { slug: string } })
   const classification = getPageClassification(canonSlug);
   const shouldEmitSchema = classification === 'indexable';
 
-  // Load view model for schema (reuse existing data path)
-  let vm: WhopViewModel | null = null;
-  try {
-    // Safe: getWhopViewModel defaults to 'en' when feature flag is off
-    vm = await getWhopViewModel(raw, undefined);
-  } catch (error) {
-    console.warn('Failed to load view model for schema:', error);
-  }
-
   // 1) Try lookup with normalized slug for DB
   console.log('[WHOP DETAIL] Starting fetch for slug:', { raw, dbSlug, canonSlug });
 
-  const dealData = await getDeal(dbSlug);
-  console.log('[WHOP DETAIL] getDeal result:', { found: !!dealData, id: dealData?.id });
+  // Performance measurement: time parallel data fetches
+  console.time('[PERF] Parallel data fetch');
 
-  // Use cached, tagged data (D1) - no fallback needed
-  const finalWhopData = await getWhopBySlugCached(dbSlug);
+  // Parallelize all data fetches for faster load time
+  const [vm, dealData, finalWhopData, verificationData] = await Promise.all([
+    // Load view model for schema (reuse existing data path)
+    getWhopViewModel(raw, undefined).catch((error) => {
+      console.warn('Failed to load view model for schema:', error);
+      return null;
+    }),
+    // Get deal data
+    getDeal(dbSlug),
+    // Use cached, tagged data (D1) - no fallback needed
+    getWhopBySlugCached(dbSlug),
+    // Load verification data for Screenshot B
+    getVerificationData(dbSlug),
+  ]);
+
+  console.timeEnd('[PERF] Parallel data fetch');
+
+  console.log('[WHOP DETAIL] getDeal result:', { found: !!dealData, id: dealData?.id });
   console.log('[WHOP DETAIL] Final data chosen:', {
     found: !!finalWhopData,
     name: finalWhopData?.name,
@@ -492,9 +499,6 @@ export default async function WhopPage({ params }: { params: { slug: string } })
     retirement: (finalWhopData as any)?.retirement,
     promoCount: (finalWhopData as any)?.PromoCode?.length
   });
-
-  // Load verification data for Screenshot B
-  const verificationData = await getVerificationData(dbSlug);
 
   // Debug logging for production troubleshooting
   console.log('Verification data loaded for', dbSlug, ':', verificationData);
