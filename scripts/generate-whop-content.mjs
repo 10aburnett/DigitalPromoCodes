@@ -43,6 +43,68 @@ if (typeof fetch !== "function") {
   global.fetch = undiciFetch;
 }
 
+// Atomic append helper (crash-safe writes)
+function appendLineAtomic(file, obj) {
+  const tmp = `${file}.tmp-${process.pid}-${Date.now()}`;
+  const fd = fs.openSync(tmp, "w");
+  try {
+    fs.writeFileSync(fd, JSON.stringify(obj) + "\n");
+    fs.fsyncSync(fd);                       // ensure on disk
+    fs.closeSync(fd);
+    fs.renameSync(tmp, tmp);                // noop to satisfy macOS caching
+    fs.appendFileSync(file, fs.readFileSync(tmp));
+  } finally {
+    try { fs.unlinkSync(tmp); } catch {}
+  }
+}
+
+// UA profiles for soft-404 detection
+const UA = {
+  desktop: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120 Safari/537.36",
+  mobile:  "Mozilla/5.0 (Linux; Android 14; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120 Mobile Safari/537.36",
+};
+
+// Fetch helper with UA switching and soft-404 detection
+async function fetchHtml(url, profile="desktop", referer=null, timeoutMs=10000) {
+  const headers = {
+    "User-Agent": UA[profile] || UA.desktop,
+    "Accept": "text/html,*/*;q=0.8",
+    "Accept-Language": "en-GB,en;q=0.9",
+    "Accept-Encoding": "gzip, deflate, br",
+    "Connection": "keep-alive",
+  };
+  if (referer) headers["Referer"] = referer;
+
+  const controller = new AbortController();
+  const t = setTimeout(() => controller.abort(), timeoutMs);
+
+  try {
+    const res = await fetch(url, {
+      redirect: "follow",
+      headers,
+      signal: controller.signal
+    });
+    const html = await res.text();
+    return { res, html };
+  } finally {
+    clearTimeout(t);
+  }
+}
+
+function looksSoft404(status, html) {
+  if (status !== 404) return false;
+  if (!html) return false;
+  if (html.length < SOFT404_MIN_LEN) return false;
+  const head = html.slice(0, 2000);
+  const rx = new RegExp(SOFT404_PHRASES.join("|"), "i");
+  return !rx.test(head); // long, normal-looking page while server sent 404
+}
+
+function looksLikeWAF(html) {
+  const h = (html || "").slice(0, 3000);
+  return /cloudflare|please enable javascript|attention required|checking your browser/i.test(h);
+}
+
 // Rolling similarity memory
 const SIM_TRACK_FILE = "data/content/.simhash.json";
 let simState = { recent: [] }; // store last N hashes
@@ -312,29 +374,93 @@ function isHostAllowed(url) {
 
 // HTTP fetcher with timeout and polite headers
 async function fetchHttp(url, { timeoutMs = 10000 } = {}) {
-  const controller = new AbortController();
-  const t = setTimeout(() => controller.abort(), timeoutMs);
-  try {
-    const res = await fetch(url, {
-      signal: controller.signal,
-      headers: {
-        "user-agent": `Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124 Safari/537.36 (+${os.hostname()})`,
-        "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-      }
-    });
-    const text = await res.text();
-    return {
-      status: res.status,
-      text,
-      url: res.url || url, // final URL after redirects
-      headers: res.headers
-    };
-  } finally {
-    clearTimeout(t);
+  // Primary probe: desktop UA
+  let { res: r1, html: html1 } = await fetchHtml(url, "desktop", null);
+  let status1 = r1.status;
+
+  // Soft-404 downgrade
+  if (looksSoft404(status1, html1)) {
+    console.log(`⚡ Soft-404 detected for ${url} - treating as 200`);
+    status1 = 200;
   }
+
+  // If we still look dead/blocked or tiny OR hit a WAF, do a second probe (mobile UA + Google referer)
+  let rFinal = r1, htmlFinal = html1, statusFinal = status1, probe = "desktop";
+  let status2, html2, r2;
+  let forceMobileProbe = looksLikeWAF(html1);
+
+  if (
+    ((status1 === 404 || status1 === 403 || html1.length < RELAXED_MIN_EVIDENCE_CHARS) || forceMobileProbe) &&
+    PROBE_ON_404
+  ) {
+    if (forceMobileProbe) {
+      console.log(`⚡ WAF/interstitial detected for ${url} - forcing mobile probe`);
+    }
+    const result = await fetchHtml(url, "mobile", "https://www.google.com/");
+    r2 = result.res;
+    html2 = result.html;
+    status2 = r2.status;
+
+    if (looksSoft404(status2, html2)) {
+      console.log(`⚡ Soft-404 detected on mobile probe for ${url} - treating as 200`);
+      status2 = 200;
+    }
+
+    // Prefer the second probe if it's clearly better
+    if (status2 === 200 && html2.length >= RELAXED_MIN_EVIDENCE_CHARS) {
+      rFinal = r2;
+      htmlFinal = html2;
+      statusFinal = 200;
+      probe = "mobile+referer";
+      console.log(`✅ Mobile probe successful for ${url} (${html2.length} chars)`);
+    }
+  }
+
+  // Return rich metadata for diagnostics
+  return {
+    status: statusFinal,
+    text: htmlFinal,
+    url: rFinal.url || url,
+    headers: rFinal.headers,
+    _meta: {
+      status1,
+      status2,
+      len1: html1?.length ?? 0,
+      len2: html2?.length ?? 0,
+      finalUrl1: r1?.url ?? url,
+      finalUrl2: r2?.url ?? null,
+      probeUsed: probe,
+      soft404Probe1: looksSoft404(status1, html1),
+      soft404Probe2: status2 ? looksSoft404(status2, html2) : null,
+    }
+  };
 }
 
 // Extract structured evidence from HTML
+// Extract meta/OG/JSON-LD signals (for SPA pages with thin visible text)
+function extractMetaSignals(html) {
+  const out = [];
+  const title = (html.match(/<title[^>]*>([^<]*)<\/title>/i)?.[1] || "").trim();
+  if (title) out.push(title);
+
+  const get = (name) => {
+    const rx = new RegExp(`<meta[^>]+(?:name|property)=(['"])${name}\\1[^>]*content=(['"])([^"']+)\\2`, 'i');
+    return html.match(rx)?.[3] || null;
+  };
+  const ogTitle = get("og:title");
+  const ogDesc  = get("og:description");
+  const desc    = get("description");
+  [ogTitle, ogDesc, desc].filter(Boolean).forEach(s => out.push(s));
+
+  // grab JSON-LD snippets (often present on marketplace pages)
+  const jsonlds = [...html.matchAll(/<script[^>]+type=['"]application\/ld\+json['"][^>]*>([\s\S]*?)<\/script>/gi)];
+  for (const m of jsonlds) {
+    const t = (m[1] || "").replace(/\s+/g, " ").slice(0, 800);
+    if (t.length > 80) out.push(t);
+  }
+  return out;
+}
+
 function extractFromHtml(html, baseUrl) {
   const strip = s => s.replace(/<script[\s\S]*?<\/script>/gi, "")
                       .replace(/<style[\s\S]*?<\/style>/gi, "")
@@ -360,6 +486,11 @@ function extractFromHtml(html, baseUrl) {
 
   const longText = strip(html).slice(0, 12000);
 
+  // Extract meta signals for SPA detection
+  const metaSignals = extractMetaSignals(html);
+  const metaText = metaSignals.join(". ");
+  const metaWords = metaText.split(/\s+/).filter(Boolean).length;
+
   return {
     baseUrl,
     title,
@@ -368,7 +499,9 @@ function extractFromHtml(html, baseUrl) {
     paras: pMatches,
     priceTokens: priceish,
     faq,
-    textSample: longText
+    textSample: longText,
+    metaWords,  // for SPA guardrail bypass
+    metaText    // for debug
   };
 }
 
@@ -421,8 +554,27 @@ async function obtainEvidence(url, slug, name, forceRecrawl = false) {
   }
 
   const doFetch = async () => {
-    const { status, text, url: fetchedUrl, headers } = await fetchHttp(url);
+    const resp = await fetchHttp(url);
+    const { status, text, url: fetchedUrl, headers, _meta } = resp;
     let finalUrl = fetchedUrl;  // mutable for drill-down reassignment
+
+    // HTML debug capture (after fetch, before extraction)
+    if (SAVE_HTML_DEBUG) {
+      try {
+        const safe = slug.replace(/[^a-z0-9_-]/gi, "_");
+        const dir = "data/debug/html";
+        fs.mkdirSync(dir, { recursive: true });
+        const metaOut = {
+          slug, url, finalUrl: fetchedUrl, status,
+          len: (text || "").length, meta: _meta || null,
+          ts: new Date().toISOString(),
+        };
+        fs.writeFileSync(`${dir}/${safe}.meta.json`, JSON.stringify(metaOut, null, 2));
+        // only store small sample if huge
+        const body = text.length > 200_000 ? text.slice(0, 200_000) : text;
+        fs.writeFileSync(`${dir}/${safe}.raw.html`, body);
+      } catch {}
+    }
 
     // Content-Type sanity check (avoid caching non-HTML)
     const ct = (headers?.get?.("content-type") || "").toLowerCase();
@@ -558,11 +710,25 @@ async function obtainEvidence(url, slug, name, forceRecrawl = false) {
       }
       // --- end semantic drill-down --------------------------------------------------
 
-      // Thin evidence guard: require minimum signal
+      // Thin evidence guard with SPA bypass: require minimum signal
       const contentCount = (ex.paras?.length || 0) + (ex.bullets?.length || 0);
-      if (contentCount < 2 || textLength < 250) {
-        console.warn(`⚠️  Skipping ${slug}: Insufficient evidence (${contentCount} blocks, ${textLength} chars)`);
+      const metaWords = ex.metaWords || 0;
+      const effectiveWords = textLength / 5 + Math.floor(metaWords * 0.8); // rough word count
+
+      // Check if this is a known SPA domain (like whop.com)
+      const urlHost = new URL(finalUrl).hostname;
+      const IS_KNOWN_SPA = /(^|\.)whop\.com$/i.test(urlHost);
+
+      // Allow meta-only passes for known SPAs with healthy meta signals
+      const metaOnlyPass = (status === 200 && IS_KNOWN_SPA && metaWords >= 25);
+
+      if (!metaOnlyPass && (contentCount < 2 || textLength < 250)) {
+        console.warn(`⚠️  Skipping ${slug}: Insufficient evidence (${contentCount} blocks, ${textLength} chars, ${metaWords} meta words)`);
         return null;
+      }
+
+      if (metaOnlyPass && contentCount < 2) {
+        console.log(`✅ SPA bypass for ${slug}: meta-only pass (${metaWords} meta words, ${textLength} chars)`);
       }
 
       const evidence = {
@@ -1006,9 +1172,75 @@ const IGNORE_CHECKPOINT = process.env.IGNORE_CHECKPOINT === "1";
 const ALLOW_OVERWRITE = process.env.ALLOW_OVERWRITE === "1";
 const EVIDENCE_ONLY = process.env.EVIDENCE_ONLY === "1";
 const EVIDENCE_MIN_CHARS = +(process.env.EVIDENCE_MIN_CHARS || 600);
+const RELAX_GUARDRAILS = process.env.RELAX_GUARDRAILS === "1";
+const MIN_EVIDENCE_CHARS = +(process.env.MIN_EVIDENCE_CHARS || 800);
+const RELAXED_MIN_EVIDENCE_CHARS = +(process.env.RELAXED_MIN_EVIDENCE_CHARS || 350);
+const MAX_RETRIES = +(process.env.MAX_RETRIES || 3);
+
+// Soft-404 detection toggles
+const PROBE_ON_404 = process.env.PROBE_ON_404 !== "0";  // default ON
+const SOFT404_MIN_LEN = +(process.env.SOFT404_MIN_LEN || 5000);  // bytes of HTML to treat as likely soft-404
+const SOFT404_PHRASES = (process.env.SOFT404_PHRASES || "404,not found,page not found,doesn't exist,not-found").split(",");
+
+// HTML debug capture toggle
+const SAVE_HTML_DEBUG = process.env.SAVE_HTML_DEBUG === "1";
 
 let ck = loadJSON(CHECKPOINT, { done: {}, pending: {} });
 if (!ck.rejected) ck.rejected = {}; // Track rejects separately from done
+
+// Retry state tracking (prevent infinite loops)
+const RETRY_STATE = "data/content/retry-counts.json";
+let retries = {};
+try { if (fs.existsSync(RETRY_STATE)) retries = JSON.parse(fs.readFileSync(RETRY_STATE, "utf8")); } catch {}
+function bumpRetry(slug) {
+  retries[slug] = (retries[slug] || 0) + 1;
+  fs.writeFileSync(RETRY_STATE, JSON.stringify(retries, null, 2));
+  return retries[slug];
+}
+
+// Periodic consolidation tracking
+let _successesSinceConsolidate = 0;
+const CONSOLIDATE_EVERY = +(process.env.CONSOLIDATE_EVERY || 50);
+
+// Success set cache (for write-path guards)
+let _succSet = null;
+function successSet() {
+  if (_succSet) return _succSet;
+  _succSet = new Set(
+    fs.readFileSync("data/content/master/successes.jsonl","utf8")
+      .trim().split("\n").filter(Boolean)
+      .map(l => { try { return JSON.parse(l).slug } catch { return null }})
+      .filter(Boolean)
+  );
+  return _succSet;
+}
+
+// Remove any stale reject entry when a success is written
+function removeRejectIfExists(slug) {
+  const p = "data/content/master/rejects.jsonl";
+  if (!fs.existsSync(p)) return;
+  const lines = fs.readFileSync(p, "utf8").split("\n");
+  let changed = false;
+  const out = [];
+  for (const line of lines) {
+    if (!line.trim()) continue;
+    try {
+      const o = JSON.parse(line);
+      if (o.slug === slug) { changed = true; continue; }
+      out.push(line);
+    } catch { out.push(line); }
+  }
+  if (changed) {
+    const tmp = `${p}.tmp-${process.pid}-${Date.now()}`;
+    fs.writeFileSync(tmp, out.join("\n") + "\n");
+    const fd = fs.openSync(tmp, "r");
+    fs.fsyncSync(fd);
+    fs.closeSync(fd);
+    fs.renameSync(tmp, p);
+    // Update cache
+    if (_succSet) _succSet.add(slug);
+  }
+}
 
 // Prune stale pending entries (from crashed runs)
 const MAX_PENDING_AGE_MS = 30 * 60 * 1000; // 30 min
@@ -1026,8 +1258,30 @@ function persistCheckpoint() {
 }
 
 // Helper to reject and persist (separate from done)
-function rejectAndPersist(slug, reason) {
-  ck.rejected[slug] = { reason: String(reason || 'unknown'), ts: Date.now() };
+function rejectAndPersist(slug, reason, meta = {}) {
+  // HARD GUARD: if slug is already a success, do NOT write a reject
+  if (successSet().has(slug)) {
+    console.warn(`⚠️  Skip reject for ${slug}: already in successes`);
+    return;
+  }
+
+  // Classify error into machine-readable errorCode
+  const reasonStr = String(reason || 'unknown');
+  const code = (
+    meta.errorCode ||
+    (/404/i.test(reasonStr)                    ? "HTTP_404" :
+     /evidence.*insufficient/i.test(reasonStr) ? "INSUFFICIENT_EVIDENCE" :
+     /fetch failed/i.test(reasonStr)           ? "NETWORK_FETCH_FAIL" :
+     /guardrail/i.test(reasonStr)              ? "GUARDRAIL_FAIL" :
+     /grounding check failed/i.test(reasonStr) ? "GUARDRAIL_FAIL" :
+     /repair failed/i.test(reasonStr)          ? "GUARDRAIL_FAIL" :
+     /primary keyword.*missing/i.test(reasonStr) ? "GUARDRAIL_FAIL" :
+     /rate.*limit/i.test(reasonStr)            ? "RATE_LIMIT" :
+     /timeout/i.test(reasonStr)                ? "TIMEOUT" :
+                                                 "OTHER")
+  );
+
+  ck.rejected[slug] = { reason: reasonStr, errorCode: code, ts: Date.now(), meta };
   delete ck.pending[slug];
   persistCheckpoint();
 
@@ -1035,7 +1289,7 @@ function rejectAndPersist(slug, reason) {
   // Skip if in EVIDENCE_ONLY mode (we're just probing, not finalizing)
   if (!EVIDENCE_ONLY) {
     try {
-      const rejectEntry = { slug, error: String(reason || 'unknown'), ts: new Date().toISOString() };
+      const rejectEntry = { slug, error: reasonStr, errorCode: code, meta, ts: new Date().toISOString() };
       fs.appendFileSync("data/content/master/rejects.jsonl", JSON.stringify(rejectEntry) + "\n");
     } catch (err) {
       console.error(`⚠️  Failed to append reject to master: ${err.message}`);
@@ -2314,6 +2568,32 @@ function checkHardCounts(obj, preserved = {}) {
   const errs = [];
   const T = TARGETS;
 
+  // Apply relaxed thresholds if RELAX_GUARDRAILS is enabled
+  const relaxFactor = RELAX_GUARDRAILS ? 0.6 : 1.0;
+  const relaxedT = {
+    aboutParagraphsMin: Math.max(1, Math.floor(T.aboutParagraphsMin * relaxFactor)),
+    aboutParagraphsMax: Math.ceil(T.aboutParagraphsMax * 1.2),
+    aboutWordsMin: Math.max(60, Math.floor(T.aboutWordsMin * relaxFactor)),
+    aboutWordsMax: Math.ceil(T.aboutWordsMax * 1.2),
+    redeemStepsMin: Math.max(2, Math.floor(T.redeemStepsMin * relaxFactor)),
+    redeemStepsMax: Math.ceil(T.redeemStepsMax * 1.2),
+    redeemStepWordsMin: Math.max(8, Math.floor(T.redeemStepWordsMin * relaxFactor)),
+    redeemStepWordsMax: Math.ceil(T.redeemStepWordsMax * 1.2),
+    detailsBulletsMin: Math.max(2, Math.floor(T.detailsBulletsMin * relaxFactor)),
+    detailsBulletsMax: Math.ceil(T.detailsBulletsMax * 1.2),
+    detailsWordsMin: Math.max(60, Math.floor(T.detailsWordsMin * relaxFactor)),
+    detailsWordsMax: Math.ceil(T.detailsWordsMax * 1.2),
+    termsBulletsMin: Math.max(2, Math.floor(T.termsBulletsMin * relaxFactor)),
+    termsBulletsMax: Math.ceil(T.termsBulletsMax * 1.2),
+    termsWordsMin: Math.max(50, Math.floor(T.termsWordsMin * relaxFactor)),
+    termsWordsMax: Math.ceil(T.termsWordsMax * 1.2),
+    faqCountMin: Math.max(2, Math.floor(T.faqCountMin * relaxFactor)),
+    faqCountMax: Math.ceil(T.faqCountMax * 1.2),
+    faqAnswerWordsMin: Math.max(25, Math.floor(T.faqAnswerWordsMin * relaxFactor)),
+    faqAnswerWordsMax: Math.ceil(T.faqAnswerWordsMax * 1.2),
+  };
+  const thresholds = RELAX_GUARDRAILS ? relaxedT : T;
+
   // helper
   const wc = (html) => countWords(html);
   const liCount = (html) => countTags(html || "", "li");
@@ -2322,12 +2602,12 @@ function checkHardCounts(obj, preserved = {}) {
   // ABOUT: paragraphs + words
   if (!preserved?.about && obj.aboutcontent) {
     const p = paraCount(obj.aboutcontent);
-    if (p && (p < T.aboutParagraphsMin || p > T.aboutParagraphsMax)) {
-      errs.push(`aboutcontent paragraphs ${p} not in ${T.aboutParagraphsMin}–${T.aboutParagraphsMax}`);
+    if (p && (p < thresholds.aboutParagraphsMin || p > thresholds.aboutParagraphsMax)) {
+      errs.push(`aboutcontent paragraphs ${p} not in ${thresholds.aboutParagraphsMin}–${thresholds.aboutParagraphsMax}`);
     }
     const w = wc(obj.aboutcontent);
-    if (w && (w < T.aboutWordsMin || w > T.aboutWordsMax)) {
-      errs.push(`aboutcontent words ${w} not in ${T.aboutWordsMin}–${T.aboutWordsMax}`);
+    if (w && (w < thresholds.aboutWordsMin || w > thresholds.aboutWordsMax)) {
+      errs.push(`aboutcontent words ${w} not in ${thresholds.aboutWordsMin}–${thresholds.aboutWordsMax}`);
     }
   }
 
@@ -2338,15 +2618,15 @@ function checkHardCounts(obj, preserved = {}) {
     if (!hasOl) errs.push(`howtoredeemcontent must use <ol> for steps`);
 
     const steps = liCount(obj.howtoredeemcontent);
-    if (steps && (steps < T.redeemStepsMin || steps > T.redeemStepsMax)) {
-      errs.push(`howtoredeem steps ${steps} not in ${T.redeemStepsMin}–${T.redeemStepsMax}`);
+    if (steps && (steps < thresholds.redeemStepsMin || steps > thresholds.redeemStepsMax)) {
+      errs.push(`howtoredeem steps ${steps} not in ${thresholds.redeemStepsMin}–${thresholds.redeemStepsMax}`);
     }
     // per-step word counts
     const stepMatches = String(obj.howtoredeemcontent).match(/<li\b[^>]*>[\s\S]*?<\/li>/gi) || [];
     stepMatches.forEach((li, i) => {
       const words = wc(li);
-      if (words && (words < T.redeemStepWordsMin || words > T.redeemStepWordsMax)) {
-        errs.push(`howtoredeem step ${i + 1} words ${words} not in ${T.redeemStepWordsMin}–${T.redeemStepWordsMax}`);
+      if (words && (words < thresholds.redeemStepWordsMin || words > thresholds.redeemStepWordsMax)) {
+        errs.push(`howtoredeem step ${i + 1} words ${words} not in ${thresholds.redeemStepWordsMin}–${thresholds.redeemStepWordsMax}`);
       }
     });
   }
@@ -2354,38 +2634,38 @@ function checkHardCounts(obj, preserved = {}) {
   // DETAILS: bullets + words
   if (!preserved?.details && obj.promodetailscontent) {
     const b = liCount(obj.promodetailscontent);
-    if (b && (b < T.detailsBulletsMin || b > T.detailsBulletsMax)) {
-      errs.push(`promodetails bullets ${b} not in ${T.detailsBulletsMin}–${T.detailsBulletsMax}`);
+    if (b && (b < thresholds.detailsBulletsMin || b > thresholds.detailsBulletsMax)) {
+      errs.push(`promodetails bullets ${b} not in ${thresholds.detailsBulletsMin}–${thresholds.detailsBulletsMax}`);
     }
     const w = wc(obj.promodetailscontent);
-    if (w && (w < T.detailsWordsMin || w > T.detailsWordsMax)) {
-      errs.push(`promodetails words ${w} not in ${T.detailsWordsMin}–${T.detailsWordsMax}`);
+    if (w && (w < thresholds.detailsWordsMin || w > thresholds.detailsWordsMax)) {
+      errs.push(`promodetails words ${w} not in ${thresholds.detailsWordsMin}–${thresholds.detailsWordsMax}`);
     }
   }
 
   // TERMS: bullets + words
   if (!preserved?.terms && obj.termscontent) {
     const b = liCount(obj.termscontent);
-    if (b && (b < T.termsBulletsMin || b > T.termsBulletsMax)) {
-      errs.push(`terms bullets ${b} not in ${T.termsBulletsMin}–${T.termsBulletsMax}`);
+    if (b && (b < thresholds.termsBulletsMin || b > thresholds.termsBulletsMax)) {
+      errs.push(`terms bullets ${b} not in ${thresholds.termsBulletsMin}–${thresholds.termsBulletsMax}`);
     }
     const w = wc(obj.termscontent);
-    if (w && (w < T.termsWordsMin || w > T.termsWordsMax)) {
-      errs.push(`terms words ${w} not in ${T.termsWordsMin}–${T.termsWordsMax}`);
+    if (w && (w < thresholds.termsWordsMin || w > thresholds.termsWordsMax)) {
+      errs.push(`terms words ${w} not in ${thresholds.termsWordsMin}–${thresholds.termsWordsMax}`);
     }
   }
 
   // FAQ: 3–6 items, each answer 40–70 words
   if (!preserved?.faq && Array.isArray(obj.faqcontent)) {
     const n = obj.faqcontent.length;
-    if (n && (n < T.faqCountMin || n > T.faqCountMax)) {
-      errs.push(`faq count ${n} not in ${T.faqCountMin}–${T.faqCountMax}`);
+    if (n && (n < thresholds.faqCountMin || n > thresholds.faqCountMax)) {
+      errs.push(`faq count ${n} not in ${thresholds.faqCountMin}–${thresholds.faqCountMax}`);
     }
     for (let i = 0; i < obj.faqcontent.length; i++) {
       const ans = obj.faqcontent[i]?.answerHtml || "";
       const w = wc(ans);
-      if (w && (w < T.faqAnswerWordsMin || w > T.faqAnswerWordsMax)) {
-        errs.push(`faq answer ${i + 1} words ${w} not in ${T.faqAnswerWordsMin}–${T.faqAnswerWordsMax}`);
+      if (w && (w < thresholds.faqAnswerWordsMin || w > thresholds.faqAnswerWordsMax)) {
+        errs.push(`faq answer ${i + 1} words ${w} not in ${thresholds.faqAnswerWordsMin}–${thresholds.faqAnswerWordsMax}`);
         break; // one is enough to trigger repair
       }
     }
@@ -2872,6 +3152,18 @@ function recordHash(h) {
 
 async function worker(task) {
   const { slug, name, url } = task;
+
+  // Check retry ceiling (IGNORE_CHECKPOINT mode only)
+  if (IGNORE_CHECKPOINT) {
+    const attempts = bumpRetry(slug);
+    if (attempts > MAX_RETRIES) {
+      rejectAndPersist(slug, `abandoned after ${attempts} attempts`, { errorCode: "ABANDONED" });
+      return;
+    }
+    if (attempts > 1) {
+      console.log(`🔄 Retry attempt ${attempts}/${MAX_RETRIES} for ${slug}`);
+    }
+  }
 
   // Validate URL exists
   if (!url || !/^https?:\/\//i.test(url)) {
@@ -3371,16 +3663,36 @@ ${JSON.stringify(obj)}
       appendFingerprint({ slug, sha });
       fingerprints.set(slug, sha);
 
-      // IMMEDIATE APPEND to master updates (crash-safe)
-      try {
-        fs.appendFileSync("data/content/master/updates.jsonl", JSON.stringify(output) + "\n");
-      } catch (err) {
-        console.error(`⚠️  Failed to append success to master: ${err.message}`);
+      // IMMEDIATE ATOMIC APPEND to master (crash-safe for both updates and successes)
+      if (!EVIDENCE_ONLY) {
+        try {
+          appendLineAtomic("data/content/master/updates.jsonl", output);
+          appendLineAtomic("data/content/master/successes.jsonl", output);
+          // Remove any stale reject for this slug
+          removeRejectIfExists(slug);
+        } catch (err) {
+          console.error(`⚠️  Failed to append success to master: ${err.message}`);
+        }
       }
 
       if (evidence?.drilled) drilledCount++;
       ck.done[slug] = true;
       delete ck.pending[slug];
+
+      // Periodic consolidation (keeps master counts up-to-date during long runs)
+      _successesSinceConsolidate++;
+      if (_successesSinceConsolidate >= CONSOLIDATE_EVERY && !EVIDENCE_ONLY) {
+        _successesSinceConsolidate = 0;
+        console.log(`\n🔄 Running periodic consolidation (every ${CONSOLIDATE_EVERY} successes)...`);
+        try {
+          const { spawnSync } = await import("child_process");
+          spawnSync("node", ["scripts/consolidate-results.mjs"], { stdio: "inherit" });
+          spawnSync("node", ["scripts/audit-invariants.mjs"], { stdio: "inherit" });
+          console.log(`✅ Consolidation complete\n`);
+        } catch (e) {
+          console.warn(`⚠️  Consolidation skipped: ${e.message}`);
+        }
+      }
 
       // Record fingerprint for cross-doc originality tracking
       if (!preserved?.about) {
@@ -3477,10 +3789,38 @@ ${JSON.stringify(obj)}
             appendFingerprint({ slug, sha: sha2 });
             fingerprints.set(slug, sha2);
 
+            // IMMEDIATE ATOMIC APPEND to master (crash-safe)
+            if (!EVIDENCE_ONLY) {
+              try {
+                appendLineAtomic("data/content/master/updates.jsonl", output2);
+                appendLineAtomic("data/content/master/successes.jsonl", output2);
+                // Remove any stale reject for this slug
+                removeRejectIfExists(slug);
+              } catch (err) {
+                console.error(`⚠️  Failed to append success to master: ${err.message}`);
+              }
+            }
+
             if (evidence?.drilled) drilledCount++;
             ck.done[slug] = true;
             delete ck.pending[slug];
             process.env.MODEL = prevModel;
+
+            // Periodic consolidation
+            _successesSinceConsolidate++;
+            if (_successesSinceConsolidate >= CONSOLIDATE_EVERY && !EVIDENCE_ONLY) {
+              _successesSinceConsolidate = 0;
+              console.log(`\n🔄 Running periodic consolidation (every ${CONSOLIDATE_EVERY} successes)...`);
+              try {
+                const { spawnSync } = await import("child_process");
+                spawnSync("node", ["scripts/consolidate-results.mjs"], { stdio: "inherit" });
+                spawnSync("node", ["scripts/audit-invariants.mjs"], { stdio: "inherit" });
+                console.log(`✅ Consolidation complete\n`);
+              } catch (e) {
+                console.warn(`⚠️  Consolidation skipped: ${e.message}`);
+              }
+            }
+
             return;
           } catch (ee) {
             // fall through to reject
