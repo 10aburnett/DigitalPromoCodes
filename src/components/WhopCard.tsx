@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useSocialProof, createSocialProofFromWhop } from '@/contexts/SocialProofContext';
 import InitialsAvatar from './InitialsAvatar';
@@ -38,6 +38,7 @@ export default function WhopCard({ promo, priority = false }: WhopCardProps) {
   const { t, language, isHydrated } = useLanguage();
   const { addNotification } = useSocialProof();
   const pathname = usePathname();
+  const router = useRouter();
   const cardRef = useRef<HTMLDivElement | null>(null);
 
   // Robust fallbacks for API shape variations
@@ -195,7 +196,9 @@ export default function WhopCard({ promo, priority = false }: WhopCardProps) {
       <article className="relative p-5 rounded-xl shadow-lg border transition-all hover:shadow-xl hover:border-opacity-50" style={{ background: 'linear-gradient(135deg, var(--background-secondary), var(--background-tertiary))', borderColor: 'var(--border-color)' }}>
         <Link
           href={getDetailPageUrl()}
-          prefetch={false}
+          prefetch={true}
+          onMouseEnter={() => router.prefetch(getDetailPageUrl())}
+          onTouchStart={() => router.prefetch(getDetailPageUrl())}
           className="block"
           title={`${promo.whopName} Promo Code - ${promo.promoText} (${new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })})`}
         >
@@ -268,10 +271,12 @@ export default function WhopCard({ promo, priority = false }: WhopCardProps) {
         <div className="mt-2">
           <Link
             href={getDetailPageUrl()}
-            prefetch={false}
+            prefetch={true}
+            onMouseEnter={() => router.prefetch(getDetailPageUrl())}
+            onTouchStart={() => router.prefetch(getDetailPageUrl())}
             className="w-full font-bold py-3 px-4 rounded-lg text-center transition-all duration-200 block hover:opacity-90 hover:scale-[1.02] transform-gpu"
-            style={{ 
-              backgroundColor: 'var(--accent-color)', 
+            style={{
+              backgroundColor: 'var(--accent-color)',
               color: 'white'
             }}
             onClick={handleViewDealClick}
