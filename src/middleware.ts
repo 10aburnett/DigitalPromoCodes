@@ -29,8 +29,8 @@ function verifyJWT(token: string, secret: string): any {
 export function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
-  // Allow all debug routes to pass through untouched
-  if (pathname.startsWith('/api/_debug/') || pathname.startsWith('/api/debug-api/')) {
+  // Allow all debug routes and trace route to pass through untouched
+  if (pathname.startsWith('/api/_debug/') || pathname.startsWith('/api/debug-api/') || pathname.startsWith('/api/_trace')) {
     return NextResponse.next();
   }
 
