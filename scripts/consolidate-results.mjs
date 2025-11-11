@@ -12,6 +12,9 @@ const META_FILE    = path.join(MASTER_DIR, "meta-runs.jsonl");
 const UPDATES_FILE = path.join(MASTER_DIR, "updates.jsonl");
 const MANIFEST     = path.join(MASTER_DIR, ".processed_raw_files.json");
 
+// Gate: require --ingest-raw flag to process raw rejects files
+const INGEST_RAW = process.argv.includes("--ingest-raw");
+
 // ---------- helpers ----------
 fs.mkdirSync(MASTER_DIR, { recursive: true });
 
@@ -133,13 +136,29 @@ for (const f of fs.readdirSync(RAW_DIR)) {
     console.log(`✓ Processed ${count} successes, ${rejCount} rejects from ${f}`);
     appendedSuccess++;
   } else if (/^rejects-.*\.jsonl$/.test(f)) {
-    let count = 0;
-    for (const line of iterLines(full)) {
-      appendIfNewSlug(REJECT_FILE, UPDATES_FILE, line, seenRejects);
-      count++;
+    // GATE: Only ingest raw rejects if --ingest-raw flag is passed
+    if (INGEST_RAW) {
+      let count = 0;
+      let filtered = 0;
+      for (const line of iterLines(full)) {
+        try {
+          const j = JSON.parse(line);
+          // Skip if slug already exists in successes
+          if (j?.slug && seenSuccess.has(j.slug)) {
+            filtered++;
+            continue;
+          }
+          appendIfNewSlug(REJECT_FILE, UPDATES_FILE, line, seenRejects);
+          count++;
+        } catch {
+          // Skip unparseable lines
+        }
+      }
+      console.log(`✓ Processed ${count} rejects from ${f} (${filtered} filtered - already in successes)`);
+      appendedRejects++;
+    } else {
+      console.log(`⚠️  Skipping raw rejects file ${f} (use --ingest-raw to process)`);
     }
-    console.log(`✓ Processed ${count} rejects from ${f}`);
-    appendedRejects++;
   } else if (/meta.*\.json$/i.test(f)) {
     const content = fs.readFileSync(full, "utf8").trim();
     if (content) {
