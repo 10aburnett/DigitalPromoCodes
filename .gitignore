@@ -147,3 +147,7 @@ data/locks/
 data/content/master/.consolidate.lock
 *.backup*.jsonl
 /tmp/whp-audit
+
+# Performance audit files (local only)
+src/app/api/_trace/
+src/lib/perf/
