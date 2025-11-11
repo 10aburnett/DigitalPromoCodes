@@ -152,6 +152,8 @@ export default async function RootLayout({
         <meta name="geo.region" content="US" />
         <meta name="geo.placename" content="United States" />
         <link rel="preconnect" href="https://www.googletagmanager.com" />
+        <link rel="preconnect" href="https://assets.whop.com" crossOrigin="" />
+        <link rel="preconnect" href="https://img-v2-prod.whop.com" crossOrigin="" />
         <link rel="dns-prefetch" href="//whpcodes.com" />
         <link rel="dns-prefetch" href="//www.googletagmanager.com" />
         <style dangerouslySetInnerHTML={{__html: `

@@ -1066,14 +1066,18 @@ export default async function WhopPage({ params }: { params: { slug: string } })
 
         {/* Full-width sections for better layout */}
         <div className="w-full space-y-8">
-          {/* Recommended Whops Section - Server-rendered for JS-off compatibility */}
+          {/* Recommended Whops Section - Streamed for faster hero paint */}
           <div className="max-w-2xl mx-auto">
-            <RecommendedSection currentWhopSlug={dbSlug} />
+            <Suspense fallback={<SectionSkeleton />}>
+              <RecommendedSection currentWhopSlug={dbSlug} />
+            </Suspense>
           </div>
 
-          {/* Alternatives Section - Server-rendered for JS-off compatibility */}
+          {/* Alternatives Section - Streamed for faster hero paint */}
           <div className="max-w-2xl mx-auto">
-            <AlternativesSection currentWhopSlug={dbSlug} />
+            <Suspense fallback={<SectionSkeleton />}>
+              <AlternativesSection currentWhopSlug={dbSlug} />
+            </Suspense>
           </div>
 
           {/* Reviews Section - Streamed for better performance */}
