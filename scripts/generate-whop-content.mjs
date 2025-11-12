@@ -881,6 +881,7 @@ SEO REQUIREMENTS (based on top-ranking coupon pages):
 - In all other sections, use secondary keywords: "discount", "offer", "current deal", "saving", etc.
 
 1. aboutcontent (130-170 words, HARD MIN 120, **MUST BE 2-3 paragraphs**):
+   - **FORMAT**: Output as 2–3 <p> paragraphs (no other formatting)
    - **CRITICAL**: Write exactly 2–3 complete paragraphs. Do NOT write just 1 paragraph.
    - MUST include "\${safeName} promo code" naturally in the first paragraph (critical for SEO - Whop uses "promo code" terminology). Use this exact phrase ONLY ONCE.
    - Optionally sprinkle "discount", "offer", or "save on \${safeName}" as secondary keywords (≤2 total).
@@ -898,6 +899,7 @@ SEO REQUIREMENTS (based on top-ranking coupon pages):
    - CRITICAL: Start each bullet with an action verb (imperative voice: Use/Apply/Access/Choose/Get/Select/etc.).
 
 3. howtoredeemcontent (3-5 steps, each step 12-20 words; HARD MIN 10 words per step):
+   - **FORMAT**: Output as <ol> with 4–6 <li> steps (no <ul>)
    - CRITICAL: Start each step with an action verb (imperative voice: Click/Copy/Apply/Confirm/Visit/Navigate/Enter/etc.).
    - **DO NOT use "promo code" here** - use "discount", "offer", "code" (without "promo") instead.
    - Use full sentences; avoid fragments. Aim for ~15 words per step to avoid under-runs.
@@ -1185,6 +1187,25 @@ const SOFT404_PHRASES = (process.env.SOFT404_PHRASES || "404,not found,page not 
 // HTML debug capture toggle
 const SAVE_HTML_DEBUG = process.env.SAVE_HTML_DEBUG === "1";
 
+// Policy-driven guardrails (without weakening evidence globally)
+const RULESET = process.env.RULESET || "strict"; // "strict" | "relaxed-spa"
+const GUARDRAIL_POLICY = {
+  "strict": {
+    aboutMinWords: 120,
+    faqMin: 4,
+    evidenceChars: 800,
+    name: "Strict (default)"
+  },
+  "relaxed-spa": {
+    aboutMinWords: 70,
+    faqMin: 3,
+    evidenceChars: 300,
+    name: "Relaxed for SPAs"
+  },
+};
+const ACTIVE_POLICY = GUARDRAIL_POLICY[RULESET] || GUARDRAIL_POLICY["strict"];
+console.log(`📋 Active guardrail policy: ${ACTIVE_POLICY.name}`);
+
 let ck = loadJSON(CHECKPOINT, { done: {}, pending: {} });
 if (!ck.rejected) ck.rejected = {}; // Track rejects separately from done
 
@@ -1451,6 +1472,103 @@ function sanitizePayload(obj) {
   }
   return obj;
 }
+
+// ============================================================================
+// Self-healing normalisation & repair helpers
+// ============================================================================
+
+function ensureOrderedList(html) {
+  if (!html) return html;
+  const hasOl = /<ol[\s>]/i.test(html);
+  if (hasOl) return html;
+
+  // 1) Try converting an <ul> into an <ol>
+  if (/<ul[\s>]/i.test(html)) {
+    return html
+      .replace(/<ul([^>]*)>/ig, '<ol$1>')
+      .replace(/<\/ul>/ig, '</ol>');
+  }
+
+  // 2) Otherwise split plain text into 4–6 steps and wrap
+  const text = html
+    .replace(/<\/?p>/ig, '\n')
+    .replace(/<br\s*\/?>/ig, '\n')
+    .replace(/<[^>]+>/g, '')
+    .split(/\n+/)
+    .map(s => s.trim())
+    .filter(Boolean);
+
+  const lines = text.length >= 4 ? text.slice(0, 6) : (text.join(' ').match(/[^.?!]+[.?!]/g) || []).slice(0,6);
+  if (lines.length === 0) return html;
+
+  const items = lines.map(s => `<li>${s}</li>`).join('');
+  return `<ol>\n${items}\n</ol>`;
+}
+
+function ensureParagraphs(html, min=2) {
+  if (!html) return html;
+  // If already contains <p>, keep; else wrap sentences/blocks
+  if (/<p[\s>]/i.test(html)) return html;
+  const sentences = html
+    .replace(/<br\s*\/?>/ig, '\n')
+    .replace(/<[^>]+>/g, '')
+    .split(/\n{2,}|(?<=[.?!])\s+(?=[A-Z0-9])/)
+    .map(s => s.trim())
+    .filter(Boolean);
+  if (sentences.length === 0) return html;
+  const paras = (sentences.length < min ? [sentences.join(' ')] : sentences).slice(0, Math.max(min, 3));
+  return paras.map(p => `<p>${p}</p>`).join('\n');
+}
+
+function clampListItems(html, min=4, max=7) {
+  if (!html) return html;
+  const m = html.match(/<ol[^>]*>([\s\S]*?)<\/ol>/i);
+  if (!m) return html;
+  const lis = [...m[1].matchAll(/<li[\s>][\s\S]*?<\/li>/ig)].map(x => x[0]);
+  if (lis.length === 0) return html;
+  const picked = lis.slice(0, Math.max(min, Math.min(max, lis.length)));
+  const wrapped = `<ol>\n${picked.join('\n')}\n</ol>`;
+  return html.replace(/<ol[^>]*>[\s\S]*?<\/ol>/i, wrapped);
+}
+
+function ensureUnorderedList(html) {
+  if (!html) return html;
+  if (/<ul[\s>]/i.test(html)) return html;
+  // convert any <ol> to <ul>
+  if (/<ol[\s>]/i.test(html)) return html.replace(/<ol([^>]*)>/ig,'<ul$1>').replace(/<\/ol>/ig,'</ul>');
+  // fallback: split lines → bullets
+  const lines = html.replace(/<br\s*\/?>/ig, '\n').replace(/<[^>]+>/g,'').split(/\n+/).map(s=>s.trim()).filter(Boolean);
+  if (lines.length === 0) return html;
+  const items = lines.slice(0,7).map(s=>`<li>${s}</li>`).join('');
+  return `<ul>\n${items}\n</ul>`;
+}
+
+function normaliseOutput(output, { isKnownSPA=false } = {}) {
+  const o = { ...output };
+
+  // aboutcontent: guarantee <p> paragraphs (2–3)
+  o.aboutcontent = ensureParagraphs(o.aboutcontent, 2);
+
+  // howtoredeemcontent: force <ol> and sane count
+  o.howtoredeemcontent = clampListItems(ensureOrderedList(o.howtoredeemcontent), 4, 6);
+
+  // promodetailscontent / termscontent: prefer <ul>/<li>
+  o.promodetailscontent = ensureUnorderedList(o.promodetailscontent);
+  o.termscontent = ensureUnorderedList(o.termscontent);
+
+  // FAQ: ensure array shape with non-empty answers
+  if (!Array.isArray(o.faqcontent)) o.faqcontent = [];
+  o.faqcontent = o.faqcontent
+    .filter(x => x && x.question && x.answerHtml)
+    .slice(0, 6);
+
+  // Optional: if SPA and meta-only, mark for lenient treatment
+  if (isKnownSPA) o.__spa_ok = true;
+
+  return o;
+}
+
+// ============================================================================
 
 function validatePayload(obj) {
   const required = ["slug","aboutcontent","howtoredeemcontent","promodetailscontent","termscontent","faqcontent"];
@@ -3090,6 +3208,11 @@ Issues:
   // Final HTML tidy before sanitize
   fixed = finalHtmlTidy(fixed);
 
+  // Self-healing normalisation for evidence repair (same as generation layer)
+  const urlHost = new URL(task.url).hostname;
+  const isKnownSPA = /(^|\.)whop\.com$/i.test(urlHost);
+  fixed = normaliseOutput(fixed, { isKnownSPA });
+
   fixed = sanitizePayload(fixed);
   const err = validatePayload(fixed) || checkHardCounts(fixed)[0] || null;
   if (err) throw new Error(`Repair failed: ${err}`);
@@ -3359,6 +3482,11 @@ async function worker(task) {
 
       // Final HTML tidy before validation
       obj = finalHtmlTidy(obj);
+
+      // Self-healing normalisation (repair formatting before validation)
+      const urlHost = new URL(evidence?.finalUrl || url).hostname;
+      const isKnownSPA = /(^|\.)whop\.com$/i.test(urlHost);
+      obj = normaliseOutput(obj, { isKnownSPA });
 
       // Now validate (operating on merged obj)
       const err = validatePayload(obj);
