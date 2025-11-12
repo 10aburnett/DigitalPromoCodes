@@ -31,6 +31,8 @@ import os from "os";
 import crypto from "crypto";
 import { acquireLock, releaseLock } from "./lib/lock.mjs";
 import { climbEvidenceLadder } from "./evidence-ladder.mjs";
+import { faqIsGrounded, regenerateFaqGrounded, buildQuoteOnlyFaq } from "./faq-grounding.mjs";
+import { buildSyntheticFallback } from "./synthetic-fallback.mjs";
 
 // Acquire PID lock to prevent concurrent runs
 acquireLock({ role: "generator" });
@@ -763,7 +765,9 @@ async function obtainEvidence(url, slug, name, forceRecrawl = false) {
         finalUrl, // store final URL after redirects
         fetchedAt: new Date().toISOString(),
         textHash: sha256(ex.textSample || ""),
-        drilled // track if hub drill-down was used
+        drilled, // track if hub drill-down was used
+        html: html1, // carry raw HTML forward for FAQ grounding
+        textSample: ex.textSample || "" // ensure non-null
       };
       fs.writeFileSync(cachePath, JSON.stringify(evidence, null, 2));
       return evidence;
@@ -3549,6 +3553,44 @@ async function worker(task) {
       const urlHost = new URL(evidence?.finalUrl || url).hostname;
       const isKnownSPA = /(^|\.)whop\.com$/i.test(urlHost);
       obj = normaliseOutput(obj, { isKnownSPA });
+
+      // ====================== FAQ QUOTE-LOCK LOOP ======================
+      try {
+        const evidenceHost = urlHost;
+        const evidenceHtml = evidence?.html || "";
+        const evidenceText = (evidence?.textSample || "").replace(/\s+/g, " ").trim();
+        let faqTries = 0;
+        const maxFaqTries = ACTIVE_POLICY.retryUntilSuccess ? 4 : 2;
+
+        while (faqTries < maxFaqTries &&
+               !faqIsGrounded(obj.faqcontent, evidenceText, evidenceHost)) {
+          faqTries++;
+          console.log(`🔄 FAQ not grounded → regenerating (${faqTries}/${maxFaqTries}) for ${slug}`);
+
+          // Create a wrapper function to call the model and parse JSON
+          const callModelJSON = async (sys, user) => {
+            const combined = `${sys}\n\n${user}`;
+            const raw = await api.callLLM(combined);
+            const firstBrace = raw.indexOf("[");
+            const lastBrace = raw.lastIndexOf("]");
+            if (firstBrace >= 0 && lastBrace > firstBrace) {
+              return JSON.parse(raw.slice(firstBrace, lastBrace+1));
+            }
+            return JSON.parse(raw);
+          };
+
+          obj.faqcontent = await regenerateFaqGrounded(callModelJSON, evidenceHtml, evidenceHost);
+          obj = normaliseOutput(obj, { isKnownSPA });
+        }
+
+        if (!faqIsGrounded(obj.faqcontent, evidenceText, evidenceHost)) {
+          console.warn(`⚠️  FAQ still not grounded → applying quote-only fallback for ${slug}`);
+          obj.faqcontent = buildQuoteOnlyFaq(evidenceText, evidenceHost);
+        }
+      } catch (e) {
+        console.warn(`⚠️  FAQ grounding loop error: ${e?.message || e}`);
+      }
+      // ==================== END FAQ QUOTE-LOCK LOOP ====================
 
       // Now validate (operating on merged obj)
       const err = validatePayload(obj);
