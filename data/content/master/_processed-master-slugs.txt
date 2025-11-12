@@ -404,6 +404,7 @@ alvarburn-comunidad-privada
 am-elites-premium
 amazon-direct-to-brand
 amazon-fba
+amazon-fba-advanced-course
 amazon-fba-mastery
 amazon-fba-network
 amazon-fba-profit-path

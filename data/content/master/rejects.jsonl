@@ -310,7 +310,6 @@
 {"slug":"aiautomator-2","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"amplified-advisors","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"amanda-fit-nees-coaching","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"amazon-fba-advanced-course","error":"fetch failed"}
 {"slug":"alertskr","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"apex-leads-group","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"airflow","error":"Soft skip: 404 or insufficient evidence"}
@@ -2498,11 +2497,10 @@
 {"slug":"movewithbrettbs-whop","error":"Evidence fetch failed: fetch failed"}
 {"slug":"communication-mastery-protocol","error":"Evidence fetch failed: fetch failed"}
 {"slug":"components-trading","error":"Evidence fetch failed: fetch failed"}
-{"slug":"closr","error":"Evidence fetch failed: fetch failed"}
 {"slug":"moonlight","error":"Evidence fetch failed: fetch failed"}
 {"slug":"coaching-pro","error":"Evidence fetch failed: fetch failed"}
 {"slug":"clothing-brand-education","error":"Evidence fetch failed: fetch failed"}
-{"slug":"closing-bible-financing","error":"Evidence fetch failed: fetch failed"}
+{"slug":"closing-bible-financing","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-11T16:05:15.900Z"}
 {"slug":"msa-trading","error":"Evidence fetch failed: fetch failed"}
 {"slug":"complete-pain-resolution","error":"Evidence fetch failed: fetch failed"}
 {"slug":"clutch-trading","error":"Evidence fetch failed: fetch failed"}

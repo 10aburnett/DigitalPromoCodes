@@ -22007,18 +22007,12 @@
     "premium-mois": {
       "when": "2025-11-10T16:41:06.942Z",
       "why": "synced_from_master"
-    }
+    },
+    "amazon-fba-advanced-course": true,
+    "closr": true
   },
   "pending": {
-    "prop-and-seek-premium": 1762796283225,
-    "premium-discord-more": 1762796283235,
-    "ourbologroup-membership": 1762796283237,
-    "premium-live-tradingwkmo": 1762796283239,
-    "peak-performance-accelerator": 1762796283241,
-    "new-vip-week-package": 1762796283243,
-    "plan-lite-": 1762796283245,
-    "platinum-paquete-completo": 1762796283247,
-    "my-8-figure-system": 1762796283249
+    "100-creative": 1762948678192
   },
   "outPath": "data/content/raw/ai-run-20251104T180924.jsonl",
   "rejPath": "data/content/raw/rejects-20251104T180924.jsonl",
@@ -23269,10 +23263,6 @@
       "why": "synced_from_master_rejects"
     },
     "amanda-fit-nees-coaching": {
-      "when": "2025-11-10T16:41:06.942Z",
-      "why": "synced_from_master_rejects"
-    },
-    "amazon-fba-advanced-course": {
       "when": "2025-11-10T16:41:06.942Z",
       "why": "synced_from_master_rejects"
     },
@@ -32026,7 +32016,9 @@
     },
     "closr": {
       "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762795760964
+      "errorCode": "HTTP_404",
+      "ts": 1762880869487,
+      "meta": {}
     },
     "moonlight": {
       "reason": "Soft skip: 404 or insufficient evidence",
@@ -32042,7 +32034,9 @@
     },
     "closing-bible-financing": {
       "reason": "Soft skip: 404 or insufficient evidence",
-      "ts": 1762795770315
+      "errorCode": "HTTP_404",
+      "ts": 1762877115897,
+      "meta": {}
     },
     "msa-trading": {
       "reason": "Soft skip: 404 or insufficient evidence",
