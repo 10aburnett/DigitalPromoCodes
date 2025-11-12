@@ -30,6 +30,7 @@ import readline from "readline";
 import os from "os";
 import crypto from "crypto";
 import { acquireLock, releaseLock } from "./lib/lock.mjs";
+import { climbEvidenceLadder } from "./evidence-ladder.mjs";
 
 // Acquire PID lock to prevent concurrent runs
 acquireLock({ role: "generator" });
@@ -722,6 +723,32 @@ async function obtainEvidence(url, slug, name, forceRecrawl = false) {
       // Allow meta-only passes for known SPAs with healthy meta signals
       const metaOnlyPass = (status === 200 && IS_KNOWN_SPA && metaWords >= 25);
 
+      // Must-succeed mode: climb evidence ladder if initial fetch is insufficient
+      if (!metaOnlyPass && (contentCount < 2 || textLength < 250) && ACTIVE_POLICY.retryUntilSuccess) {
+        console.log(`📶 Must-succeed mode: evidence insufficient, climbing ladder...`);
+        const minChars = ACTIVE_POLICY.evidenceChars || 300;
+        const ladderResult = await climbEvidenceLadder(finalUrl, html1, minChars);
+
+        if (ladderResult.ok) {
+          // Re-extract from ladder HTML
+          const ex2 = extractFromHtml(ladderResult.html, ladderResult.url);
+          const evidence = {
+            ...ex2,
+            finalUrl: ladderResult.url,
+            fetchedAt: new Date().toISOString(),
+            textHash: sha256(ex2.textSample || ""),
+            evidenceSource: ladderResult.source,
+            drilled: false
+          };
+          fs.writeFileSync(cachePath, JSON.stringify(evidence, null, 2));
+          console.log(`✅ Evidence ladder success: ${ladderResult.source} (${(ex2.textSample || "").length} chars)`);
+          return evidence;
+        } else {
+          console.warn(`⚠️  Evidence ladder exhausted: ${ladderResult.why}`);
+          // Fall through to normal insufficient evidence handling
+        }
+      }
+
       if (!metaOnlyPass && (contentCount < 2 || textLength < 250)) {
         console.warn(`⚠️  Skipping ${slug}: Insufficient evidence (${contentCount} blocks, ${textLength} chars, ${metaWords} meta words)`);
         return null;
@@ -1188,7 +1215,7 @@ const SOFT404_PHRASES = (process.env.SOFT404_PHRASES || "404,not found,page not 
 const SAVE_HTML_DEBUG = process.env.SAVE_HTML_DEBUG === "1";
 
 // Policy-driven guardrails (without weakening evidence globally)
-const RULESET = process.env.RULESET || "strict"; // "strict" | "relaxed-spa"
+const RULESET = process.env.RULESET || "strict"; // "strict" | "relaxed-spa" | "must-succeed"
 const GUARDRAIL_POLICY = {
   "strict": {
     aboutMinWords: 120,
@@ -1202,9 +1229,25 @@ const GUARDRAIL_POLICY = {
     evidenceChars: 300,
     name: "Relaxed for SPAs"
   },
+  "must-succeed": {
+    aboutMinWords: 40,
+    faqMin: 1,
+    evidenceChars: 100,
+    maxRetries: 8,
+    allowSynthetic: true,
+    allowLowConfidence: true,
+    retryUntilSuccess: true,
+    name: "Must-succeed (retry until success or terminal 404)"
+  },
 };
 const ACTIVE_POLICY = GUARDRAIL_POLICY[RULESET] || GUARDRAIL_POLICY["strict"];
 console.log(`📋 Active guardrail policy: ${ACTIVE_POLICY.name}`);
+
+// Override MAX_RETRIES if policy specifies it
+const EFFECTIVE_MAX_RETRIES = ACTIVE_POLICY.maxRetries || MAX_RETRIES;
+if (ACTIVE_POLICY.maxRetries && ACTIVE_POLICY.maxRetries !== MAX_RETRIES) {
+  console.log(`🔄 Policy overrides MAX_RETRIES: ${MAX_RETRIES} → ${ACTIVE_POLICY.maxRetries}`);
+}
 
 let ck = loadJSON(CHECKPOINT, { done: {}, pending: {} });
 if (!ck.rejected) ck.rejected = {}; // Track rejects separately from done
@@ -1301,6 +1344,25 @@ function rejectAndPersist(slug, reason, meta = {}) {
      /timeout/i.test(reasonStr)                ? "TIMEOUT" :
                                                  "OTHER")
   );
+
+  // Must-succeed mode: only reject terminal 404s, never quality/retry errors
+  if (ACTIVE_POLICY.retryUntilSuccess) {
+    const retryableErrors = ["INSUFFICIENT_EVIDENCE", "NETWORK_FETCH_FAIL", "GUARDRAIL_FAIL", "RATE_LIMIT", "TIMEOUT", "OTHER"];
+    if (retryableErrors.includes(code)) {
+      console.log(`🔄 Must-succeed mode: skipping reject for retryable error ${code} on ${slug}`);
+      // Don't persist reject - this will cause retry on next pass
+      delete ck.pending[slug]; // But do clear pending state
+      persistCheckpoint();
+      return;
+    }
+    // Only HTTP_404 and ABANDONED are terminal in must-succeed mode
+    if (code !== "HTTP_404" && code !== "ABANDONED") {
+      console.log(`🔄 Must-succeed mode: deferring reject for ${code} on ${slug}`);
+      delete ck.pending[slug];
+      persistCheckpoint();
+      return;
+    }
+  }
 
   ck.rejected[slug] = { reason: reasonStr, errorCode: code, ts: Date.now(), meta };
   delete ck.pending[slug];
@@ -3279,12 +3341,12 @@ async function worker(task) {
   // Check retry ceiling (IGNORE_CHECKPOINT mode only)
   if (IGNORE_CHECKPOINT) {
     const attempts = bumpRetry(slug);
-    if (attempts > MAX_RETRIES) {
+    if (attempts > EFFECTIVE_MAX_RETRIES) {
       rejectAndPersist(slug, `abandoned after ${attempts} attempts`, { errorCode: "ABANDONED" });
       return;
     }
     if (attempts > 1) {
-      console.log(`🔄 Retry attempt ${attempts}/${MAX_RETRIES} for ${slug}`);
+      console.log(`🔄 Retry attempt ${attempts}/${EFFECTIVE_MAX_RETRIES} for ${slug}`);
     }
   }
 
