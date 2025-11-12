@@ -951,6 +951,7 @@ SEO REQUIREMENTS (based on top-ranking coupon pages):
    - **CRITICAL: NEVER include the exact phrase "promo code" in FAQ questions or answers. Use "discount", "offer", "current deal", "saving" instead to avoid keyword stuffing.**
    - CRITICAL: Vary question openers (≥3 distinct when n≥4: How/What/Can/Where/Is/Do/etc.). Avoid repetitive "How do I..." patterns.
    - Include semantic variations of target keywords naturally.
+   - **GROUNDING REQUIREMENT**: Each FAQ answer SHOULD include at least one verbatim quoted sentence from EVIDENCE (in quotes) followed by "(Verified on [hostname])" when facts are available. If EVIDENCE is insufficient for a specific question, write: "We couldn't verify this from the available sources."
 
 FORMATTING RULES:
 - Use HTML <p>, <ul>, <ol>, <li>, and <strong> tags correctly for SEO structure.
@@ -3346,6 +3347,49 @@ async function worker(task) {
   if (IGNORE_CHECKPOINT) {
     const attempts = bumpRetry(slug);
     if (attempts > EFFECTIVE_MAX_RETRIES) {
+      // Must-succeed mode: emit synthetic fallback instead of rejecting
+      if (ACTIVE_POLICY.retryUntilSuccess && ACTIVE_POLICY.allowSynthetic) {
+        console.warn(`🔄 Max retries reached → emitting synthetic low-evidence for ${slug}`);
+        const safeName = (name || slug).replace(/[^\w\s-]/g, "");
+        const synth = buildSyntheticFallback({ slug, displayName: safeName, name: safeName });
+
+        // Add metadata flags
+        const output = {
+          ...synth,
+          __meta: {
+            sourceUrl: url,
+            finalUrl: url,
+            evidenceHash: null,
+            drilled: false,
+            confidence: "low",
+            evidence_status: "synthetic",
+            indexable: false,
+            attempt_count: attempts
+          }
+        };
+
+        // Write output (skip fingerprint/dedupe for synthetic)
+        fs.appendFileSync(OUT_FILE, JSON.stringify(output) + "\n");
+
+        // Atomic append to master
+        if (!EVIDENCE_ONLY) {
+          try {
+            appendLineAtomic("data/content/master/updates.jsonl", output);
+            appendLineAtomic("data/content/master/successes.jsonl", output);
+            removeRejectIfExists(slug);
+          } catch (err) {
+            console.error(`⚠️  Failed to append synthetic success: ${err.message}`);
+          }
+        }
+
+        // Mark done and clean up
+        ck.done[slug] = true;
+        delete ck.pending[slug];
+        persistCheckpoint();
+        return;
+      }
+
+      // Legacy path: reject
       rejectAndPersist(slug, `abandoned after ${attempts} attempts`, { errorCode: "ABANDONED" });
       return;
     }
@@ -3866,13 +3910,18 @@ ${JSON.stringify(obj)}
       } catch {}
 
       // Add evidence breadcrumb for audit trail (not imported to DB)
+      const attempts = IGNORE_CHECKPOINT ? (retryCount.get(slug) || 1) : 1;
       const output = {
         ...obj,
         __meta: {
           sourceUrl: url,
           finalUrl: evidence?.finalUrl || url,
           evidenceHash: evidence?.textHash || null,
-          drilled: evidence?.drilled || false
+          drilled: evidence?.drilled || false,
+          confidence: evidence?.evidenceSource ? (evidence.evidenceSource === "direct" ? "high" : "medium") : "high",
+          evidence_status: evidence?.evidenceSource || "direct",
+          indexable: true,
+          attempt_count: attempts
         }
       };
 
@@ -3991,13 +4040,18 @@ ${JSON.stringify(obj)}
             recordHash(hashOf(obj2));
 
             // Add evidence breadcrumb for audit trail (not imported to DB)
+            const attempts2 = IGNORE_CHECKPOINT ? (retryCount.get(slug) || 1) : 1;
             const output2 = {
               ...obj2,
               __meta: {
                 sourceUrl: url,
                 finalUrl: evidence?.finalUrl || url,
                 evidenceHash: evidence?.textHash || null,
-                drilled: evidence?.drilled || false
+                drilled: evidence?.drilled || false,
+                confidence: evidence?.evidenceSource ? (evidence.evidenceSource === "direct" ? "high" : "medium") : "high",
+                evidence_status: evidence?.evidenceSource || "direct",
+                indexable: true,
+                attempt_count: attempts2
               }
             };
 
