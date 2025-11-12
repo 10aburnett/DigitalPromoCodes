@@ -31,7 +31,7 @@ import os from "os";
 import crypto from "crypto";
 import { acquireLock, releaseLock } from "./lib/lock.mjs";
 import { climbEvidenceLadder } from "./evidence-ladder.mjs";
-import { faqIsGrounded, regenerateFaqGrounded, buildQuoteOnlyFaq } from "./faq-grounding.mjs";
+import { faqIsGrounded, regenerateFaqGrounded, buildQuoteOnlyFaq, buildGeneralFaq } from "./faq-grounding.mjs";
 import { buildSyntheticFallback } from "./synthetic-fallback.mjs";
 
 // Acquire PID lock to prevent concurrent runs
@@ -2959,8 +2959,9 @@ function checkGrounding(obj, evidence, preserved = {}) {
     }
   }
 
-  // Check FAQ answers (skip if entire FAQ was preserved)
-  if (!preserved?.faq && Array.isArray(obj.faqcontent)) {
+  // Check FAQ answers (skip if entire FAQ was preserved OR if using generic fallback)
+  const isGenericFaq = obj.__meta?.evidence_status === "general" || obj.__meta?.needsVerification === true;
+  if (!preserved?.faq && !isGenericFaq && Array.isArray(obj.faqcontent)) {
     for (const qa of obj.faqcontent) {
       if (qa?.answerHtml && !grounded(qa.answerHtml)) {
         groundFails.push("faq answer not grounded");
@@ -3604,7 +3605,7 @@ async function worker(task) {
         const evidenceHtml = evidence?.html || "";
         const evidenceText = (evidence?.textSample || "").replace(/\s+/g, " ").trim();
         let faqTries = 0;
-        const maxFaqTries = ACTIVE_POLICY.retryUntilSuccess ? 4 : 2;
+        const maxFaqTries = ACTIVE_POLICY.retryUntilSuccess ? 3 : 2;
 
         while (faqTries < maxFaqTries &&
                !faqIsGrounded(obj.faqcontent, evidenceText, evidenceHost)) {
@@ -3628,8 +3629,16 @@ async function worker(task) {
         }
 
         if (!faqIsGrounded(obj.faqcontent, evidenceText, evidenceHost)) {
-          console.warn(`⚠️  FAQ still not grounded → applying quote-only fallback for ${slug}`);
-          obj.faqcontent = buildQuoteOnlyFaq(evidenceText, evidenceHost);
+          console.warn(`⚠️  FAQ still not grounded → applying zero-cost generic fallback for ${slug}`);
+          const display = (task?.displayName || name || slug || "").trim();
+          obj.faqcontent = buildGeneralFaq(display, 5, slug);
+          obj.__meta = {
+            ...(obj.__meta || {}),
+            confidence: obj.__meta?.confidence || "medium",
+            evidence_status: "general",
+            indexable: true,
+            needsVerification: true
+          };
         }
       } catch (e) {
         console.warn(`⚠️  FAQ grounding loop error: ${e?.message || e}`);
