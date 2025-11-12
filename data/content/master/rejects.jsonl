@@ -160,7 +160,6 @@
 {"slug":"500-challenge","error":"Repair failed: aboutcontent words 114 not in 120–180"}
 {"slug":"-pro-plan","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"-free-7-days-leadsautopilot","error":"Primary keyword (\"🎁 FREE 7 DAYS 🎁 LeadsAutopilot promo code\") missing in aboutcontent first paragraph (min presence rule)"}
-{"slug":"6-figur-funding","error":"Repair failed: howtoredeemcontent must use <ol> for steps"}
 {"slug":"500-small-account-challenge","error":"Primary keyword (\"$500 Small Account Challenge promo code\") missing in aboutcontent first paragraph (min presence rule)"}
 {"slug":"400-balance-5000-tokens","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"5-balance-50-tokens","error":"Soft skip: 404 or insufficient evidence"}
@@ -197,7 +196,6 @@
 {"slug":"3in1","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"5-day-challenge-vip-june","error":"Grounding check failed: faq answer not grounded"}
 {"slug":"-7-day-free-trial-bundle-","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"4-pick-silver-package","error":"Count checks failed after repair: aboutcontent words 118 not in 120–180; howtoredeemcontent must use <ol> for steps; howtoredeem step 3 words 7 not in 10–20; howtoredeem step 4 words 8 not in 10–20; howtoredeem step 5 words 7 not in 10–20; Over-certain claim language detected (avoid guarantees); howtoredeemcontent bullets should start with an action verb (imperative); promodetailscontent bullets should start with an action verb (imperative)"}
 {"slug":"1of1locks","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"100-resell-expansion","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"-atom-signals-indicator-","error":"Soft skip: 404 or insufficient evidence"}
@@ -234,7 +232,6 @@
 {"slug":"agentdash","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"agp-accelerator","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"8-figure-blueprint","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"acquisition-network-","error":"Count checks failed after repair: howtoredeemcontent must use <ol> for steps; howtoredeem step 4 words 7 not in 10–20; howtoredeem step 5 words 9 not in 10–20; Avoid chaining multiple synonyms back-to-back in aboutcontent; howtoredeemcontent bullets should start with an action verb (imperative); promodetailscontent bullets should start with an action verb (imperative)"}
 {"slug":"activate-your-vsn","error":"Grounding check failed: faq answer not grounded"}
 {"slug":"ackolade","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"abhmedia-ongoing-standard","error":"Soft skip: 404 or insufficient evidence"}
@@ -243,14 +240,12 @@
 {"slug":"agent-developer-mentorship","error":"Grounding check failed: faq answer not grounded"}
 {"slug":"ads-for-smokes","error":"Primary keyword (\"Ads For Smokes™ promo code\") missing in aboutcontent first paragraph (min presence rule)"}
 {"slug":"adams-unlimited-enterprise","error":"Grounding check failed: faq answer not grounded"}
-{"slug":"ai-profit-lab","error":"Repair failed: howtoredeemcontent must use <ol> for steps"}
 {"slug":"advert-management","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"agency-accelerator","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"admit-one","error":"Grounding check failed: faq answer not grounded"}
 {"slug":"adamant-capital-solutions","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"ai-credit-repair","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"affiniti-flow","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"acquisition-ace-financing","error":"Repair failed: howtoredeemcontent must use <ol> for steps"}
 {"slug":"ados","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"agency-partner-package","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"academia-de-trading-1","error":"Grounding check failed: faq answer not grounded"}
@@ -262,7 +257,6 @@
 {"slug":"aesthetic-mastery","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"affiliatepro","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"abtrades-free-community-chat","error":"Repair failed: aboutcontent words 118 not in 120–180"}
-{"slug":"academy-live","error":"Repair failed: howtoredeemcontent must use <ol> for steps"}
 {"slug":"adflow-platinum","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"ai-plays","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"abonnement-promodfis-anj","error":"Soft skip: 404 or insufficient evidence"}
@@ -281,9 +275,7 @@
 {"slug":"abc-premium-picks","error":"Grounding check failed: faq answer not grounded"}
 {"slug":"advanced","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"ai-business-plans-with-doug","error":"Repair failed: howtoredeemcontent must use <ol> for steps"}
-{"slug":"90-day-mentorship","error":"Repair failed: howtoredeemcontent must use <ol> for steps"}
 {"slug":"accelerator-lite","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"a-list-affiliate-programme","error":"Repair failed: howtoredeemcontent must use <ol> for steps"}
 {"slug":"adverthead","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"99percentlocks","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"accs-bot-vinted","error":"Soft skip: 404 or insufficient evidence"}
@@ -296,7 +288,6 @@
 {"slug":"ai-growth-partner-essentials","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"9-every-nfl-pick-","error":"Primary keyword (\"$9 EVERY NFL PICK 🏈 promo code\") missing in aboutcontent first paragraph (min presence rule)"}
 {"slug":"access-to-all-indicators-","error":"Grounding check failed: faq answer not grounded"}
-{"slug":"acne-masterclass","error":"Count checks failed after repair: aboutcontent words 119 not in 120–180; howtoredeemcontent must use <ol> for steps; howtoredeem step 4 words 9 not in 10–20; howtoredeem step 5 words 7 not in 10–20; Over-certain claim language detected (avoid guarantees); howtoredeemcontent bullets should start with an action verb (imperative); promodetailscontent bullets should start with an action verb (imperative)"}
 {"slug":"ai-vault","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"amplify-views","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"all-in-legacy-consulting-inc","error":"Soft skip: 404 or insufficient evidence"}
@@ -314,12 +305,10 @@
 {"slug":"apex-leads-group","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"airflow","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"all-in","error":"Grounding check failed: faq answer not grounded"}
-{"slug":"airbnb-arbitrage-roadmap-ps","error":"Repair failed: howtoredeemcontent must use <ol> for steps"}
 {"slug":"anya-wareck","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"amazon-tax-walmart-kredi","error":"Primary keyword (\"Amazon , Tax , Walmart , kredi promo code\") missing in aboutcontent first paragraph (min presence rule)"}
 {"slug":"alecc-webinars","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"ancientagency","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"amazon-seller-course","error":"Repair failed: howtoredeemcontent must use <ol> for steps"}
 {"slug":"alminmilanovic","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"alliance-group-coaching","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"amazon-fba-success-hub-gyfba","error":"Soft skip: 404 or insufficient evidence"}
@@ -362,7 +351,6 @@
 {"slug":"ambition-fitness-warriors","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"alpha-analyst","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"ansley-jean-fitness","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"alpha-trades-vip-access","error":"Repair failed: howtoredeemcontent must use <ol> for steps"}
 {"slug":"artists-in-business-deposit","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"aro-trades-1-on-1-mentorship","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"art-of-sales-intensive","error":"Soft skip: 404 or insufficient evidence"}
@@ -376,7 +364,6 @@
 {"slug":"ascensionacademy","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"ascend-university-access","error":"Grounding check failed: faq answer not grounded"}
 {"slug":"atm-operations","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"astro-os-pro","error":"Repair failed: howtoredeemcontent must use <ol> for steps"}
 {"slug":"athletix-academy","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"ateamchefs-family-invite","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"aumenta-tu-valor","error":"Soft skip: 404 or insufficient evidence"}
@@ -396,7 +383,6 @@
 {"slug":"bdl-premium-monthly","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"be-elite-a-la-carte-4momo","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"bbff-starter-fantasy-diy","error":"Grounding check failed: faq answer not grounded"}
-{"slug":"bdt-trading-course","error":"Count checks failed after repair: howtoredeemcontent must use <ol> for steps; howtoredeem step 3 words 8 not in 10–20; howtoredeem step 4 words 7 not in 10–20; Over-certain claim language detected (avoid guarantees); howtoredeemcontent bullets should start with an action verb (imperative); promodetailscontent bullets should start with an action verb (imperative)"}
 {"slug":"buy-crypto","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"budgetdog-academy","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"business-growth-mastery-gp","error":"Soft skip: 404 or insufficient evidence"}
@@ -523,7 +509,6 @@
 {"slug":"crypto-office-membresa","error":"Grounding check failed: faq answer not grounded"}
 {"slug":"crypto-moguls-academy","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"coursebuild","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"criss-gold","error":"Repair failed: howtoredeemcontent must use <ol> for steps"}
 {"slug":"credit-restoration","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"crypto-bank-account","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"custombbstoreorder","error":"Grounding check failed: faq answer not grounded"}
@@ -534,7 +519,6 @@
 {"slug":"creative-that-converts","error":"Grounding check failed: faq answer not grounded"}
 {"slug":"cronus-heaven-premium","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"crafty-investments","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"cyber-ninja","error":"Repair failed: howtoredeemcontent must use <ol> for steps"}
 {"slug":"criscklukks-whop","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"cryptoalphas-hub-dolphin","error":"Grounding check failed: faq answer not grounded"}
 {"slug":"custom-subscription","error":"Soft skip: 404 or insufficient evidence"}
@@ -555,7 +539,6 @@
 {"slug":"daniel-g-hubzome-lda-speaking","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"dealsify","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"defi-consulting-alliance","error":"Repair failed: aboutcontent words 114 not in 120–180"}
-{"slug":"delta-prime-membership","error":"Count checks failed after repair: aboutcontent words 110 not in 120–180; howtoredeemcontent must use <ol> for steps; howtoredeem step 5 words 7 not in 10–20; promodetailscontent bullets should start with an action verb (imperative)"}
 {"slug":"dialerio","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"deepquant","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"da-lock-room","error":"Soft skip: 404 or insufficient evidence"}
@@ -573,7 +556,6 @@
 {"slug":"ddu-online-services-agency-","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"cybill","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"datsq9-1-week-pass","error":"fetch failed"}
-{"slug":"day-trading-launchpad","error":"Repair failed: howtoredeemcontent must use <ol> for steps"}
 {"slug":"degen-vip","error":"Repair failed: aboutcontent words 114 not in 120–180"}
 {"slug":"deal-dad-discord","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"darshilinvests","error":"Soft skip: 404 or insufficient evidence"}
@@ -657,7 +639,6 @@
 {"slug":"dinner","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"dt-coaching","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"digital-wealth-society","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"digital-freedom-elite-bundle","error":"Repair failed: howtoredeemcontent must use <ol> for steps"}
 {"slug":"dropship-journey-20","error":"Grounding check failed: faq answer not grounded"}
 {"slug":"dnd-monthly-membership","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"digital-master-premium","error":"Soft skip: 404 or insufficient evidence"}
@@ -700,7 +681,6 @@
 {"slug":"dlinedna-premium","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"discord-vip-tier-3","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"drews-wcma-growth-circle","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"donations-ad-free-wlogin","error":"Repair failed: howtoredeemcontent must use <ol> for steps"}
 {"slug":"dm-setting","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"donguribatake","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"dk-trading","error":"Soft skip: 404 or insufficient evidence"}
@@ -729,7 +709,6 @@
 {"slug":"ecom-revolution","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"elevatescore","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"elite-aesthetics-120","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"ecommerce-accelerator-course","error":"Repair failed: howtoredeemcontent must use <ol> for steps"}
 {"slug":"elite18","error":"Grounding check failed: faq answer not grounded"}
 {"slug":"elite6","error":"Grounding check failed: faq answer not grounded"}
 {"slug":"ebay-automation","error":"Soft skip: 404 or insufficient evidence"}
@@ -737,7 +716,6 @@
 {"slug":"ecom-endgame","error":"Grounding check failed: faq answer not grounded"}
 {"slug":"emberflow-90-day-program","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"elev8-ecommerce","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"elite-smc-trading-bootcamp","error":"Repair failed: howtoredeemcontent must use <ol> for steps"}
 {"slug":"ecoledropout","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"e-l-e-v-a-t-i-o-n","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"elite-landscaping-mastery","error":"Soft skip: 404 or insufficient evidence"}
@@ -750,9 +728,7 @@
 {"slug":"edge-your-bets","error":"Grounding check failed: faq answer not grounded"}
 {"slug":"eamerge","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"elites-monthly-package","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"elite-crypto-payment","error":"Count checks failed after repair: howtoredeemcontent must use <ol> for steps; howtoredeem step 3 words 9 not in 10–20; howtoredeem step 4 words 7 not in 10–20; howtoredeem step 5 words 7 not in 10–20; howtoredeemcontent bullets should start with an action verb (imperative); promodetailscontent bullets should start with an action verb (imperative)"}
 {"slug":"eduardo51-prestige","error":"Grounding check failed: faq answer not grounded"}
-{"slug":"e-mini-mavericks-trading-room","error":"Repair failed: howtoredeemcontent must use <ol> for steps"}
 {"slug":"elite-cripto-membership","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"edp-fr-accs-light","error":"Grounding check failed: faq answer not grounded"}
 {"slug":"eminence-pro-course","error":"Soft skip: 404 or insufficient evidence"}
@@ -784,7 +760,6 @@
 {"slug":"exotic-fleet-formula","error":"Style guard: aboutcontent needs more varied sentence length (human cadence). Require ≥3 sentences, mean 13–22 words/sentence, stdev ≥4 for natural variation."}
 {"slug":"eros-media","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"financially-free-entourage","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"financial-dominance","error":"Repair failed: howtoredeemcontent must use <ol> for steps"}
 {"slug":"faceless-creator-club","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"fba-to-100k","error":"Grounding check failed: faq answer not grounded"}
 {"slug":"ez-legal-tint","error":"Soft skip: 404 or insufficient evidence"}
@@ -800,7 +775,6 @@
 {"slug":"faith-genevas-6-figure-bluepr","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"exclusive-calls","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"firestart","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"fba-accelerator-coaching","error":"Repair failed: howtoredeemcontent must use <ol> for steps"}
 {"slug":"fameu","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"first-team-investing-monthly","error":"Grounding check failed: faq answer not grounded"}
 {"slug":"everything-is-planned-legacy","error":"Soft skip: 404 or insufficient evidence"}
@@ -899,7 +873,6 @@
 {"slug":"flyyypicks","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"flash-picks","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"freedomers","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"flipflip-free-trial","error":"Repair failed: howtoredeemcontent must use <ol> for steps"}
 {"slug":"francescas-fitness","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"forex-league-premium","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"fittobe","error":"Soft skip: 404 or insufficient evidence"}
@@ -913,8 +886,6 @@
 {"slug":"freakn-club","error":"Grounding check failed: faq answer not grounded"}
 {"slug":"flight-school","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"flyty-sportsbets","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"fortnite-maps-clipping-paid","error":"Count checks failed after repair: howtoredeemcontent must use <ol> for steps; howtoredeem step 4 words 9 not in 10–20; howtoredeem step 5 words 6 not in 10–20; Over-certain claim language detected (avoid guarantees); howtoredeemcontent bullets should start with an action verb (imperative); promodetailscontent bullets should start with an action verb (imperative)"}
-{"slug":"fluid-trades-algo-suite","error":"Repair failed: howtoredeemcontent must use <ol> for steps"}
 {"slug":"flinch-mob","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"fullyloadedsportz-discord","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"full-access-all-features-","error":"Soft skip: 404 or insufficient evidence"}
@@ -933,7 +904,6 @@
 {"slug":"gold-pips-premium","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"gioecom-corp","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"gabrielo-writes-email-list","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"goliath-school","error":"Repair failed: howtoredeemcontent must use <ol> for steps"}
 {"slug":"fxvdriixn-trades","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"get-access","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"fxpiptalk","error":"Soft skip: 404 or insufficient evidence"}
@@ -970,7 +940,6 @@
 {"slug":"greater-than-fitness","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"gayltv","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"get-mentored-by-millionaires","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"glizzy-clipper-notifications","error":"Count checks failed after repair: howtoredeemcontent must use <ol> for steps; howtoredeem step 3 words 8 not in 10–20; howtoredeem step 4 words 8 not in 10–20; howtoredeem step 5 words 7 not in 10–20; Over-certain claim language detected (avoid guarantees); Avoid chaining multiple synonyms back-to-back in aboutcontent; howtoredeemcontent bullets should start with an action verb (imperative); promodetailscontent bullets should start with an action verb (imperative)"}
 {"slug":"gideon-trades","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"genies-placement-academy","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"g3-price-action-academy","error":"Soft skip: 404 or insufficient evidence"}
@@ -1053,9 +1022,7 @@
 {"slug":"health-pillars-masterclass","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"high-ticket-reselling","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"infosolutionsio","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"isw-exclusive-play","error":"Repair failed: howtoredeemcontent must use <ol> for steps"}
 {"slug":"ink-launch-system","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"instaincome-mastery","error":"Repair failed: howtoredeemcontent must use <ol> for steps"}
 {"slug":"inner-circle-course-only","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"hustlenow","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"hybrid-high-performer-8-m","error":"Soft skip: 404 or insufficient evidence"}
@@ -1158,7 +1125,6 @@
 {"slug":"jump-professors-elite","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"johndaytrading-lab","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"kenzo-picks","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"la-fabrica-premium","error":"Count checks failed after repair: howtoredeemcontent must use <ol> for steps; howtoredeem step 5 words 7 not in 10–20; Over-certain claim language detected (avoid guarantees); Avoid chaining multiple synonyms back-to-back in aboutcontent; howtoredeemcontent bullets should start with an action verb (imperative); promodetailscontent bullets should start with an action verb (imperative)"}
 {"slug":"king-trading","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"jordansportswin","error":"Grounding check failed: faq answer not grounded"}
 {"slug":"jenna-b-fit-5","error":"Originality guard: aboutcontent is too similar to recent outputs (cross-doc similarity ≥40%). LLM must generate unique phrasing."}
@@ -1213,7 +1179,6 @@
 {"slug":"livecops-server","error":"Repair failed: howtoredeemcontent must use <ol> for steps"}
 {"slug":"linkedin-funnels","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"linx","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"level-3-masterheart-circle","error":"Repair failed: howtoredeemcontent must use <ol> for steps"}
 {"slug":"la-petite-agora-multipass","error":"Grounding check failed: faq answer not grounded"}
 {"slug":"lead-generation-loc-2","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"launchbase-kit","error":"Soft skip: 404 or insufficient evidence"}
@@ -1249,7 +1214,6 @@
 {"slug":"live-workshop-elite","error":"Grounding check failed: faq answer not grounded"}
 {"slug":"lafemilliebets-vip","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"llamada-academia-desc","error":"Repair failed: howtoredeemcontent must use <ol> for steps"}
-{"slug":"legal-robbery-live-trading","error":"Count checks failed after repair: aboutcontent words 119 not in 120–180; howtoredeemcontent must use <ol> for steps; howtoredeem step 5 words 7 not in 10–20; howtoredeemcontent bullets should start with an action verb (imperative); promodetailscontent bullets should start with an action verb (imperative)"}
 {"slug":"legacy-scaling-systems","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"lilpraiseys-students","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"lin-marie-virtual-hangout-spot","error":"Soft skip: 404 or insufficient evidence"}
@@ -1262,7 +1226,6 @@
 {"slug":"latenight","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"linkup-media","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"lifetime-premium-access","error":"Count checks failed after repair: aboutcontent words 119 not in 120–180; howtoredeemcontent must use <ol> for steps; howtoredeem step 4 words 7 not in 10–20; howtoredeem step 5 words 9 not in 10–20; Avoid chaining multiple synonyms back-to-back in aboutcontent; howtoredeemcontent bullets should start with an action verb (imperative); promodetailscontent bullets should start with an action verb (imperative)"}
-{"slug":"live-trading-floor-discord","error":"Repair failed: howtoredeemcontent must use <ol> for steps"}
 {"slug":"luxury-lifestyle-worldwide-inc","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"lynks-private","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"m1-capital-accelerator","error":"Soft skip: 404 or insufficient evidence"}
@@ -1392,7 +1355,6 @@
 {"slug":"mayziepickz","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"milly-fam","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"money-season","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"money-hub","error":"Repair failed: howtoredeemcontent must use <ol> for steps"}
 {"slug":"mega-max-bets","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"moissanite-club","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"momentum-xchange","error":"Soft skip: 404 or insufficient evidence"}
@@ -1436,13 +1398,11 @@
 {"slug":"operator-incubator","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"obsidian-ad-accounts","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"noodles-research","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"no-limit-picks","error":"Count checks failed after repair: howtoredeemcontent must use <ol> for steps; howtoredeem step 5 words 7 not in 10–20; howtoredeemcontent bullets should start with an action verb (imperative); promodetailscontent bullets should start with an action verb (imperative)"}
 {"slug":"orderblox-pro","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"no-risk-no-rarri-course","error":"Grounding check failed: faq answer not grounded"}
 {"slug":"nutr-clipping-community","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"nyarthbot-renewal","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"organic-trades-discord-monthly","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"one-mill-acceleration-course","error":"Repair failed: howtoredeemcontent must use <ol> for steps"}
 {"slug":"operator-accelerator","error":"Grounding check failed: faq answer not grounded"}
 {"slug":"optionlab-blueprint","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"oil-money-trading","error":"Soft skip: 404 or insufficient evidence"}
@@ -1461,7 +1421,6 @@
 {"slug":"only-profit-car-rental","error":"Grounding check failed: faq answer not grounded"}
 {"slug":"opusmagna-trading","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"nyo-trading","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"opticle-trading-tier-ii","error":"Count checks failed after repair: aboutcontent words 119 not in 120–180; howtoredeemcontent must use <ol> for steps; howtoredeem step 3 words 8 not in 10–20; howtoredeem step 4 words 7 not in 10–20; howtoredeem step 5 words 8 not in 10–20; howtoredeemcontent bullets should start with an action verb (imperative); promodetailscontent bullets should start with an action verb (imperative)"}
 {"slug":"nqbbyjays-mentorship-group","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"os-premium","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"no-risk-no-rari","error":"Grounding check failed: faq answer not grounded"}
@@ -1599,7 +1558,6 @@
 {"slug":"mr-exclusive-picks","error":"Grounding check failed: faq answer not grounded"}
 {"slug":"coingrams-vip-access","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"cno-research","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"myfreedomclub","error":"Count checks failed after repair: aboutcontent words 118 not in 120–180; howtoredeemcontent must use <ol> for steps; howtoredeem step 3 words 8 not in 10–20; howtoredeem step 4 words 7 not in 10–20; howtoredeem step 5 words 8 not in 10–20; howtoredeemcontent bullets should start with an action verb (imperative); promodetailscontent bullets should start with an action verb (imperative)"}
 {"slug":"monthly-credit-card-paypal","error":"fetch failed"}
 {"slug":"coaching-program","error":"fetch failed"}
 {"slug":"moun-avan-lajan","error":"fetch failed"}
@@ -1862,7 +1820,6 @@
 {"slug":"rodney-east-all-things-music","error":"Grounding check failed: faq answer not grounded"}
 {"slug":"scaltools-club","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"richofflip","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"secret-sauce-package","error":"Count checks failed after repair: howtoredeemcontent must use <ol> for steps; howtoredeem step 3 words 9 not in 10–20; howtoredeem step 4 words 7 not in 10–20; howtoredeem step 5 words 8 not in 10–20; howtoredeemcontent bullets should start with an action verb (imperative); promodetailscontent bullets should start with an action verb (imperative)"}
 {"slug":"road-2-royalty","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"rxchslipz","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"safe-passive-investor","error":"Grounding check failed: faq answer not grounded"}
@@ -1879,7 +1836,6 @@
 {"slug":"skillset-solutions","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"simplexmedia","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"simple-wealth-academy","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"silently","error":"Count checks failed after repair: howtoredeemcontent must use <ol> for steps; howtoredeem step 5 words 7 not in 10–20; howtoredeemcontent bullets should start with an action verb (imperative); promodetailscontent bullets should start with an action verb (imperative)"}
 {"slug":"short-form-masterclass","error":"Grounding check failed: faq answer not grounded"}
 {"slug":"sigmavue","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"service-personnalise","error":"Soft skip: 404 or insufficient evidence"}
@@ -1922,7 +1878,6 @@
 {"slug":"signals-live-education","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"smith-and-flex","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"sneaky-picks-bandit","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"signalx-breaker-algo","error":"Repair failed: howtoredeemcontent must use <ol> for steps"}
 {"slug":"silver-plan","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"smdmm-premium","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"she-got-options","error":"Soft skip: 404 or insufficient evidence"}
@@ -1948,7 +1903,6 @@
 {"slug":"steal-my-agency","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"social-video-ads","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"sole-source","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"sonix-academy","error":"Repair failed: howtoredeemcontent must use <ol> for steps"}
 {"slug":"spycom-vip","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"spark-trading-elite-mentorship","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"solum-media-inc","error":"Soft skip: 404 or insufficient evidence"}
@@ -2039,7 +1993,6 @@
 {"slug":"swerve-picks-monthly","error":"Grounding check failed: faq answer not grounded"}
 {"slug":"stride-systems","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"tb-academy","error":"Grounding check failed: faq answer not grounded"}
-{"slug":"tdl-trading-premium","error":"Repair failed: howtoredeemcontent must use <ol> for steps"}
 {"slug":"supply-connect","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"swing-accelerate","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"targeted-trades-premium","error":"Soft skip: 404 or insufficient evidence"}
@@ -2065,7 +2018,6 @@
 {"slug":"stocksetfs-key-levels-suite","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"tce-betting-gold","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"supreme-team-picks","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"swerve-picks-weekly","error":"Repair failed: howtoredeemcontent must use <ol> for steps"}
 {"slug":"t6lockz","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"tectivussolutions","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"syndicate-premium","error":"Soft skip: 404 or insufficient evidence"}
@@ -2134,7 +2086,6 @@
 {"slug":"the-cryptic","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"the-mammoth-moneylines","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"the-locksmiths-hq","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"the-only-system-you-need","error":"Count checks failed after repair: howtoredeemcontent must use <ol> for steps; howtoredeem step 4 words 7 not in 10–20; howtoredeem step 5 words 9 not in 10–20; howtoredeemcontent bullets should start with an action verb (imperative); promodetailscontent bullets should start with an action verb (imperative)"}
 {"slug":"the-rainmakers","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"the-traders-syndicate","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"the-tik-tok-shop-roadmap","error":"Soft skip: 404 or insufficient evidence"}
@@ -2160,7 +2111,6 @@
 {"slug":"theparlayprophets","error":"Grounding check failed: faq answer not grounded"}
 {"slug":"thrive-creator-mastermind","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"the-x-freedom-formula","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"the-viral-crew","error":"Count checks failed after repair: howtoredeemcontent must use <ol> for steps; howtoredeem step 3 words 8 not in 10–20; howtoredeem step 4 words 8 not in 10–20; howtoredeem step 5 words 7 not in 10–20; Over-certain claim language detected (avoid guarantees); howtoredeemcontent bullets should start with an action verb (imperative); promodetailscontent bullets should start with an action verb (imperative)"}
 {"slug":"the-trading-tutor-super-star","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"theoolrt-empire-du-fit","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"the-trading-den","error":"Soft skip: 404 or insufficient evidence"}
@@ -2248,7 +2198,6 @@
 {"slug":"traders-society-199","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"tiktok-viral","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"tp-futures-trading","error":"Primary keyword (\"T&P Futures Trading promo code\") missing in aboutcontent first paragraph (min presence rule)"}
-{"slug":"tm-final-v3","error":"Count checks failed after repair: howtoredeemcontent must use <ol> for steps; howtoredeem step 5 words 7 not in 10–20; howtoredeemcontent bullets should start with an action verb (imperative); promodetailscontent bullets should start with an action verb (imperative)"}
 {"slug":"turn-cars-into-cash-fast","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"truman-money","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"universidad-marca-personal","error":"Soft skip: 404 or insufficient evidence"}
@@ -2292,7 +2241,6 @@
 {"slug":"unemployed-market-killers","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"tuna-traders-og-tunas","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"university-access","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"tuned-notify-legacy","error":"Repair failed: howtoredeemcontent must use <ol> for steps"}
 {"slug":"tsusho-trading","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"tropical-bets","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"uprety-edu","error":"Soft skip: 404 or insufficient evidence"}
@@ -2328,7 +2276,6 @@
 {"slug":"vanguard-marketing-group","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"value-add-marketing","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"vector-algo-live-account","error":"Repair failed: howtoredeemcontent must use <ol> for steps"}
-{"slug":"vip-day-package","error":"Count checks failed after repair: aboutcontent words 103 not in 120–180; howtoredeemcontent must use <ol> for steps; howtoredeem step 3 words 9 not in 10–20; howtoredeem step 4 words 7 not in 10–20; howtoredeemcontent bullets should start with an action verb (imperative); promodetailscontent bullets should start with an action verb (imperative)"}
 {"slug":"vip-trading-group","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"vacation-market-network","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"vip-solo-afiliados-ultra-vip","error":"Soft skip: 404 or insufficient evidence"}
@@ -2369,7 +2316,6 @@
 {"slug":"vip-locks","error":"Grounding check failed: faq answer not grounded"}
 {"slug":"vip-discord-memberships","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"verifyed-vip","error":"Style guard: aboutcontent needs more varied sentence length (human cadence). Require ≥3 sentences, mean 13–22 words/sentence, stdev ≥4 for natural variation."}
-{"slug":"utopia-40","error":"Repair failed: howtoredeemcontent must use <ol> for steps"}
 {"slug":"vault-elite-vip-discord","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"value-picks","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"vh-bets","error":"Soft skip: 404 or insufficient evidence"}
@@ -2394,7 +2340,6 @@
 {"slug":"weekly-access-most-popular","error":"Grounding check failed: faq answer not grounded"}
 {"slug":"waroncappers-premium","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"washedup-sports-premium-access","error":"Style guard: aboutcontent needs more varied sentence length (human cadence). Require ≥3 sentences, mean 13–22 words/sentence, stdev ≥4 for natural variation."}
-{"slug":"whats-the-next-bet-premium","error":"Repair failed: howtoredeemcontent must use <ol> for steps"}
 {"slug":"wholesale-mastery-starter-pack","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"we-flip-it-all-membership","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"wifi-money-lab","error":"Soft skip: 404 or insufficient evidence"}
@@ -2431,7 +2376,6 @@
 {"slug":"x-dylan-jahraus-course-only","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"women-in-power","error":"Grounding check failed: faq answer not grounded"}
 {"slug":"zero-to-hero-trading-academy","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"wojo-media-growth","error":"Count checks failed after repair: howtoredeemcontent must use <ol> for steps; howtoredeem step 3 words 7 not in 10–20; howtoredeem step 4 words 8 not in 10–20; howtoredeem step 5 words 8 not in 10–20; howtoredeemcontent bullets should start with an action verb (imperative); promodetailscontent bullets should start with an action verb (imperative)"}
 {"slug":"youtube-consulting","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"ypa-program-10-superior-videos","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"wolf-pack-pro-copy-trading","error":"Repair failed: howtoredeemcontent must use <ol> for steps"}
@@ -2452,7 +2396,6 @@
 {"slug":"zay-prize-picks","error":"Grounding check failed: faq answer not grounded"}
 {"slug":"yeldapicks-premium","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"yeslermedia","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"youth-financials-inner-circle","error":"Repair failed: howtoredeemcontent must use <ol> for steps"}
 {"slug":"xm-invest","error":"Grounding check failed: faq answer not grounded"}
 {"slug":"zero-to-39m-ecom-crash-course","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"women-of-wall-street","error":"Soft skip: 404 or insufficient evidence"}
