@@ -353,6 +353,12 @@ if (GENERIC_FAQ_SLUGS_FILE) {
 }
 const FORCE_GENERIC_ON_PRIOR_FAQ_REJECT = (process.env.FORCE_GENERIC_ON_PRIOR_FAQ_REJECT === "1");
 
+// Max FAQ retries. For big reject sweeps, set FAQ_MAX_TRIES=1 in env to save tokens.
+const FAQ_MAX_TRIES = parseInt(process.env.FAQ_MAX_TRIES || "3", 10);
+
+// Toggle extractive mode (quote-heavy). Default OFF for SEO safety.
+const ENABLE_EXTRACTIVE = (process.env.ENABLE_EXTRACTIVE === "1");
+
 // Configure your token-to-USD map (rough; adjust as needed)
 const PRICE = {
   openai: { in: 0.00015/1000, out: 0.00060/1000 }, // $/token, example for gpt-4o-mini
@@ -483,58 +489,93 @@ function extractMetaSignals(html) {
 
 // Build a "human-visible" text snapshot from HTML for paraphrasing.
 // Goal: keep what a user actually reads, drop scripts/JSON/attrs/URLs.
+// Build a robust, user-visible text string from HTML.
+// Goal: plenty of clean text for paraphrasing, but no JS/JSON/attrs junk.
 function buildVisibleTextFromHtml(html) {
-  if (!html) return "";
+  if (!html || typeof html !== 'string') return "";
 
-  let cleaned = html;
-
-  // 1) Drop whole script/style/noscript/head blocks
-  cleaned = cleaned
+  // 1) Strip obviously non-visible content and tags
+  let text = html
     .replace(/<script[\s\S]*?<\/script>/gi, " ")
     .replace(/<style[\s\S]*?<\/style>/gi, " ")
     .replace(/<noscript[\s\S]*?<\/noscript>/gi, " ")
-    .replace(/<head[\s\S]*?<\/head>/gi, " ");
+    .replace(/<svg[\s\S]*?<\/svg>/gi, " ")
+    .replace(/<head[\s\S]*?<\/head>/gi, " ")
+    .replace(/<\/?[^>]+>/g, " ")     // strip remaining tags
+    .replace(/\s+/g, " ")
+    .trim();
 
-  // 2) Prefer main/article/section if present, fall back to body
-  const mainMatch =
-    cleaned.match(/<(main|article|section)[^>]*>([\s\S]*?)<\/\1>/i) ||
-    cleaned.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
+  if (!text) return "";
 
-  if (mainMatch) {
-    cleaned = mainMatch[2] || mainMatch[1] || cleaned;
+  // 2) Split into "sentence-ish" pieces.
+  // Use both punctuation and line-ish boundaries rather than only [.?!]
+  const rawPieces = text
+    .split(/(?<=[.!?])\s+|\n+| {2,}/)
+    .map(s => s.trim())
+    .filter(Boolean);
+
+  const chunks = [];
+
+  for (const piece of rawPieces) {
+    if (!piece) continue;
+
+    // If a piece is very long, break it up instead of dropping it
+    if (piece.length > 800) {
+      let start = 0;
+      while (start < piece.length && chunks.length < 80) {
+        const slice = piece.slice(start, start + 400).trim();
+        if (slice.length >= 40) chunks.push(slice);
+        start += 400;
+      }
+    } else {
+      chunks.push(piece);
+    }
   }
 
-  // 3) Turn block-level tags into newlines to preserve structure
-  cleaned = cleaned
-    .replace(/<\/(p|div|li|h[1-6]|section|article|br|tr)>/gi, "\n")
-    .replace(/<(p|div|li|h[1-6]|section|article|br|tr)[^>]*>/gi, " ");
+  const cleaned = [];
+  for (let c of chunks) {
+    c = c.trim();
+    if (c.length < 20) continue;      // relax minimum from 30 → 20
+    if (c.length > 800) continue;     // safety, though we chunked above
 
-  // 4) Strip remaining tags
-  cleaned = cleaned.replace(/<\/?[^>]+>/g, " ");
+    // Filter obvious non-visible / junk segments
+    if (/[{}\[\]]/.test(c)) continue; // JSON / code-ish
+    if (/%2F|%3D|%20|%3F|%26/i.test(c)) continue; // URL-encoded junk
+    if (/https?:|\.com\/|\.net\/|api\/|amazonaws|cloudflare/i.test(c)) continue;
+    if (/data-radix|class=|href=|rel=|src=|width:|height:|resize:/i.test(c)) continue;
 
-  // 5) Normalise whitespace
-  cleaned = cleaned.replace(/\r/g, "\n").replace(/\t/g, " ");
-  cleaned = cleaned.replace(/\s+/g, " ").trim();
+    // Filter segments that are basically a single huge token (hash, etc.)
+    if (/[A-Za-z0-9]{60,}/.test(c)) continue;
 
-  // 6) Split into pseudo-lines by punctuation + length clamping
-  const chunks = cleaned
-    .split(/(?<=[.!?])\s+/) // sentence-ish split
-    .map(s => s.trim())
-    .filter(s => s.length >= 30 && s.length <= 400)
-    .filter(s => {
-      // Drop obviously non-human lines: URLs, encodings, CSS junk
-      if (/https?:\/\//i.test(s)) return false;
-      if (/%2F|%3D|%3F|%26|&#x[0-9a-f]+;/i.test(s)) return false;
-      if (/[{}\[\]]/.test(s)) return false;
-      if (/data-radix|class=|href=|src=|rel=|width:|height:/i.test(s)) return false;
-      // Require at least a couple of letters
-      if (!/[A-Za-zÀ-ÿ].*[A-Za-zÀ-ÿ]/.test(s)) return false;
-      return true;
-    });
+    cleaned.push(c);
+    if (cleaned.length >= 80) break;  // hard cap
+  }
 
-  // 7) Join back and hard-cap length
-  const result = chunks.join(" ").slice(0, 10000);
-  return result;
+  if (!cleaned.length) {
+    // Fallback: if we filtered everything, at least return truncated raw text
+    return text.slice(0, 8000);
+  }
+
+  const visible = cleaned.join(" ");
+  return visible.slice(0, 8000); // cap for token budget
+}
+
+// Classify how much real user-visible text we have.
+// This is used to decide between paraphrase/extractive/generic + indexability.
+function classifyEvidenceStrength(evidence) {
+  const visible = (evidence?.visibleText || "").trim();
+  const len = visible.length;
+
+  if (!visible || len < 150) {
+    return { level: "none", len };
+  }
+  if (len < 350) {
+    return { level: "low", len };
+  }
+  if (len < 800) {
+    return { level: "medium", len };
+  }
+  return { level: "high", len };
 }
 
 function extractFromHtml(html, baseUrl) {
@@ -894,7 +935,14 @@ async function obtainEvidence(url, slug, name, forceRecrawl = false) {
 }
 
 const api = {
-  async _callLLMRaw(prompt) {
+  async _callLLMRaw(options) {
+    // Support both string (backward compat) and object parameters
+    const isObjectCall = typeof options === 'object' && options !== null && !Array.isArray(options);
+    const systemPrompt = isObjectCall ? (options.systemPrompt || SYSTEM_PROMPT) : SYSTEM_PROMPT;
+    const userPrompt = isObjectCall ? (options.userPrompt || "") : String(options || "");
+    const temperature = isObjectCall ? (options.temperature ?? 0.2) : 0.2;
+    const maxTokens = isObjectCall ? (options.maxTokens ?? 2000) : 2000;
+
     if (PROVIDER === "openai") {
       const key = process.env.OPENAI_API_KEY;
       if (!key) throw new Error("OPENAI_API_KEY missing");
@@ -906,10 +954,11 @@ const api = {
         },
         body: JSON.stringify({
           model: MODEL,
-          temperature: 0.2,
+          temperature,
+          max_tokens: maxTokens,
           messages: [
-            { role: "system", content: SYSTEM_PROMPT },
-            { role: "user", content: prompt }
+            { role: "system", content: systemPrompt },
+            { role: "user", content: userPrompt }
           ],
           response_format: { type: "json_object" } // reduces off-format drift
         })
@@ -938,10 +987,10 @@ const api = {
         },
         body: JSON.stringify({
           model: MODEL,
-          max_tokens: 2000,
-          temperature: 0.2,
-          system: SYSTEM_PROMPT,
-          messages: [{ role: "user", content: prompt }]
+          max_tokens: maxTokens,
+          temperature,
+          system: systemPrompt,
+          messages: [{ role: "user", content: userPrompt }]
         })
       });
       if (!res.ok) {
@@ -1282,6 +1331,14 @@ function pickRow(r) {
 }
 
 rows = rows.map(pickRow).filter(r => r.slug);
+
+// Apply onlySlugs filter EARLY (before checkpoint logic, before "Found X rows" message)
+// This prevents loading unnecessary checkpoint/usage data for 8000+ whops when testing 50 slugs
+if (args.onlySlugs) {
+  const only = new Set(String(args.onlySlugs).split(",").map(s => s.trim()).filter(Boolean));
+  rows = rows.filter(r => only.has(r.slug));
+  console.log(`🎯 Filtered to ${rows.length} slugs from --onlySlugs`);
+}
 
 // Skip already filled (optional)
 if (SKIP_FILLED) {
@@ -2403,6 +2460,806 @@ function hasPolicy(items, key) {
     regional: /vat|gst|currency|region|tax/
   };
   return (checks[key] || /./).test(text);
+}
+
+/**
+ * Infer the generic topic from name and slug
+ */
+function inferGenericTopic(name, slug) {
+  const full = `${name || ""} ${slug || ""}`.toLowerCase();
+
+  // Trading and financial markets - but NOT if it's clearly crypto trading
+  if (full.match(/trading|trader|futures|forex|stocks?|orderflow|scalping|price[\s-]?action|sala[\s-]?de[\s-]?trading|indices|fx|day[\s-]?trading|swing[\s-]?trading|chart|technical[\s-]?analysis|candle|options|derivatives|nasdaq|s&p|dow|spy|qqq/)) {
+    // If it has crypto keywords, categorize as crypto instead
+    if (full.match(/crypto|bitcoin|eth|btc|altcoin|defi/)) {
+      return { topic: "crypto", emoji: "🪙" };
+    }
+    return { topic: "trading", emoji: "📈" };
+  }
+
+  // Cryptocurrency and blockchain - "crypto" alone is enough
+  if (full.match(/crypto|bitcoin|btc|ethereum|eth|altcoin|defi|nft|web3|blockchain|solana|binance|coinbase|token|metamask|wallet|hodl|moon|pump|gem|degen|ape|polygon|avalanche|cardano|ripple|xrp|dogecoin|shiba|memecoin/)) {
+    return { topic: "crypto", emoji: "🪙" };
+  }
+
+  // Sports betting - "picks" is a strong signal
+  if (full.match(/betting|sportsbook|parlay|parlays|picks|sports[\s-]?tips|odds|tipster|gambling|casino|poker|blackjack|bookie|spread|over[\s-]?under|prop[\s-]?bet|draft[\s-]?kings|fanduel|bet365|prizepicks|underdog|handicapper|vegas|wager/)) {
+    return { topic: "sports_betting", emoji: "⚾" };
+  }
+
+  // Amazon FBA specific - "amazon" alone should trigger this
+  if (full.match(/amazon|fba|seller[\s-]?central|private[\s-]?label|wholesale[\s-]?amazon|amazon[\s-]?ppc|amz|helium[\s-]?10|jungle[\s-]?scout|keepa|asin|listing[\s-]?optimization|merch/)) {
+    return { topic: "amazon_fba", emoji: "📦" };
+  }
+
+  // E-commerce (separate from Amazon FBA)
+  if (full.match(/shopify|dropship|dropshipping|print[\s-]?on[\s-]?demand|pod|etsy|ebay|woocommerce|ecom|e-commerce|oberlo|aliexpress|fulfillment|store[\s-]?build|product[\s-]?research|supplier/)) {
+    return { topic: "ecommerce", emoji: "🛒" };
+  }
+
+  // Real estate and property - "airbnb" triggers this
+  if (full.match(/real[\s-]?estate|property|airbnb|vrbo|rent[\s-]?to[\s-]?rent|flipping|landlord|wholesaling|realty|housing|reit|mortgage|tenant|lease|rental|str|short[\s-]?term[\s-]?rental|zillow|redfin|realtor/)) {
+    return { topic: "real_estate", emoji: "🏠" };
+  }
+
+  // Fitness and wellness
+  if (full.match(/fitness|gym|workout|coaching|bodybuilding|nutrition|training[\s-]?plan|weight[\s-]?loss|muscle|diet|crossfit|yoga|pilates|exercise|cardio|strength|supplement|protein|cutting|bulking|shred|gains|physique/)) {
+    return { topic: "fitness", emoji: "💪" };
+  }
+
+  // Social media marketing agency
+  if (full.match(/smma|social[\s-]?media[\s-]?agency|ugc|content[\s-]?agency|media[\s-]?buying|influencer|instagram[\s-]?marketing|tiktok[\s-]?marketing|facebook[\s-]?ads|meta[\s-]?ads|google[\s-]?ads|ppc|seo|copywriting|funnel|lead[\s-]?gen|client[\s-]?acquisition|retainer|agency/)) {
+    return { topic: "smma", emoji: "📱" };
+  }
+
+  // OnlyFans and content creation
+  if (full.match(/onlyfans|of[\s-]?management|content[\s-]?creator|adult|cam|fansly|chatting|ppv|subscriber|fan[\s-]?management|spicy|creator[\s-]?economy/)) {
+    return { topic: "onlyfans", emoji: "📸" };
+  }
+
+  // Personal development and mindset
+  if (full.match(/mindset|self[\s-]?improvement|self[\s-]?help|discipline|motivation|personal[\s-]?development|success|productivity|habits|goals|entrepreneur|hustle|grind|wealth[\s-]?building|financial[\s-]?freedom|passive[\s-]?income/)) {
+    return { topic: "mindset", emoji: "🧠" };
+  }
+
+  // Discord communities and signals - but be careful not to over-match
+  if (full.match(/discord|signals?|alert|notification|community|alpha|groupchat|server|vip[\s-]?access|premium[\s-]?group|members[\s-]?only|exclusive/)) {
+    // Check if it's more specifically another category
+    if (!full.match(/trading|crypto|betting|picks|amazon|fitness|smma|onlyfans/)) {
+      return { topic: "discord_signals", emoji: "💬" };
+    }
+  }
+
+  // Automation and bots - including sneaker bots
+  if (full.match(/bot|automation|sniper|auto[\s-]?trade|copytrading|botting|scraper|discord[\s-]?bot|whatsapp[\s-]?bot|sneaker|supreme|yeezy|monitor|proxies|captcha|checkout|resell|cook[\s-]?group/)) {
+    return { topic: "automation_bots", emoji: "🤖" };
+  }
+
+  // AI tools and services (separate from automation)
+  if (full.match(/\bai\b|artificial[\s-]?intelligence|gpt|chatgpt|gpt-?[0-9]|claude|machine[\s-]?learning|llm|midjourney|stable[\s-]?diffusion|dall-?e|prompt[\s-]?engineering|gemini|copilot|jasper|writesonic/)) {
+    return { topic: "ai_tools", emoji: "🤖" };
+  }
+
+  // Gaming and esports
+  if (full.match(/gaming|games?|esports|roblox|minecraft|fortnite|valorant|league[\s-]?of[\s-]?legends|lol|csgo|cs2|apex|warzone|call[\s-]?of[\s-]?duty|cod|overwatch|rocket[\s-]?league|twitch|streaming|gamer|gameplay/)) {
+    return { topic: "gaming", emoji: "🎮" };
+  }
+
+  // Education and courses (generic catch-all)
+  if (full.match(/course|academy|education|masterclass|training|tutorial|university|bootcamp|certification|learn|tutor|homework|math|language|spanish|french|german|chinese|japanese|sat|act|gmat|lsat|exam[\s-]?prep/)) {
+    return { topic: "education", emoji: "🎓" };
+  }
+
+  return { topic: "generic", emoji: "📂" };
+}
+
+/**
+ * Create deterministic RNG from slug for content variation
+ */
+function makeSlugRNG(slug = "") {
+  // Simple deterministic hash → 32-bit int
+  let h = 2166136261 >>> 0;
+  const s = slug || "default-slug";
+  for (let i = 0; i < s.length; i++) {
+    h ^= s.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+
+  // Linear congruential generator
+  let state = h >>> 0;
+
+  function rand() {
+    state = (state * 1664525 + 1013904223) >>> 0;
+    return state / 0x100000000; // [0,1)
+  }
+
+  function pick(arr) {
+    if (!arr || !arr.length) return "";
+    const idx = Math.floor(rand() * arr.length);
+    return arr[idx];
+  }
+
+  function pickN(arr, n) {
+    if (!arr || !arr.length) return [];
+    const copy = arr.slice();
+    const out = [];
+    const count = Math.min(n, copy.length);
+    for (let i = 0; i < count; i++) {
+      const idx = Math.floor(rand() * copy.length);
+      out.push(copy[idx]);
+      copy.splice(idx, 1);
+    }
+    return out;
+  }
+
+  return { rand, pick, pickN };
+}
+
+/**
+ * Build varied trading topic content
+ */
+function buildTradingContent({ slug, display }) {
+  const { pick, pickN, rand } = makeSlugRNG(slug);
+  const name = display || slug;
+
+  const nouns = [
+    "trading education programme",
+    "trading community",
+    "trading mentorship",
+    "market analysis service",
+    "trading strategy course"
+  ];
+
+  const focuses = [
+    "market analysis, trading psychology and practical trade ideas",
+    "technical analysis, risk management and trade execution",
+    "price action strategies, market structure and entry timing",
+    "chart patterns, indicators and systematic trading approaches",
+    "trading discipline, position sizing and portfolio management"
+  ];
+
+  const includes = [
+    "live trading sessions",
+    "community chat access",
+    "recorded educational content",
+    "daily market analysis",
+    "trade alerts and setups",
+    "one-on-one mentoring",
+    "backtesting tools",
+    "trading journals"
+  ];
+
+  const selected = pickN(includes, 2 + Math.floor(rand() * 2));
+  const includesList = selected.length > 1
+    ? selected.slice(0, -1).join(", ") + " or " + selected[selected.length - 1]
+    : selected[0];
+
+  return `<p>📈 ${name} is a ${pick(nouns)} offered via Whop.</p>
+<p>It focuses on ${pick(focuses)}. Many programmes of this type include ${includesList}, but the exact structure and benefits depend on the creator's current plan. Always refer to the live Whop listing for the most up-to-date details before you subscribe.</p>`;
+}
+
+/**
+ * Build varied crypto topic content
+ */
+function buildCryptoContent({ slug, display }) {
+  const { pick, pickN, rand } = makeSlugRNG(slug);
+  const name = display || slug;
+
+  const nouns = [
+    "cryptocurrency education product",
+    "crypto trading community",
+    "blockchain and DeFi resource",
+    "digital asset analysis service",
+    "crypto investment programme"
+  ];
+
+  const focuses = [
+    "market analysis, project research and trading strategies",
+    "DeFi protocols, yield farming and blockchain technology",
+    "technical analysis, on-chain metrics and market cycles",
+    "altcoin research, tokenomics and investment thesis",
+    "risk management, portfolio allocation and market psychology"
+  ];
+
+  const features = [
+    "market updates and analysis",
+    "token research reports",
+    "DeFi strategy guides",
+    "trading signals",
+    "community discussions",
+    "educational workshops",
+    "portfolio tracking tools",
+    "early project alerts"
+  ];
+
+  const selected = pickN(features, 2 + Math.floor(rand() * 2));
+  const featureList = selected.join(", ");
+
+  return `<p>🪙 ${name} is a ${pick(nouns)} on Whop.</p>
+<p>It covers ${pick(focuses)}. The specific focus areas, tools provided and community access depend on the creator's expertise. Common features include ${featureList}. Always verify current features and risk disclaimers on the live Whop listing.</p>`;
+}
+
+/**
+ * Build varied sports betting content
+ */
+function buildSportsBettingContent({ slug, display }) {
+  const { pick, pickN, rand } = makeSlugRNG(slug);
+  const name = display || slug;
+
+  const nouns = [
+    "sports betting and picks service",
+    "sports analysis and betting resource",
+    "betting strategy and picks platform",
+    "sports wagering community",
+    "handicapping and picks service"
+  ];
+
+  const focuses = [
+    "betting analysis, picks recommendations and parlay strategies",
+    "game analysis, statistical models and value betting",
+    "line movements, injury reports and matchup breakdowns",
+    "bankroll management, unit sizing and disciplined betting",
+    "prop bets, player performance and live betting opportunities"
+  ];
+
+  const sports = [
+    "NFL", "NBA", "MLB", "NHL", "NCAA Football", "NCAA Basketball",
+    "Soccer", "Tennis", "MMA", "Golf", "Esports"
+  ];
+
+  const selectedSports = pickN(sports, 2 + Math.floor(rand() * 3));
+  const sportsList = selectedSports.join(", ");
+
+  return `<p>⚾ ${name} is a ${pick(nouns)} accessed via Whop.</p>
+<p>It provides ${pick(focuses)} across various sports including ${sportsList}. Nothing is guaranteed; you remain fully responsible for your betting decisions and financial risk. Check the live Whop listing for sports coverage, track record claims and terms before subscribing.</p>`;
+}
+
+/**
+ * Build varied Amazon FBA content
+ */
+function buildAmazonFBAContent({ slug, display }) {
+  const { pick, pickN, rand } = makeSlugRNG(slug);
+  const name = display || slug;
+
+  const nouns = [
+    "Amazon FBA training programme",
+    "Amazon seller education platform",
+    "FBA business development course",
+    "Amazon marketplace mastery resource",
+    "private label selling programme"
+  ];
+
+  const focuses = [
+    "product research, supplier sourcing and listing optimization",
+    "inventory management, PPC campaigns and ranking strategies",
+    "private label development, brand building and review management",
+    "wholesale sourcing, profit calculations and scaling strategies",
+    "keyword research, competitor analysis and launch techniques"
+  ];
+
+  const tools = [
+    "product research tools",
+    "keyword tracking software",
+    "profit calculators",
+    "supplier databases",
+    "PPC management strategies",
+    "inventory planning sheets",
+    "launch checklists",
+    "case study examples"
+  ];
+
+  const selectedTools = pickN(tools, 2 + Math.floor(rand() * 2));
+  const toolsList = selectedTools.join(", ");
+
+  return `<p>📦 ${name} is an ${pick(nouns)} delivered through Whop.</p>
+<p>It focuses on ${pick(focuses)}. Resources typically include ${toolsList}, though specific offerings vary by creator. Refer to the live Whop listing for up-to-date information before joining.</p>`;
+}
+
+/**
+ * Build varied e-commerce content
+ */
+function buildEcommerceContent({ slug, display }) {
+  const { pick, pickN, rand } = makeSlugRNG(slug);
+  const name = display || slug;
+
+  const nouns = [
+    "e-commerce training programme",
+    "online store building course",
+    "dropshipping education platform",
+    "digital commerce resource",
+    "online retail mastery programme"
+  ];
+
+  const focuses = [
+    "product selection, store setup and conversion optimization",
+    "traffic generation, email marketing and customer retention",
+    "supplier relations, order fulfillment and inventory management",
+    "brand building, social proof and scaling strategies",
+    "market research, competitor analysis and pricing strategies"
+  ];
+
+  const platforms = [
+    "Shopify",
+    "WooCommerce",
+    "BigCommerce",
+    "Facebook Marketplace",
+    "Etsy",
+    "eBay"
+  ];
+
+  const selectedPlatforms = pickN(platforms, 1 + Math.floor(rand() * 2));
+  const platformList = selectedPlatforms.join(" and ");
+
+  return `<p>🛒 ${name} is an ${pick(nouns)} on Whop.</p>
+<p>It covers ${pick(focuses)}. Common platforms include ${platformList}, with specific focus depending on the creator's expertise. Check the live Whop listing for exact modules and support levels.</p>`;
+}
+
+/**
+ * Build varied real estate content
+ */
+function buildRealEstateContent({ slug, display }) {
+  const { pick, pickN, rand } = makeSlugRNG(slug);
+  const name = display || slug;
+
+  const nouns = [
+    "real estate education programme",
+    "property investing course",
+    "real estate investment training",
+    "property wealth building system",
+    "real estate mastery platform"
+  ];
+
+  const focuses = [
+    "deal sourcing, property analysis and financing strategies",
+    "wholesaling techniques, fix-and-flip methods and rental strategies",
+    "market research, valuation methods and negotiation tactics",
+    "property management, tenant screening and cash flow optimization",
+    "creative financing, partnerships and scaling strategies"
+  ];
+
+  const strategies = [
+    "buy-and-hold rentals",
+    "fix-and-flip projects",
+    "wholesale deals",
+    "REITs and syndications",
+    "short-term rentals",
+    "commercial properties"
+  ];
+
+  const selectedStrategies = pickN(strategies, 2 + Math.floor(rand() * 2));
+  const strategyList = selectedStrategies.join(", ");
+
+  return `<p>🏠 ${name} is a ${pick(nouns)} offered on Whop.</p>
+<p>It covers ${pick(focuses)}. Common strategies include ${strategyList}, with specific focus areas depending on the creator's expertise. Review the live Whop listing for current curriculum and requirements.</p>`;
+}
+
+/**
+ * Build varied fitness content
+ */
+function buildFitnessContent({ slug, display }) {
+  const { pick, pickN, rand } = makeSlugRNG(slug);
+  const name = display || slug;
+
+  const nouns = [
+    "fitness training programme",
+    "workout and nutrition system",
+    "fitness transformation platform",
+    "health and wellness programme",
+    "strength and conditioning course"
+  ];
+
+  const focuses = [
+    "customized workout plans, nutrition protocols and progress tracking",
+    "strength training, cardio programming and mobility work",
+    "meal planning, macro tracking and supplement guidance",
+    "habit formation, accountability systems and lifestyle optimization",
+    "form coaching, injury prevention and recovery strategies"
+  ];
+
+  const features = [
+    "video demonstrations",
+    "workout calendars",
+    "nutrition guides",
+    "progress tracking tools",
+    "community support",
+    "coaching check-ins",
+    "meal prep guides"
+  ];
+
+  const selectedFeatures = pickN(features, 3 + Math.floor(rand() * 2));
+  const featureList = selectedFeatures.join(", ");
+
+  return `<p>💪 ${name} is a ${pick(nouns)} available through Whop.</p>
+<p>It includes ${pick(focuses)}. Common features include ${featureList}, though specific offerings vary by creator. Check the live Whop listing for equipment requirements and support levels.</p>`;
+}
+
+/**
+ * Build varied SMMA content
+ */
+function buildSMMAContent({ slug, display }) {
+  const { pick, pickN, rand } = makeSlugRNG(slug);
+  const name = display || slug;
+
+  const nouns = [
+    "social media marketing agency training",
+    "SMMA business building course",
+    "digital marketing agency programme",
+    "agency scaling system",
+    "social media agency blueprint"
+  ];
+
+  const focuses = [
+    "client acquisition, service delivery and team building",
+    "niche selection, pricing strategies and sales systems",
+    "Facebook ads, Instagram growth and content creation",
+    "client onboarding, retention strategies and upselling",
+    "automation tools, workflow optimization and scaling tactics"
+  ];
+
+  const services = [
+    "Facebook advertising",
+    "Instagram management",
+    "TikTok marketing",
+    "content creation",
+    "email marketing",
+    "lead generation"
+  ];
+
+  const selectedServices = pickN(services, 2 + Math.floor(rand() * 2));
+  const serviceList = selectedServices.join(", ");
+
+  return `<p>📱 ${name} is a ${pick(nouns)} on Whop.</p>
+<p>It teaches ${pick(focuses)}. Common service offerings include ${serviceList}, with specific frameworks varying by creator. Review the live Whop listing for exact modules and support.</p>`;
+}
+
+/**
+ * Build varied mindset content
+ */
+function buildMindsetContent({ slug, display }) {
+  const { pick, pickN, rand } = makeSlugRNG(slug);
+  const name = display || slug;
+
+  const nouns = [
+    "personal development programme",
+    "mindset transformation course",
+    "success psychology system",
+    "peak performance platform",
+    "personal growth blueprint"
+  ];
+
+  const focuses = [
+    "habit formation, goal setting and productivity systems",
+    "mindset shifts, limiting belief removal and confidence building",
+    "time management, focus optimization and energy management",
+    "visualization techniques, affirmations and mental conditioning",
+    "accountability structures, progress tracking and milestone planning"
+  ];
+
+  const methods = [
+    "daily exercises",
+    "guided meditations",
+    "journaling prompts",
+    "video lessons",
+    "group coaching calls",
+    "accountability partners"
+  ];
+
+  const selectedMethods = pickN(methods, 2 + Math.floor(rand() * 2));
+  const methodList = selectedMethods.join(", ");
+
+  return `<p>🧠 ${name} is a ${pick(nouns)} offered via Whop.</p>
+<p>It focuses on ${pick(focuses)}. Methods typically include ${methodList}, though specific approaches vary by creator. Check the live Whop listing for programme details and commitment requirements.</p>`;
+}
+
+/**
+ * Build varied Discord signals content
+ */
+function buildDiscordSignalsContent({ slug, display }) {
+  const { pick, pickN, rand } = makeSlugRNG(slug);
+  const name = display || slug;
+
+  const nouns = [
+    "private Discord community",
+    "signals and alerts server",
+    "Discord trading group",
+    "exclusive Discord hub",
+    "members-only Discord channel"
+  ];
+
+  const features = [
+    "real-time alerts, market analysis and trade ideas",
+    "live voice calls, screen shares and Q&A sessions",
+    "educational channels, resources and tutorials",
+    "member chat rooms, networking and collaborations",
+    "bot integrations, automated alerts and tracking tools"
+  ];
+
+  const channels = [
+    "announcements",
+    "general chat",
+    "signals alerts",
+    "education",
+    "market analysis",
+    "wins tracking",
+    "voice channels"
+  ];
+
+  const selectedChannels = pickN(channels, 3 + Math.floor(rand() * 2));
+  const channelList = selectedChannels.join(", ");
+
+  return `<p>💬 ${name} is a ${pick(nouns)} hosted through Whop.</p>
+<p>It provides ${pick(features)}. Typical channels include ${channelList}, with specific structure set by the creator. Confirm all details on the live Whop listing before purchasing access.</p>`;
+}
+
+/**
+ * Build varied automation bots content
+ */
+function buildAutomationBotsContent({ slug, display }) {
+  const { pick, pickN, rand } = makeSlugRNG(slug);
+  const name = display || slug;
+
+  const nouns = [
+    "automation bot system",
+    "automated trading tool",
+    "bot software package",
+    "automation toolkit",
+    "workflow automation platform"
+  ];
+
+  const capabilities = [
+    "automated trading execution, risk management and position sizing",
+    "data monitoring, alert generation and workflow automation",
+    "web scraping, data collection and automated reporting",
+    "task automation, scheduling and process optimization",
+    "API integrations, custom scripts and bot configurations"
+  ];
+
+  const features = [
+    "setup guides",
+    "configuration templates",
+    "risk controls",
+    "backtesting tools",
+    "monitoring dashboards",
+    "support documentation"
+  ];
+
+  const selectedFeatures = pickN(features, 2 + Math.floor(rand() * 2));
+  const featureList = selectedFeatures.join(", ");
+
+  return `<p>🤖 ${name} is an ${pick(nouns)} delivered through Whop.</p>
+<p>It provides ${pick(capabilities)}. Common features include ${featureList}, though specific offerings vary by creator. Always read the live Whop listing carefully before using any automation tools.</p>`;
+}
+
+/**
+ * Build varied AI tools content
+ */
+function buildAIToolsContent({ slug, display }) {
+  const { pick, pickN, rand } = makeSlugRNG(slug);
+  const name = display || slug;
+
+  const nouns = [
+    "AI tools and automation service",
+    "artificial intelligence toolkit",
+    "AI-powered platform",
+    "machine learning system",
+    "AI productivity suite"
+  ];
+
+  const capabilities = [
+    "content generation, copywriting and creative assistance",
+    "data analysis, pattern recognition and predictive modeling",
+    "workflow automation, task optimization and process improvement",
+    "image generation, video editing and media enhancement",
+    "chatbot development, conversational AI and customer service"
+  ];
+
+  const tools = [
+    "text generators",
+    "image creators",
+    "data analyzers",
+    "automation scripts",
+    "API access",
+    "custom prompts",
+    "workflow templates"
+  ];
+
+  const selectedTools = pickN(tools, 3 + Math.floor(rand() * 2));
+  const toolList = selectedTools.join(", ");
+
+  return `<p>🤖 ${name} is an ${pick(nouns)} offered on Whop.</p>
+<p>It enables ${pick(capabilities)}. Typical tools include ${toolList}, with specific features depending on the creator's technology stack. Review the live Whop listing for current capabilities and usage limits.</p>`;
+}
+
+/**
+ * Build varied gaming content
+ */
+function buildGamingContent({ slug, display }) {
+  const { pick, pickN, rand } = makeSlugRNG(slug);
+  const name = display || slug;
+
+  const nouns = [
+    "gaming coaching programme",
+    "esports training platform",
+    "gaming improvement course",
+    "competitive gaming system",
+    "gaming mastery programme"
+  ];
+
+  const focuses = [
+    "gameplay mechanics, strategy guides and skill improvement",
+    "team coordination, communication and competitive tactics",
+    "rank climbing, MMR optimization and performance analysis",
+    "game sense development, decision making and positioning",
+    "aim training, reaction time and mechanical skill building"
+  ];
+
+  const features = [
+    "VOD reviews",
+    "live coaching",
+    "practice drills",
+    "strategy guides",
+    "custom configs",
+    "team scrims"
+  ];
+
+  const selectedFeatures = pickN(features, 2 + Math.floor(rand() * 2));
+  const featureList = selectedFeatures.join(", ");
+
+  return `<p>🎮 ${name} is a ${pick(nouns)} available through Whop.</p>
+<p>It offers ${pick(focuses)}. Common features include ${featureList}, with specific game focus varying by creator. Check the live Whop listing for supported games and skill requirements.</p>`;
+}
+
+/**
+ * Build varied OnlyFans content
+ */
+function buildOnlyFansContent({ slug, display }) {
+  const { pick, pickN, rand } = makeSlugRNG(slug);
+  const name = display || slug;
+
+  const nouns = [
+    "content creator management service",
+    "creator growth platform",
+    "content monetization system",
+    "creator marketing programme",
+    "audience building service"
+  ];
+
+  const services = [
+    "content strategy, posting schedules and audience engagement",
+    "growth hacking, promotional tactics and cross-platform marketing",
+    "pricing optimization, upselling strategies and revenue maximization",
+    "content planning, production workflows and quality standards",
+    "analytics tracking, performance metrics and optimization strategies"
+  ];
+
+  const features = [
+    "content calendars",
+    "growth strategies",
+    "pricing guides",
+    "engagement tactics",
+    "analytics tools",
+    "marketing templates"
+  ];
+
+  const selectedFeatures = pickN(features, 3 + Math.floor(rand() * 2));
+  const featureList = selectedFeatures.join(", ");
+
+  return `<p>📸 ${name} is a ${pick(nouns)} offered through Whop.</p>
+<p>It provides ${pick(services)}. Tools typically include ${featureList}, with specific services varying by creator. Review the live Whop listing for exact offerings and success metrics.</p>`;
+}
+
+/**
+ * Build varied education content
+ */
+function buildEducationContent({ slug, display }) {
+  const { pick, pickN, rand } = makeSlugRNG(slug);
+  const name = display || slug;
+
+  const nouns = [
+    "educational course",
+    "online training programme",
+    "skill development platform",
+    "learning academy",
+    "professional development course"
+  ];
+
+  const formats = [
+    "structured lessons, practical assignments and progress tracking",
+    "video modules, written materials and interactive exercises",
+    "live sessions, recorded content and hands-on projects",
+    "self-paced learning, quizzes and certification paths",
+    "group workshops, individual feedback and peer collaboration"
+  ];
+
+  const resources = [
+    "video lessons",
+    "course materials",
+    "practice exercises",
+    "community forums",
+    "office hours",
+    "certificates"
+  ];
+
+  const selectedResources = pickN(resources, 3 + Math.floor(rand() * 2));
+  const resourceList = selectedResources.join(", ");
+
+  return `<p>📚 ${name} is an ${pick(nouns)} available through Whop.</p>
+<p>It includes ${pick(formats)}. Resources typically include ${resourceList}, though specific offerings vary by creator. Review the live Whop listing for learning outcomes and prerequisites.</p>`;
+}
+
+/**
+ * Build topic-aware generic about content with variation
+ */
+function buildTopicAwareAbout(display, topicInfo, slug) {
+  const { topic, emoji } = topicInfo;
+  const icon = emoji || "📦";
+
+  // Use new varied content builders for main topics
+  if (topic === "trading") {
+    return buildTradingContent({ slug, display });
+  }
+
+  if (topic === "crypto") {
+    return buildCryptoContent({ slug, display });
+  }
+
+  if (topic === "sports_betting") {
+    return buildSportsBettingContent({ slug, display });
+  }
+
+  // Add more varied content builders for other major categories
+  if (topic === "amazon_fba") {
+    return buildAmazonFBAContent({ slug, display });
+  }
+
+  if (topic === "ecommerce") {
+    return buildEcommerceContent({ slug, display });
+  }
+
+  // Use varied builders for remaining topics
+  if (topic === "real_estate") {
+    return buildRealEstateContent({ slug, display });
+  }
+
+  if (topic === "fitness") {
+    return buildFitnessContent({ slug, display });
+  }
+
+  if (topic === "smma") {
+    return buildSMMAContent({ slug, display });
+  }
+
+  if (topic === "mindset") {
+    return buildMindsetContent({ slug, display });
+  }
+
+  if (topic === "discord_signals") {
+    return buildDiscordSignalsContent({ slug, display });
+  }
+
+  if (topic === "automation_bots") {
+    return buildAutomationBotsContent({ slug, display });
+  }
+
+  if (topic === "ai_tools") {
+    return buildAIToolsContent({ slug, display });
+  }
+
+  if (topic === "gaming") {
+    return buildGamingContent({ slug, display });
+  }
+
+  if (topic === "onlyfans") {
+    return buildOnlyFansContent({ slug, display });
+  }
+
+  if (topic === "education") {
+    return buildEducationContent({ slug, display });
+  }
+
+  // Generic fallback
+  return `<p>${icon} ${display} is listed on Whop as a digital product or membership. This summary explains the basic access flow and key terms so you can quickly understand what to expect.</p>
+<p>Details such as features, pricing and included benefits can change; always rely on the live Whop listing before you buy.</p>`;
 }
 
 function ensurePromoPolicyBullets(html) {
@@ -3564,109 +4421,124 @@ async function worker(task) {
     return; // Already logged warning in obtainEvidence
   }
 
-  // MAX-RETRIES PATH: Try extractive-first, then synthetic fallback
+  // MAX-RETRIES PATH: stop burning tokens.
+  // For SEO safety: NO extractive, NO synthetic. Emit cheap generic, non-indexable content.
   if (attempts > EFFECTIVE_MAX_RETRIES && ACTIVE_POLICY.retryUntilSuccess) {
-    const evidenceText = evidence?.textSample || "";
-    const evidenceHtml = evidence?.html || "";
-    const quotes = evidence?.quotes || [];
-    const lang = evidence?.lang || 'en';
-    const features = evidence?.features || [];
+    const display = (task?.displayName || name || slug || "").trim();
+    const evClass = classifyEvidenceStrength(evidence || {});
+    const evLevel = evClass.level;
+    const evLen = evClass.len;
+    const topicInfo = inferGenericTopic(name, slug);
 
-    const hasEnoughEvidence = evidenceText.length >= 300 && quotes.length >= 2;
+    // If we have high evidence, use topic-aware content (indexable)
+    // Otherwise, use generic low-evidence content (non-indexable)
+    const useTopicAware = (evLevel === "high" || evLevel === "medium");
 
-    if (hasEnoughEvidence) {
-      // EXTRACTIVE PATH: zero-hallucination content from verbatim quotes
-      console.log(`📝 Max-retries → extractive path for ${slug} (${lang}, ${quotes.length} quotes, ${features.length} features)`);
+    if (useTopicAware) {
+      console.warn(`⚠️ Max retries reached for ${slug} – emitting topic-aware generic content (${topicInfo.topic}, indexable)`);
 
-      const extractiveContent = buildExtractiveFromEvidence({
-        slug,
-        name: name || slug,
-        host: new URL(evidence.finalUrl || url).hostname,
-        evidence
-      });
+      const topicAbout = buildTopicAwareAbout(display, topicInfo, slug);
 
-      const output = {
-        slug,
-        ...extractiveContent,
-        __meta: {
-          sourceUrl: url,
-          finalUrl: evidence.finalUrl || url,
-          evidenceHash: evidence.textHash || null,
-          drilled: evidence.drilled || false,
-          confidence: "medium",
-          evidence_status: "extractive",
-          indexable: true,
-          lang,
-          quote_count: quotes.length,
-          feature_count: features.length,
-          attempt_count: attempts
-        }
-      };
+      // Keep generic structured content for the other fields
+      const genericRedeem = `<ol><li>Open the official ${display} listing on Whop.</li><li>Sign in or create a Whop account if you do not already have one.</li><li>Review the plan description, included features and creator policies.</li><li>Choose a plan and complete checkout using your preferred payment method.</li><li>After purchase, go to your Whop dashboard to access ${display} and follow any setup steps from the creator.</li></ol>`;
 
-      // Write output (skip fingerprint/dedupe for extractive)
-      fs.appendFileSync(OUT_FILE, JSON.stringify(output) + "\n");
+      const genericPromo = `<ul><li>Access is delivered through your Whop account after purchase.</li><li>Plan types, pricing and availability can change over time.</li><li>Specific features and perks depend on the plan you choose.</li><li>Local taxes or payment-provider fees may apply.</li><li>Check the live Whop page for up-to-date information before you subscribe.</li></ul>`;
 
-      // Atomic append to master
-      if (!EVIDENCE_ONLY) {
-        try {
-          appendLineAtomic("data/content/master/updates.jsonl", output);
-          appendLineAtomic("data/content/master/successes.jsonl", output);
-          removeRejectIfExists(slug);
-        } catch (err) {
-          console.error(`⚠️  Failed to append extractive success: ${err.message}`);
-        }
-      }
+      const genericTerms = `<ul><li>Use of ${display} is subject to Whop's Terms of Service and the creator's rules.</li><li>Misuse, chargebacks or policy violations can lead to revoked access.</li><li>Refunds, if offered, follow the creator's and Whop's stated policies.</li><li>Always review renewal, cancellation and billing terms before you buy.</li><li>You are responsible for complying with any applicable laws when using this product.</li></ul>`;
 
-      // Mark done and clean up
-      ck.done[slug] = true;
-      delete ck.pending[slug];
-      persistCheckpoint();
-      return;
-    }
-
-    // SYNTHETIC FALLBACK: insufficient evidence for extractive
-    if (ACTIVE_POLICY.allowSynthetic) {
-      console.warn(`🔄 Max retries + insufficient evidence → synthetic for ${slug} (${evidenceText.length} chars, ${quotes.length} quotes)`);
-      const safeName = (name || slug).replace(/[^\w\s-]/g, "");
-      const synth = buildSyntheticFallback({ slug, displayName: safeName, name: safeName });
+      const genericFaq = buildGeneralFaq(display, 5, slug);
 
       const output = {
-        ...synth,
+        slug,
+        aboutcontent: topicAbout,
+        howtoredeemcontent: genericRedeem,
+        promodetailscontent: genericPromo,
+        termscontent: genericTerms,
+        faqcontent: genericFaq,
         __meta: {
           sourceUrl: url,
           finalUrl: evidence?.finalUrl || url,
           evidenceHash: evidence?.textHash || null,
           drilled: evidence?.drilled || false,
-          confidence: "low",
-          evidence_status: "synthetic",
-          indexable: false,
-          attempt_count: attempts
+          confidence: "medium",
+          evidence_status: "topic_generic",
+          topic: topicInfo.topic,
+          indexable: true,  // Topic-aware content is indexable
+          attempt_count: attempts,
+          evidence_level: evLevel,
+          evidence_len: evLen
         }
       };
 
-      // Write output (skip fingerprint/dedupe for synthetic)
+      // Write output
       fs.appendFileSync(OUT_FILE, JSON.stringify(output) + "\n");
 
-      // Atomic append to master
       if (!EVIDENCE_ONLY) {
         try {
           appendLineAtomic("data/content/master/updates.jsonl", output);
           appendLineAtomic("data/content/master/successes.jsonl", output);
           removeRejectIfExists(slug);
         } catch (err) {
-          console.error(`⚠️  Failed to append synthetic success: ${err.message}`);
+          console.error(`⚠️ Failed to append topic-aware success: ${err.message}`);
         }
       }
 
-      // Mark done and clean up
       ck.done[slug] = true;
       delete ck.pending[slug];
       persistCheckpoint();
       return;
     }
 
-    // Legacy path: reject if synthetic not allowed
-    rejectAndPersist(slug, `abandoned after ${attempts} attempts`, { errorCode: "ABANDONED" });
+    // Low evidence path: use basic generic content (non-indexable)
+    console.warn(`⚠️ Max retries reached for ${slug} – emitting generic low-evidence content (non-indexable)`);
+
+    const genericAbout = `<p>${display} is listed on Whop as a digital product or membership. This summary explains the basic access flow and key terms so you can quickly understand what to expect.</p><p>Details such as features, pricing and included benefits can change; always rely on the live Whop listing before you buy.</p>`;
+
+    const genericRedeem = `<ol><li>Open the official ${display} listing on Whop.</li><li>Sign in or create a Whop account if you do not already have one.</li><li>Review the plan description, included features and creator policies.</li><li>Choose a plan and complete checkout using your preferred payment method.</li><li>After purchase, go to your Whop dashboard to access ${display} and follow any setup steps from the creator.</li></ol>`;
+
+    const genericPromo = `<ul><li>Access is delivered through your Whop account after purchase.</li><li>Plan types, pricing and availability can change over time.</li><li>Specific features and perks depend on the plan you choose.</li><li>Local taxes or payment-provider fees may apply.</li><li>Check the live Whop page for up-to-date information before you subscribe.</li></ul>`;
+
+    const genericTerms = `<ul><li>Use of ${display} is subject to Whop's Terms of Service and the creator's rules.</li><li>Misuse, chargebacks or policy violations can lead to revoked access.</li><li>Refunds, if offered, follow the creator's and Whop's stated policies.</li><li>Always review renewal, cancellation and billing terms before you buy.</li><li>You are responsible for complying with any applicable laws when using this product.</li></ul>`;
+
+    const genericFaq = buildGeneralFaq(display, 5, slug);
+
+    const output = {
+      slug,
+      aboutcontent: genericAbout,
+      howtoredeemcontent: genericRedeem,
+      promodetailscontent: genericPromo,
+      termscontent: genericTerms,
+      faqcontent: genericFaq,
+      __meta: {
+        sourceUrl: url,
+        finalUrl: evidence?.finalUrl || url,
+        evidenceHash: evidence?.textHash || null,
+        drilled: evidence?.drilled || false,
+        confidence: "low",
+        evidence_status: "generic_low_evidence",
+        indexable: false, // IMPORTANT: do NOT let these be indexed
+        attempt_count: attempts,
+        evidence_level: evLevel,
+        evidence_len: evLen
+      }
+    };
+
+    // Write output (no extra fingerprint/dedupe needed, we already guard at import)
+    fs.appendFileSync(OUT_FILE, JSON.stringify(output) + "\n");
+
+    if (!EVIDENCE_ONLY) {
+      try {
+        appendLineAtomic("data/content/master/updates.jsonl", output);
+        appendLineAtomic("data/content/master/successes.jsonl", output);
+        removeRejectIfExists(slug);
+      } catch (err) {
+        console.error(`⚠️ Failed to append generic max-retries success: ${err.message}`);
+      }
+    }
+
+    ck.done[slug] = true;
+    delete ck.pending[slug];
+    persistCheckpoint();
     return;
   }
 
@@ -3862,13 +4734,15 @@ async function worker(task) {
           const quotes = makeQuoteBank(evidenceText || evidenceHtml);
           const features = extractFeaturePhrases(evidenceText || evidenceHtml);
 
-          // Get visibleText for paraphraser (already computed in evidence)
-          const visibleText = evidence?.visibleText || "";
+          // Classify evidence strength to determine approach
+          const evClass = classifyEvidenceStrength(evidence);
+          const canParaphrase = evClass.level === "medium" || evClass.level === "high";
+          const canExtract = quotes.length >= 2 && evClass.level !== "none";
 
           // Three-tier approach: paraphraser > extractive > generic
-          // 1. Try paraphraser if we have clean visibleText (≥400 chars)
-          if (visibleText.length >= 400) {
-            console.log(`🤖 Paraphraser fast-path for ${slug} (${visibleText.length} chars visibleText)`);
+          // 1. Try paraphraser if we have enough visibleText (medium/high evidence)
+          if (canParaphrase) {
+            console.log(`🤖 Paraphraser fast-path for ${slug} (${evClass.len} chars, ${evClass.level} evidence)`);
 
             try {
               const paraphrasedContent = await buildParaphrasedFromEvidence({
@@ -3892,7 +4766,8 @@ async function worker(task) {
                 evidence_status: "paraphrased",
                 indexable: true,
                 lang,
-                visibleTextLength: visibleText.length
+                visibleTextLength: evClass.len,
+                evidence_level: evClass.level
               };
             } catch (err) {
               console.error(`❌ Paraphraser failed for ${slug}: ${err.message}`);
@@ -3902,10 +4777,8 @@ async function worker(task) {
 
           // 2. If paraphraser didn't run or failed, try extractive content
           if (!obj.__meta?.evidence_status || obj.__meta.evidence_status !== "paraphrased") {
-            const hasEnoughEvidence =
-              evidenceText.length >= 300 && quotes.length >= 2;
-
-            if (hasEnoughEvidence) {
+            // Only use extractive if ENABLE_EXTRACTIVE is true
+            if (canExtract && ENABLE_EXTRACTIVE) {
               console.log(`📝 Extractive fast-path for ${slug} (${lang}, ${quotes.length} quotes, ${features.length} features)`);
 
               // Build extractive content from evidence
@@ -3940,15 +4813,19 @@ async function worker(task) {
               };
             } else {
               // 3. Fallback to generic FAQ if not enough evidence
-              console.log(`🟨 Generic FAQ fast-path for ${slug} (insufficient evidence: ${evidenceText.length} chars, ${quotes.length} quotes)`);
+              // Low-evidence pages should be non-indexable to avoid SEO thin-content penalty
+              const isLowEvidence = evClass.level === "none" || evClass.level === "low";
+              console.log(`🟨 Generic FAQ fast-path for ${slug} (${evClass.level} evidence: ${evClass.len} chars, ${quotes.length} quotes) → indexable=${!isLowEvidence}`);
               const display = (task?.displayName || name || slug || "").trim();
               obj.faqcontent = buildGeneralFaq(display, 5, slug);
               obj.__meta = {
                 ...(obj.__meta || {}),
-                confidence: obj.__meta?.confidence || "medium",
-                evidence_status: "general",
-                indexable: true,
-                needsVerification: true
+                confidence: isLowEvidence ? "low" : "medium",
+                evidence_status: isLowEvidence ? "generic_low_evidence" : "general",
+                indexable: !isLowEvidence,
+                needsVerification: true,
+                evidence_level: evClass.level,
+                evidence_len: evClass.len
               };
             }
           }
@@ -3958,7 +4835,10 @@ async function worker(task) {
         } else {
           // Standard FAQ grounding loop with retries
           let faqTries = 0;
-          const maxFaqTries = ACTIVE_POLICY.retryUntilSuccess ? 3 : 2;
+          const maxFaqTries = Math.min(
+            FAQ_MAX_TRIES,
+            ACTIVE_POLICY.retryUntilSuccess ? 3 : 2
+          );
 
           while (faqTries < maxFaqTries &&
                  !faqIsGrounded(obj.faqcontent, evidenceText, evidenceHost)) {
@@ -4617,7 +5497,7 @@ async function run() {
     return !done && !wasRejected;                    // default: skip rejects
   });
 
-  // Apply onlySlugs filter if specified
+  // Validate onlySlugs filter (actual filtering already done early, this just validates)
   if (args.onlySlugs) {
     const only = new Set(String(args.onlySlugs).split(",").map(s => s.trim()).filter(Boolean));
 
@@ -4632,6 +5512,7 @@ async function run() {
       }
     }
 
+    // Already filtered early (line 1326), just double-check queue matches
     queue = queue.filter(r => only.has(r.slug));
     if (queue.length === 0) {
       console.error("No valid slugs to process (after onlySlugs + reject filtering).");
