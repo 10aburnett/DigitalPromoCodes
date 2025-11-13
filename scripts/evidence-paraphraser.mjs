@@ -17,8 +17,8 @@ export async function buildParaphrasedFromEvidence({ api, slug, name, host, evid
   const visible = evidence.visibleText || evidence.textSample || "";
   const lang = evidence.lang || "en";
 
-  // 2. Ensure we have enough text to paraphrase
-  if (visible.length < 400) {
+  // 2. Ensure we have enough text to paraphrase (relaxed threshold to ~320)
+  if (visible.length < 320) {
     throw new Error(`Insufficient visibleText for paraphrasing (${visible.length} chars)`);
   }
 
