@@ -74,363 +74,62 @@
 {"slug":"betslipbuddy-w-auto-recap","error":"OpenAI 429 {\n    \"error\": {\n        \"message\": \"Rate limit reached for gpt-4o in organization org-4aUcorTfl5MWQE44blIe8AOY on tokens per min (TPM): Limit 30000, Used 30000, Requested 2907. Please try again in 5.814s. Visit https://platform.openai.com/account/rate-limits to learn more.\",\n        \"type\": \"tokens\",\n        \"param\": null,\n        \"code\": \"rate_limit_exceeded\"\n    }\n}\n"}
 {"slug":"betstars-bots","error":"OpenAI 429 {\n    \"error\": {\n        \"message\": \"Rate limit reached for gpt-4o in organization org-4aUcorTfl5MWQE44blIe8AOY on tokens per min (TPM): Limit 30000, Used 29580, Requested 3118. Please try again in 5.396s. Visit https://platform.openai.com/account/rate-limits to learn more.\",\n        \"type\": \"tokens\",\n        \"param\": null,\n        \"code\": \"rate_limit_exceeded\"\n    }\n}\n"}
 {"slug":"betting-bankroll-blueprint","error":"OpenAI 429 {\n    \"error\": {\n        \"message\": \"Rate limit reached for gpt-4o in organization org-4aUcorTfl5MWQE44blIe8AOY on tokens per min (TPM): Limit 30000, Used 30000, Requested 2954. Please try again in 5.908s. Visit https://platform.openai.com/account/rate-limits to learn more.\",\n        \"type\": \"tokens\",\n        \"param\": null,\n        \"code\": \"rate_limit_exceeded\"\n    }\n}\n"}
-{"slug":"betting-hub","error":"OpenAI 429 {\n    \"error\": {\n        \"message\": \"Rate limit reached for gpt-4o in organization org-4aUcorTfl5MWQE44blIe8AOY on tokens per min (TPM): Limit 30000, Used 30000, Requested 3395. Please try again in 6.79s. Visit https://platform.openai.com/account/rate-limits to learn more.\",\n        \"type\": \"tokens\",\n        \"param\": null,\n        \"code\": \"rate_limit_exceeded\"\n    }\n}\n"}
 {"slug":"bettingthepitch-premium","error":"OpenAI 429 {\n    \"error\": {\n        \"message\": \"Rate limit reached for gpt-4o in organization org-4aUcorTfl5MWQE44blIe8AOY on tokens per min (TPM): Limit 30000, Used 30000, Requested 2948. Please try again in 5.896s. Visit https://platform.openai.com/account/rate-limits to learn more.\",\n        \"type\": \"tokens\",\n        \"param\": null,\n        \"code\": \"rate_limit_exceeded\"\n    }\n}\n"}
 {"slug":"bettor-central-premium","error":"OpenAI 429 {\n    \"error\": {\n        \"message\": \"Rate limit reached for gpt-4o in organization org-4aUcorTfl5MWQE44blIe8AOY on tokens per min (TPM): Limit 30000, Used 30000, Requested 3117. Please try again in 6.234s. Visit https://platform.openai.com/account/rate-limits to learn more.\",\n        \"type\": \"tokens\",\n        \"param\": null,\n        \"code\": \"rate_limit_exceeded\"\n    }\n}\n"}
-{"slug":"bettor-odds-all-access","error":"OpenAI 429 {\n    \"error\": {\n        \"message\": \"Rate limit reached for gpt-4o in organization org-4aUcorTfl5MWQE44blIe8AOY on tokens per min (TPM): Limit 30000, Used 30000, Requested 3440. Please try again in 6.88s. Visit https://platform.openai.com/account/rate-limits to learn more.\",\n        \"type\": \"tokens\",\n        \"param\": null,\n        \"code\": \"rate_limit_exceeded\"\n    }\n}\n"}
-{"slug":"bettor-odds-ev","error":"OpenAI 429 {\n    \"error\": {\n        \"message\": \"Rate limit reached for gpt-4o in organization org-4aUcorTfl5MWQE44blIe8AOY on tokens per min (TPM): Limit 30000, Used 30000, Requested 3510. Please try again in 7.02s. Visit https://platform.openai.com/account/rate-limits to learn more.\",\n        \"type\": \"tokens\",\n        \"param\": null,\n        \"code\": \"rate_limit_exceeded\"\n    }\n}\n"}
-{"slug":"bettor-odds-predictions","error":"OpenAI 429 {\n    \"error\": {\n        \"message\": \"Rate limit reached for gpt-4o in organization org-4aUcorTfl5MWQE44blIe8AOY on tokens per min (TPM): Limit 30000, Used 30000, Requested 3568. Please try again in 7.136s. Visit https://platform.openai.com/account/rate-limits to learn more.\",\n        \"type\": \"tokens\",\n        \"param\": null,\n        \"code\": \"rate_limit_exceeded\"\n    }\n}\n"}
-{"slug":"bettors-lounge-monthly","error":"OpenAI 429 {\n    \"error\": {\n        \"message\": \"Rate limit reached for gpt-4o in organization org-4aUcorTfl5MWQE44blIe8AOY on tokens per min (TPM): Limit 30000, Used 30000, Requested 3323. Please try again in 6.646s. Visit https://platform.openai.com/account/rate-limits to learn more.\",\n        \"type\": \"tokens\",\n        \"param\": null,\n        \"code\": \"rate_limit_exceeded\"\n    }\n}\n"}
 {"slug":"betwisepickss","error":"OpenAI 429 {\n    \"error\": {\n        \"message\": \"Rate limit reached for gpt-4o in organization org-4aUcorTfl5MWQE44blIe8AOY on tokens per min (TPM): Limit 30000, Used 30000, Requested 2951. Please try again in 5.902s. Visit https://platform.openai.com/account/rate-limits to learn more.\",\n        \"type\": \"tokens\",\n        \"param\": null,\n        \"code\": \"rate_limit_exceeded\"\n    }\n}\n"}
 {"slug":"betwithboog","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:32:36.001Z"}
-{"slug":"betwithhaddy","error":"OpenAI 429 {\n    \"error\": {\n        \"message\": \"Rate limit reached for gpt-4o in organization org-4aUcorTfl5MWQE44blIe8AOY on tokens per min (TPM): Limit 30000, Used 27592, Requested 3013. Please try again in 1.21s. Visit https://platform.openai.com/account/rate-limits to learn more.\",\n        \"type\": \"tokens\",\n        \"param\": null,\n        \"code\": \"rate_limit_exceeded\"\n    }\n}\n"}
-{"slug":"betwithhaddy-parlays","error":"OpenAI 429 {\n    \"error\": {\n        \"message\": \"Rate limit reached for gpt-4o in organization org-4aUcorTfl5MWQE44blIe8AOY on tokens per min (TPM): Limit 30000, Used 30000, Requested 2853. Please try again in 5.706s. Visit https://platform.openai.com/account/rate-limits to learn more.\",\n        \"type\": \"tokens\",\n        \"param\": null,\n        \"code\": \"rate_limit_exceeded\"\n    }\n}\n"}
-{"slug":"betwithrt-exclusive","error":"OpenAI 429 {\n    \"error\": {\n        \"message\": \"Rate limit reached for gpt-4o in organization org-4aUcorTfl5MWQE44blIe8AOY on tokens per min (TPM): Limit 30000, Used 30000, Requested 3030. Please try again in 6.06s. Visit https://platform.openai.com/account/rate-limits to learn more.\",\n        \"type\": \"tokens\",\n        \"param\": null,\n        \"code\": \"rate_limit_exceeded\"\n    }\n}\n"}
 {"slug":"beyond-clinical-care","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:28:18.693Z"}
-{"slug":"beyourownboss","error":"OpenAI 429 {\n    \"error\": {\n        \"message\": \"Rate limit reached for gpt-4o in organization org-4aUcorTfl5MWQE44blIe8AOY on tokens per min (TPM): Limit 30000, Used 30000, Requested 3104. Please try again in 6.208s. Visit https://platform.openai.com/account/rate-limits to learn more.\",\n        \"type\": \"tokens\",\n        \"param\": null,\n        \"code\": \"rate_limit_exceeded\"\n    }\n}\n"}
-{"slug":"beyourownboss-academy","error":"Grounding check failed: faq answer not grounded"}
-{"slug":"bfx-war-room","error":"OpenAI 429 {\n    \"error\": {\n        \"message\": \"Rate limit reached for gpt-4o in organization org-4aUcorTfl5MWQE44blIe8AOY on tokens per min (TPM): Limit 30000, Used 30000, Requested 3626. Please try again in 7.252s. Visit https://platform.openai.com/account/rate-limits to learn more.\",\n        \"type\": \"tokens\",\n        \"param\": null,\n        \"code\": \"rate_limit_exceeded\"\n    }\n}\n"}
 {"slug":"bg-advanced-trading-content","error":"OpenAI 429 {\n    \"error\": {\n        \"message\": \"Rate limit reached for gpt-4o in organization org-4aUcorTfl5MWQE44blIe8AOY on tokens per min (TPM): Limit 30000, Used 29105, Requested 2990. Please try again in 4.19s. Visit https://platform.openai.com/account/rate-limits to learn more.\",\n        \"type\": \"tokens\",\n        \"param\": null,\n        \"code\": \"rate_limit_exceeded\"\n    }\n}\n"}
-{"slug":"bg-traders","error":"OpenAI 429 {\n    \"error\": {\n        \"message\": \"Rate limit reached for gpt-4o in organization org-4aUcorTfl5MWQE44blIe8AOY on tokens per min (TPM): Limit 30000, Used 30000, Requested 3705. Please try again in 7.41s. Visit https://platform.openai.com/account/rate-limits to learn more.\",\n        \"type\": \"tokens\",\n        \"param\": null,\n        \"code\": \"rate_limit_exceeded\"\n    }\n}\n"}
-{"slug":"bh-insights-crypto-payment","error":"OpenAI 429 {\n    \"error\": {\n        \"message\": \"Rate limit reached for gpt-4o in organization org-4aUcorTfl5MWQE44blIe8AOY on tokens per min (TPM): Limit 30000, Used 30000, Requested 3632. Please try again in 7.264s. Visit https://platform.openai.com/account/rate-limits to learn more.\",\n        \"type\": \"tokens\",\n        \"param\": null,\n        \"code\": \"rate_limit_exceeded\"\n    }\n}\n"}
-{"slug":"big-bettors-pack","error":"OpenAI 429 {\n    \"error\": {\n        \"message\": \"Rate limit reached for gpt-4o in organization org-4aUcorTfl5MWQE44blIe8AOY on tokens per min (TPM): Limit 30000, Used 30000, Requested 2920. Please try again in 5.84s. Visit https://platform.openai.com/account/rate-limits to learn more.\",\n        \"type\": \"tokens\",\n        \"param\": null,\n        \"code\": \"rate_limit_exceeded\"\n    }\n}\n"}
-{"slug":"big-cherry-sports-picks","error":"Repair failed: howtoredeemcontent must use <ol> for steps"}
-{"slug":"big-fish-package-","error":"OpenAI 429 {\n    \"error\": {\n        \"message\": \"Rate limit reached for gpt-4o in organization org-4aUcorTfl5MWQE44blIe8AOY on tokens per min (TPM): Limit 30000, Used 30000, Requested 3097. Please try again in 6.194s. Visit https://platform.openai.com/account/rate-limits to learn more.\",\n        \"type\": \"tokens\",\n        \"param\": null,\n        \"code\": \"rate_limit_exceeded\"\n    }\n}\n"}
-{"slug":"big-gains-club-premium","error":"OpenAI 429 {\n    \"error\": {\n        \"message\": \"Rate limit reached for gpt-4o in organization org-4aUcorTfl5MWQE44blIe8AOY on tokens per min (TPM): Limit 30000, Used 30000, Requested 3130. Please try again in 6.26s. Visit https://platform.openai.com/account/rate-limits to learn more.\",\n        \"type\": \"tokens\",\n        \"param\": null,\n        \"code\": \"rate_limit_exceeded\"\n    }\n}\n"}
 {"slug":"big-guy-university","error":"Evidence fetch failed: This operation was aborted","errorCode":"NETWORK_FETCH_FAIL","meta":{},"ts":"2025-11-12T14:29:44.004Z"}
-{"slug":"big-pick-energy-premium","error":"OpenAI 429 {\n    \"error\": {\n        \"message\": \"Rate limit reached for gpt-4o in organization org-4aUcorTfl5MWQE44blIe8AOY on tokens per min (TPM): Limit 30000, Used 30000, Requested 3294. Please try again in 6.588s. Visit https://platform.openai.com/account/rate-limits to learn more.\",\n        \"type\": \"tokens\",\n        \"param\": null,\n        \"code\": \"rate_limit_exceeded\"\n    }\n}\n"}
 {"slug":"bigcryptogains-vip","error":"OpenAI 429 {\n    \"error\": {\n        \"message\": \"Rate limit reached for gpt-4o in organization org-4aUcorTfl5MWQE44blIe8AOY on tokens per min (TPM): Limit 30000, Used 30000, Requested 3218. Please try again in 6.436s. Visit https://platform.openai.com/account/rate-limits to learn more.\",\n        \"type\": \"tokens\",\n        \"param\": null,\n        \"code\": \"rate_limit_exceeded\"\n    }\n}\n"}
-{"slug":"bigger-picture-trading","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"biggerpicture-mentorship","error":"OpenAI 429 {\n    \"error\": {\n        \"message\": \"Rate limit reached for gpt-4o in organization org-4aUcorTfl5MWQE44blIe8AOY on tokens per min (TPM): Limit 30000, Used 30000, Requested 3666. Please try again in 7.332s. Visit https://platform.openai.com/account/rate-limits to learn more.\",\n        \"type\": \"tokens\",\n        \"param\": null,\n        \"code\": \"rate_limit_exceeded\"\n    }\n}\n"}
 {"slug":"bigjoebets","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"bigprofit","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"bike-blueprint","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"bike4sail-crypto-sm-alerts","error":"OpenAI 429 {\n    \"error\": {\n        \"message\": \"Rate limit reached for gpt-4o in organization org-4aUcorTfl5MWQE44blIe8AOY on tokens per min (TPM): Limit 30000, Used 30000, Requested 3289. Please try again in 6.578s. Visit https://platform.openai.com/account/rate-limits to learn more.\",\n        \"type\": \"tokens\",\n        \"param\": null,\n        \"code\": \"rate_limit_exceeded\"\n    }\n}\n"}
-{"slug":"bill-boys-trading-full-access","error":"OpenAI 429 {\n    \"error\": {\n        \"message\": \"Rate limit reached for gpt-4o in organization org-4aUcorTfl5MWQE44blIe8AOY on tokens per min (TPM): Limit 30000, Used 30000, Requested 3042. Please try again in 6.084s. Visit https://platform.openai.com/account/rate-limits to learn more.\",\n        \"type\": \"tokens\",\n        \"param\": null,\n        \"code\": \"rate_limit_exceeded\"\n    }\n}\n"}
 {"slug":"bill-money-bets","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"billionaire-club","error":"OpenAI 429 {\n    \"error\": {\n        \"message\": \"Rate limit reached for gpt-4o in organization org-4aUcorTfl5MWQE44blIe8AOY on tokens per min (TPM): Limit 30000, Used 30000, Requested 2843. Please try again in 5.686s. Visit https://platform.openai.com/account/rate-limits to learn more.\",\n        \"type\": \"tokens\",\n        \"param\": null,\n        \"code\": \"rate_limit_exceeded\"\n    }\n}\n"}
 {"slug":"billionaire-traders-club","error":"OpenAI 429 {\n    \"error\": {\n        \"message\": \"Rate limit reached for gpt-4o in organization org-4aUcorTfl5MWQE44blIe8AOY on tokens per min (TPM): Limit 30000, Used 30000, Requested 2986. Please try again in 5.972s. Visit https://platform.openai.com/account/rate-limits to learn more.\",\n        \"type\": \"tokens\",\n        \"param\": null,\n        \"code\": \"rate_limit_exceeded\"\n    }\n}\n"}
-{"slug":"biscuit-ebay-only","error":"OpenAI 429 {\n    \"error\": {\n        \"message\": \"Rate limit reached for gpt-4o in organization org-4aUcorTfl5MWQE44blIe8AOY on tokens per min (TPM): Limit 30000, Used 27425, Requested 3003. Please try again in 856ms. Visit https://platform.openai.com/account/rate-limits to learn more.\",\n        \"type\": \"tokens\",\n        \"param\": null,\n        \"code\": \"rate_limit_exceeded\"\n    }\n}\n"}
-{"slug":"biscuit-premium","error":"OpenAI 429 {\n    \"error\": {\n        \"message\": \"Rate limit reached for gpt-4o in organization org-4aUcorTfl5MWQE44blIe8AOY on tokens per min (TPM): Limit 30000, Used 30000, Requested 3209. Please try again in 6.418s. Visit https://platform.openai.com/account/rate-limits to learn more.\",\n        \"type\": \"tokens\",\n        \"param\": null,\n        \"code\": \"rate_limit_exceeded\"\n    }\n}\n"}
 {"slug":"biscuitbet-vip","error":"OpenAI 429 {\n    \"error\": {\n        \"message\": \"Rate limit reached for gpt-4o in organization org-4aUcorTfl5MWQE44blIe8AOY on tokens per min (TPM): Limit 30000, Used 30000, Requested 3118. Please try again in 6.236s. Visit https://platform.openai.com/account/rate-limits to learn more.\",\n        \"type\": \"tokens\",\n        \"param\": null,\n        \"code\": \"rate_limit_exceeded\"\n    }\n}\n"}
 {"slug":"bitmit-trades-vip","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:33:25.797Z"}
-{"slug":"bizlaunchio","error":"OpenAI 429 {\n    \"error\": {\n        \"message\": \"Rate limit reached for gpt-4o in organization org-4aUcorTfl5MWQE44blIe8AOY on tokens per min (TPM): Limit 30000, Used 30000, Requested 2981. Please try again in 5.962s. Visit https://platform.openai.com/account/rate-limits to learn more.\",\n        \"type\": \"tokens\",\n        \"param\": null,\n        \"code\": \"rate_limit_exceeded\"\n    }\n}\n"}
-{"slug":"bizon-scaling","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:30:21.680Z"}
-{"slug":"bizz-district-2","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:30:21.810Z"}
-{"slug":"black-belt-sales-program","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"black-envy-clubhouse-weekly","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:27:10.903Z"}
 {"slug":"black-sheep","error":"OpenAI 429 {\n    \"error\": {\n        \"message\": \"Rate limit reached for gpt-4o in organization org-4aUcorTfl5MWQE44blIe8AOY on tokens per min (TPM): Limit 30000, Used 30000, Requested 2981. Please try again in 5.962s. Visit https://platform.openai.com/account/rate-limits to learn more.\",\n        \"type\": \"tokens\",\n        \"param\": null,\n        \"code\": \"rate_limit_exceeded\"\n    }\n}\n"}
-{"slug":"black-sheep-culture-club","error":"OpenAI 429 {\n    \"error\": {\n        \"message\": \"Rate limit reached for gpt-4o in organization org-4aUcorTfl5MWQE44blIe8AOY on tokens per min (TPM): Limit 30000, Used 30000, Requested 3320. Please try again in 6.64s. Visit https://platform.openai.com/account/rate-limits to learn more.\",\n        \"type\": \"tokens\",\n        \"param\": null,\n        \"code\": \"rate_limit_exceeded\"\n    }\n}\n"}
-{"slug":"black-sheep-founders-circle","error":"OpenAI 429 {\n    \"error\": {\n        \"message\": \"Rate limit reached for gpt-4o in organization org-4aUcorTfl5MWQE44blIe8AOY on tokens per min (TPM): Limit 30000, Used 30000, Requested 3599. Please try again in 7.198s. Visit https://platform.openai.com/account/rate-limits to learn more.\",\n        \"type\": \"tokens\",\n        \"param\": null,\n        \"code\": \"rate_limit_exceeded\"\n    }\n}\n"}
-{"slug":"blackjack-lifetime-options","error":"OpenAI 429 {\n    \"error\": {\n        \"message\": \"Rate limit reached for gpt-4o in organization org-4aUcorTfl5MWQE44blIe8AOY on tokens per min (TPM): Limit 30000, Used 30000, Requested 3190. Please try again in 6.38s. Visit https://platform.openai.com/account/rate-limits to learn more.\",\n        \"type\": \"tokens\",\n        \"param\": null,\n        \"code\": \"rate_limit_exceeded\"\n    }\n}\n"}
 {"slug":"blackjack-options-free-trial","error":"OpenAI 429 {\n    \"error\": {\n        \"message\": \"Rate limit reached for gpt-4o in organization org-4aUcorTfl5MWQE44blIe8AOY on tokens per min (TPM): Limit 30000, Used 30000, Requested 3357. Please try again in 6.714s. Visit https://platform.openai.com/account/rate-limits to learn more.\",\n        \"type\": \"tokens\",\n        \"param\": null,\n        \"code\": \"rate_limit_exceeded\"\n    }\n}\n"}
 {"slug":"blackjack-options-monthly","error":"OpenAI 429 {\n    \"error\": {\n        \"message\": \"Rate limit reached for gpt-4o in organization org-4aUcorTfl5MWQE44blIe8AOY on tokens per min (TPM): Limit 30000, Used 30000, Requested 3359. Please try again in 6.718s. Visit https://platform.openai.com/account/rate-limits to learn more.\",\n        \"type\": \"tokens\",\n        \"param\": null,\n        \"code\": \"rate_limit_exceeded\"\n    }\n}\n"}
-{"slug":"blackops-agency","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:31:39.558Z"}
 {"slug":"blackout-signals-ict-ninja","error":"Count checks failed after repair: aboutcontent words 111 not in 120–180; howtoredeemcontent must use <ol> for steps; howtoredeem step 4 words 9 not in 10–20; howtoredeem step 5 words 7 not in 10–20; howtoredeemcontent bullets should start with an action verb (imperative); promodetailscontent bullets should start with an action verb (imperative)"}
 {"slug":"blackswan-trading","error":"OpenAI 429 {\n    \"error\": {\n        \"message\": \"Rate limit reached for gpt-4o in organization org-4aUcorTfl5MWQE44blIe8AOY on tokens per min (TPM): Limit 30000, Used 30000, Requested 3250. Please try again in 6.5s. Visit https://platform.openai.com/account/rate-limits to learn more.\",\n        \"type\": \"tokens\",\n        \"param\": null,\n        \"code\": \"rate_limit_exceeded\"\n    }\n}\n"}
 {"slug":"blade-watch-membership","error":"OpenAI 429 {\n    \"error\": {\n        \"message\": \"Rate limit reached for gpt-4o in organization org-4aUcorTfl5MWQE44blIe8AOY on tokens per min (TPM): Limit 30000, Used 27743, Requested 3036. Please try again in 1.558s. Visit https://platform.openai.com/account/rate-limits to learn more.\",\n        \"type\": \"tokens\",\n        \"param\": null,\n        \"code\": \"rate_limit_exceeded\"\n    }\n}\n"}
-{"slug":"blastoises-1-on-1-mentorship","error":"OpenAI 429 {\n    \"error\": {\n        \"message\": \"Rate limit reached for gpt-4o in organization org-4aUcorTfl5MWQE44blIe8AOY on tokens per min (TPM): Limit 30000, Used 30000, Requested 3308. Please try again in 6.616s. Visit https://platform.openai.com/account/rate-limits to learn more.\",\n        \"type\": \"tokens\",\n        \"param\": null,\n        \"code\": \"rate_limit_exceeded\"\n    }\n}\n"}
 {"slug":"blindside-faithful-discord","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"blockmage","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"bloodline-breaker-special-offe","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:29:53.460Z"}
 {"slug":"blue-ridge-marketing","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:32:38.738Z"}
-{"slug":"blueprint-community-access","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:31:57.858Z"}
 {"slug":"bmk-crypto-signals-for-starter","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:32:35.582Z"}
-{"slug":"bnb-masterclass","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"bnbu-1","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:32:13.638Z"}
-{"slug":"bobbynutrition","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:26:52.470Z"}
 {"slug":"bodysculpting-monthly-program","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:27:25.745Z"}
 {"slug":"bogobet","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:33:25.323Z"}
 {"slug":"bolyur-bets","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:32:31.040Z"}
 {"slug":"bookbreaker","error":"Evidence fetch failed: This operation was aborted","errorCode":"NETWORK_FETCH_FAIL","meta":{},"ts":"2025-11-12T14:29:44.002Z"}
 {"slug":"bookiemike","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:28:23.266Z"}
-{"slug":"bookiesk","error":"Grounding check failed: faq answer not grounded"}
-{"slug":"bookprofits-initial-signup","error":"Grounding check failed: faq answer not grounded"}
 {"slug":"boomin-bets","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:32:37.606Z"}
-{"slug":"boosts-promos","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"boss-status","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:28:05.519Z"}
-{"slug":"boutique-hotel-mastermind","error":"Style guard: aboutcontent needs more varied sentence length (human cadence). Require ≥3 sentences, mean 13–22 words/sentence, stdev ≥4 for natural variation."}
-{"slug":"boutique-hotel-mastermind-subs","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:32:12.331Z"}
 {"slug":"brainformance-academy","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"brand-builders-community","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:27:59.624Z"}
 {"slug":"brand-hub-member","error":"Grounding check failed: faq answer not grounded"}
-{"slug":"brand-my-agent-llc","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:26:36.858Z"}
-{"slug":"brands-500","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:32:20.257Z"}
 {"slug":"brasco-bets-picks","error":"Grounding check failed: faq answer not grounded"}
 {"slug":"breakout-creators-club","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:33:51.034Z"}
 {"slug":"breezys-cord","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:32:40.966Z"}
-{"slug":"brez-elite-clips-payments","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:31:51.849Z"}
 {"slug":"brick-trader-vip-community","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"bronze-sub-sifi-only","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"brot-detailing-community","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:27:13.099Z"}
 {"slug":"brutal-bets","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:28:18.005Z"}
-{"slug":"buff-paid","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:30:32.071Z"}
-{"slug":"bug-up-ent","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:27:00.626Z"}
-{"slug":"builder-accelerator","error":"Grounding check failed: faq answer not grounded"}
-{"slug":"builder-accelerator-financing","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:30:12.521Z"}
-{"slug":"built-by-you","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:27:35.274Z"}
-{"slug":"built-different","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:32:26.328Z"}
-{"slug":"bullish-premium-chat","error":"Primary keyword (\"🚨Bullish Premium Chat🚨 promo code\") missing in aboutcontent first paragraph (min presence rule)"}
 {"slug":"bullnet-spezial","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:27:31.678Z"}
 {"slug":"bulltrix-algo-indicator","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:28:06.143Z"}
 {"slug":"bundle-1s-2f","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"bundle-3s1a","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"bundle-deal-alerts-bots","error":"Grounding check failed: faq answer not grounded"}
 {"slug":"business-ascension","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:27:44.313Z"}
-{"slug":"business-consulting-fee","error":"Grounding check failed: faq answer not grounded"}
-{"slug":"business-growth-mastery-gp","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:29:57.410Z"}
-{"slug":"businessgrowr-aaf-dfy-setup","error":"Grounding check failed: faq answer not grounded"}
 {"slug":"buzzer-picks-vip","error":"Grounding check failed: faq answer not grounded"}
 {"slug":"bwalks-locks-","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:33:33.226Z"}
 {"slug":"bybit-futures-premium","error":"Grounding check failed: faq answer not grounded"}
-{"slug":"byeb-deposit","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:27:19.910Z"}
-{"slug":"c-raytrains","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"caa-itin-forensic-training","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"cam-easty-deposit","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"canary-chain","error":"Grounding check failed: faq answer not grounded"}
 {"slug":"candida-community","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:33:47.361Z"}
-{"slug":"canvas-world","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"capital-care-package","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:31:46.947Z"}
-{"slug":"capital-hill-trading-bootcamp","error":"Grounding check failed: faq answer not grounded"}
 {"slug":"capital-photography","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:28:21.785Z"}
-{"slug":"capital-unlocked","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:31:47.040Z"}
-{"slug":"capture-ecom","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:27:28.509Z"}
-{"slug":"cardonomics-monitor-membership","error":"Repair failed: howtoredeemcontent must use <ol> for steps"}
-{"slug":"career-enterprise","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:32:21.213Z"}
-{"slug":"career-evolved","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:30:57.862Z"}
-{"slug":"cash-out-central-premium","error":"Repair failed: howtoredeemcontent must use <ol> for steps"}
-{"slug":"cashflowcoaching","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"cashglobe","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:27:45.407Z"}
-{"slug":"cashpages-arabic","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:33:52.994Z"}
-{"slug":"cashpages-pt","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:27:29.411Z"}
-{"slug":"cassyss-degen-activities","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:28:14.636Z"}
-{"slug":"castnq","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"cc-compass","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:26:58.305Z"}
-{"slug":"cc-sports-consulting","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"ccs-collectibles","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:27:34.261Z"}
-{"slug":"cdl-sportsbook-pass","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"ceasars-sports-picks","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:27:42.398Z"}
-{"slug":"cedbusiness2024s-whop","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:27:38.834Z"}
-{"slug":"ceo-freedom-program","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"ceos-behind-the-wheel","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:31:34.016Z"}
-{"slug":"certified-degens","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"certified-lead-kings","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:31:42.872Z"}
-{"slug":"certified-lockz-premium","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:28:05.468Z"}
-{"slug":"certified-nipers-vip","error":"Style guard: aboutcontent needs more varied sentence length (human cadence). Require ≥3 sentences, mean 13–22 words/sentence, stdev ≥4 for natural variation."}
-{"slug":"certified-nipers-vip-access","error":"Repair failed: howtoredeemcontent must use <ol> for steps"}
-{"slug":"certified-smackers","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:33:23.235Z"}
-{"slug":"chad-buyers-club","error":"Grounding check failed: faq answer not grounded"}
-{"slug":"chaincandy","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"chairtio-ai-trading-signals","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:33:50.614Z"}
-{"slug":"changing-lives-protocol","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:26:44.072Z"}
-{"slug":"channel-launch","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:27:01.857Z"}
-{"slug":"chaos-indicator-for-trading","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:33:57.106Z"}
-{"slug":"charlys-way-plus","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:26:43.666Z"}
-{"slug":"chart-chasers-gold","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"chart-masters-enterprises","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:32:31.796Z"}
-{"slug":"chase-the-odds","error":"Grounding check failed: faq answer not grounded"}
-{"slug":"chavo-clips","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"checkmate-trading","error":"Primary keyword (\"CheckMate Trading™ promo code\") missing in aboutcontent first paragraph (min presence rule)"}
-{"slug":"chef-bets","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"chefscrew","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:28:20.369Z"}
-{"slug":"chuks-hut","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:33:24.193Z"}
-{"slug":"circle-of-ecom","error":"Grounding check failed: faq answer not grounded"}
-{"slug":"cisero-ai","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:30:20.874Z"}
-{"slug":"clear-path-consulting-llc","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:33:21.294Z"}
-{"slug":"clickreigninternetmedia","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:31:49.457Z"}
-{"slug":"client-control","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"clinicore-ai","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:27:39.784Z"}
-{"slug":"clip-labs-premium","error":"Grounding check failed: faq answer not grounded"}
-{"slug":"clipcut","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:31:46.115Z"}
-{"slug":"clockincheese","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:33:16.095Z"}
-{"slug":"clocks-mentorship","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"close-real-sales","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:26:40.373Z"}
-{"slug":"closer-launchpad","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:31:51.130Z"}
-{"slug":"closing-bible-financing","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:27:28.534Z"}
-{"slug":"clothing-boutique-blueprint","error":"Repair failed: howtoredeemcontent must use <ol> for steps"}
-{"slug":"clothing-brand-education","error":"Evidence fetch failed: fetch failed"}
-{"slug":"cloud-city","error":"Evidence fetch failed: fetch failed"}
-{"slug":"clubcloser","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:29:55.908Z"}
-{"slug":"clubdocnet","error":"Evidence fetch failed: fetch failed"}
-{"slug":"clubusineslatam-personalizados","error":"Evidence fetch failed: fetch failed"}
-{"slug":"clutch-trading","error":"Evidence fetch failed: fetch failed"}
-{"slug":"clx-funding-investing","error":"Evidence fetch failed: fetch failed"}
-{"slug":"cno-research","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"co-create-sales-agency","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:32:10.691Z"}
-{"slug":"coach-buckio","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:32:19.241Z"}
-{"slug":"coach-bust-academy","error":"Evidence fetch failed: fetch failed"}
-{"slug":"coach-patrick-liu","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:31:18.823Z"}
-{"slug":"coaching-by-brian","error":"Evidence fetch failed: fetch failed"}
-{"slug":"coaching-pro","error":"Evidence fetch failed: fetch failed"}
-{"slug":"coaching-program","error":"fetch failed"}
-{"slug":"code-to-ceo","error":"Grounding check failed: faq answer not grounded"}
-{"slug":"coinflow-community","error":"fetch failed"}
-{"slug":"coingrams-vip-access","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"collins-picks","error":"Evidence fetch failed: fetch failed"}
-{"slug":"colton-membership","error":"Evidence fetch failed: fetch failed"}
-{"slug":"combined-all-picks","error":"Grounding check failed: faq answer not grounded"}
-{"slug":"comfyui-and-flux-vip-workflows","error":"fetch failed"}
-{"slug":"commercify-ai","error":"Evidence fetch failed: fetch failed"}
-{"slug":"communication-mastery-protocol","error":"Evidence fetch failed: fetch failed"}
-{"slug":"complete-pain-resolution","error":"Evidence fetch failed: fetch failed"}
-{"slug":"components-trading","error":"Evidence fetch failed: fetch failed"}
-{"slug":"compound-community","error":"Evidence fetch failed: fetch failed"}
-{"slug":"confitdence-fitness","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:28:06.402Z"}
-{"slug":"congruence-in-closing","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:30:18.439Z"}
-{"slug":"consulting-mastery","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:30:05.886Z"}
-{"slug":"consulting-utopia-dfy","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:32:05.714Z"}
-{"slug":"content-accelerator","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:30:15.527Z"}
-{"slug":"content-growth-engine","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:26:39.471Z"}
-{"slug":"contentflow","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:30:23.847Z"}
-{"slug":"conversionmind-ai-system-pro","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:31:58.088Z"}
-{"slug":"copywriting-mba","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:30:01.820Z"}
-{"slug":"corgi-calls-corgi-pass","error":"Style guard: aboutcontent needs more varied sentence length (human cadence). Require ≥3 sentences, mean 13–22 words/sentence, stdev ≥4 for natural variation."}
-{"slug":"courses-funnels","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:29:59.035Z"}
-{"slug":"cpa-weekly-program","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:32:08.872Z"}
-{"slug":"cr-trade-system","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:27:57.221Z"}
-{"slug":"cre8tion-monthly-full-access","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:32:24.497Z"}
-{"slug":"create8room","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:32:03.676Z"}
-{"slug":"creative-that-converts","error":"Grounding check failed: faq answer not grounded"}
-{"slug":"creativeforge","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"creatorlink-elite","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:30:34.561Z"}
-{"slug":"creators-acquisition","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:29:58.532Z"}
-{"slug":"creators-project","error":"Repair failed: aboutcontent words 118 not in 120–180"}
-{"slug":"credit-academy","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:33:55.348Z"}
-{"slug":"credit-repair-balance-2nd-pay","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:32:25.453Z"}
-{"slug":"credits","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:31:20.383Z"}
-{"slug":"criscklukks-whop","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:33:03.132Z"}
-{"slug":"critical-commerce","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:32:27.322Z"}
-{"slug":"cronus-heaven-premium","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:28:08.191Z"}
-{"slug":"croozie-coaching","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:27:18.733Z"}
-{"slug":"crown-legacy-investments","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:28:19.443Z"}
-{"slug":"crush-media","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"crypto-academy","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"crypto-capital-vip","error":"Repair failed: howtoredeemcontent must use <ol> for steps"}
-{"slug":"crypto-moguls-academy","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"crypto-office-membresa","error":"Grounding check failed: faq answer not grounded"}
-{"slug":"crypto-seth-vip","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:26:57.190Z"}
-{"slug":"crypto-wealth-club","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:26:38.638Z"}
-{"slug":"cryptoalphas-hub-dolphin","error":"Grounding check failed: faq answer not grounded"}
-{"slug":"cryptony-vip","error":"Grounding check failed: faq answer not grounded"}
-{"slug":"cryptopro","error":"Grounding check failed: faq answer not grounded"}
-{"slug":"cryptorise-group-access","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"cryptorise-group-full-access","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"ctp-ecom","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:32:22.464Z"}
-{"slug":"cumbre-de-titanes","error":"Grounding check failed: faq answer not grounded"}
-{"slug":"currency-cave-live-trading","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"curso-completo-de-media-buying","error":"Grounding check failed: faq answer not grounded"}
-{"slug":"curso-inicial-airdrops","error":"Grounding check failed: faq answer not grounded"}
-{"slug":"custom-payment-links","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:32:08.331Z"}
-{"slug":"custom-subscription","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:33:41.496Z"}
-{"slug":"custombbstoreorder","error":"Grounding check failed: faq answer not grounded"}
-{"slug":"cutout-media","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:27:17.997Z"}
-{"slug":"cw","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"cyber-city-media","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:32:13.185Z"}
-{"slug":"cybill","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:31:44.258Z"}
-{"slug":"d1-locks","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:33:29.877Z"}
-{"slug":"da-lock-room","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:30:38.364Z"}
-{"slug":"dabble-ev-bots-vip-dabble","error":"Grounding check failed: faq answer not grounded"}
-{"slug":"dafs-swing-trading-lounge","error":"fetch failed"}
-{"slug":"daily","error":"Grounding check failed: faq answer not grounded"}
-{"slug":"daily-grind-drip-trader","error":"fetch failed"}
-{"slug":"daisy-clips","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:26:42.634Z"}
-{"slug":"dammyflips","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:28:21.264Z"}
-{"slug":"dan-steel-trading-academy","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"daniel-g-hubzome-lda-speaking","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:30:20.768Z"}
 {"slug":"daniel-g-lifetime-sales-skool","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:34:01.862Z"}
-{"slug":"daniel-g-x-alkaline-electric","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:32:02.224Z"}
-{"slug":"daniel-g-x-anton-podcast","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:32:23.145Z"}
-{"slug":"daniel-g-x-d2d-con","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:31:05.160Z"}
-{"slug":"daniel-g-x-wealth-con","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:31:40.771Z"}
-{"slug":"daniella-rae-fitness","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:28:08.121Z"}
-{"slug":"danpe","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:32:32.478Z"}
-{"slug":"dans-profit-hunter","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"darros-playbook","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"data-extraction-10k-records","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:32:33.598Z"}
-{"slug":"data-furnisher-business","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"data-leads","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:27:53.509Z"}
-{"slug":"datsq9-1-week-pass","error":"fetch failed"}
-{"slug":"datsq9-vip-play","error":"fetch failed"}
-{"slug":"davids-marktanalysen","error":"Grounding check failed: faq answer not grounded"}
-{"slug":"dawah-central","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:33:18.956Z"}
-{"slug":"day2day-locks","error":"Grounding check failed: faq answer not grounded"}
-{"slug":"daytradinggps-daily-key-levels","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"db-locks","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:27:44.443Z"}
-{"slug":"dcoptions","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:27:46.223Z"}
-{"slug":"ddu-online-services-agency-","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:31:45.135Z"}
-{"slug":"ddu-online-services-agency-4","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:31:32.384Z"}
-{"slug":"ddu-online-services-agency-8","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:32:05.897Z"}
-{"slug":"de-wolf-van-washington","error":"Grounding check failed: faq answer not grounded"}
-{"slug":"deadman-capital","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:28:13.725Z"}
-{"slug":"deal-divers","error":"Grounding check failed: faq answer not grounded"}
-{"slug":"dealmaker-20","error":"Style guard: aboutcontent needs more varied sentence length (human cadence). Require ≥3 sentences, mean 13–22 words/sentence, stdev ≥4 for natural variation."}
-{"slug":"deals-and-aloha-flip-tribe","error":"Grounding check failed: faq answer not grounded"}
-{"slug":"dealsify","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:30:22.746Z"}
-{"slug":"deanbets","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"decide-to-heal","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:27:39.901Z"}
-{"slug":"deepquant","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:30:26.603Z"}
-{"slug":"defi-consulting-alliance","error":"Repair failed: aboutcontent words 114 not in 120–180"}
-{"slug":"degen-vip","error":"Repair failed: aboutcontent words 114 not in 120–180"}
-{"slug":"degenai","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"dehix-premium","error":"fetch failed"}
-{"slug":"delegate-automate-elevate","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:33:21.442Z"}
-{"slug":"denisp-fitness","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:33:22.719Z"}
-{"slug":"denji-trading-mentorship","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:33:54.859Z"}
-{"slug":"depop-inner-circle","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:30:19.520Z"}
-{"slug":"depop-kings","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:32:25.299Z"}
-{"slug":"deportes2k","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:33:15.302Z"}
-{"slug":"deposit-private-mentorship","error":"fetch failed"}
-{"slug":"derae-sales","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:26:40.881Z"}
-{"slug":"derek-gajis-mastermind-group","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"desperado-sales-group","error":"fetch failed"}
-{"slug":"destiny-awaits-coaching","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:26:54.092Z"}
-{"slug":"dev-alchemy","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:27:17.281Z"}
-{"slug":"devlaunch-mentorship","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:30:04.533Z"}
-{"slug":"dexters-elite","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"dfy-faceless-youtube-channel","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:32:15.316Z"}
-{"slug":"dfy-wholesaling","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:30:16.484Z"}
-{"slug":"di-extension","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:33:49.625Z"}
-{"slug":"dialerio","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:30:25.237Z"}
 {"slug":"dialos","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:28:17.038Z"}
-{"slug":"dialos-major-league-profits","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:26:56.358Z"}
-{"slug":"diamant-live-trades","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:28:20.817Z"}
-{"slug":"diamond-bankroll-management","error":"Primary keyword (\"*DIAMOND (Bankroll Management) promo code\") missing in aboutcontent first paragraph (min presence rule)"}
-{"slug":"diamond-club","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"diamond-tier-btwb","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"digistrives-seo-boost","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:26:59.231Z"}
-{"slug":"digital-asset-accelerator","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:31:10.132Z"}
-{"slug":"digital-consult-2","error":"Grounding check failed: faq answer not grounded"}
-{"slug":"digital-downline","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:28:17.165Z"}
-{"slug":"digital-marketing-service-fee","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:29:54.664Z"}
-{"slug":"digital-profit-accelerator","error":"Grounding check failed: faq answer not grounded"}
-{"slug":"dinner","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:31:53.901Z"}
-{"slug":"diontrades","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:32:20.742Z"}
-{"slug":"dirty-daves-community","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:31:46.158Z"}
-{"slug":"discord","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:29:47.858Z"}
-{"slug":"discord-premium","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:27:18.713Z"}
-{"slug":"discord-vip-tier-3","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:33:35.420Z"}
-{"slug":"dj-shab-locks","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:30:22.654Z"}
-{"slug":"dk-trading","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:29:49.309Z"}
-{"slug":"dm-setting","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:33:54.622Z"}
-{"slug":"dnd-monthly-membership","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"doge-news-official","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:26:40.230Z"}
-{"slug":"dojo-forex","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:26:50.326Z"}
-{"slug":"dominate-the-decade-mastery","error":"Grounding check failed: faq answer not grounded"}
-{"slug":"domsprops","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"donalds-store","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"done-for-you-business-solution","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:30:13.574Z"}
-{"slug":"done-for-you-social-media","error":"Soft skip: 404 or insufficient evidence"}
 {"slug":"donguribatake","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:28:22.507Z"}
-{"slug":"donovancd27s-whop","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"dontbenormal","error":"Soft skip: 404 or insufficient evidence"}
-{"slug":"doubleup-sports-monthly","error":"Grounding check failed: faq answer not grounded"}
-{"slug":"dpacpicks","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:27:35.957Z"}
 {"slug":"dr-baltimore","error":"Grounding check failed: faq answer not grounded"}
-{"slug":"dr-baltimore-10","error":"Repair failed: howtoredeemcontent must use <ol> for steps"}
-{"slug":"dr-baltimore-12","error":"Grounding check failed: faq answer not grounded"}
-{"slug":"dr-baltimore-2","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:30:34.802Z"}
 {"slug":"dr-baltimore-6","error":"Style guard: aboutcontent needs more varied sentence length (human cadence). Require ≥3 sentences, mean 13–22 words/sentence, stdev ≥4 for natural variation."}
-{"slug":"dr-baltimore-8","error":"Grounding check failed: faq answer not grounded"}
 {"slug":"dr-baltimore-9","error":"Grounding check failed: faq answer not grounded"}
 {"slug":"dr-rewire","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:29:51.727Z"}
 {"slug":"dream-picks-premium-weekly","error":"Soft skip: 404 or insufficient evidence","errorCode":"HTTP_404","meta":{},"ts":"2025-11-12T14:32:29.650Z"}
