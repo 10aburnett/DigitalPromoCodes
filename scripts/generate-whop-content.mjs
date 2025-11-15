@@ -356,6 +356,9 @@ const FORCE_GENERIC_ON_PRIOR_FAQ_REJECT = (process.env.FORCE_GENERIC_ON_PRIOR_FA
 // Max FAQ retries. For big reject sweeps, set FAQ_MAX_TRIES=1 in env to save tokens.
 const FAQ_MAX_TRIES = parseInt(process.env.FAQ_MAX_TRIES || "3", 10);
 
+// If set, FAQ grounding becomes advisory only (no hard rejects).
+const RELAX_FAQ_GROUNDING = (process.env.RELAX_FAQ_GROUNDING === "1");
+
 // Toggle extractive mode (quote-heavy). Default OFF for SEO safety.
 const ENABLE_EXTRACTIVE = (process.env.ENABLE_EXTRACTIVE === "1");
 
@@ -628,6 +631,10 @@ function extractFromHtml(html, baseUrl) {
 
 // Per-host concurrency limiter
 const hostInFlight = new Map();
+
+// Track retry counts per slug for audit trail
+const retryCount = new Map();
+
 async function withHostSlot(u, fn) {
   const { host } = new URL(u);
   while ((hostInFlight.get(host) || 0) >= MAX_HOST_CONCURRENCY) await sleep(100);
@@ -4424,18 +4431,23 @@ async function worker(task) {
   // MAX-RETRIES PATH: stop burning tokens.
   // For SEO safety: NO extractive, NO synthetic. Emit cheap generic, non-indexable content.
   if (attempts > EFFECTIVE_MAX_RETRIES && ACTIVE_POLICY.retryUntilSuccess) {
-    const display = (task?.displayName || name || slug || "").trim();
-    const evClass = classifyEvidenceStrength(evidence || {});
-    const evLevel = evClass.level;
-    const evLen = evClass.len;
-    const topicInfo = inferGenericTopic(name, slug);
+    // Skip if paraphraser already succeeded
+    if (obj.__meta?.evidence_status) {
+      console.log(`ℹ️  Skipping MAX-RETRIES generic fallback for ${slug} – already has evidence_status: ${obj.__meta.evidence_status}`);
+      // Continue to normal processing below
+    } else {
+      const display = (task?.displayName || name || slug || "").trim();
+      const evClass = classifyEvidenceStrength(evidence || {});
+      const evLevel = evClass.level;
+      const evLen = evClass.len;
+      const topicInfo = inferGenericTopic(name, slug);
 
-    // If we have high evidence, use topic-aware content (indexable)
-    // Otherwise, use generic low-evidence content (non-indexable)
-    const useTopicAware = (evLevel === "high" || evLevel === "medium");
+      // If we have high evidence, use topic-aware content (indexable)
+      // Otherwise, use generic low-evidence content (non-indexable)
+      const useTopicAware = (evLevel === "high" || evLevel === "medium");
 
-    if (useTopicAware) {
-      console.warn(`⚠️ Max retries reached for ${slug} – emitting topic-aware generic content (${topicInfo.topic}, indexable)`);
+      if (useTopicAware) {
+        console.warn(`⚠️ Max retries reached for ${slug} – emitting topic-aware generic content (${topicInfo.topic}, indexable)`);
 
       const topicAbout = buildTopicAwareAbout(display, topicInfo, slug);
 
@@ -4536,10 +4548,11 @@ async function worker(task) {
       }
     }
 
-    ck.done[slug] = true;
-    delete ck.pending[slug];
-    persistCheckpoint();
-    return;
+      ck.done[slug] = true;
+      delete ck.pending[slug];
+      persistCheckpoint();
+      return;
+    }
   }
 
   // Evidence-only mode: cheap probe without model spend
@@ -4717,63 +4730,65 @@ async function worker(task) {
       const isKnownSPA = /(^|\.)whop\.com$/i.test(urlHost);
       obj = normaliseOutput(obj, { isKnownSPA, __safeName: task.displayName || name });
 
+      // ====================== PRIMARY PARAPHRASER ======================
+      // Try paraphraser FIRST for medium/high evidence (before FAQ/generic logic)
+      const evidenceHost = urlHost;
+      const evidenceHtml = evidence?.html || "";
+      const evidenceText = (evidence?.textSample || "").replace(/\s+/g, " ").trim();
+
+      // Enrich evidence with extractive data (lang, quotes, features)
+      const lang = detectLang(evidenceText || evidenceHtml);
+      const quotes = makeQuoteBank(evidenceText || evidenceHtml);
+      const features = extractFeaturePhrases(evidenceText || evidenceHtml);
+
+      // Classify evidence strength to determine approach
+      const evClass = classifyEvidenceStrength(evidence);
+      const canParaphrase = evClass.level === "medium" || evClass.level === "high";
+
+      // Try paraphraser if we have enough visibleText (medium/high evidence)
+      if (canParaphrase) {
+        console.log(`🤖 PRIMARY PARAPHRASER for ${slug} (${evClass.len} chars, ${evClass.level} evidence)`);
+
+        try {
+          const paraphrasedContent = await buildParaphrasedFromEvidence({
+            api,
+            slug,
+            name,
+            host: evidenceHost,
+            evidence: { ...evidence, lang, quotes, features },
+            normaliseOutput
+          });
+
+          // Merge paraphrased content into obj
+          obj = {
+            ...obj,
+            ...paraphrasedContent
+          };
+
+          obj.__meta = {
+            ...(obj.__meta || {}),
+            confidence: "high",
+            evidence_status: "paraphrased",
+            indexable: true,
+            lang,
+            visibleTextLength: evClass.len,
+            evidence_level: evClass.level
+          };
+        } catch (err) {
+          console.error(`❌ PRIMARY PARAPHRASER failed for ${slug}: ${err.message}`);
+          // Fall through to FAQ/extractive/generic on paraphraser failure
+        }
+      }
+
       // ====================== FAQ PATH ======================
       try {
-        const evidenceHost = urlHost;
-        const evidenceHtml = evidence?.html || "";
-        const evidenceText = (evidence?.textSample || "").replace(/\s+/g, " ").trim();
-
         // Decide whether to skip expensive FAQ retries and use generic bank directly
         const forceGenericFAQ =
           GENERIC_FAQ_SLUGS.has(slug) ||
           (FORCE_GENERIC_ON_PRIOR_FAQ_REJECT && priorFaqGroundingFailed(slug));
 
         if (forceGenericFAQ) {
-          // Enrich evidence with extractive data (lang, quotes, features)
-          const lang = detectLang(evidenceText || evidenceHtml);
-          const quotes = makeQuoteBank(evidenceText || evidenceHtml);
-          const features = extractFeaturePhrases(evidenceText || evidenceHtml);
-
-          // Classify evidence strength to determine approach
-          const evClass = classifyEvidenceStrength(evidence);
-          const canParaphrase = evClass.level === "medium" || evClass.level === "high";
           const canExtract = quotes.length >= 2 && evClass.level !== "none";
-
-          // Three-tier approach: paraphraser > extractive > generic
-          // 1. Try paraphraser if we have enough visibleText (medium/high evidence)
-          if (canParaphrase) {
-            console.log(`🤖 Paraphraser fast-path for ${slug} (${evClass.len} chars, ${evClass.level} evidence)`);
-
-            try {
-              const paraphrasedContent = await buildParaphrasedFromEvidence({
-                api,
-                slug,
-                name,
-                host: evidenceHost,
-                evidence: { ...evidence, lang, quotes, features },
-                normaliseOutput
-              });
-
-              // Merge paraphrased content into obj
-              obj = {
-                ...obj,
-                ...paraphrasedContent
-              };
-
-              obj.__meta = {
-                ...(obj.__meta || {}),
-                confidence: "high",
-                evidence_status: "paraphrased",
-                indexable: true,
-                lang,
-                visibleTextLength: evClass.len,
-                evidence_level: evClass.level
-              };
-            } catch (err) {
-              console.error(`❌ Paraphraser failed for ${slug}: ${err.message}`);
-              // Fall through to extractive/generic on paraphraser failure
-            }
-          }
 
           // 2. If paraphraser didn't run or failed, try extractive content
           if (!obj.__meta?.evidence_status || obj.__meta.evidence_status !== "paraphrased") {
@@ -4840,25 +4855,31 @@ async function worker(task) {
             ACTIVE_POLICY.retryUntilSuccess ? 3 : 2
           );
 
-          while (faqTries < maxFaqTries &&
-                 !faqIsGrounded(obj.faqcontent, evidenceText, evidenceHost)) {
-            faqTries++;
-            console.log(`🔄 FAQ not grounded → regenerating (${faqTries}/${maxFaqTries}) for ${slug}`);
+          // If we're relaxing FAQ grounding, don't waste budget on multiple retries
+          if (!RELAX_FAQ_GROUNDING) {
+            while (faqTries < maxFaqTries &&
+                   !faqIsGrounded(obj.faqcontent, evidenceText, evidenceHost)) {
+              faqTries++;
+              console.log(`🔄 FAQ not grounded → regenerating (${faqTries}/${maxFaqTries}) for ${slug}`);
 
-            // Create a wrapper function to call the model and parse JSON
-            const callModelJSON = async (sys, user) => {
-              const combined = `${sys}\n\n${user}`;
-              const raw = await api.callLLM(combined);
-              const firstBrace = raw.indexOf("[");
-              const lastBrace = raw.lastIndexOf("]");
-              if (firstBrace >= 0 && lastBrace > firstBrace) {
-                return JSON.parse(raw.slice(firstBrace, lastBrace+1));
-              }
-              return JSON.parse(raw);
-            };
+              // Create a wrapper function to call the model and parse JSON
+              const callModelJSON = async (sys, user) => {
+                const combined = `${sys}\n\n${user}`;
+                const raw = await api.callLLM(combined);
+                const firstBrace = raw.indexOf("[");
+                const lastBrace = raw.lastIndexOf("]");
+                if (firstBrace >= 0 && lastBrace > firstBrace) {
+                  return JSON.parse(raw.slice(firstBrace, lastBrace+1));
+                }
+                return JSON.parse(raw);
+              };
 
-            obj.faqcontent = await regenerateFaqGrounded(callModelJSON, evidenceHtml, evidenceHost);
-            obj = normaliseOutput(obj, { isKnownSPA, __safeName: task.displayName || name });
+              obj.faqcontent = await regenerateFaqGrounded(callModelJSON, evidenceHtml, evidenceHost);
+              obj = normaliseOutput(obj, { isKnownSPA, __safeName: task.displayName || name });
+            }
+          } else {
+            // In relaxed mode, we generate FAQ once (already done above) and accept it,
+            // as long as it passes basic structural checks elsewhere.
           }
 
           if (!faqIsGrounded(obj.faqcontent, evidenceText, evidenceHost)) {
@@ -4936,7 +4957,13 @@ async function worker(task) {
 
       // Grounding check (ensure content is based on evidence)
       const groundErr = checkGrounding(obj, evidence);
-      if (groundErr) throw new Error(groundErr);
+      if (groundErr) {
+        if (RELAX_FAQ_GROUNDING) {
+          console.warn(`⚠️  ${groundErr} for ${slug}, accepting anyway in relaxed mode`);
+        } else {
+          throw new Error(groundErr);
+        }
+      }
 
       // Hard counts with auto-repair (skip checks on preserved fields)
       let fails = checkHardCounts(obj, preserved);

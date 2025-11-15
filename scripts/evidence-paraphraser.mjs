@@ -2,6 +2,28 @@
 // LLM-based paraphrasing of evidence for validator-safe content generation
 
 /**
+ * Robust type-safe string converter
+ * Handles all possible API response shapes
+ */
+function ensureString(value) {
+  if (typeof value === "string") return value;
+  if (value == null) return "";
+  if (Array.isArray(value)) {
+    return value.map(ensureString).join(" ");
+  }
+  if (typeof value === "object") {
+    // Common OpenAI-style shapes
+    if (value.content && typeof value.content === "string") return value.content;
+    if (value.text && typeof value.text === "string") return value.text;
+    if (value.message && typeof value.message.content === "string") {
+      return value.message.content;
+    }
+    return JSON.stringify(value);
+  }
+  return String(value);
+}
+
+/**
  * Build paraphrased content from evidence using a single LLM call
  * @param {Object} params
  * @param {Object} params.api - API instance with callLLM method
@@ -9,7 +31,7 @@
  * @param {string} params.name - Product display name
  * @param {string} params.host - Evidence source hostname
  * @param {Object} params.evidence - Evidence object with visibleText
- * @param {Function} params.normaliseOutput - Word count clamping function
+ * @param {Function} [params.normaliseOutput] - Optional word count clamping function
  * @returns {Promise<Object>} Content payload (aboutcontent, howtoredeemcontent, etc.)
  */
 export async function buildParaphrasedFromEvidence({ api, slug, name, host, evidence, normaliseOutput }) {
@@ -87,22 +109,27 @@ Each FAQ answer should be 1-2 sentences in <p> tags.
 
 Output ONLY the JSON object, no markdown code fences.`;
 
-  // 5. Call LLM once
-  const llmResponse = await api.callLLM({
-    systemPrompt,
-    userPrompt,
-    temperature: 0.3,
-    maxTokens: 2000,
-  });
+  // 5. Call LLM once with combined prompt (callLLM expects a string)
+  const combinedPrompt = `${systemPrompt}\n\n${userPrompt}`;
+  const rawResponse = await api.callLLM(combinedPrompt);
 
-  // 6. Parse JSON response
+  // 6. Normalize to a string BEFORE doing any .replace()
+  const responseStr = ensureString(rawResponse);
+
   let parsed;
   try {
     // Remove markdown fences if present
-    const cleaned = llmResponse.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+    const cleaned = responseStr
+      .replace(/```json[\r\n]*/gi, "")
+      .replace(/```[\r\n]*/g, "")
+      .trim();
+
     parsed = JSON.parse(cleaned);
   } catch (err) {
-    throw new Error(`Failed to parse LLM JSON response: ${err.message}\nResponse: ${llmResponse.slice(0, 500)}`);
+    const preview = responseStr.slice(0, 500);
+    throw new Error(
+      `Failed to parse LLM JSON response: ${err.message}\nResponse preview: ${preview}`
+    );
   }
 
   // 7. Validate required fields
@@ -113,8 +140,29 @@ Output ONLY the JSON object, no markdown code fences.`;
     }
   }
 
-  // 8. Normalize word counts using provided function
-  const normalized = normaliseOutput(parsed);
+  // 8. Ensure all HTML content fields are strings before normalizeOutput
+  // This prevents "html.replace is not a function" errors in downstream processing
+  parsed.aboutcontent = ensureString(parsed.aboutcontent);
+  parsed.howtoredeemcontent = ensureString(parsed.howtoredeemcontent);
+  parsed.promodetailscontent = ensureString(parsed.promodetailscontent);
+  parsed.termscontent = ensureString(parsed.termscontent);
+
+  // Ensure FAQ array items have string fields
+  if (Array.isArray(parsed.faqcontent)) {
+    parsed.faqcontent = parsed.faqcontent.map(item => ({
+      question: ensureString(item?.question || ""),
+      answerHtml: ensureString(item?.answerHtml || item?.answer || "")
+    }));
+  }
+
+  // 9. Normalize word counts using provided function, if present
+  let normalized;
+  if (typeof normaliseOutput === "function") {
+    normalized = normaliseOutput(parsed);
+  } else {
+    // Fallback: just return the parsed, cleaned object as-is
+    normalized = parsed;
+  }
 
   return normalized;
 }
