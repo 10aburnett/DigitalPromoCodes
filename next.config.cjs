@@ -115,6 +115,13 @@ const nextConfig = {
   // Custom headers for sitemap files
   async headers() {
     return [
+      // NOINDEX for all pages - domain deindexing
+      {
+        source: '/:path*',
+        headers: [
+          { key: 'X-Robots-Tag', value: 'noindex, nofollow, noarchive' },
+        ],
+      },
       // Allow ISR caching for whop pages
       {
         source: '/whop/:slug',

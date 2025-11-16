@@ -1,0 +1,11 @@
+// DEPLOY THIS 24-48 HOURS AFTER NOINDEX METADATA IS LIVE
+// This ensures Google sees the noindex tags before we block crawling
+
+export default function robots() {
+  return {
+    rules: [
+      { userAgent: '*', disallow: '/' },
+    ],
+    sitemap: [], // No sitemap during deindexing
+  };
+}

@@ -83,14 +83,13 @@ export async function generateMetadata(): Promise<Metadata> {
       site: '@whpcodes'
     },
     robots: {
-      index: true,
-      follow: true,
+      index: false,
+      follow: false,
+      nocache: true,
       googleBot: {
-        index: true,
-        follow: true,
-        'max-image-preview': 'large',
-        'max-snippet': -1,
-        'max-video-preview': -1,
+        index: false,
+        follow: false,
+        noimageindex: false,
       },
     },
     alternates: {
