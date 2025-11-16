@@ -46,18 +46,18 @@ function normalizeHtml(html) {
 }
 
 function pickRow(obj) {
-  // Choose exactly what your backend expects. Add/remove fields as needed.
+  // Match Prisma schema field names exactly (camelCase)
   return {
     slug: obj.slug ?? "",
-    finalUrl: obj.finalUrl ?? obj.evidence?.finalUrl ?? "",
 
-    aboutcontent: normalizeHtml(obj.aboutcontent),
-    howtoredeemcontent: normalizeHtml(obj.howtoredeemcontent),
-    promodetailscontent: normalizeHtml(obj.promodetailscontent),
-    termscontent: normalizeHtml(obj.termscontent),
+    // Content fields matching Whop model
+    aboutContent: normalizeHtml(obj.aboutcontent),
+    howToRedeemContent: normalizeHtml(obj.howtoredeemcontent),
+    promoDetailsContent: normalizeHtml(obj.promodetailscontent),
+    termsContent: normalizeHtml(obj.termscontent),
 
     // Store FAQs as JSON string so backend can JSON.parse → JSONB
-    faqcontent: obj.faqcontent ? JSON.stringify(obj.faqcontent) : "[]",
+    faqContent: obj.faqcontent ? JSON.stringify(obj.faqcontent) : "[]",
 
     // Optional diagnostics
     model: obj.model ?? "",
@@ -76,12 +76,11 @@ async function main() {
 
   const headers = [
     "slug",
-    "finalUrl",
-    "aboutcontent",
-    "howtoredeemcontent",
-    "promodetailscontent",
-    "termscontent",
-    "faqcontent",
+    "aboutContent",
+    "howToRedeemContent",
+    "promoDetailsContent",
+    "termsContent",
+    "faqContent",
     "model",
     "generated_at",
   ];
