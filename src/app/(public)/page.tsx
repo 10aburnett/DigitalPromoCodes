@@ -198,7 +198,7 @@ export async function generateMetadata(): Promise<Metadata> {
     title: `WHPCodes - Best Whop Promo Codes ${currentYear}`,
     description: `Discover the best Whop promo codes and digital product discounts in ${currentYear}. Our expertly curated list includes trusted digital products offering exclusive access, courses, communities, and more.`,
     alternates: {
-      canonical: 'https://whpcodes.com'
+// PHASE1-DEINDEX:       canonical: 'https://whpcodes.com'
     },
     robots: {
       index: true,

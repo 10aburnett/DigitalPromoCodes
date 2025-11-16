@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   title: 'Contact WHPCodes - Get in Touch for Whop Promo Codes & Support',
   description: 'Contact WHPCodes for questions about Whop promo codes, partnerships, or support. We respond within 24-48 hours to all inquiries.',
   alternates: {
-    canonical: `${siteOrigin()}/contact`,
+// PHASE1-DEINDEX:     canonical: `${siteOrigin()}/contact`,
   },
   robots: {
     index: true,

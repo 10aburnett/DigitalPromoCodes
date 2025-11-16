@@ -396,7 +396,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
       currentYear.toString()
     ].filter(Boolean).join(', '),
     alternates: {
-      canonical: `https://whpcodes.com/whop/${canon}`,
+// PHASE1-DEINDEX:       canonical: `https://whpcodes.com/whop/${canon}`,
       ...(isLocaleEnabled() && shouldIncludeInHreflang(classification) && {
         languages: (() => {
           const languages: Record<string, string> = {};

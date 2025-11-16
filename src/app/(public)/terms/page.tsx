@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   title: 'Terms of Service - WHPCodes',
   description: 'Read the terms and conditions for using WHPCodes Whop promo code platform and our affiliate services.',
   alternates: {
-    canonical: `${siteOrigin()}/terms`,
+// PHASE1-DEINDEX:     canonical: `${siteOrigin()}/terms`,
   },
   robots: {
     index: true,

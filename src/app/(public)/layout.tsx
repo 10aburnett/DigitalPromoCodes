@@ -75,20 +75,6 @@ export async function generateMetadata(): Promise<Metadata> {
       creator: '@whpcodes',
       site: '@whpcodes'
     },
-    robots: {
-      index: true,
-      follow: true,
-      googleBot: {
-        index: true,
-        follow: true,
-        'max-image-preview': 'large',
-        'max-snippet': -1,
-        'max-video-preview': -1,
-      },
-    },
-    alternates: {
-      canonical: 'https://whpcodes.com',
-    },
     verification: {
       google: 'your-google-verification-code',
     },

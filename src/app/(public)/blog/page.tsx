@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   description: `Discover the latest Whop promo codes, digital product reviews, exclusive deals, and insider tips for ${currentYear}. Stay updated with the newest discounts and insights from the world of digital products and online communities.`,
   keywords: `WHP blog, Whop promo codes ${currentYear}, digital products, online courses, Discord communities, exclusive deals, promo code tips, digital marketplace insights`,
   alternates: {
-    canonical: 'https://whpcodes.com/blog'
+// PHASE1-DEINDEX:     canonical: 'https://whpcodes.com/blog'
   },
   robots: {
     index: true,

@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   description: 'Learn about WHPCodes - your trusted source for verified Whop promo codes, discount codes, and exclusive digital product deals. We curate 8,000+ verified Whop listings with daily updates.',
   keywords: 'about whpcodes, whop promo codes, whop discount codes, digital course discounts, whop affiliate, course reviews, verified promo codes, whop coupons',
   alternates: {
-    canonical: `${siteOrigin()}/about`,
+// PHASE1-DEINDEX:     canonical: `${siteOrigin()}/about`,
   },
   robots: {
     index: true,

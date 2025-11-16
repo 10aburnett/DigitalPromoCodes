@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   title: 'Privacy Policy - WHPCodes',
   description: 'Learn how WHPCodes collects, uses, and protects your information when you use our Whop promo code platform.',
   alternates: {
-    canonical: `${siteOrigin()}/privacy`,
+// PHASE1-DEINDEX:     canonical: `${siteOrigin()}/privacy`,
   },
   robots: {
     index: true,

@@ -92,9 +92,6 @@ export async function generateMetadata(): Promise<Metadata> {
         noimageindex: false,
       },
     },
-    alternates: {
-      canonical: 'https://whpcodes.com',
-    },
     verification: {
       google: 'your-google-verification-code',
     },
