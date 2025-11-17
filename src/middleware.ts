@@ -119,10 +119,8 @@ export function middleware(request: NextRequest) {
     }
 
     // 5) X-Robots-Tag for NOINDEX
-    // PHASE1-DEINDEX: Disabled - global header in next.config.cjs handles all pages
-    // if (NOINDEX_PATHS.has(path)) {
-    //   res.headers.set('X-Robots-Tag', 'noindex, follow');
-    // }
+    // PHASE1-DEINDEX: Force global noindex for ALL public routes
+    res.headers.set('X-Robots-Tag', 'noindex, nofollow, noarchive');
 
     // 6) fall through to admin/API logic if needed, or return
     if (!path.startsWith('/admin') && !path.startsWith('/api')) {
@@ -238,15 +236,18 @@ export function middleware(request: NextRequest) {
     }
   }
 
+  // PHASE1-DEINDEX: Force X-Robots-Tag for ALL public routes not handled above
+  if (!pathname.startsWith('/admin') && !pathname.startsWith('/api')) {
+    response.headers.set('X-Robots-Tag', 'noindex, nofollow, noarchive');
+  }
+
   return response;
 }
 
 // Configure the paths that middleware should run on
+// PHASE1-DEINDEX: Match ALL routes to ensure X-Robots-Tag is always set
 export const config = {
   matcher: [
-    '/admin/:path*', 
-    '/api/:path*',
-    '/whop/:path*',
-    '/:locale/whop/:path*'
+    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|css|js)$).*)',
   ]
 }; 
