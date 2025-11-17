@@ -272,7 +272,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
       return {
         title: 'Whop Not Found',
         description: 'The requested whop could not be found.',
-        robots: { index: false, follow: true }
+        robots: { index: false, follow: false } // PHASE1-DEINDEX: hard noindex/nofollow
       };
     }
 
@@ -373,10 +373,9 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   }
 
   // Step 8: SEO classification-driven robots flags
+  // PHASE1-DEINDEX: Hard noindex/nofollow for all pages (ignore DB flags)
   const classification = getPageClassification(canon);
-  const robotsSettings = shouldIndex
-    ? getRobotsForClassification(classification)
-    : { index: false, follow: true }; // noindex but keep follow for noindexable pages
+  const robotsSettings = { index: false, follow: false }; // Hard noindex/nofollow for domain deindexing
 
   return {
     title,
@@ -409,20 +408,15 @@ export async function generateMetadata({ params }: { params: { slug: string } })
         })()
       })
     },
-    robots: shouldIndex
-      ? {
-          ...robotsSettings,
-          googleBot: {
-            ...robotsSettings,
-            'max-image-preview': 'large',
-            'max-snippet': -1,
-            'max-video-preview': -1,
-          },
-        }
-      : {
-          index: false,
-          follow: true,
-        },
+    robots: {
+      ...robotsSettings, // Always use robotsSettings (now hard-coded to index:false, follow:false)
+      googleBot: {
+        index: false,
+        follow: false,
+        noarchive: true,
+        noimageindex: true,
+      },
+    },
     openGraph: {
       title,
       description,
@@ -449,7 +443,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     return {
       title: 'Whop',
       description: 'Discover exclusive whop promo codes and discounts.',
-      robots: { index: false, follow: true }
+      robots: { index: false, follow: false } // PHASE1-DEINDEX: hard noindex/nofollow
     };
   }
 }

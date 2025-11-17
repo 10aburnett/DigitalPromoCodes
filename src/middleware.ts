@@ -119,9 +119,10 @@ export function middleware(request: NextRequest) {
     }
 
     // 5) X-Robots-Tag for NOINDEX
-    if (NOINDEX_PATHS.has(path)) {
-      res.headers.set('X-Robots-Tag', 'noindex, follow');
-    }
+    // PHASE1-DEINDEX: Disabled - global header in next.config.cjs handles all pages
+    // if (NOINDEX_PATHS.has(path)) {
+    //   res.headers.set('X-Robots-Tag', 'noindex, follow');
+    // }
 
     // 6) fall through to admin/API logic if needed, or return
     if (!path.startsWith('/admin') && !path.startsWith('/api')) {
