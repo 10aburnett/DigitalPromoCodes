@@ -67,6 +67,21 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
+  // ========================================
+  // PHASE 3: Return 410 Gone for ALL public routes
+  // Keep /admin and /api functional
+  // ========================================
+  if (!pathname.startsWith('/admin') && !pathname.startsWith('/api')) {
+    return new NextResponse('Gone', {
+      status: 410,
+      headers: {
+        'Content-Type': 'text/plain',
+        'X-Robots-Tag': 'noindex, nofollow, noarchive',
+        'Cache-Control': 'public, max-age=86400', // Cache 410 for 24 hours
+      },
+    });
+  }
+
   // SEO LOGIC FIRST (for whop routes)
   if (path.startsWith('/whop/') || path.match(/^\/([a-z]{2}(?:-[A-Z]{2})?)\/whop\//)) {
     // prove middleware executed (dev only)
