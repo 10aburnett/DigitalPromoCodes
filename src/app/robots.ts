@@ -1,12 +1,11 @@
-import { siteOrigin } from '@/lib/site-origin';
+// Phase 2: Block all crawling for domain deindexing
+// noindex tags from Phase 1 are still in place for consistency
 
 export default function robots() {
-  const origin = siteOrigin();
   return {
     rules: [
-      { userAgent: '*', allow: '/', disallow: ['/admin'] },
+      { userAgent: '*', disallow: '/' },
     ],
-    sitemap: `${origin}/sitemap.xml`,
-    host: origin,
+    // No sitemap during deindexing
   };
 }
