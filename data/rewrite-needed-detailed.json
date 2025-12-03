@@ -1,0 +1,316 @@
+{
+  "first37": [
+    {
+      "slug": "ayecon-academy-lifetime-membership",
+      "name": "Ayecon Academy Lifetime Membership",
+      "displayOrder": 2
+    },
+    {
+      "slug": "ayecon-academy-monthly-mentorship",
+      "name": "Ayecon Academy Monthly Mentorship",
+      "displayOrder": 3
+    },
+    {
+      "slug": "best-of-both-worlds",
+      "name": "Best Of Both Worlds",
+      "displayOrder": 4
+    },
+    {
+      "slug": "dodgys-dungeon",
+      "name": "Dodgy’s Dungeon",
+      "displayOrder": 5
+    },
+    {
+      "slug": "goat-sports-bets-membership",
+      "name": "GOAT Sports Bets Membership",
+      "displayOrder": 6
+    },
+    {
+      "slug": "goat-ecom-growth",
+      "name": "Goat Ecom Growth",
+      "displayOrder": 7
+    },
+    {
+      "slug": "indicators-vip-lifetime",
+      "name": "Indicators & VIP | LIFETIME",
+      "displayOrder": 8
+    },
+    {
+      "slug": "josh-exclusive-vip-access",
+      "name": "Josh Exclusive VIP Access",
+      "displayOrder": 9
+    },
+    {
+      "slug": "larrys-lounge-premium",
+      "name": "Larry's Lounge Premium",
+      "displayOrder": 10
+    },
+    {
+      "slug": "moementum-university",
+      "name": "Moementum University",
+      "displayOrder": 11
+    },
+    {
+      "slug": "momentum-monthly",
+      "name": "Momentum Monthly",
+      "displayOrder": 12
+    },
+    {
+      "slug": "owls-full-access",
+      "name": "Owls Full Access",
+      "displayOrder": 13
+    },
+    {
+      "slug": "pj-trades-premium",
+      "name": "PJ Trades Premium",
+      "displayOrder": 14
+    },
+    {
+      "slug": "parlayscience-discord-access",
+      "name": "ParlayScience Discord Access",
+      "displayOrder": 15
+    },
+    {
+      "slug": "propfellas-vip",
+      "name": "PropFellas VIP",
+      "displayOrder": 16
+    },
+    {
+      "slug": "scarface-trades-premium",
+      "name": "Scarface Trades Premium",
+      "displayOrder": 17
+    },
+    {
+      "slug": "stellar-aio",
+      "name": "Stellar AIO",
+      "displayOrder": 18
+    },
+    {
+      "slug": "supercar-income-broker",
+      "name": "Supercar Income Broker",
+      "displayOrder": 19
+    },
+    {
+      "slug": "tms-1-on-whop",
+      "name": "TMS (#1 ON WHOP)",
+      "displayOrder": 20
+    },
+    {
+      "slug": "tms-exclusive-vip-chat",
+      "name": "TMS Exclusive VIP Chat",
+      "displayOrder": 21
+    },
+    {
+      "slug": "tms-player-props-",
+      "name": "TMS Player Props 📊",
+      "displayOrder": 22
+    },
+    {
+      "slug": "tms-spartan-ai-bot",
+      "name": "TMS Spartan AI Bot",
+      "displayOrder": 23
+    },
+    {
+      "slug": "tms-heavy-hitters-",
+      "name": "TMS+ (Heavy Hitters) 💎",
+      "displayOrder": 24
+    },
+    {
+      "slug": "the-bfi-traders-university",
+      "name": "The BFI Traders University",
+      "displayOrder": 25
+    },
+    {
+      "slug": "the-delta-vader-copy-tader",
+      "name": "The Delta Vader - Copy Tader",
+      "displayOrder": 26
+    },
+    {
+      "slug": "the-haven",
+      "name": "The Haven",
+      "displayOrder": 27
+    },
+    {
+      "slug": "trade-with-insight-pro",
+      "name": "Trade With Insight - Pro",
+      "displayOrder": 28
+    },
+    {
+      "slug": "zwm-gold",
+      "name": "ZWM Gold",
+      "displayOrder": 29
+    },
+    {
+      "slug": "zwm-lifetime-access",
+      "name": "ZWM Lifetime Access",
+      "displayOrder": 30
+    },
+    {
+      "slug": "supercar-income",
+      "name": "Supercar Income",
+      "displayOrder": 31
+    },
+    {
+      "slug": "dodgys-ultimate-course",
+      "name": "Dodgy's Ultimate Course",
+      "displayOrder": 32
+    },
+    {
+      "slug": "the-haven-pay-with-crypto",
+      "name": "The Haven (Pay with Crypto)",
+      "displayOrder": 33
+    },
+    {
+      "slug": "stellar-aio-3rd-instance",
+      "name": "Stellar AIO 3rd Instance",
+      "displayOrder": 34
+    },
+    {
+      "slug": "flipalert-membership-usa",
+      "name": "FlipAlert Membership USA",
+      "displayOrder": 35
+    },
+    {
+      "slug": "the-yard-dropship-mastermind",
+      "name": "The Yard - Dropship Mastermind",
+      "displayOrder": 36
+    },
+    {
+      "slug": "jdub-trades-premium",
+      "name": "Jdub Trades Premium",
+      "displayOrder": 37
+    },
+    {
+      "slug": "elite-coaching-academy",
+      "name": "Elite Coaching Academy",
+      "displayOrder": 38
+    }
+  ],
+  "genericNames": [
+    {
+      "slug": "access",
+      "name": "Access"
+    },
+    {
+      "slug": "annual",
+      "name": "Annual"
+    },
+    {
+      "slug": "basic",
+      "name": "Basic"
+    },
+    {
+      "slug": "bundle",
+      "name": "Bundle"
+    },
+    {
+      "slug": "discord",
+      "name": "Discord"
+    },
+    {
+      "slug": "elite",
+      "name": "Elite"
+    },
+    {
+      "slug": "lifetime",
+      "name": "Lifetime"
+    },
+    {
+      "slug": "monthly",
+      "name": "MONTHLY"
+    },
+    {
+      "slug": "membership",
+      "name": "Membership"
+    },
+    {
+      "slug": "premium",
+      "name": "Premium"
+    },
+    {
+      "slug": "pro",
+      "name": "Pro"
+    },
+    {
+      "slug": "signals",
+      "name": "Signals"
+    },
+    {
+      "slug": "subscription",
+      "name": "Subscription"
+    },
+    {
+      "slug": "telegram",
+      "name": "Telegram"
+    },
+    {
+      "slug": "trading",
+      "name": "Trading"
+    },
+    {
+      "slug": "vip",
+      "name": "VIP"
+    },
+    {
+      "slug": "yearly",
+      "name": "YEARLY"
+    }
+  ],
+  "combinedSlugs": [
+    "access",
+    "annual",
+    "ayecon-academy-lifetime-membership",
+    "ayecon-academy-monthly-mentorship",
+    "basic",
+    "best-of-both-worlds",
+    "bundle",
+    "discord",
+    "dodgys-dungeon",
+    "dodgys-ultimate-course",
+    "elite",
+    "elite-coaching-academy",
+    "flipalert-membership-usa",
+    "goat-ecom-growth",
+    "goat-sports-bets-membership",
+    "indicators-vip-lifetime",
+    "jdub-trades-premium",
+    "josh-exclusive-vip-access",
+    "larrys-lounge-premium",
+    "lifetime",
+    "membership",
+    "moementum-university",
+    "momentum-monthly",
+    "monthly",
+    "owls-full-access",
+    "parlayscience-discord-access",
+    "pj-trades-premium",
+    "premium",
+    "pro",
+    "propfellas-vip",
+    "scarface-trades-premium",
+    "signals",
+    "stellar-aio",
+    "stellar-aio-3rd-instance",
+    "subscription",
+    "supercar-income",
+    "supercar-income-broker",
+    "telegram",
+    "the-bfi-traders-university",
+    "the-delta-vader-copy-tader",
+    "the-haven",
+    "the-haven-pay-with-crypto",
+    "the-yard-dropship-mastermind",
+    "tms-1-on-whop",
+    "tms-exclusive-vip-chat",
+    "tms-heavy-hitters-",
+    "tms-player-props-",
+    "tms-spartan-ai-bot",
+    "trade-with-insight-pro",
+    "trading",
+    "vip",
+    "yearly",
+    "zwm-gold",
+    "zwm-lifetime-access"
+  ],
+  "totalCount": 54
+}
