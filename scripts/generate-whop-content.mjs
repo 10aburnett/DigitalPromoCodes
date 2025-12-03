@@ -1067,7 +1067,14 @@ SEO REQUIREMENTS (based on top-ranking coupon pages):
 1. aboutcontent (130-170 words, HARD MIN 120, **MUST BE 2-3 paragraphs**):
    - **FORMAT**: Output as 2–3 <p> paragraphs (no other formatting)
    - **CRITICAL**: Write exactly 2–3 complete paragraphs. Do NOT write just 1 paragraph.
-   - MUST include "\${safeName} promo code" naturally in the first paragraph (critical for SEO - Whop uses "promo code" terminology). Use this exact phrase ONLY ONCE.
+   - MUST include "\${safeName} promo code" naturally in the first paragraph (critical for SEO). Use this exact phrase ONLY ONCE.
+   - **CRITICAL OPENING VARIATION**: NEVER start with "[Name] promo code is available here" or "Unlock savings with". Each listing MUST have a unique opening structure. Use one of these varied patterns (rotate unpredictably):
+     * Lead with what the product IS: "Looking to master futures trading? The \${safeName} promo code gives you access to..."
+     * Lead with the creator's expertise: "With over 5 years in e-commerce, \${safeName} offers... and right now there's a \${safeName} promo code..."
+     * Lead with the problem it solves: "Breaking into dropshipping can feel overwhelming. That's where \${safeName} comes in—and this \${safeName} promo code makes it more accessible."
+     * Lead with a benefit: "Daily trade signals, real-time alerts, and expert analysis—that's what you get with \${safeName}. Use our \${safeName} promo code to..."
+     * Lead with a question: "Want to learn crypto trading from experienced mentors? \${safeName} promo code unlocks..."
+     * Lead with social proof: "Thousands of members already use \${safeName} for... Grab a \${safeName} promo code here."
    - Optionally sprinkle "discount", "offer", or "save on \${safeName}" as secondary keywords (≤2 total).
    - Explain what the course or product is and why it's useful.
    - Conditional platform mention: if on whop.com, you may mention "Whop" once.
