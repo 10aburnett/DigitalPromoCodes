@@ -19,6 +19,8 @@ export async function GET() {
 
   // List of all sitemap shards
   const sitemaps = [
+    `${baseUrl}/sitemap-static.xml`,
+    `${baseUrl}/sitemap-blog.xml`,
     `${baseUrl}/sitemap/hubs.xml`,
     `${baseUrl}/sitemap/whops-a-f.xml`,
     `${baseUrl}/sitemap/whops-g-m.xml`,
