@@ -51,6 +51,7 @@
     "test:headed": "playwright test --headed",
     "test:seo": "playwright test tests/seo.spec.ts",
     "postinstall": "prisma generate",
+    "audit:legacy-brand": "node scripts/audit-legacy-brand.mjs",
     "db:check-safety": "node scripts/database-safety-guard.js",
     "db:push": "node scripts/database-safety-guard.js 'npx prisma db push' && npx prisma db push",
     "db:migrate": "node scripts/database-safety-guard.js 'npx prisma migrate dev' && npx prisma migrate dev",

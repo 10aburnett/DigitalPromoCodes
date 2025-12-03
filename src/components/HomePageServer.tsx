@@ -1,8 +1,9 @@
 // src/components/HomePageServer.tsx
 // Server component for homepage - no client state, pure server rendering
 import Link from 'next/link';
-import WhopCard from '@/components/WhopCard';
+import OfferCard from '@/components/OfferCard';
 import FilterControlsWrapper from '@/components/FilterControlsWrapper';
+import { SITE_BRAND, SITE_TAGLINE } from '@/lib/brand';
 
 interface PromoCode {
   id: string;
@@ -64,9 +65,8 @@ export default function HomePageServer({
   return (
     <div className="mx-auto w-[90%] md:w-[95%] max-w-[1280px] mt-[50px] md:mt-0">
       <h1 className="text-4xl font-bold text-center mt-2 mb-8">
-        <span style={{ color: 'var(--accent-color)' }}>WHP</span>
-        <span style={{ color: 'var(--text-color)' }}>Codes</span>
-        <span style={{ color: 'var(--text-color)' }}> - Whop Promo Codes, Coupons & Discounts</span>
+        <span style={{ color: 'var(--accent-color)' }}>{SITE_BRAND}</span>
+        <span style={{ color: 'var(--text-color)' }}> - Deals, Discounts & Exclusive Offers</span>
       </h1>
 
       {/* Client island for search/filters */}
@@ -254,7 +254,7 @@ export default function HomePageServer({
       {/* Whop Cards Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
         {items.map((whop) => (
-          <WhopCard
+          <OfferCard
             key={whop.id}
             promo={{
               id: whop.id,

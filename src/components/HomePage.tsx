@@ -2,12 +2,12 @@
 
 import React, { useState, useCallback, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { FilterState } from '@/types/whop';
+import { FilterState } from '@/types/offer';
 import { WhopCategory } from '@prisma/client';
-import WhopCard from '@/components/WhopCard';
+import OfferCard from '@/components/OfferCard';
 import FilterControls from '@/components/FilterControls';
 import StatisticsSection from '@/components/StatisticsSection';
-import VirtualizedWhopList from '@/components/VirtualizedWhopList';
+import VirtualizedOfferList from '@/components/VirtualizedOfferList';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 // Define the types for our data
@@ -378,7 +378,7 @@ export default function HomePage({ initialWhops, initialTotal, totalUsers, key }
         </div>
       )}
 
-      <VirtualizedWhopList whops={whops} loading={loading} />
+      <VirtualizedOfferList whops={whops} loading={loading} />
       
       {/* Loading indicator */}
       {loading && (

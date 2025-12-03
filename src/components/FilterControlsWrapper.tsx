@@ -3,7 +3,7 @@
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useRef } from 'react';
 import FilterControls from '@/components/FilterControls';
-import type { FilterState } from '@/types/whop';
+import type { FilterState } from '@/types/offer';
 
 export default function FilterControlsWrapper() {
   const router = useRouter();

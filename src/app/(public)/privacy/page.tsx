@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { prisma } from '@/lib/prisma';
 import DynamicLegalPage from '@/components/DynamicLegalPage';
 import { siteOrigin } from '@/lib/site-origin';
+import { SITE_BRAND } from '@/lib/brand';
 
 // SSG configuration
 export const dynamic = 'force-static'
@@ -10,8 +11,8 @@ export const fetchCache = 'force-cache'
 export const revalidate = 86400 // 24h
 
 export const metadata: Metadata = {
-  title: 'Privacy Policy - WHPCodes',
-  description: 'Learn how WHPCodes collects, uses, and protects your information when you use our Whop promo code platform.',
+  title: `Privacy Policy - ${SITE_BRAND}`,
+  description: `Learn how ${SITE_BRAND} collects, uses, and protects your information when you use our deals platform.`,
   alternates: {
 // PHASE1-DEINDEX:     canonical: `${siteOrigin()}/privacy`,
   },
@@ -27,16 +28,16 @@ export const metadata: Metadata = {
     }
   },
   openGraph: {
-    title: 'Privacy Policy - WHPCodes',
-    description: 'Learn how WHPCodes collects, uses, and protects your information when you use our Whop promo code platform.',
+    title: `Privacy Policy - ${SITE_BRAND}`,
+    description: `Learn how ${SITE_BRAND} collects, uses, and protects your information when you use our deals platform.`,
     url: `${siteOrigin()}/privacy`,
     type: 'website',
-    siteName: 'WHPCodes',
+    siteName: SITE_BRAND,
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Privacy Policy - WHPCodes',
-    description: 'Learn how WHPCodes collects, uses, and protects your information when you use our Whop promo code platform.',
+    title: `Privacy Policy - ${SITE_BRAND}`,
+    description: `Learn how ${SITE_BRAND} collects, uses, and protects your information when you use our deals platform.`,
   },
 };
 
@@ -44,7 +45,7 @@ export const metadata: Metadata = {
 const defaultPrivacyContent = `
 <div class="section">
   <h2>Introduction</h2>
-          <p>WHPCodes ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website whpcodes.com and use our services.</p>
+          <p>We are committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website and use our services.</p>
 </div>
 
 <div class="section">
@@ -70,7 +71,7 @@ const defaultPrivacyContent = `
 <div class="section">
   <h2>How We Use Your Information</h2>
   <ul>
-    <li><strong>Provide Services:</strong> To operate and maintain our website and provide whop product information</li>
+    <li><strong>Provide Services:</strong> To operate and maintain our website and provide product information</li>
     <li><strong>Improve Experience:</strong> To analyze usage patterns and improve our content and user experience</li>
     <li><strong>Communication:</strong> To respond to your inquiries and send important updates</li>
     <li><strong>Analytics:</strong> To track website performance and user engagement</li>
@@ -82,7 +83,7 @@ const defaultPrivacyContent = `
   <h2>Information Sharing</h2>
   <p>We do not sell, trade, or rent your personal information. We may share information in the following circumstances:</p>
   <ul>
-    <li><strong>Affiliate Partners:</strong> When you click on whop links, you may be redirected to our affiliate partners</li>
+    <li><strong>Affiliate Partners:</strong> When you click on offer links, you may be redirected to our affiliate partners</li>
     <li><strong>Service Providers:</strong> With trusted third-party services that help us operate our website</li>
     <li><strong>Legal Requirements:</strong> When required by law or to protect our rights</li>
     <li><strong>Business Transfers:</strong> In connection with a merger, sale, or transfer of assets</li>
@@ -92,7 +93,6 @@ const defaultPrivacyContent = `
 <div class="section">
   <h2>Contact Us</h2>
   <p>If you have any questions about this Privacy Policy or our data practices, please contact us:</p>
-          <p>Email: <a href="mailto:whpcodes@gmail.com">whpcodes@gmail.com</a></p>
   <p>Website: <a href="/contact">Contact Form</a></p>
 </div>
 `;
@@ -129,11 +129,11 @@ export default async function PrivacyPolicy() {
             "@context": "https://schema.org",
             "@type": "WebPage",
             name: "Privacy Policy",
-            description: "Learn how WHPCodes collects, uses, and protects your information.",
+            description: `Learn how ${SITE_BRAND} collects, uses, and protects your information.`,
             url: `${origin}/privacy`,
             mainEntity: {
               "@type": "Organization",
-              name: "WHPCodes",
+              name: SITE_BRAND,
               url: origin
             }
           })

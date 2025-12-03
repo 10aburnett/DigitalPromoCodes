@@ -24,7 +24,7 @@ export const translations = {
     'nav.admin': 'Admin',
     
     // Homepage
-    'home.title': 'WHPCodes - Whop Promo Codes, Coupons & Discounts',
+    'home.title': 'OfferHub - Deals, Coupons & Discounts',
     'home.subtitle': 'Discover exclusive promo codes and deals for the best digital products',
     'home.cta': 'Browse Deals',
     'home.filterCodes': 'Filter Courses',
@@ -37,11 +37,11 @@ export const translations = {
     'home.exclusiveAccessDesc': 'Get special promo codes and exclusive discounts that you won\'t find anywhere else, negotiated exclusively for our community.',
     'home.alwaysUpdated': 'Always Updated',
     'home.alwaysUpdatedDesc': 'Our promo code database is updated daily to ensure all offers are current, active, and provide maximum value to users.',
-    'home.readyToSave': 'Ready to save money? Browse our top-rated Whop products above and start accessing premium content today.',
+    'home.readyToSave': 'Ready to save money? Browse our top-rated products above and start accessing premium content today.',
     
     // Statistics
     'stats.users': 'Total Users',
-    'stats.whops': 'Active Whops',
+    'stats.whops': 'Active Offers',
     'stats.codes': 'Promo Codes',
     'stats.claimed': 'Promo Codes Claimed',
     'stats.popular': 'Most Popular',
@@ -94,7 +94,7 @@ export const translations = {
     'whop.termsOfferNoCode': 'offer',
     
     // Footer
-    'footer.description': 'Your trusted source for Whop promo codes, coupons, discounts and exclusive deals.',
+    'footer.description': 'Your trusted source for deals, coupons, discounts and exclusive deals.',
     'footer.quickLinks': 'Quick Links',
     'footer.legal': 'Legal',
     'footer.privacy': 'Privacy Policy',
@@ -108,7 +108,7 @@ export const translations = {
     // Privacy Policy Content
     'privacy.title': 'Privacy Policy',
     'privacy.introduction.title': 'Introduction',
-    'privacy.introduction.content': 'WHPCodes ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website whpcodes.com and use our services.',
+    'privacy.introduction.content': 'OfferHub ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website example.com and use our services.',
     'privacy.infoCollect.title': 'Information We Collect',
     'privacy.infoProvide.title': 'Information You Provide',
     'privacy.infoProvide.content': 'Contact information when you reach out to us\nFeedback and comments you submit\nNewsletter subscription information',
@@ -125,20 +125,20 @@ export const translations = {
     'privacy.rights.title': 'Your Rights',
     'privacy.rights.content': 'You have the right to:\n\nAccess your personal information\nCorrect inaccurate information\nRequest deletion of your information\nOpt-out of marketing communications\nObject to processing of your information',
     'privacy.contact.title': 'Contact Us',
-    'privacy.contact.content': 'If you have any questions about this Privacy Policy or our data practices, please contact us:<br><br>Email: <a href="mailto:whpcodes@gmail.com">whpcodes@gmail.com</a><br>Website: <a href="/contact">Contact Form</a>',
+    'privacy.contact.content': 'If you have any questions about this Privacy Policy or our data practices, please contact us:<br><br>Email: <a href="mailto:contact@example.com">contact@example.com</a><br>Website: <a href="/contact">Contact Form</a>',
     
     // Terms of Service Content
     'terms.title': 'Terms of Service',
     'terms.agreement.title': 'Agreement to Terms',
-    'terms.agreement.content': 'By accessing and using WHPCodes ("we," "our," or "us"), you accept and agree to be bound by the terms and provision of this agreement. If you do not agree to abide by the above, please do not use this service.',
+    'terms.agreement.content': 'By accessing and using OfferHub ("we," "our," or "us"), you accept and agree to be bound by the terms and provision of this agreement. If you do not agree to abide by the above, please do not use this service.',
     'terms.license.title': 'Use License',
-    'terms.license.content': 'Permission is granted to temporarily download one copy of the materials on WHPCodes for personal, non-commercial transitory viewing only. This is the grant of a license, not a transfer of title, and under this license you may not:\n\nModify or copy the materials\nUse the materials for any commercial purpose or for any public display\nAttempt to reverse engineer any software contained on the website\nRemove any copyright or other proprietary notations from the materials',
+    'terms.license.content': 'Permission is granted to temporarily download one copy of the materials on OfferHub for personal, non-commercial transitory viewing only. This is the grant of a license, not a transfer of title, and under this license you may not:\n\nModify or copy the materials\nUse the materials for any commercial purpose or for any public display\nAttempt to reverse engineer any software contained on the website\nRemove any copyright or other proprietary notations from the materials',
     'terms.disclaimer.title': 'Disclaimer',
-    'terms.disclaimer.content': 'Information Accuracy: The materials on WHPCodes are provided on an \'as is\' basis. We make no warranties, expressed or implied.\nThird-Party Services: We are not responsible for the content, policies, or practices of third-party whop websites that we link to.\nPromotion Availability: Whop promotions and discounts are subject to change without notice. We do not guarantee the availability or terms of any promotional offers.',
+    'terms.disclaimer.content': 'Information Accuracy: The materials on OfferHub are provided on an \'as is\' basis. We make no warranties, expressed or implied.\nThird-Party Services: We are not responsible for the content, policies, or practices of third-party websites that we link to.\nPromotion Availability: Promotions and discounts are subject to change without notice. We do not guarantee the availability or terms of any promotional offers.',
     'terms.responsible.title': 'Responsible Use',
-    'terms.responsible.content': 'WHPCodes promotes responsible use of digital products and services. We encourage users to:\n\nOnly purchase products and services you can afford\nResearch products thoroughly before purchasing\nRead terms and conditions of whop products carefully\nContact whop providers directly for product support\n\nIf you have concerns about any whop product or service, please contact the provider directly or reach out to us through our contact form.',
+    'terms.responsible.content': 'OfferHub promotes responsible use of digital products and services. We encourage users to:\n\nOnly purchase products and services you can afford\nResearch products thoroughly before purchasing\nRead terms and conditions of whop products carefully\nContact whop providers directly for product support\n\nIf you have concerns about any whop product or service, please contact the provider directly or reach out to us through our contact form.',
     'terms.contactInfo.title': 'Contact Information',
-    'terms.contactInfo.content': 'If you have any questions about these Terms of Service, please contact us:<br><br>Email: <a href="mailto:legal@whpcodes.com">legal@whpcodes.com</a><br>Website: <a href="/contact">Contact Form</a>',
+    'terms.contactInfo.content': 'If you have any questions about these Terms of Service, please contact us:<br><br>Email: <a href="mailto:legal@example.com">legal@example.com</a><br>Website: <a href="/contact">Contact Form</a>',
     
     // Contact
     'contact.title': 'Contact Us',
@@ -181,7 +181,7 @@ export const translations = {
     'nav.admin': 'Admin',
     
     // Homepage
-    'home.title': 'WHPCodes - Códigos Promocionales de Whop, Cupones y Descuentos',
+    'home.title': 'OfferHub - Códigos de Descuento, Cupones y Descuentos',
     'home.subtitle': 'Descubre códigos promocionales exclusivos y ofertas para los mejores productos digitales',
     'home.cta': 'Ver Ofertas',
     'home.filterCodes': 'Filtrar Códigos',
@@ -194,11 +194,11 @@ export const translations = {
     'home.exclusiveAccessDesc': 'Obtén códigos promocionales especiales y descuentos exclusivos que no encontrarás en ningún otro lugar, negociados exclusivamente para nuestra comunidad.',
     'home.alwaysUpdated': 'Siempre Actualizado',
     'home.alwaysUpdatedDesc': 'Nuestra base de datos de códigos promocionales se actualiza diariamente para asegurar que todas las ofertas sean actuales, activas y proporcionen el máximo valor a los usuarios.',
-    'home.readyToSave': '¿Listo para ahorrar dinero? Navega nuestros productos Whop mejor calificados arriba y comienza a acceder a contenido premium hoy.',
+    'home.readyToSave': '¿Listo para ahorrar dinero? Navega nuestros productos mejor calificados arriba y comienza a acceder a contenido premium hoy.',
     
     // Statistics
     'stats.users': 'Usuarios Totales',
-    'stats.whops': 'Whops Activos',
+    'stats.whops': 'Ofertas Activas',
     'stats.codes': 'Códigos Promocionales',
     'stats.claimed': 'Códigos Promocionales Canjeados',
     'stats.popular': 'Más Popular',
@@ -265,14 +265,14 @@ export const translations = {
     // Privacy Policy Content
     'privacy.title': 'Política de Privacidad',
     'privacy.introduction.title': 'Introducción',
-    'privacy.introduction.content': 'WHPCodes ("nosotros," "nuestro," o "nosotros") se compromete a proteger su privacidad. Esta Política de Privacidad explica cómo recopilamos, utilizamos, divulghiamos y protegemos su información cuando visita nuestro sitio web whpcodes.com y utiliza nuestros servicios.',
+    'privacy.introduction.content': 'OfferHub ("nosotros," "nuestro," o "nosotros") se compromete a proteger su privacidad. Esta Política de Privacidad explica cómo recopilamos, utilizamos, divulghiamos y protegemos su información cuando visita nuestro sitio web example.com y utiliza nuestros servicios.',
     'privacy.infoCollect.title': 'Información que Recopilamos',
     'privacy.infoProvide.title': 'Información que Nos Proporciona',
     'privacy.infoProvide.content': 'Información de contacto cuando nos contacta\nComentarios y sugerencias que nos envía\nInformación de suscripción a boletines informativo',
     'privacy.infoAuto.title': 'Información Automáticamente Recopilada',
     'privacy.infoAuto.content': 'Tipo y versión del navegador\nInformación del dispositivo\nPáginas visitadas y tiempo que pasa en nuestro sitio\nInformaziones del sitio web de referencia\nCokies y tecnologías de seguimiento similares',
     'privacy.howUse.title': 'Cómo Utilizamos Su Información',
-    'privacy.howUse.content': 'Proporcionar Servicios: Para operar y mantener nuestro sitio web y proporcionar información sobre productos Whop\nMejorar Experiencia: Para analizar patrones de uso y mejorar nuestro contenido y experiencia de usuario\nComunicación: Para responder a sus consultas y enviar actualizaciones importantes\nAnalítica: Para rastrear el rendimiento del sitio web y la participación del usuario\nCumplimiento Legal: Para cumplir con las leyes y regulaciones aplicables',
+    'privacy.howUse.content': 'Proporcionar Servicios: Para operar y mantener nuestro sitio web y proporcionar información sobre productos\nMejorar Experiencia: Para analizar patrones de uso y mejorar nuestro contenido y experiencia de usuario\nComunicación: Para responder a sus consultas y enviar actualizaciones importantes\nAnalítica: Para rastrear el rendimiento del sitio web y la participación del usuario\nCumplimiento Legal: Para cumplir con las leyes y regulaciones aplicables',
     'privacy.sharing.title': 'Compartir Información',
     'privacy.sharing.content': 'No vendiamos, intercambiamos o noleggiamo las tús informaciones personales. Podemos compartir información en las siguientes circunstancias:\n\nAffiliate Partners: Cuando haga clic en enlaces whop, puede ser redirigido a nuestros socios afiliados\nService Providers: Con servicios de terceros de confianza que nos ayudan a operar nuestro sitio web\nLegal Requirements: Cuando se requiere por ley o para proteger nuestros derechos\nBusiness Transfers: En conexión con una fusión, venta o transferencia de activos',
     'privacy.cookies.title': 'Cookies y Seguimiento',
@@ -282,20 +282,20 @@ export const translations = {
     'privacy.rights.title': 'Sus Derechos',
     'privacy.rights.content': 'Tiene el derecho de:\n\nAcceder a su información personal\nCorregir información inexacta\nSolicitar la eliminación de su información\nOpcionar la no participación en comunicaciones de marketing\nObjetar el procesamiento de su información',
     'privacy.contact.title': 'Contáctenos',
-    'privacy.contact.content': 'Si tiene alguna pregunta sobre esta Política de Privacidad o nuestras prácticas de datos, por favor contáctenos:<br><br>Correo electrónico: <a href="mailto:whpcodes@gmail.com">whpcodes@gmail.com</a><br>Sitio web: <a href="/es/contact">Formulario de Contacto</a>',
+    'privacy.contact.content': 'Si tiene alguna pregunta sobre esta Política de Privacidad o nuestras prácticas de datos, por favor contáctenos:<br><br>Correo electrónico: <a href="mailto:contact@example.com">contact@example.com</a><br>Sitio web: <a href="/es/contact">Formulario de Contacto</a>',
     
     // Terms of Service Content
     'terms.title': 'Términos de Servizio',
     'terms.agreement.title': 'Acuerdo de Términos',
-    'terms.agreement.content': 'Al acceder y utilizar WHPCodes ("nosotros," "nuestro," o "nosotros"), acepta y acepta estar sujeto a los términos y disposición de este acuerdo. Si no está de acuerdo con lo anterior, por favor no utilice este servicio.',
+    'terms.agreement.content': 'Al acceder y utilizar OfferHub ("nosotros," "nuestro," o "nosotros"), acepta y acepta estar sujeto a los términos y disposición de este acuerdo. Si no está de acuerdo con lo anterior, por favor no utilice este servicio.',
     'terms.license.title': 'Licencia de Uso',
-    'terms.license.content': 'Se otorga permiso para descargar temporalmente una copia de los materiales en WHPCodes solo para visualización transitoria personal, no comercial. Este es el otorgamiento de una licencia, no una transferencia de título, y bajo esta licencia no puede:\n\nModificar o copiar los materiales\nUsar los materiales para cualquier propósito comercial o para cualquier exhibición pública\nIntentar invertir ingeniería de software contenido en el sitio web\nEliminar cualquier notación de propiedad intelectual o cualquier otra',
+    'terms.license.content': 'Se otorga permiso para descargar temporalmente una copia de los materiales en OfferHub solo para visualización transitoria personal, no comercial. Este es el otorgamiento de una licencia, no una transferencia de título, y bajo esta licencia no puede:\n\nModificar o copiar los materiales\nUsar los materiales para cualquier propósito comercial o para cualquier exhibición pública\nIntentar invertir ingeniería de software contenido en el sitio web\nEliminar cualquier notación de propiedad intelectual o cualquier otra',
     'terms.disclaimer.title': 'Renuncia',
-    'terms.disclaimer.content': 'Precisión de la Información: Los materiales en WHPCodes se proporcionan en base "tal cual". No hacemos ninguna garantía, expresa o implícita.\nServicios de Terceros: No somos responsables del contenido, políticas o prácticas de sitios web whop terceros a los que enlazamos.\nDisponibilità delle Promozioni: Le promozioni e gli sconti whop sono basati su modifiche senza preavviso. Non garantiamo la disponibilità o i termini di qualsiasi offerta promozionale.',
+    'terms.disclaimer.content': 'Precisión de la Información: Los materiales en OfferHub se proporcionan en base "tal cual". No hacemos ninguna garantía, expresa o implícita.\nServicios de Terceros: No somos responsables del contenido, políticas o prácticas de sitios web whop terceros a los que enlazamos.\nDisponibilità delle Promozioni: Le promozioni e gli sconti whop sono basati su modifiche senza preavviso. Non garantiamo la disponibilità o i termini di qualsiasi offerta promozionale.',
     'terms.responsible.title': 'Uso Responsable',
-    'terms.responsible.content': 'WHPCodes promueve el uso responsable de productos y servicios digitales. Nosotros animamos a los usuarios a:\n\nSolo comprar productos y servicios que puedan pagar\nInvestigar productos minuciosamente antes de comprar\nLeer cuidadosamente los términos y condiciones de los productos whop\nContactar directamente con los proveedores de whop para product support\n\nSi tiene alguna preocupación sobre cualquier producto o servicio whop, por favor contáctese directamente con el proveedor o comuníquese con nosotros a través del formulario de contacto.',
+    'terms.responsible.content': 'OfferHub promueve el uso responsable de productos y servicios digitales. Nosotros animamos a los usuarios a:\n\nSolo comprar productos y servicios que puedan pagar\nInvestigar productos minuciosamente antes de comprar\nLeer cuidadosamente los términos y condiciones de los productos whop\nContactar directamente con los proveedores de whop para product support\n\nSi tiene alguna preocupación sobre cualquier producto o servicio whop, por favor contáctese directamente con el proveedor o comuníquese con nosotros a través del formulario de contacto.',
     'terms.contactInfo.title': 'Contacto',
-    'terms.contactInfo.content': 'Si tiene alguna pregunta sobre estos Términos de Servicio, por favor contáctenos:<br><br>Correo electrónico: <a href="mailto:legal@whpcodes.com">legal@whpcodes.com</a><br>Sitio web: <a href="/es/contact">Formulario de Contacto</a>',
+    'terms.contactInfo.content': 'Si tiene alguna pregunta sobre estos Términos de Servicio, por favor contáctenos:<br><br>Correo electrónico: <a href="mailto:legal@example.com">legal@example.com</a><br>Sitio web: <a href="/es/contact">Formulario de Contacto</a>',
     
     // Contact
     'contact.title': 'Contáctanos',
@@ -338,7 +338,7 @@ export const translations = {
     'nav.admin': 'Admin',
     
     // Homepage
-    'home.title': 'WHPCodes - Whop Promocodes, Coupons & Kortingen',
+    'home.title': 'OfferHub - Promocodes, Coupons & Kortingen',
     'home.subtitle': 'Ontdek exclusieve promocodes en deals voor de beste digitale producten',
     'home.cta': 'Bekijk Deals',
     'home.filterCodes': 'Filter Codes',
@@ -351,11 +351,11 @@ export const translations = {
     'home.exclusiveAccessDesc': 'Krijg speciale promocodes en exclusieve kortingen die u nergens anders vindt, exclusief onderhandeld voor onze gemeenschap.',
     'home.alwaysUpdated': 'Altijd Bijgewerkt',
     'home.alwaysUpdatedDesc': 'Onze promocode database wordt dagelijks bijgewerkt om ervoor te zorgen dat alle aanbiedingen actueel, actief zijn en maximale waarde bieden aan gebruikers.',
-    'home.readyToSave': 'Klaar om geld te besparen? Bekijk onze best beoordeelde Whop producten hierboven en begin vandaag nog met toegang tot premium content.',
+    'home.readyToSave': 'Klaar om geld te besparen? Bekijk onze best beoordeelde producten hierboven en begin vandaag nog met toegang tot premium content.',
     
     // Statistics
     'stats.users': 'Totaal Gebruikers',
-    'stats.whops': 'Actieve Whops',
+    'stats.whops': 'Actieve Aanbiedingen',
     'stats.codes': 'Promocodes',
     'stats.claimed': 'Promocodes Verzilverd',
     'stats.popular': 'Meest Populair',
@@ -422,14 +422,14 @@ export const translations = {
     // Privacy Policy Content
     'privacy.title': 'Privacybeleid',
     'privacy.introduction.title': 'Inleiding',
-    'privacy.introduction.content': 'WHPCodes ("wij," "ons," of "ons") is geweten om uw privacy te beschermen. Dit Privacybeleid legt uit hoe we uw informatie verzamelen, gebruiken, delen en beschermen wanneer u onze website whpcodes.com bezoekt en onze diensten gebruikt.',
+    'privacy.introduction.content': 'OfferHub ("wij," "ons," of "ons") is geweten om uw privacy te beschermen. Dit Privacybeleid legt uit hoe we uw informatie verzamelen, gebruiken, delen en beschermen wanneer u onze website example.com bezoekt en onze diensten gebruikt.',
     'privacy.infoCollect.title': 'Informatie die We Verzamelen',
     'privacy.infoProvide.title': 'Informatie die U Ons Verstrekt',
     'privacy.infoProvide.content': 'Contactgegevens wanneer u contact opneemt met ons\nOpmerkingen en suggesties die u indient\nInformatie over nieuwsbriefabonnementen',
     'privacy.infoAuto.title': 'Automatisch Verzamelde Informatie',
     'privacy.infoAuto.content': 'Browsertype en -versie\nApparaatinformatie\nPáginas bezocht en tijd doorgebracht op onze site\nReferentie-websiteinformatie\nCookies en vergelijkbare trackingtechnologien',
     'privacy.howUse.title': 'Hoe We Uw Informatie Gebruiken',
-    'privacy.howUse.content': 'Diensten Verstrekken: Om onze website te besturen en te onderhouden en Whop-productinformatie te verstrekken\nGebruikerservaring Verbeteren: Om gebruikspatronen te analyseren en onze inhoud en gebruikerservaring te verbeteren\nCommunicatie: Om antwoorden te geven op uw vragen en belangrijke updates te verzenden\nAnalyse: Om de prestaties van de website en de gebruikersinteractie te traceren\nJuridisch Naleven: Om te voldoen aan de toepasselijke wetten en voorschriften',
+    'privacy.howUse.content': 'Diensten Verstrekken: Om onze website te besturen en te onderhouden en productinformatie te verstrekken\nGebruikerservaring Verbeteren: Om gebruikspatronen te analyseren en onze inhoud en gebruikerservaring te verbeteren\nCommunicatie: Om antwoorden te geven op uw vragen en belangrijke updates te verzenden\nAnalyse: Om de prestaties van de website en de gebruikersinteractie te traceren\nJuridisch Naleven: Om te voldoen aan de toepasselijke wetten en voorschriften',
     'privacy.sharing.title': 'Informationen Delen',
     'privacy.sharing.content': 'We verkopen, ruilen of huren uw persoonlijke informatie niet uit. We kunnen informatie delen in de volgende gevallen:\n\nAffiliate Partners: Wanneer u op whop-links klikt, kunt u worden omgeleid naar onze affiliate-partners\nService providers: Con servicii de terți parti de încredere care ne ajută să operăm site-ul nostru web\nJuridische eisen: Wanneer dit is vereist door de wet of om onze rechten te beschermen\nBusiness Transfers: In verband met een fusie, vente of activa-overdracht',
     'privacy.cookies.title': 'Cookies en Tracking',
@@ -439,20 +439,20 @@ export const translations = {
     'privacy.rights.title': 'Uw Rechten',
     'privacy.rights.content': 'U heeft het recht om:\n\nToegang te krijgen tot uw persoonlijke informatie\nOnnauwkeurige informatie te corrigeren\nEen verzoek te doen om uw informatie te verwijderen\nUitgaan van marketingcommunicatie\nObjecteren tegen het verwerken van uw informatie',
     'privacy.contact.title': 'Neem Contact Op',
-    'privacy.contact.content': 'Als u vragen heeft over dit Privacybeleid of onze gegevenspraktijken, neem dan contact met ons op:<br><br>E-mail: <a href="mailto:whpcodes@gmail.com">whpcodes@gmail.com</a><br>Website: <a href="/nl/contact">Contactformulier</a>',
+    'privacy.contact.content': 'Als u vragen heeft over dit Privacybeleid of onze gegevenspraktijken, neem dan contact met ons op:<br><br>E-mail: <a href="mailto:contact@example.com">contact@example.com</a><br>Website: <a href="/nl/contact">Contactformulier</a>',
     
     // Terms of Service Content
     'terms.title': 'Servicevoorwaarden',
     'terms.agreement.title': 'Overeenkomst met Servicevoorwaarden',
-    'terms.agreement.content': 'Door toegang te krijgen en te gebruiken WHPCodes ("wij," "ons," of "ons"), gaat u akkoord en gaat u ervan uit dat u zich aan de voorwaarden en bepalingen van deze overeenkomst moet houden. Als u niet akkoord gaat met de bovenstaande, gelieve deze dienst niet te gebruiken.',
+    'terms.agreement.content': 'Door toegang te krijgen en te gebruiken OfferHub ("wij," "ons," of "ons"), gaat u akkoord en gaat u ervan uit dat u zich aan de voorwaarden en bepalingen van deze overeenkomst moet houden. Als u niet akkoord gaat met de bovenstaande, gelieve deze dienst niet te gebruiken.',
     'terms.license.title': 'Gebruikslicentie',
-    'terms.license.content': 'Er is toestemming verleend om tijdelijk een kopie van de materialen op WHPCodes te downloaden voor persoonlijk, niet-commercieel tijdelijk bekijken. Dit is het verlenen van een licentie, niet een titeloverdracht, en onder deze licentie mag u dit niet:\n\nModificar o copiar los materiales\nUsar los materiales para cualquier propósito comercial o para cualquier exhibición pública\nIntentar invertir ingeniería de software contenido en el sitio web\nEliminar cualquier notación de propiedad intelectual o cualquier otra',
+    'terms.license.content': 'Er is toestemming verleend om tijdelijk een kopie van de materialen op OfferHub te downloaden voor persoonlijk, niet-commercieel tijdelijk bekijken. Dit is het verlenen van een licentie, niet een titeloverdracht, en onder deze licentie mag u dit niet:\n\nModificar o copiar los materiales\nUsar los materiales para cualquier propósito comercial o para cualquier exhibición pública\nIntentar invertir ingeniería de software contenido en el sitio web\nEliminar cualquier notación de propiedad intelectual o cualquier otra',
     'terms.disclaimer.title': 'Afwijzing',
-    'terms.disclaimer.content': 'Informationsgenauigkeit: De materialen op WHPCodes worden "so verkauft". Wir garantieren keine expliziten oder impliziten Garantien.\nDiensten von derden: We zijn niet verantwoordelijk voor de inhoud, beleid of praktijken van derde-partijwhop-websites die we linken naar.\nPromotiebeschikbaarheid: Promoties en kortingen whop zijn onderhevig aan wijzigingen zonder voorafgaande melding. We garanderen niet de beschikbaarheid of voorwaarden van enige promotieaanbieding.',
+    'terms.disclaimer.content': 'Informationsgenauigkeit: De materialen op OfferHub worden "so verkauft". Wir garantieren keine expliziten oder impliziten Garantien.\nDiensten von derden: We zijn niet verantwoordelijk voor de inhoud, beleid of praktijken van derde-partijwhop-websites die we linken naar.\nPromotiebeschikbaarheid: Promoties en kortingen whop zijn onderhevig aan wijzigingen zonder voorafgaande melding. We garanderen niet de beschikbaarheid of voorwaarden van enige promotieaanbieding.',
     'terms.responsible.title': 'Verantwoordelijk Gebruik',
-    'terms.responsible.content': 'WHPCodes stimuleert verantwoord gebruik van digitale producten en diensten. We aanmoedigen gebruikers om:\n\nAlleen producten en diensten te kopen die ze kunnen betalen\nProdukte grondig te onderzoeken voordat ze worden gekocht\nVoorwaarden en voorwaarden van whop-producten grondig te lezen\nDirect contact opnemen met whop-providers voor productondersteuning\n\nAls u zorgen heeft over een whop-product of -dienst, gelieve direct contact op te nemen met de provider of contacteer ons via ons contactformulier.',
+    'terms.responsible.content': 'OfferHub stimuleert verantwoord gebruik van digitale producten en diensten. We aanmoedigen gebruikers om:\n\nAlleen producten en diensten te kopen die ze kunnen betalen\nProdukte grondig te onderzoeken voordat ze worden gekocht\nVoorwaarden en voorwaarden van whop-producten grondig te lezen\nDirect contact opnemen met whop-providers voor productondersteuning\n\nAls u zorgen heeft over een whop-product of -dienst, gelieve direct contact op te nemen met de provider of contacteer ons via ons contactformulier.',
     'terms.contactInfo.title': 'Contactgegevens',
-    'terms.contactInfo.content': 'Als u vragen heeft over deze Servicevoorwaarden, gelieve contact met ons op:<br><br>E-mail: <a href="mailto:legal@whpcodes.com">legal@whpcodes.com</a><br>Website: <a href="/nl/contact">Contactformulier</a>',
+    'terms.contactInfo.content': 'Als u vragen heeft over deze Servicevoorwaarden, gelieve contact met ons op:<br><br>E-mail: <a href="mailto:legal@example.com">legal@example.com</a><br>Website: <a href="/nl/contact">Contactformulier</a>',
     
     // Contact
     'contact.title': 'Neem Contact Op',
@@ -495,7 +495,7 @@ export const translations = {
     'nav.admin': 'Admin',
     
     // Homepage
-    'home.title': 'WHPCodes - Promotions Premium de Produits Numériques',
+    'home.title': 'OfferHub - Promotions Premium de Produits Numériques',
     'home.subtitle': 'Découvrez des codes promo exclusifs et des offres pour les meilleurs produits numériques',
     'home.cta': 'Voir les Offres',
     'home.filterCodes': 'Filtrer Codes',
@@ -508,11 +508,11 @@ export const translations = {
     'home.exclusiveAccessDesc': 'Obtenez des codes promo spéciaux et des remises exclusives que vous ne trouverez nulle part ailleurs, négociés exclusivement pour notre communauté.',
     'home.alwaysUpdated': 'Toujours Mis à Jour',
     'home.alwaysUpdatedDesc': 'Notre base de données de codes promo est mise à jour quotidiennement pour s\'assurer que toutes les offres sont actuelles, actives et offrent une valeur maximale aux utilisateurs.',
-    'home.readyToSave': 'Prêt à économiser de l\'argent ? Parcourez nos produits Whop les mieux notés ci-dessus et commencez à accéder au contenu premium dès aujourd\'hui.',
+    'home.readyToSave': 'Prêt à économiser de l\'argent ? Parcourez nos produits les mieux notés ci-dessus et commencez à accéder au contenu premium dès aujourd\'hui.',
     
     // Statistics
     'stats.users': 'Utilisateurs Totaux',
-    'stats.whops': 'Whops Actifs',
+    'stats.whops': 'Offres Actives',
     'stats.codes': 'Codes Promo',
     'stats.claimed': 'Codes Promo Réclamés',
     'stats.popular': 'Plus Populaire',
@@ -579,14 +579,14 @@ export const translations = {
     // Privacy Policy Content
     'privacy.title': 'Politique de Confidentialité',
     'privacy.introduction.title': 'Introduction',
-    'privacy.introduction.content': 'WHPCodes ("nous," "notre," ou "nous") s\'engage à protéger votre vie privée. Cette Politique de Confidentialité explique comment nous collectons, utilisons, divulguons et protégeons vos informations lorsque vous visitez notre site web whpcodes.com et utilisez nos services.',
+    'privacy.introduction.content': 'OfferHub ("nous," "notre," ou "nous") s\'engage à protéger votre vie privée. Cette Politique de Confidentialité explique comment nous collectons, utilisons, divulguons et protégeons vos informations lorsque vous visitez notre site web example.com et utilisez nos services.',
     'privacy.infoCollect.title': 'Informations que Nous Collectons',
     'privacy.infoProvide.title': 'Informations que Vous Nous Fournissez',
     'privacy.infoProvide.content': 'Informations de contact lorsque vous nous contactez\nCommentaires et suggestions que vous soumettez\nInformations d\'abonnement à la newsletter',
     'privacy.infoAuto.title': 'Informations Automatiquement Collectées',
     'privacy.infoAuto.content': 'Type et version du navigateur\nInformations sur l\'appareil\nPáginas visitées et temps passé sur notre site\nInformations du site de référence\nCookies et technologies de suivi similaires',
     'privacy.howUse.title': 'Comment Nous Utilisons Vos Informations',
-    'privacy.howUse.content': 'Fournir des Services: Pour exploiter et maintenir notre site web et fournir des informations sur les produits Whop\nAméliorer l\'Expérience: Pour analyser les modèles d\'utilisation et améliorer notre contenu et l\'expérience utilisateur\nCommunication: Pour répondre à vos questions et envoyer des mises à jour importantes\nAnalyse: Pour suivre les performances du site web et l\'engagement des utilisateurs\nConformité Légale: Pour se conformer aux lois et réglementations applicables',
+    'privacy.howUse.content': 'Fournir des Services: Pour exploiter et maintenir notre site web et fournir des informations sur les produits\nAméliorer l\'Expérience: Pour analyser les modèles d\'utilisation et améliorer notre contenu et l\'expérience utilisateur\nCommunication: Pour répondre à vos questions et envoyer des mises à jour importantes\nAnalyse: Pour suivre les performances du site web et l\'engagement des utilisateurs\nConformité Légale: Pour se conformer aux lois et réglementations applicables',
     'privacy.sharing.title': 'Partage d\'Informations',
     'privacy.sharing.content': 'Nous ne vendons, n\'échangeons ni ne louons vos informations personnelles. Nous pouvons partager des informations dans les circonstances suivantes:\n\nPartenaires Affiliés: Lorsque vous cliquez sur des liens whop, vous pouvez être redirigé vers nos partenaires affiliés\nFournisseurs de Services: Avec des services de terze parti fidate qui nous aident à exploiter notre site web\nExigences Légales: Lorsque requis par la loi ou pour protéger nos droits\nTransferts d\'Entreprise: En relation avec une fusion, vente ou transfert d\'actifs',
     'privacy.cookies.title': 'Cookies et Suivi',
@@ -596,20 +596,20 @@ export const translations = {
     'privacy.rights.title': 'Vos Droits',
     'privacy.rights.content': 'Vous avez le droit de:\n\nAccéder à vos informations personnelles\nCorriger les informations inexactes\nDemander la suppression de vos informations\nRefuser de participer aux communications marketing\nVous opposer au traitement de vos informations',
     'privacy.contact.title': 'Nous Contacter',
-    'privacy.contact.content': 'Si vous avez des questions sur cette Politique de Confidentialité ou nos pratiques de données, veuillez nous contacter:<br><br>E-mail: <a href="mailto:whpcodes@gmail.com">whpcodes@gmail.com</a><br>Site web: <a href="/fr/contact">Formulaire de Contact</a>',
+    'privacy.contact.content': 'Si vous avez des questions sur cette Politique de Confidentialité ou nos pratiques de données, veuillez nous contacter:<br><br>E-mail: <a href="mailto:contact@example.com">contact@example.com</a><br>Site web: <a href="/fr/contact">Formulaire de Contact</a>',
     
     // Terms of Service Content
     'terms.title': 'Conditions de Service',
     'terms.agreement.title': 'Accord aux Conditions',
-    'terms.agreement.content': 'En accédant et en utilisant WHPCodes ("nous," "notre," ou "nous"), vous acceptez et convenez d\'être lié par les termes et dispositions de cet accord. Si vous n\'êtes pas d\'accord avec ce qui précède, veuillez ne pas utiliser ce service.',
+    'terms.agreement.content': 'En accédant et en utilisant OfferHub ("nous," "notre," ou "nous"), vous acceptez et convenez d\'être lié par les termes et dispositions de cet accord. Si vous n\'êtes pas d\'accord avec ce qui précède, veuillez ne pas utiliser ce service.',
     'terms.license.title': 'Licence d\'Utilisation',
-    'terms.license.content': 'La permission est accordée de télécharger temporairement une copie des matériaux sur WHPCodes pour un visionnage personnel, non commercial et transitoire uniquement. Ceci est l\'octroi d\'une licence, non un transfert de titre, et sous cette licence vous ne pouvez pas:\n\nModifier ou copier les matériaux\nUtiliser les matériaux pour tout usage commercial ou public\nTenter d\'effectuer de l\'ingénierie inverse de tout logiciel contenu sur le site web\nSupprimer toute notation de propriété intellectuelle ou autre',
+    'terms.license.content': 'La permission est accordée de télécharger temporairement une copie des matériaux sur OfferHub pour un visionnage personnel, non commercial et transitoire uniquement. Ceci est l\'octroi d\'une licence, non un transfert de titre, et sous cette licence vous ne pouvez pas:\n\nModifier ou copier les matériaux\nUtiliser les matériaux pour tout usage commercial ou public\nTenter d\'effectuer de l\'ingénierie inverse de tout logiciel contenu sur le site web\nSupprimer toute notation de propriété intellectuelle ou autre',
     'terms.disclaimer.title': 'Avis de non-responsabilité',
-    'terms.disclaimer.content': 'Précision des Informations: Les matériaux sur WHPCodes sont fournis "en l\'état". Nous ne donnons aucune garantie, expresse ou implicite.\nServices Tiers: Nous ne sommes pas responsables du contenu, des politiques ou des pratiques des sites web whop tiers vers lesquels nous créons des liens.\nDisponibilité des Promotions: Les promotions et remises whop sont sujettes à changement sans préavis. Nous ne garantissons pas la disponibilité ou les termes de toute offre promotionnelle.',
+    'terms.disclaimer.content': 'Précision des Informations: Les matériaux sur OfferHub sont fournis "en l\'état". Nous ne donnons aucune garantie, expresse ou implicite.\nServices Tiers: Nous ne sommes pas responsables du contenu, des politiques ou des pratiques des sites web whop tiers vers lesquels nous créons des liens.\nDisponibilité des Promotions: Les promotions et remises whop sont sujettes à changement sans préavis. Nous ne garantissons pas la disponibilité ou les termes de toute offre promotionnelle.',
     'terms.responsible.title': 'Utilisation Responsable',
-    'terms.responsible.content': 'WHPCodes promeut l\'utilisation responsable de produits et services numériques. Nous encourageons les utilisateurs à:\n\nN\'acheter que des produits et services qu\'ils peuvent se permettre\nRechercher les produits de manière approfondie avant d\'acheter\nLire attentivement les termes et conditions des produits whop\nContacter directement les fournisseurs whop pour product support\n\nSi vous avez des préoccupations concernant un produit ou service whop, veuillez contacter directement le fournisseur ou nous contacter via notre formulaire de contact.',
+    'terms.responsible.content': 'OfferHub promeut l\'utilisation responsable de produits et services numériques. Nous encourageons les utilisateurs à:\n\nN\'acheter que des produits et services qu\'ils peuvent se permettre\nRechercher les produits de manière approfondie avant d\'acheter\nLire attentivement les termes et conditions des produits whop\nContacter directement les fournisseurs whop pour product support\n\nSi vous avez des préoccupations concernant un produit ou service whop, veuillez contacter directement le fournisseur ou nous contacter via notre formulaire de contact.',
     'terms.contactInfo.title': 'Informations de Contact',
-    'terms.contactInfo.content': 'Si vous avez des questions sur ces Conditions de Service, veuillez nous contacter:<br><br>E-mail: <a href="mailto:legal@whpcodes.com">legal@whpcodes.com</a><br>Site web: <a href="/fr/contact">Formulaire de Contact</a>',
+    'terms.contactInfo.content': 'Si vous avez des questions sur ces Conditions de Service, veuillez nous contacter:<br><br>E-mail: <a href="mailto:legal@example.com">legal@example.com</a><br>Site web: <a href="/fr/contact">Formulaire de Contact</a>',
     
     // Contact
     'contact.title': 'Nous Contacter',
@@ -652,7 +652,7 @@ export const translations = {
     'nav.admin': 'Admin',
     
     // Homepage
-    'home.title': 'WHPCodes - Whop Promo-Codes, Gutscheine & Rabatte',
+    'home.title': 'OfferHub - Deals, Gutscheine & Rabatte',
     'home.subtitle': 'Entdecken Sie exklusive Promocodes und Angebote für die besten digitalen Produkte',
     'home.cta': 'Angebote Durchsuchen',
     'home.filterCodes': 'Filter Codes',
@@ -665,11 +665,11 @@ export const translations = {
     'home.exclusiveAccessDesc': 'Erhalten Sie spezielle Promocodes und exklusive Rabatte, die Sie nirgendwo anders finden, exklusiv für unsere Gemeinschaft verhandelt.',
     'home.alwaysUpdated': 'Immer Aktuell',
     'home.alwaysUpdatedDesc': 'Unsere Promocode-Datenbank wird täglich aktualisiert, um sicherzustellen, dass alle Angebote aktuell, aktiv sind und maximalen Wert für Benutzer bieten.',
-    'home.readyToSave': 'Bereit, Geld zu sparen? Durchsuchen Sie unsere bestbewerteten Whop-Produkte oben und beginnen Sie noch heute mit dem Zugang zu Premium-Inhalten.',
+    'home.readyToSave': 'Bereit, Geld zu sparen? Durchsuchen Sie unsere bestbewerteten Produkte oben und beginnen Sie noch heute mit dem Zugang zu Premium-Inhalten.',
     
     // Statistics
     'stats.users': 'Gesamte Benutzer',
-    'stats.whops': 'Aktive Whops',
+    'stats.whops': 'Aktive Angebote',
     'stats.codes': 'Promocodes',
     'stats.claimed': 'Promocodes Eingelöst',
     'stats.popular': 'Am Beliebtesten',
@@ -722,7 +722,7 @@ export const translations = {
     'whop.termsOfferNoCode': 'Angebot',
     
     // Footer
-    'footer.description': 'Ihre vertrauenswürdige Quelle für Whop-Promo-Codes, Gutscheine, Rabatte und exklusive Angebote.',
+    'footer.description': 'Ihre vertrauenswürdige Quelle für Promo-Codes, Gutscheine, Rabatte und exklusive Angebote.',
     'footer.quickLinks': 'Schnelle Links',
     'footer.legal': 'Rechtliches',
     'footer.privacy': 'Datenschutzrichtlinie',
@@ -736,14 +736,14 @@ export const translations = {
     // Privacy Policy Content
     'privacy.title': 'Datenschutzrichtlinie',
     'privacy.introduction.title': 'Einleitung',
-    'privacy.introduction.content': 'WHPCodes ("wir," "unser," oder "uns") ist darum bemüht, Ihre Privatsphäre zu schützen. Diese Datenschutzrichtlinie erklärt, wie wir Ihre Informationen sammeln, verwenden, offenbaren und schützen, wenn Sie unsere Website whpcodes.com besuchen und unsere Dienste nutzen.',
+    'privacy.introduction.content': 'OfferHub ("wir," "unser," oder "uns") ist darum bemüht, Ihre Privatsphäre zu schützen. Diese Datenschutzrichtlinie erklärt, wie wir Ihre Informationen sammeln, verwenden, offenbaren und schützen, wenn Sie unsere Website example.com besuchen und unsere Dienste nutzen.',
     'privacy.infoCollect.title': 'Informationen, die wir sammeln',
     'privacy.infoProvide.title': 'Informationen, die Sie uns geben',
     'privacy.infoProvide.content': 'Kontaktdaten, wenn Sie sich bei uns melden\nKommentare und Vorschläge, die Sie einreichen\nInformationen zur Newsletter-Abonnement',
     'privacy.infoAuto.title': 'Automatisch Verzamelde Informatie',
     'privacy.infoAuto.content': 'Browsertyp und -version\nGeräteinformationen\nPáginas bezocht und Zeit, die Sie auf unserer Website verbringen\nReferenz-Website-Informationen\nCookies und ähnliche Tracking-Technologien',
     'privacy.howUse.title': 'Wie wir Ihre Informationen verwenden',
-    'privacy.howUse.content': 'Dienste bereitstellen: Um unsere Website zu betreiben und zu unterhalten und Whop-Produktinformationen bereitzustellen\nBenutzererfahrung verbessern: Um Nutzungsmuster zu analysieren und unseren Inhalt und die Benutzererfahrung zu verbessern\nKommunikation: Um Ihren Fragen zu antworten und wichtige Updates zu senden\nAnalyse: Um die Website-Leistung und die Benutzerinteraktion zu überwachen\nRechtliches einhalten: Um Gesetzes- und Regelungsbestimmungen einzuhalten',
+    'privacy.howUse.content': 'Dienste bereitstellen: Um unsere Website zu betreiben und zu unterhalten und Produktinformationen bereitzustellen\nBenutzererfahrung verbessern: Um Nutzungsmuster zu analysieren und unseren Inhalt und die Benutzererfahrung zu verbessern\nKommunikation: Um Ihren Fragen zu antworten und wichtige Updates zu senden\nAnalyse: Um die Website-Leistung und die Benutzerinteraktion zu überwachen\nRechtliches einhalten: Um Gesetzes- und Regelungsbestimmungen einzuhalten',
     'privacy.sharing.title': 'Informationen teilen',
     'privacy.sharing.content': 'Wir verkaufen, tauschen oder vermieten Ihre persönlichen Informationen niet uit. Wir können Informationen teilen, wenn dies aus folgenden Gründen erforderlich ist:\n\nAffiliate-Partner: Wenn Sie auf whop-Links klicken, können Sie zu unseren Affiliate-Partnern umgeleitet werden\nDienstleister: Mit vertrauenswürdigen Drittanbieterdiensten, die uns helfen, unsere Website zu betreiben\nJuridische Anforderungen: Wenn dies von der Gesetzgebung oder der Beschützung unserer Rechte erforderlich ist\nGeschäftsübertragungen: In Verbindung mit einer Fusion, Übernahme oder Vermögensübertragung',
     'privacy.cookies.title': 'Cookies und Tracking',
@@ -753,20 +753,20 @@ export const translations = {
     'privacy.rights.title': 'Ihre Rechte',
     'privacy.rights.content': 'Sie haben das Recht:\n\nZugriff auf Ihre persönlichen Informationen zu haben\nUnrichtige Informationen zu korrigieren\nEin Verlangen zu erheben, Ihre Informationen zu löschen\nAusstieg aus Marketingkommunikationen\nWiderspruch gegen das Verarbeiten Ihrer Informationen',
     'privacy.contact.title': 'Kontaktieren Sie Uns',
-    'privacy.contact.content': 'Wenn Sie Fragen oder Bedenken zu dieser Datenschutzrichtlinie oder unseren Datenpraktiken haben, wenden Sie sich bitte an uns:<br><br>E-Mail: <a href="mailto:whpcodes@gmail.com">whpcodes@gmail.com</a><br>Website: <a href="/de/contact">Kontaktformular</a>',
+    'privacy.contact.content': 'Wenn Sie Fragen oder Bedenken zu dieser Datenschutzrichtlinie oder unseren Datenpraktiken haben, wenden Sie sich bitte an uns:<br><br>E-Mail: <a href="mailto:contact@example.com">contact@example.com</a><br>Website: <a href="/de/contact">Kontaktformular</a>',
     
     // Terms of Service Content
     'terms.title': 'Nutzungsbedingungen',
     'terms.agreement.title': 'Zustimmung zu den Nutzungsbedingungen',
-    'terms.agreement.content': 'Durch den Zugriff und die Nutzung von WHPCodes ("wir," "unser," oder "uns") erklären Sie sich damit einverstanden, an die Bedingungen und Bestimmungen dieses Vertrags gebunden zu sein. Wenn Sie dies nicht tun, bitte verwenden Sie diesen Dienst nicht.',
+    'terms.agreement.content': 'Durch den Zugriff und die Nutzung von OfferHub ("wir," "unser," oder "uns") erklären Sie sich damit einverstanden, an die Bedingungen und Bestimmungen dieses Vertrags gebunden zu sein. Wenn Sie dies nicht tun, bitte verwenden Sie diesen Dienst nicht.',
     'terms.license.title': 'Licenza di Uso',
-    'terms.license.content': 'Es wird eine Erlaubnis erteilt, temporär eine Kopie der Materialien auf WHPCodes herunterzuladen, nur für persönliche, nichtkommerzielle vorübergehende Ansicht. Dies ist das Erteilen einer Lizenz, keine Übertragung des Titels, und unter dieser Lizenz dürfen Sie dies nicht:\n\nModificar o copiar los materiales\nUsar los materiales para cualquier propósito comercial o para cualquier exhibición pública\nIntentar invertir ingeniería de software contenido en el sitio web\nEliminar cualquier notación de propiedad intelectual o cualquier otra',
+    'terms.license.content': 'Es wird eine Erlaubnis erteilt, temporär eine Kopie der Materialien auf OfferHub herunterzuladen, nur für persönliche, nichtkommerzielle vorübergehende Ansicht. Dies ist das Erteilen einer Lizenz, keine Übertragung des Titels, und unter dieser Lizenz dürfen Sie dies nicht:\n\nModificar o copiar los materiales\nUsar los materiales para cualquier propósito comercial o para cualquier exhibición pública\nIntentar invertir ingeniería de software contenido en el sitio web\nEliminar cualquier notación de propiedad intelectual o cualquier otra',
     'terms.disclaimer.title': 'Haftungsausschluss',
-    'terms.disclaimer.content': 'Informationsgenauigkeit: Die Materialien auf WHPCodes werden "wie besehen" bereitgestellt. Wir gewähren keine ausdrücklichen oder stillschweigenden Garantien.\nDrittanbieterdienste: Wir sind nicht verantwortlich für den Inhalt, die Richtlinien oder Praktiken von Drittanbieter-whop-Websites, zu denen wir verlinken.\nVerfügbarkeit von Promotionen: Whop-Promotionen und Rabatte können sich ohne Vorankündigung ändern. Wir garantieren nicht die Verfügbarkeit oder Bedingungen von Werbeangeboten.',
+    'terms.disclaimer.content': 'Informationsgenauigkeit: Die Materialien auf OfferHub werden "wie besehen" bereitgestellt. Wir gewähren keine ausdrücklichen oder stillschweigenden Garantien.\nDrittanbieterdienste: Wir sind nicht verantwortlich für den Inhalt, die Richtlinien oder Praktiken von Drittanbieter-Websites, zu denen wir verlinken.\nVerfügbarkeit von Promotionen: Promotionen und Rabatte können sich ohne Vorankündigung ändern. Wir garantieren nicht die Verfügbarkeit oder Bedingungen von Werbeangeboten.',
     'terms.responsible.title': 'Verantwortungsvolle Nutzung',
-    'terms.responsible.content': 'WHPCodes fördert den verantwortungsvollen Gebrauch digitaler Produkte und Dienste. Wir ermutigen die Benutzer dazu:\n\nNur Produkte und Dienste zu kaufen, die sie sich leisten können\nProdukte gründlich zu recherchieren, bevor sie gekauft werden\nBedingungen und Bestimmungen von whop-Produkten sorgfältig zu lesen\nDirekt mit whop-Anbietern zu kontaktieren, um Produktunterstützung zu erhalten\n\nWenn Sie Bedenken über ein whop-Produkt oder -Dienst haben, wenden Sie sich bitte direkt an den Anbieter oder kontaktieren Sie uns über unser Kontaktformular.',
+    'terms.responsible.content': 'OfferHub fördert den verantwortungsvollen Gebrauch digitaler Produkte und Dienste. Wir ermutigen die Benutzer dazu:\n\nNur Produkte und Dienste zu kaufen, die sie sich leisten können\nProdukte gründlich zu recherchieren, bevor sie gekauft werden\nBedingungen und Bestimmungen von whop-Produkten sorgfältig zu lesen\nDirekt mit whop-Anbietern zu kontaktieren, um Produktunterstützung zu erhalten\n\nWenn Sie Bedenken über ein whop-Produkt oder -Dienst haben, wenden Sie sich bitte direkt an den Anbieter oder kontaktieren Sie uns über unser Kontaktformular.',
     'terms.contactInfo.title': 'Kontaktinformationen',
-    'terms.contactInfo.content': 'Wenn Sie Fragen oder Bedenken zu diesen Nutzungsbedingungen haben, wenden Sie sich bitte an uns:<br><br>E-Mail: <a href="mailto:legal@whpcodes.com">legal@whpcodes.com</a><br>Website: <a href="/de/contact">Kontaktformular</a>',
+    'terms.contactInfo.content': 'Wenn Sie Fragen oder Bedenken zu diesen Nutzungsbedingungen haben, wenden Sie sich bitte an uns:<br><br>E-Mail: <a href="mailto:legal@example.com">legal@example.com</a><br>Website: <a href="/de/contact">Kontaktformular</a>',
     
     // Contact
     'contact.title': 'Kontaktieren Sie Uns',
@@ -809,7 +809,7 @@ export const translations = {
     'nav.admin': 'Admin',
     
     // Homepage
-    'home.title': 'WHPCodes - Codici Promo Whop, Coupon e Sconti',
+    'home.title': 'OfferHub - Codici Promo, Coupon e Sconti',
     'home.subtitle': 'Scopri codici promo esclusivi e offerte per i migliori prodotti digitali',
     'home.cta': 'Sfoglia Offerte',
     'home.filterCodes': 'Filtra Corsi',
@@ -822,11 +822,11 @@ export const translations = {
     'home.exclusiveAccessDesc': 'Ottieni codici promozionali speciali e sconti esclusivi che non trovi altrove, negoziati esclusivamente per la nostra comunità.',
     'home.alwaysUpdated': 'Sempre Aggiornato',
     'home.alwaysUpdatedDesc': 'Il nostro database di codici promozionali viene aggiornato quotidianamente per assicurarsi che tutte le offerte siano attuali, attive e forniscano il massimo valore agli utenti.',
-    'home.readyToSave': 'Pronto per risparmiare denaro? Sfoglia i nostri prodotti Whop meglio classificati sopra e inizia ad accedere al contenuto premium oggi.',
+    'home.readyToSave': 'Pronto per risparmiare denaro? Sfoglia i nostri prodotti meglio classificati sopra e inizia ad accedere al contenuto premium oggi.',
     
     // Statistics
     'stats.users': 'Utenti Totali',
-    'stats.whops': 'Whops Attivi',
+    'stats.whops': 'Offerte Attive',
     'stats.codes': 'Codici Promo',
     'stats.claimed': 'Codici Promo Riscattati',
     'stats.popular': 'Più Popolare',
@@ -893,14 +893,14 @@ export const translations = {
     // Privacy Policy Content
     'privacy.title': 'Politica sulla Privacy',
     'privacy.introduction.title': 'Introduzione',
-    'privacy.introduction.content': 'WHPCodes ("noi," "nostro," o "nostro") si impegna a proteggere la tua privacy. Questa Politica sulla Privacy spiega come raccogliamo, usiamo, divulghiamo e proteggiamo le tue informazioni quando visiti il nostro sito web whpcodes.com e usi i nostri servizi.',
+    'privacy.introduction.content': 'OfferHub ("noi," "nostro," o "nostro") si impegna a proteggere la tua privacy. Questa Politica sulla Privacy spiega come raccogliamo, usiamo, divulghiamo e proteggiamo le tue informazioni quando visiti il nostro sito web example.com e usi i nostri servizi.',
     'privacy.infoCollect.title': 'Informazioni che Raccogliamo',
     'privacy.infoProvide.title': 'Informazioni che Vi Forniamo',
     'privacy.infoProvide.content': 'Informazioni di contatto quando ci contatti\nCommenti e suggerimenti che inviate\nInformazioni di iscrizione alla newsletter',
     'privacy.infoAuto.title': 'Informazioni Automaticamente Raccogliate',
     'privacy.infoAuto.content': 'Tipo e versione del browser\nInformazioni sul dispositivo\nPáginas visitadas y tiempo que pasa en nuestro sitio\nInformazioni sul sito di riferimento\nCookies e tecnologie di tracciamento simili',
     'privacy.howUse.title': 'Come Utilizziamo Le Tue Informazioni',
-    'privacy.howUse.content': 'Fornire Servizi: Per operare e mantenere il nostro sito web e fornire informazioni su prodotti Whop\nMigliorare l\'esperienza utente: Per analizzare i modelli di utilizzo e migliorare il nostro contenuto e l\'esperienza utente\nComunicazione: Per rispondere alle tue domande e inviare aggiornamenti importanti\nAnalisi: Per tracciare le prestazioni del sito web e l\'interazione degli utenti\nCumprimento Legale: Per conformarsi ai requisiti di legge e regolamentazione',
+    'privacy.howUse.content': 'Fornire Servizi: Per operare e mantenere il nostro sito web e fornire informazioni su prodotti\nMigliorare l\'esperienza utente: Per analizzare i modelli di utilizzo e migliorare il nostro contenuto e l\'esperienza utente\nComunicazione: Per rispondere alle tue domande e inviare aggiornamenti importanti\nAnalisi: Per tracciare le prestazioni del sito web e l\'interazione degli utenti\nCumprimento Legale: Per conformarsi ai requisiti di legge e regolamentazione',
     'privacy.sharing.title': 'Condivisione delle Informazioni',
     'privacy.sharing.content': 'Non vendiamo, scambiamo o noleggiamo le tue informazioni personali. Potremmo condividere le informazioni in questi casi:\n\nPartners di Affiliazione: Quando clicchi sui link whop, potresti essere reindirizzato ai nostri partner di affiliazione\nFournisseurs de Services: Con servizi di terze parti fidate che ci aiutano a operare il nostro sito web\nRequisiti Legais: Quando richiesto dalla legge o per proteggere i nostri diritti\nTrasferimenti di Impresa: In connessione con una fusione, vente o trasferimento di attività',
     'privacy.cookies.title': 'Cookies e Tracciamento',
@@ -910,20 +910,20 @@ export const translations = {
     'privacy.rights.title': 'I Tuoi Diritti',
     'privacy.rights.content': 'Hai il diritto di:\n\nAccedere alle tue informazioni personali\nCorreggere informazioni errate\nRichiedere la cancellazione delle tue informazioni\nRifiutare di partecipare a comunicazioni di marketing\nObjettare al trattamento delle tue informazioni',
     'privacy.contact.title': 'Contattaci',
-    'privacy.contact.content': 'Se hai domande o preoccupazioni sulla nostra Politica sulla Privacy o sulle nostre pratiche di gestione dei dati, per favore contattaci:<br><br>E-mail: <a href="mailto:whpcodes@gmail.com">whpcodes@gmail.com</a><br>Sito web: <a href="/it/contact">Modulo di contatto</a>',
+    'privacy.contact.content': 'Se hai domande o preoccupazioni sulla nostra Politica sulla Privacy o sulle nostre pratiche di gestione dei dati, per favore contattaci:<br><br>E-mail: <a href="mailto:contact@example.com">contact@example.com</a><br>Sito web: <a href="/it/contact">Modulo di contatto</a>',
     
     // Terms of Service Content
     'terms.title': 'Termini di Servizio',
     'terms.agreement.title': 'Accordo sui Termini di Servizio',
-    'terms.agreement.content': 'Accedendo e utilizzando WHPCodes ("noi," "nostro," o "nostro"), accetti e accetti di essere vincolato ai termini e disposizioni di questo accordo. Se non accetti quanto sopra, per favore non utilizzare questo servizio.',
+    'terms.agreement.content': 'Accedendo e utilizzando OfferHub ("noi," "nostro," o "nostro"), accetti e accetti di essere vincolato ai termini e disposizioni di questo accordo. Se non accetti quanto sopra, per favore non utilizzare questo servizio.',
     'terms.license.title': 'Licenza di Utilizzo',
-    'terms.license.content': 'È concessa la licenza per scaricare temporaneamente una copia dei materiali su WHPCodes solo per la visione personale, non commerciale, transitoria. Questo è il conferimento di una licenza, non una trasferimento di titolo, e sotto questa licenza non è consentito:\n\nModificare o copiare i materiali\nUtilizzare i materiali per qualsiasi scopo commerciale o pubblico\nProvare a invertire l\'ingegneria inversa del software contenuto nel sito web\nRimuovere qualsiasi nota di proprietà intellettuale o altra',
+    'terms.license.content': 'È concessa la licenza per scaricare temporaneamente una copia dei materiali su OfferHub solo per la visione personale, non commerciale, transitoria. Questo è il conferimento di una licenza, non una trasferimento di titolo, e sotto questa licenza non è consentito:\n\nModificare o copiare i materiali\nUtilizzare i materiali per qualsiasi scopo commerciale o pubblico\nProvare a invertire l\'ingegneria inversa del software contenuto nel sito web\nRimuovere qualsiasi nota di proprietà intellettuale o altra',
     'terms.disclaimer.title': 'Rinuncia',
-    'terms.disclaimer.content': 'Precisione delle Informazioni: I materiali su WHPCodes sono forniti "così come sono". Non garantiamo esplicitamente o implicitamente alcuna garanzia.\nServizi di Terze Parti: Non siamo responsabili per il contenuto, le politiche o le pratiche di siti web whop a cui ci siamo collegati.\nDisponibilità delle Promozioni: Le promozioni e gli sconti whop sono soggetti a modifiche senza preavviso. Non garantiamo la disponibilità o i termini di qualsiasi offerta promozionale.',
+    'terms.disclaimer.content': 'Precisione delle Informazioni: I materiali su OfferHub sono forniti "così come sono". Non garantiamo esplicitamente o implicitamente alcuna garanzia.\nServizi di Terze Parti: Non siamo responsabili per il contenuto, le politiche o le pratiche di siti web whop a cui ci siamo collegati.\nDisponibilità delle Promozioni: Le promozioni e gli sconti whop sono soggetti a modifiche senza preavviso. Non garantiamo la disponibilità o i termini di qualsiasi offerta promozionale.',
     'terms.responsible.title': 'Utilizzo Responsabile',
-    'terms.responsible.content': 'WHPCodes promuove l\'utilizzo responsabile di prodotti e servizi digitali. Incoraggiamo gli utenti a:\n\nAcquistare solo prodotti e servizi che possono permettersi\nIndagare sui prodotti attentamente prima di acquistare\nLeggere attentamente i termini e le condizioni dei prodotti whop\nEntrare in contatto direttamente con i fornitori whop per il supporto del prodotto\n\nSe hai preoccupazioni su un prodotto o servizio whop, per favore entra in contatto direttamente con il fornitore o comunica con noi attraverso il nostro modulo di contatto.',
+    'terms.responsible.content': 'OfferHub promuove l\'utilizzo responsabile di prodotti e servizi digitali. Incoraggiamo gli utenti a:\n\nAcquistare solo prodotti e servizi che possono permettersi\nIndagare sui prodotti attentamente prima di acquistare\nLeggere attentamente i termini e le condizioni dei prodotti whop\nEntrare in contatto direttamente con i fornitori whop per il supporto del prodotto\n\nSe hai preoccupazioni su un prodotto o servizio whop, per favore entra in contatto direttamente con il fornitore o comunica con noi attraverso il nostro modulo di contatto.',
     'terms.contactInfo.title': 'Informazioni di Contatto',
-    'terms.contactInfo.content': 'Se hai domande o preoccupazioni su questi Termini di Servizio, per favore contattaci:<br><br>E-mail: <a href="mailto:legal@whpcodes.com">legal@whpcodes.com</a><br>Sito web: <a href="/it/contact">Modulo di contatto</a>',
+    'terms.contactInfo.content': 'Se hai domande o preoccupazioni su questi Termini di Servizio, per favore contattaci:<br><br>E-mail: <a href="mailto:legal@example.com">legal@example.com</a><br>Sito web: <a href="/it/contact">Modulo di contatto</a>',
     
     // Contact
     'contact.title': 'Contattaci',
@@ -966,7 +966,7 @@ export const translations = {
     'nav.admin': 'Admin',
     
     // Homepage
-    'home.title': 'WHPCodes - Promoções Premium de Produtos Digitais',
+    'home.title': 'OfferHub - Promoções Premium de Produtos Digitais',
     'home.subtitle': 'Descubra códigos promocionais exclusivos e ofertas para os melhores produtos digitais',
     'home.cta': 'Navegar Ofertas',
     'home.filterCodes': 'Filtrar Códigos',
@@ -979,11 +979,11 @@ export const translations = {
     'home.exclusiveAccessDesc': 'Obtenha códigos promocionais especiais e descontos exclusivos que você não encontrará em nenhum outro lugar, negociados exclusivamente para nossa comunidade.',
     'home.alwaysUpdated': 'Sempre Atualizado',
     'home.alwaysUpdatedDesc': 'Nosso banco de dados de códigos promocionais é atualizado diariamente para garantir que todas as ofertas sejam atuais, ativas e forneçam o máximo valor aos usuários.',
-    'home.readyToSave': 'Pronto para economizar dinheiro? Navegue pelos nossos produtos Whop mais bem avaliados acima e comece a acessar conteúdo premium hoje.',
+    'home.readyToSave': 'Pronto para economizar dinheiro? Navegue pelos nossos produtos mais bem avaliados acima e comece a acessar conteúdo premium hoje.',
     
     // Statistics
     'stats.users': 'Usuários Totais',
-    'stats.whops': 'Whops Ativos',
+    'stats.whops': 'Ofertas Ativas',
     'stats.codes': 'Códigos Promocionais',
     'stats.claimed': 'Códigos Promocionais Resgatados',
     'stats.popular': 'Mais Popular',
@@ -1050,14 +1050,14 @@ export const translations = {
     // Privacy Policy Content
     'privacy.title': 'Política de Privacidade',
     'privacy.introduction.title': 'Introdução',
-    'privacy.introduction.content': 'WHPCodes ("nós," "nosso," ou "nosso") se compromete em proteger sua privacidade. Esta Política de Privacidade explica como coletamos, usamos, divulgamos e protegemos suas informações quando você visita nosso site whpcodes.com e usa nossos serviços.',
+    'privacy.introduction.content': 'OfferHub ("nós," "nosso," ou "nosso") se compromete em proteger sua privacidade. Esta Política de Privacidade explica como coletamos, usamos, divulgamos e protegemos suas informações quando você visita nosso site example.com e usa nossos serviços.',
     'privacy.infoCollect.title': 'Informações que Coletamos',
     'privacy.infoProvide.title': 'Informações que Você Nos Fornece',
     'privacy.infoProvide.content': 'Informações de contato ao entrar em contato conosco\nComentários e sugestões que você envia\nInformações de assinatura de newsletter',
     'privacy.infoAuto.title': 'Informações Automaticamente Coletadas',
     'privacy.infoAuto.content': 'Tipo e versão do navegador\nInformações do dispositivo\nPáginas visitadas e tempo gasto no nosso site\nInformações do site de referência\nCookies e tecnologias de rastreamento semelhantes',
     'privacy.howUse.title': 'Como Usamos Suas Informações',
-    'privacy.howUse.content': 'Fornecer Serviços: Para operar e manter nosso site web e fornecer informações sobre produtos Whop\nMelhorar Experiência: Para analisar padrões de uso e melhorar nosso conteúdo e experiência de usuário\nComunicação: Para responder a suas perguntas e enviar atualizações importantes\nAnálise: Para rastrear o desempenho do site web e a interação dos usuários\nCumprimento Legal: Para cumprir com as leis e regulamentos aplicáveis',
+    'privacy.howUse.content': 'Fornecer Serviços: Para operar e manter nosso site web e fornecer informações sobre produtos\nMelhorar Experiência: Para analisar padrões de uso e melhorar nosso conteúdo e experiência de usuário\nComunicação: Para responder a suas perguntas e enviar atualizações importantes\nAnálise: Para rastrear o desempenho do site web e a interação dos usuários\nCumprimento Legal: Para cumprir com as leis e regulamentos aplicáveis',
     'privacy.sharing.title': 'Compartilhamento de Informações',
     'privacy.sharing.content': 'Não vendemos, trocamos ou noleggamos suas informações pessoais. Potremmo condividere informazioni in questi casi:\n\nPartners di Affiliazione: Quando você clica em links whop, pode ser redirecionado para nossos partners di affiliazione\nProvider di Servizi: Con serviços de terceiros de confiança que nos ajudam a operar nosso site web\nRequisitos Legais: Quando exigido dalla legge o per proteggere i nostri diritti\nTrasferimenti di Impresa: In connessione con una fusione, vendita o trasferimento di attività',
     'privacy.cookies.title': 'Cookies e Rastreamento',
@@ -1067,20 +1067,20 @@ export const translations = {
     'privacy.rights.title': 'I Tuoi Diritti',
     'privacy.rights.content': 'Hai il diritto di:\n\nAccedere alle tue informazioni personali\nCorreggere informazioni errate\nRichiedere la cancellazione delle tue informazioni\nRifiutare di partecipare a comunicazioni di marketing\nObiettare al trattamento delle tue informazioni',
     'privacy.contact.title': 'Contattaci',
-    'privacy.contact.content': 'Se hai domande o preoccupazioni sulla nostra Politica sulla Privacy o sulle nostre pratiche di gestione dei dati, per favore contattaci:<br><br>E-mail: <a href="mailto:whpcodes@gmail.com">whpcodes@gmail.com</a><br>Sito web: <a href="/pt/contact">Modulo di contatto</a>',
+    'privacy.contact.content': 'Se hai domande o preoccupazioni sulla nostra Politica sulla Privacy o sulle nostre pratiche di gestione dei dati, per favore contattaci:<br><br>E-mail: <a href="mailto:contact@example.com">contact@example.com</a><br>Sito web: <a href="/pt/contact">Modulo di contatto</a>',
     
     // Terms of Service Content
     'terms.title': 'Termini di Servizio',
     'terms.agreement.title': 'Accordo sui Termini di Servizio',
-    'terms.agreement.content': 'Accedendo e utilizzando WHPCodes ("noi," "nostro," o "nostro"), accetti e accetti di essere vincolato ai termini e disposizioni di questo accordo. Se non accetti quanto sopra, per favore non utilizzare questo servizio.',
+    'terms.agreement.content': 'Accedendo e utilizzando OfferHub ("noi," "nostro," o "nostro"), accetti e accetti di essere vincolato ai termini e disposizioni di questo accordo. Se non accetti quanto sopra, per favore non utilizzare questo servizio.',
     'terms.license.title': 'Licenza di Utilizzo',
-    'terms.license.content': 'È concessa la licenza per scaricare temporaneamente una copia dei materiali su WHPCodes solo per la visione personale, non commerciale, transitoria. Questo è il conferimento di una licenza, ke una trasferimento di titolo, e sotto questa licenza non è consentito:\n\nModificare o copiare i materiali\nUtilizzare i materiali per qualsiasi scopo commerciale o pubblico\nProvare a invertire l\'ingegneria inversa del software contenuto nel sito web\nRimuovere qualsiasi nota di proprietà intellettuale o altra',
+    'terms.license.content': 'È concessa la licenza per scaricare temporaneamente una copia dei materiali su OfferHub solo per la visione personale, non commerciale, transitoria. Questo è il conferimento di una licenza, ke una trasferimento di titolo, e sotto questa licenza non è consentito:\n\nModificare o copiare i materiali\nUtilizzare i materiali per qualsiasi scopo commerciale o pubblico\nProvare a invertire l\'ingegneria inversa del software contenuto nel sito web\nRimuovere qualsiasi nota di proprietà intellettuale o altra',
     'terms.disclaimer.title': 'Rinuncia',
-    'terms.disclaimer.content': 'Precisione delle Informazioni: I materiali su WHPCodes sono forniti "così come sono". Non garantiamo esplicitamente o implicitamente alcuna garanzia.\nServizi di Terze Parti: Non siamo responsabili per il contenuto, le politiche o le pratiche di siti web whop a cui ci siamo collegati.\nDisponibilità delle Promozioni: Le promozioni e gli sconti whop sono basati su modifiche senza preavviso. Non garantiamo la disponibilità o i termini di qualsiasi offerta promozionale.',
+    'terms.disclaimer.content': 'Precisione delle Informazioni: I materiali su OfferHub sono forniti "così come sono". Non garantiamo esplicitamente o implicitamente alcuna garanzia.\nServizi di Terze Parti: Non siamo responsabili per il contenuto, le politiche o le pratiche di siti web whop a cui ci siamo collegati.\nDisponibilità delle Promozioni: Le promozioni e gli sconti whop sono basati su modifiche senza preavviso. Non garantiamo la disponibilità o i termini di qualsiasi offerta promozionale.',
     'terms.responsible.title': 'Utilizzo Responsabile',
-    'terms.responsible.content': 'WHPCodes promuove l\'utilizzo responsabile di prodotti e servizi digitali. Animiamo gli utenti a:\n\nAcquistare solo prodotti e servizi che possono permettersi\nIndagare sui prodotti attentamente prima di acquistare\nLeggere attentamente i termini e le condizioni dei prodotti whop\nEntrare in contatto direttamente con i fornitori whop per il supporto del prodotto\n\nSe hai preoccupazioni su un prodotto o servizio whop, per favore entra in contatto direttamente con il fornitore o comunica con noi attraverso il nostro modulo di contatto.',
+    'terms.responsible.content': 'OfferHub promuove l\'utilizzo responsabile di prodotti e servizi digitali. Animiamo gli utenti a:\n\nAcquistare solo prodotti e servizi che possono permettersi\nIndagare sui prodotti attentamente prima di acquistare\nLeggere attentamente i termini e le condizioni dei prodotti whop\nEntrare in contatto direttamente con i fornitori whop per il supporto del prodotto\n\nSe hai preoccupazioni su un prodotto o servizio whop, per favore entra in contatto direttamente con il fornitore o comunica con noi attraverso il nostro modulo di contatto.',
     'terms.contactInfo.title': 'Informazioni di Contatto',
-    'terms.contactInfo.content': 'Se hai domande o preoccupazioni su questi Termini di Servizio, per favore contattaci:<br><br>E-mail: <a href="mailto:legal@whpcodes.com">legal@whpcodes.com</a><br>Sito web: <a href="/pt/contact">Modulo di contatto</a>',
+    'terms.contactInfo.content': 'Se hai domande o preoccupazioni su questi Termini di Servizio, per favore contattaci:<br><br>E-mail: <a href="mailto:legal@example.com">legal@example.com</a><br>Sito web: <a href="/pt/contact">Modulo di contatto</a>',
     
     // Contact
     'contact.title': 'Entre em Contato',
@@ -1123,7 +1123,7 @@ export const translations = {
     'nav.admin': '管理员',
     
     // Homepage
-    'home.title': 'WHPCodes - 高级数字产品促销',
+    'home.title': 'OfferHub - 高级数字产品促销',
     'home.subtitle': '发现最佳数字产品的独家促销代码和优惠',
     'home.cta': '浏览优惠',
     'home.filterCodes': '筛选代码',
@@ -1136,11 +1136,11 @@ export const translations = {
     'home.exclusiveAccessDesc': '获取特殊促销代码和独家折扣，您不会在其他地方找到，独家为我们的社区协商。',
     'home.alwaysUpdated': '始终更新',
     'home.alwaysUpdatedDesc': '我们的促销代码数据库每天都会更新，以确保所有促销活动都是最新的、活跃的，并为用户提供最大价值。',
-    'home.readyToSave': '准备好省钱吗？浏览我们上面最好的Whop产品，今天就开始访问高级内容。',
+    'home.readyToSave': '准备好省钱吗？浏览我们上面最好的产品，今天就开始访问高级内容。',
     
     // Statistics
     'stats.users': '总用户数',
-    'stats.whops': '活跃Whops',
+    'stats.whops': '活跃优惠s',
     'stats.codes': '促销代码',
     'stats.claimed': '已兑换促销代码',
     'stats.popular': '最受欢迎',
@@ -1207,14 +1207,14 @@ export const translations = {
     // Privacy Policy Content
     'privacy.title': '隐私政策',
     'privacy.introduction.title': '介绍',
-    'privacy.introduction.content': 'WHPCodes ("我们," "我们的," 或 "我们的") 致力于保护您的隐私。本隐私政策解释了我们如何收集、使用、披露和保护您的信息，当您访问我们的网站 whpcodes.com 并使用我们的服务时。',
+    'privacy.introduction.content': 'OfferHub ("我们," "我们的," 或 "我们的") 致力于保护您的隐私。本隐私政策解释了我们如何收集、使用、披露和保护您的信息，当您访问我们的网站 example.com 并使用我们的服务时。',
     'privacy.infoCollect.title': '我们收集的信息',
     'privacy.infoProvide.title': '您提供的信息',
     'privacy.infoProvide.content': '联系我们时提供的联系信息\n您提交的评论和建议\n新闻通讯订阅信息',
     'privacy.infoAuto.title': '自动收集的信息',
     'privacy.infoAuto.content': '浏览器类型和版本\n设备信息\n访问的页面和在网站上的时间\n参考网站信息\nCookies和类似的跟踪技术',
     'privacy.howUse.title': '我们如何使用您的信息',
-    'privacy.howUse.content': '提供服务：为了运营和维护我们的网站并提供 Whop 产品信息\n改进体验：为了分析使用模式并改进我们的内容和用户体验\n沟通：为了回答您的问题并发送重要更新\n分析：为了跟踪网站性能和用户参与度\n遵守法律：为了遵守适用法律和法规',
+    'privacy.howUse.content': '提供服务：为了运营和维护我们的网站并提供 产品信息\n改进体验：为了分析使用模式并改进我们的内容和用户体验\n沟通：为了回答您的问题并发送重要更新\n分析：为了跟踪网站性能和用户参与度\n遵守法律：为了遵守适用法律和法规',
     'privacy.sharing.title': '信息共享',
     'privacy.sharing.content': '我们不会出售、交换或出租您的个人信息。在以下情况下，我们可能会共享信息：\n\n联盟伙伴：当您点击 whop 链接时，您可能会被重定向到我们的联盟伙伴\n服务提供商：与帮助我们运营网站的可信第三方服务\n法律要求：当法律要求或为了保护我们的权利时\n业务转让：在合并、出售或资产转让的背景下',
     'privacy.cookies.title': 'Cookies 和跟踪',
@@ -1224,20 +1224,20 @@ export const translations = {
     'privacy.rights.title': '您的权利',
     'privacy.rights.content': '您有权：\n\n访问您的个人信息\n纠正不准确的信息\n请求删除您的信息\n退出营销通信\n反对处理您的信息',
     'privacy.contact.title': '联系我们',
-    'privacy.contact.content': '如果您对我们的隐私政策或数据实践有任何问题或关注，请随时与我们联系:<br><br>电子邮件: <a href="mailto:whpcodes@gmail.com">whpcodes@gmail.com</a><br>网站: <a href="/zh/contact">联系表单</a>',
+    'privacy.contact.content': '如果您对我们的隐私政策或数据实践有任何问题或关注，请随时与我们联系:<br><br>电子邮件: <a href="mailto:contact@example.com">contact@example.com</a><br>网站: <a href="/zh/contact">联系表单</a>',
     
     // Terms of Service Content
     'terms.title': '服务条款',
     'terms.agreement.title': '服务条款协议',
-    'terms.agreement.content': '通过访问和使用 WHPCodes ("我们," "我们的," 或 "我们的"), 您同意并同意受本协议的条款和条件的约束。如果您不同意上述内容，请不要使用此服务。',
+    'terms.agreement.content': '通过访问和使用 OfferHub ("我们," "我们的," 或 "我们的"), 您同意并同意受本协议的条款和条件的约束。如果您不同意上述内容，请不要使用此服务。',
     'terms.license.title': '使用许可',
-    'terms.license.content': '已授予临时下载 WHPCodes 上的材料副本的许可，仅供个人、非商业性临时查看。这是许可，不是转让标题，并且在此许可下，您不得：\n\n修改或复制材料\n将材料用于任何商业目的或公共显示\n尝试反向工程网站上包含的任何软件\n从材料中删除任何知识产权或其他',
+    'terms.license.content': '已授予临时下载 OfferHub 上的材料副本的许可，仅供个人、非商业性临时查看。这是许可，不是转让标题，并且在此许可下，您不得：\n\n修改或复制材料\n将材料用于任何商业目的或公共显示\n尝试反向工程网站上包含的任何软件\n从材料中删除任何知识产权或其他',
     'terms.disclaimer.title': '免责声明',
     'terms.disclaimer.content': '信息准确性: 材料在 "按原样" 基础上提供。我们不提供任何明示或暗示的保证。\n第三方服务: 我们不对链接的第三方 whop 网站的内容、政策或实践负责。\n促销可用性: 促销和 whop 折扣可能会无通知更改。我们不保证任何促销优惠的可用性或条款。',
     'terms.responsible.title': '负责任使用',
-    'terms.responsible.content': 'WHPCodes 促进数字产品和服务的负责任使用。我们鼓励用户：\n\n仅购买他们可以负担的产品和服务\n在购买前彻底研究产品\n仔细阅读 whop 产品的条款和条件\n直接联系 whop 提供商以获取产品支持\n\n如果您对任何 whop 产品或服务有任何关注或关注，请直接联系提供商或通过我们的联系表单与我们联系。',
+    'terms.responsible.content': 'OfferHub 促进数字产品和服务的负责任使用。我们鼓励用户：\n\n仅购买他们可以负担的产品和服务\n在购买前彻底研究产品\n仔细阅读 whop 产品的条款和条件\n直接联系 whop 提供商以获取产品支持\n\n如果您对任何 whop 产品或服务有任何关注或关注，请直接联系提供商或通过我们的联系表单与我们联系。',
     'terms.contactInfo.title': '联系信息',
-    'terms.contactInfo.content': '如果您对这些服务条款有任何问题，请与我们联系:<br><br>电子邮件: <a href="mailto:legal@whpcodes.com">legal@whpcodes.com</a><br>网站: <a href="/zh/contact">联系表单</a>',
+    'terms.contactInfo.content': '如果您对这些服务条款有任何问题，请与我们联系:<br><br>电子邮件: <a href="mailto:legal@example.com">legal@example.com</a><br>网站: <a href="/zh/contact">联系表单</a>',
     
     // Contact
     'contact.title': '联系我们',

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { siteOrigin } from '@/lib/site-origin';
+import { SITE_BRAND, SITE_DESCRIPTION } from '@/lib/brand';
 
 export async function GET() {
   const origin = siteOrigin();
@@ -22,9 +23,9 @@ export async function GET() {
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
   <rss version="2.0"><channel>
-    <title>WHPCodes Blog</title>
+    <title>${SITE_BRAND} Blog</title>
     <link>${origin}/blog</link>
-    <description>Latest posts from WHPCodes</description>
+    <description>${SITE_DESCRIPTION}</description>
     ${items}
   </channel></rss>`;
 

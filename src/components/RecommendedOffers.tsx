@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import WhopCardLink from './WhopCardLink';
+import OfferCardLink from './OfferCardLink';
 import SectionPanel from './SectionPanel';
 import { loadNeighbors, getNeighborSlugsFor, getExploreFor } from '@/lib/graph';
 import { getBaseUrl } from '@/lib/base-url';
@@ -368,7 +368,7 @@ export default function RecommendedWhops({ currentWhopSlug }: RecommendedWhopsPr
       {/* Single column layout for better alignment within constrained width */}
       <div className="space-y-4">
         {recommendations.map((whop, index) => (
-          <WhopCardLink
+          <OfferCardLink
             key={whop.id}
             slug={whop.slug}
             title={whop.name}

@@ -82,14 +82,14 @@ export function middleware(request: NextRequest) {
     });
   }
 
-  // SEO LOGIC FIRST (for whop routes)
-  if (path.startsWith('/whop/') || path.match(/^\/([a-z]{2}(?:-[A-Z]{2})?)\/whop\//)) {
+  // SEO LOGIC FIRST (for offer routes - renamed from whop)
+  if (path.startsWith('/offer/') || path.match(/^\/([a-z]{2}(?:-[A-Z]{2})?)\/offer\//)) {
     // prove middleware executed (dev only)
     const res = NextResponse.next();
     if (process.env.NODE_ENV !== 'production') res.headers.set('x-mw-hit', '1');
 
-    // 1) CASE + COLON NORMALIZATION: Canonicalize /whop/* paths
-    if (path.startsWith('/whop/')) {
+    // 1) CASE + COLON NORMALIZATION: Canonicalize /offer/* paths
+    if (path.startsWith('/offer/')) {
       let target = path.toLowerCase();
 
       // Canonicalize colon variants:
@@ -110,15 +110,15 @@ export function middleware(request: NextRequest) {
       }
     }
 
-    // 2) normalize legacy locale URLs → /whop/:slug
-    const m = path.match(/^\/([a-z]{2}(?:-[A-Z]{2})?)\/whop\/(.+)$/);
+    // 2) normalize legacy locale URLs → /offer/:slug
+    const m = path.match(/^\/([a-z]{2}(?:-[A-Z]{2})?)\/offer\/(.+)$/);
     if (m) {
-      return NextResponse.redirect(new URL(`/whop/${m[2]}`, url), 308);
+      return NextResponse.redirect(new URL(`/offer/${m[2]}`, url), 308);
     }
 
     // 3) handle specific redirects (preserve existing)
-    if (path === '/whop/monthly-mentorship') {
-      return NextResponse.redirect(new URL('/whop/ayecon-academy-monthly-mentorship', url));
+    if (path === '/offer/monthly-mentorship') {
+      return NextResponse.redirect(new URL('/offer/ayecon-academy-monthly-mentorship', url));
     }
 
     // 4) exact 410 for retired
@@ -141,6 +141,12 @@ export function middleware(request: NextRequest) {
     if (!path.startsWith('/admin') && !path.startsWith('/api')) {
       return res;
     }
+  }
+
+  // Legacy /whop/ redirect to /offer/
+  if (path.startsWith('/whop/')) {
+    const newPath = path.replace('/whop/', '/offer/');
+    return NextResponse.redirect(new URL(newPath, url), 301);
   }
   
   // Handle preflight OPTIONS requests for CORS

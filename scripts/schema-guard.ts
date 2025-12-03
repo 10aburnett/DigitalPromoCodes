@@ -20,7 +20,7 @@ function take<T>(arr: T[], n: number) {
 import fs from 'node:fs';
 import path from 'node:path';
 import * as seoIndexes from '../src/app/_generated/seo-indexes';
-import { getWhopViewModel } from '../src/app/(public)/whop/[slug]/vm';
+import { getWhopViewModel } from '../src/app/(public)/offer/[slug]/vm';
 import {
   buildPrimaryEntity,
   buildBreadcrumbList,

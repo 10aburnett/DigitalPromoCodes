@@ -2,6 +2,8 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { getPublishedBlogPosts, type BlogListItem } from '@/lib/blog'
+import { siteOrigin } from '@/lib/site-origin'
+import { SITE_BRAND, SITE_AUTHOR } from '@/lib/brand'
 
 // TypeScript safety: allow optional fields without altering Prisma
 type BlogListItemWithDates = BlogListItem & {
@@ -19,11 +21,11 @@ export const runtime = 'nodejs' // Required for Prisma
 const currentYear = new Date().getFullYear()
 
 export const metadata: Metadata = {
-  title: `WHP Blog - Latest Whop Promo Codes, Tips & Digital Product Insights ${currentYear}`,
-  description: `Discover the latest Whop promo codes, digital product reviews, exclusive deals, and insider tips for ${currentYear}. Stay updated with the newest discounts and insights from the world of digital products and online communities.`,
-  keywords: `WHP blog, Whop promo codes ${currentYear}, digital products, online courses, Discord communities, exclusive deals, promo code tips, digital marketplace insights`,
+  title: `${SITE_BRAND} Blog - Latest Deals, Tips & Digital Product Insights ${currentYear}`,
+  description: `Discover the latest deals, digital product reviews, exclusive offers, and insider tips for ${currentYear}. Stay updated with the newest discounts and insights from the world of digital products and online communities.`,
+  keywords: `blog, deals ${currentYear}, digital products, online courses, communities, exclusive deals, discount tips, digital marketplace insights`,
   alternates: {
-// PHASE1-DEINDEX:     canonical: 'https://whpcodes.com/blog'
+// PHASE1-DEINDEX:     canonical: `${siteOrigin()}/blog`
   },
   robots: {
     index: true,
@@ -37,15 +39,15 @@ export const metadata: Metadata = {
     }
   },
   openGraph: {
-    title: `WHP Blog - Latest Whop Promo Codes & Digital Product Insights ${currentYear}`,
-    description: `Your source for the latest Whop promo codes, exclusive deals, and digital product insights for ${currentYear}. Get insider tips and discover new opportunities in the digital marketplace.`,
+    title: `${SITE_BRAND} Blog - Latest Deals & Digital Product Insights ${currentYear}`,
+    description: `Your source for the latest deals, exclusive offers, and digital product insights for ${currentYear}. Get insider tips and discover new opportunities in the digital marketplace.`,
     type: 'website',
-    url: 'https://whpcodes.com/blog'
+    url: `${siteOrigin()}/blog`
   },
   twitter: {
     card: 'summary_large_image',
-    title: `WHP Blog - Latest Whop Promo Codes & Digital Product Insights ${currentYear}`,
-    description: `Your source for the latest Whop promo codes, exclusive deals, and digital product insights for ${currentYear}. Get insider tips and discover new opportunities in the digital marketplace.`
+    title: `${SITE_BRAND} Blog - Latest Deals & Digital Product Insights ${currentYear}`,
+    description: `Your source for the latest deals, exclusive offers, and digital product insights for ${currentYear}. Get insider tips and discover new opportunities in the digital marketplace.`
   }
 }
 
@@ -87,22 +89,24 @@ export default async function BlogPage() {
       );
     }
 
+    const origin = siteOrigin();
+
     // Build JSON-LD CollectionPage schema for SEO
     const jsonLd = {
       '@context': 'https://schema.org',
       '@type': 'CollectionPage',
-      name: 'WHP Blog',
-      description: `Latest posts and guides on Whop promo codes and digital products in ${currentYear}.`,
-      url: 'https://whpcodes.com/blog',
+      name: `${SITE_BRAND} Blog`,
+      description: `Latest posts and guides on deals and digital products in ${currentYear}.`,
+      url: `${origin}/blog`,
       hasPart: (posts as BlogListItemWithDates[]).slice(0, 20).map((p) => ({
         '@type': 'BlogPosting',
         headline: p.title,
         datePublished: p.publishedAt?.toISOString?.() ?? undefined,
         dateModified: (p.updatedAt ?? p.publishedAt)?.toISOString?.() ?? undefined,
-        url: `https://whpcodes.com/blog/${p.slug}`,
+        url: `${origin}/blog/${p.slug}`,
         author: {
           '@type': 'Person',
-          name: (p as any).User?.name || (p as any).authorName || 'WHP Team'
+          name: (p as any).User?.name || (p as any).authorName || SITE_AUTHOR
         }
       })),
     };

@@ -1,7 +1,8 @@
 const { verify } = require('jsonwebtoken');
 
 // This would normally come from cookies, but for debugging let's see what format JWT should have
-const jwtSecret = process.env.AUTH_SECRET || "whpcodes-secret-key";
+// TODO: Update fallback secret when new brand is finalised (env var AUTH_SECRET should be used in production)
+const jwtSecret = process.env.AUTH_SECRET || "site-dev-secret-key";
 
 console.log('=== JWT TOKEN DEBUGGING ===');
 console.log('JWT Secret:', jwtSecret);
@@ -11,7 +12,7 @@ console.log('2. admin-1754410423863 (alexburnett21@icloud.com)');
 
 console.log('\nTo test JWT token:');
 console.log('1. Go to browser dev tools');
-console.log('2. Go to Application/Storage > Cookies > whpcodes.com');
+console.log('2. Go to Application/Storage > Cookies > [your-domain]');
 console.log('3. Find "admin-token" cookie value');
 console.log('4. Paste it here to decode:');
 

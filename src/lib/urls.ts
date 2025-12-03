@@ -9,18 +9,21 @@ export function absoluteUrl(path = '/') {
   return `${ORIGIN}${path}`;
 }
 
-// locale-aware canonical for whop pages (safe with feature flag)
-export function whopAbsoluteUrl(slug: string, locale?: string | null) {
-  const base = `/whop/${slug}`;
+// locale-aware canonical for offer pages (safe with feature flag)
+export function offerAbsoluteUrl(slug: string, locale?: string | null) {
+  const base = `/offer/${slug}`;
 
   // Only apply locale logic if feature is enabled and locale is valid
   if (isLocaleEnabled() && isLocale(locale) && locale !== 'en') {
-    return absoluteUrl(`/${locale}${base}`); // e.g., /de/whop/slug
+    return absoluteUrl(`/${locale}${base}`); // e.g., /de/offer/slug
   }
 
   // Default behavior (same as before when flag is off)
-  return absoluteUrl(base); // e.g., /whop/slug
+  return absoluteUrl(base); // e.g., /offer/slug
 }
+
+// Legacy alias for backwards compatibility during migration
+export const whopAbsoluteUrl = offerAbsoluteUrl;
 
 /**
  * Normalize URL for comparison - removes query params, hash, and trailing slash

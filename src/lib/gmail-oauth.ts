@@ -76,7 +76,8 @@ export const sendContactEmail = async (data: ContactEmailData): Promise<void> =>
         </div>
         
         <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e9ecef; color: #666; font-size: 12px;">
-          <p>This email was sent from the WHPCodes contact form.</p>
+          <!-- TODO: Update brand name once new domain is finalised -->
+          <p>This email was sent from our website contact form.</p>
           <p>Reply directly to this email to respond to ${data.name} at ${data.email}</p>
         </div>
       </div>
@@ -106,11 +107,12 @@ export const sendAutoReply = async (data: ContactEmailData): Promise<void> => {
   const mailOptions = {
     from: 'whpcodes@gmail.com',
     to: data.email,
-    subject: `Thank you for contacting WHPCodes - We've received your message`,
+    // TODO: Update brand name and domain once new domain is finalised
+    subject: `Thank you for contacting us - We've received your message`,
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
         <h2 style="color: #6366f1; border-bottom: 2px solid #6366f1; padding-bottom: 10px;">
-          Thank you for contacting WHPCodes
+          Thank you for contacting us
         </h2>
         
         <p>Hi ${data.name},</p>
@@ -133,11 +135,11 @@ export const sendAutoReply = async (data: ContactEmailData): Promise<void> => {
           </ul>
         </div>
         
-        <p>In the meantime, feel free to explore our latest promo codes and deals at <a href="https://whpcodes.com" style="color: #6366f1;">WHPCodes.com</a></p>
-        
+        <!-- TODO: Update brand name and URL once new domain is finalised -->
+        <p>In the meantime, feel free to explore our latest offers and deals on our website.</p>
+
         <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e9ecef; color: #666; font-size: 12px;">
-          <p>Best regards,<br>The WHPCodes Team</p>
-          <p>Visit us: <a href="https://whpcodes.com" style="color: #6366f1;">https://whpcodes.com</a></p>
+          <p>Best regards,<br>Our Team</p>
         </div>
       </div>
     `,

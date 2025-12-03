@@ -56,12 +56,15 @@ export const getPromoStatsForSlug = cache(async (slug: string): Promise<PromoUsa
     }
 
     // Fallback to path-based matching (less accurate but works for older data)
+    // Note: Includes both old /whop/ and new /offer/ paths for backwards compatibility
     const whereBase = {
       actionType: 'code_copy' as const,
       OR: [
+        { path: { contains: `/offer/${slug}`, mode: 'insensitive' as const } },
+        { path: { contains: `/en/offer/${slug}`, mode: 'insensitive' as const } },
+        // Legacy paths for historical data
         { path: { contains: `/whop/${slug}`, mode: 'insensitive' as const } },
-        { path: { contains: `/en/whop/${slug}`, mode: 'insensitive' as const } },
-        { path: { contains: `https://whpcodes.com/whop/${slug}`, mode: 'insensitive' as const } }
+        { path: { contains: `/en/whop/${slug}`, mode: 'insensitive' as const } }
       ]
     };
 

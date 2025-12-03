@@ -11,6 +11,7 @@ import { SocialProofProvider, useSocialProof } from '@/contexts/SocialProofConte
 import SocialProofPopupManager from './SocialProofPopup';
 import GeneralPromoSubmissionButton from './GeneralPromoSubmissionButton';
 import { useIsMobile } from '@/hooks/use-is-mobile';
+import { SITE_BRAND } from '@/lib/brand';
 
 interface ConditionalLayoutProps {
   children: React.ReactNode;
@@ -260,7 +261,7 @@ function LayoutContent({ children, faviconUrl }: ConditionalLayoutProps) {
                 </div>
               </div>
               <div className="text-xs text-center sm:text-right opacity-70" style={{ color: 'var(--text-muted)' }}>
-                © {currentYear} WHPCodes. {t('footer.rights')}
+                © {currentYear} {SITE_BRAND}. {t('footer.rights')}
               </div>
             </div>
           </div>
@@ -274,10 +275,9 @@ function LayoutContent({ children, faviconUrl }: ConditionalLayoutProps) {
               <Link
                 href={getLocalizedPath('/')}
                 className="select-none text-xl font-extrabold tracking-tight"
-                aria-label="WHP Codes home"
+                aria-label={`${SITE_BRAND} home`}
               >
-                <span style={{ color: 'var(--accent-color)' }}>WHP</span>
-                <span style={{ color: 'var(--text-color)' }}> CODES</span>
+                <span style={{ color: 'var(--accent-color)' }}>{SITE_BRAND}</span>
               </Link>
 
               {/* hamburger button */}
@@ -299,7 +299,7 @@ function LayoutContent({ children, faviconUrl }: ConditionalLayoutProps) {
 
               {/* copyright */}
               <p className="mt-2 text-xs" style={{ color: 'var(--text-muted)' }}>
-                © {currentYear} WHPCodes. {t('footer.rights')}
+                © {currentYear} {SITE_BRAND}. {t('footer.rights')}
               </p>
             </div>
           </div>

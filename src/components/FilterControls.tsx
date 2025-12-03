@@ -1,5 +1,5 @@
 import React from 'react';
-import { FilterState, WhopCategory, getCategoryLabel } from '@/types/whop';
+import { FilterState, WhopCategory, getCategoryLabel } from '@/types/offer';
 
 interface FilterControlsProps {
   filters: FilterState;

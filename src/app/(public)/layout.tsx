@@ -10,6 +10,7 @@ import { absoluteUrl } from '@/lib/urls';
 import { buildOrgSite } from '@/lib/jsonld';
 import JsonLd from '@/components/JsonLd';
 import { siteOrigin } from '@/lib/site-origin';
+import { SITE_BRAND, SITE_TAGLINE, SITE_DESCRIPTION } from '@/lib/brand';
 
 const currentYear = new Date().getFullYear();
 
@@ -47,33 +48,35 @@ export async function generateMetadata(): Promise<Metadata> {
     faviconUrl = `/favicon.ico?v=${STATIC_VERSION}`;
   }
 
+  const title = `${SITE_BRAND} - Exclusive Deals & Discounts ${currentYear}`;
+  const description = `${SITE_DESCRIPTION} Find verified deals, discount codes & exclusive offers for ${currentYear}. Updated daily!`;
+
   return {
-    title: `WHPCodes - Best Whop Promo Codes & Discount Codes ${currentYear}`,
-    description: `Find verified Whop promo codes, discount codes & coupons for ${currentYear}. Get exclusive access to premium digital products, courses, & communities at discounted prices. Each code updated daily!`,
-    keywords: 'whop promo codes, whop discount codes, whop coupons, digital product discounts, community access codes, course promo codes, whop deals, exclusive discounts',
+    title,
+    description,
+    keywords: 'deals, discount codes, coupons, digital product discounts, community access, course discounts, exclusive offers',
     metadataBase: new URL(siteOrigin()),
     openGraph: {
-      title: `WHPCodes - Best Whop Promo Codes & Discount Codes ${currentYear}`,
-      description: `Find verified Whop promo codes, discount codes & coupons for ${currentYear}. Get exclusive access to premium digital products, courses, & communities at discounted prices. Each code updated daily!`,
-      url: 'https://whpcodes.com',
+      title,
+      description,
+      url: siteOrigin(),
       type: 'website',
-      siteName: 'WHPCodes',
+      siteName: SITE_BRAND,
       images: [
         {
           url: '/logo.png',
           width: 1200,
           height: 630,
-          alt: 'WHPCodes - Best Whop Promo Codes & Discount Codes'
+          alt: `${SITE_BRAND} - Exclusive Deals & Discounts`
         }
       ],
     },
     twitter: {
       card: 'summary_large_image',
-      title: `Best Whop Promo Codes & Discount Codes ${currentYear} - Exclusive Digital Product Deals`,
-      description: `Find verified Whop promo codes, discount codes & coupons for ${currentYear}. Get exclusive access to premium digital products, courses, & communities at discounted prices. Each code updated daily!`,
+      title: `${SITE_BRAND} - Exclusive Deals & Discounts ${currentYear}`,
+      description,
       images: ['/logo.png'],
-      creator: '@whpcodes',
-      site: '@whpcodes'
+      // Twitter handles removed until new brand accounts exist
     },
     verification: {
       google: 'your-google-verification-code',
@@ -114,18 +117,15 @@ export default async function PublicLayout({
   // Build Organization + WebSite JSON-LD (SSR only, no DB queries)
   const orgSiteSchema = buildOrgSite({
     org: {
-      name: 'WHPCodes',
+      name: SITE_BRAND,
       url: absoluteUrl(),
       logo: absoluteUrl('/logo.png'),
-      sameAs: [
-        'https://twitter.com/whpcodes',
-        'https://github.com/whpcodes'
-      ]
+      // sameAs removed until new brand social accounts exist
     },
     site: {
-      name: 'WHPCodes',
+      name: SITE_BRAND,
       url: absoluteUrl(),
-      searchTarget: absoluteUrl('/search?q={search_term_string}')
+      searchTarget: absoluteUrl('/?search={search_term_string}')
     }
   });
 

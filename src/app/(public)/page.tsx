@@ -3,6 +3,8 @@ import StatisticsSectionServer from '@/components/StatisticsSectionServer';
 import CallToAction from '@/components/CallToAction';
 import { prisma } from '@/lib/prisma';
 import { getStatisticsCached } from '@/data/statistics'; // Server-side statistics
+import { absoluteUrl, offerAbsoluteUrl } from '@/lib/urls';
+import { SITE_BRAND, SITE_TAGLINE, SITE_DESCRIPTION } from '@/lib/brand';
 import type { Metadata } from 'next';
 
 // Force dynamic rendering so ?page= works server-side (not statically cached)
@@ -193,12 +195,14 @@ async function getPagedWhops({
 // Metadata for SEO
 export async function generateMetadata(): Promise<Metadata> {
   const currentYear = new Date().getFullYear();
+  const title = `${SITE_BRAND} - Exclusive Deals & Discounts ${currentYear}`;
+  const description = `${SITE_TAGLINE}. Our curated list includes verified digital products, courses, communities, and more with exclusive discounts for ${currentYear}.`;
 
   return {
-    title: `WHPCodes - Best Whop Promo Codes ${currentYear}`,
-    description: `Discover the best Whop promo codes and digital product discounts in ${currentYear}. Our expertly curated list includes trusted digital products offering exclusive access, courses, communities, and more.`,
+    title,
+    description,
     alternates: {
-// PHASE1-DEINDEX:       canonical: 'https://whpcodes.com'
+// PHASE1-DEINDEX:       canonical: absoluteUrl('/')
     },
     robots: {
       index: true,
@@ -212,15 +216,15 @@ export async function generateMetadata(): Promise<Metadata> {
       }
     },
     openGraph: {
-      title: `WHPCodes - Best Whop Promo Codes ${currentYear}`,
-      description: `Discover the best Whop promo codes and digital product discounts in ${currentYear}.`,
+      title,
+      description,
       type: 'website',
-      url: 'https://whpcodes.com'
+      url: absoluteUrl('/')
     },
     twitter: {
       card: 'summary_large_image',
-      title: `WHPCodes - Best Whop Promo Codes ${currentYear}`,
-      description: `Discover the best Whop promo codes and digital product discounts in ${currentYear}.`
+      title,
+      description
     }
   };
 }
@@ -256,17 +260,19 @@ export default async function Home({
   const currentYear = new Date().getFullYear();
 
   // Build JSON-LD schemas for server HTML
+  const siteUrl = absoluteUrl('/');
   const websiteSchema = {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
-    'name': `WHPCodes - Best Whop Promo Codes ${currentYear}`,
-    'description': `Discover the best Whop promo codes and digital product discounts in ${currentYear}. Our expertly curated list includes trusted digital products offering exclusive access, courses, communities, and more.`,
-    'url': 'https://whpcodes.com',
+    '@id': `${siteUrl}#website`,
+    'name': SITE_BRAND,
+    'description': SITE_DESCRIPTION,
+    'url': siteUrl,
     'potentialAction': {
       '@type': 'SearchAction',
       'target': {
         '@type': 'EntryPoint',
-        'urlTemplate': 'https://whpcodes.com/?searchTerm={search_term_string}'
+        'urlTemplate': `${siteUrl}?search={search_term_string}`
       },
       'query-input': 'required name=search_term_string'
     }
@@ -275,31 +281,29 @@ export default async function Home({
   const organizationSchema = {
     '@context': 'https://schema.org',
     '@type': 'Organization',
-    'name': 'WHPCodes',
-    'url': 'https://whpcodes.com',
+    '@id': `${siteUrl}#org`,
+    'name': SITE_BRAND,
+    'url': siteUrl,
     'logo': {
       '@type': 'ImageObject',
-      'url': 'https://whpcodes.com/logo.png',
+      'url': absoluteUrl('/logo.png'),
       'width': 400,
       'height': 400
     },
-    'description': `We review and compare the best Whop promo codes and digital product discounts in ${currentYear}.`,
-    'sameAs': [
-      'https://twitter.com/whpcodes',
-      'https://www.facebook.com/whpcodes'
-    ],
+    'description': SITE_DESCRIPTION,
+    // sameAs removed - no verified social profiles for new brand yet
     'contactPoint': {
       '@type': 'ContactPoint',
       'contactType': 'customer service',
-      'url': 'https://whpcodes.com/contact'
+      'url': absoluteUrl('/contact')
     }
   };
 
   const offersSchema = {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
-    'name': `Best Whop Promo Codes ${currentYear}`,
-    'description': `Curated list of the best Whop promo codes and discount codes for ${currentYear}`,
+    'name': `Top Deals & Discounts ${currentYear}`,
+    'description': `Curated list of the best deals and discount codes for ${currentYear}`,
     'numberOfItems': data.total,
     'itemListElement': data.items.slice(0, 10).map((whop, index) => ({
       '@type': 'ListItem',
@@ -308,7 +312,7 @@ export default async function Home({
         '@type': 'Product',
         'name': whop.name,
         'description': whop.description,
-        'url': `https://whpcodes.com/whop/${whop.slug.toLowerCase()}`,
+        'url': offerAbsoluteUrl(whop.slug.toLowerCase()),
         'image': whop.logo,
         'aggregateRating': {
           '@type': 'AggregateRating',
@@ -320,7 +324,7 @@ export default async function Home({
           '@type': 'Offer',
           'name': promo.title,
           'description': promo.description,
-          'url': `https://whpcodes.com/whop/${whop.slug.toLowerCase()}`,
+          'url': offerAbsoluteUrl(whop.slug.toLowerCase()),
           'availability': 'https://schema.org/InStock',
           'validFrom': new Date().toISOString(),
           'priceSpecification': {
@@ -369,11 +373,11 @@ export default async function Home({
             </div>
 
             <h2 className="md-heading text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r bg-clip-text text-transparent leading-tight py-2" style={{ backgroundImage: `linear-gradient(to right, var(--text-color), var(--text-secondary))` }}>
-              WHPCodes
+              {SITE_BRAND}
             </h2>
 
             <p className="md-body max-w-3xl mx-auto text-lg md:text-xl leading-relaxed mb-8" style={{ color: 'var(--text-secondary)' }}>
-              Discover the best Whop promo codes and digital product discounts. Get exclusive access to premium communities, courses, and digital products at discounted prices.
+              {SITE_TAGLINE}. Get exclusive access to premium communities, courses, and digital products at discounted prices.
             </p>
           </div>
 

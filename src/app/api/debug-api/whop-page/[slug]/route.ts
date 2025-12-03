@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getWhopBySlugCached } from '@/data/whops';
+import { getWhopBySlugCached } from '@/data/offers';
 import { prisma } from '@/lib/prisma';
 import { canonicalSlugForDB } from '@/lib/slug-utils';
 

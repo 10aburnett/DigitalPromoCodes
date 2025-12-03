@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { Metadata } from 'next';
 import dynamicImport from 'next/dynamic';
 import { normalizeImagePath } from '@/lib/image-utils';
-import { getWhopBySlugCached } from '@/data/whops'; // NEW: Use cached version
+import { getWhopBySlugCached } from '@/data/offers'; // NEW: Use cached version
 import { getWhopBySlug, getWhopBySlugUnfiltered } from '@/lib/data'; // Keep for metadata generation
 import { prisma } from '@/lib/prisma';
 import { whereIndexable } from '@/lib/where-indexable';
@@ -29,7 +29,7 @@ const WhopReviewSection = dynamicImport(() => import('@/components/WhopReviewSec
   loading: () => null,
 });
 import FAQSectionServer from '@/components/FAQSectionServer'; // Server component for SEO
-import RecommendedWhopsServer from '@/components/RecommendedWhopsServer'; // Server component for recommendations
+import RecommendedWhopsServer from '@/components/RecommendedOffersServer'; // Server component for recommendations
 import AlternativesServer from '@/components/AlternativesServer'; // Server component for alternatives
 import { getRecommendations, getAlternatives } from '@/data/recommendations'; // Data fetching for recommendations/alternatives
 import { getPromoStatsForSlug } from '@/data/promo-stats'; // Server-side promo usage statistics
@@ -42,8 +42,8 @@ import RenderPlain from '@/components/RenderPlain';
 import { looksLikeHtml, isMeaningful, escapeHtml, toPlainText } from '@/lib/textRender';
 import PromoStatsDisplay from '@/components/PromoStatsDisplay';
 import VerificationStatus from '@/components/VerificationStatus';
-import HowToSection from '@/components/whop/HowToSection';
-import HowToSchema from '@/components/whop/HowToSchema';
+import HowToSection from '@/components/offer/HowToSection';
+import HowToSchema from '@/components/offer/HowToSchema';
 import HydrationTripwire from '@/components/HydrationTripwire';
 import ServerSectionGuard from '@/components/ServerSectionGuard';
 import { djb2 } from '@/lib/hydration-debug';
@@ -270,9 +270,9 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     if (!whopData) {
       console.warn('[WHOP META] No data found, returning 404 metadata');
       return {
-        title: 'Whop Not Found',
-        description: 'The requested whop could not be found.',
-        robots: { index: false, follow: true }
+        title: 'Offer Not Found',
+        description: 'The requested offer could not be found.',
+        robots: { index: false, follow: false } // PHASE1-DEINDEX: hard noindex/nofollow
       };
     }
 
@@ -373,10 +373,9 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   }
 
   // Step 8: SEO classification-driven robots flags
+  // PHASE1-DEINDEX: Hard noindex/nofollow for all pages (ignore DB flags)
   const classification = getPageClassification(canon);
-  const robotsSettings = shouldIndex
-    ? getRobotsForClassification(classification)
-    : { index: false, follow: true }; // noindex but keep follow for noindexable pages
+  const robotsSettings = { index: false, follow: false }; // Hard noindex/nofollow for domain deindexing
 
   return {
     title,
@@ -396,7 +395,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
       currentYear.toString()
     ].filter(Boolean).join(', '),
     alternates: {
-      canonical: `https://whpcodes.com/whop/${canon}`,
+// PHASE1-DEINDEX:       canonical: `https://whpcodes.com/whop/${canon}`,
       ...(isLocaleEnabled() && shouldIncludeInHreflang(classification) && {
         languages: (() => {
           const languages: Record<string, string> = {};
@@ -409,20 +408,15 @@ export async function generateMetadata({ params }: { params: { slug: string } })
         })()
       })
     },
-    robots: shouldIndex
-      ? {
-          ...robotsSettings,
-          googleBot: {
-            ...robotsSettings,
-            'max-image-preview': 'large',
-            'max-snippet': -1,
-            'max-video-preview': -1,
-          },
-        }
-      : {
-          index: false,
-          follow: true,
-        },
+    robots: {
+      ...robotsSettings, // Always use robotsSettings (now hard-coded to index:false, follow:false)
+      googleBot: {
+        index: false,
+        follow: false,
+        noarchive: true,
+        noimageindex: true,
+      },
+    },
     openGraph: {
       title,
       description,
@@ -447,9 +441,9 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     console.error('[WHOP META] Error generating metadata:', error);
     // Return safe fallback metadata instead of crashing
     return {
-      title: 'Whop',
-      description: 'Discover exclusive whop promo codes and discounts.',
-      robots: { index: false, follow: true }
+      title: 'Offer',
+      description: 'Discover exclusive deals and discounts.',
+      robots: { index: false, follow: false } // PHASE1-DEINDEX: hard noindex/nofollow
     };
   }
 }

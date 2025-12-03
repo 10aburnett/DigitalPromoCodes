@@ -2,16 +2,20 @@ import React from 'react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { siteOrigin } from '@/lib/site-origin';
+import { SITE_BRAND, SITE_DESCRIPTION } from '@/lib/brand';
 
 // SSG configuration
 export const dynamic = 'force-static'
 export const fetchCache = 'force-cache'
 export const revalidate = 86400 // 24h
 
+const title = `About ${SITE_BRAND} - Exclusive Deals & Digital Product Discounts`;
+const description = `Learn about ${SITE_BRAND} - ${SITE_DESCRIPTION} We curate 8,000+ verified listings with daily updates.`;
+
 export const metadata: Metadata = {
-  title: 'About WHPCodes - Best Whop Promo Codes & Digital Product Discounts',
-  description: 'Learn about WHPCodes - your trusted source for verified Whop promo codes, discount codes, and exclusive digital product deals. We curate 8,000+ verified Whop listings with daily updates.',
-  keywords: 'about whpcodes, whop promo codes, whop discount codes, digital course discounts, whop affiliate, course reviews, verified promo codes, whop coupons',
+  title,
+  description,
+  keywords: 'about us, deals, discount codes, digital course discounts, affiliate, course reviews, verified offers',
   alternates: {
 // PHASE1-DEINDEX:     canonical: `${siteOrigin()}/about`,
   },
@@ -27,16 +31,16 @@ export const metadata: Metadata = {
     }
   },
   openGraph: {
-    title: 'About WHPCodes - Best Whop Promo Codes & Digital Product Discounts',
-    description: 'Learn about WHPCodes - your trusted source for verified Whop promo codes, discount codes, and exclusive digital product deals. We curate 8,000+ verified Whop listings with daily updates.',
+    title,
+    description,
     url: `${siteOrigin()}/about`,
     type: 'website',
-    siteName: 'WHPCodes',
+    siteName: SITE_BRAND,
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'About WHPCodes - Best Whop Promo Codes & Digital Product Discounts',
-    description: 'Learn about WHPCodes - your trusted source for verified Whop promo codes, discount codes, and exclusive digital product deals. We curate 8,000+ verified Whop listings with daily updates.',
+    title,
+    description,
   },
 };
 
@@ -52,7 +56,8 @@ export default function AboutPage() {
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "Organization",
-            name: "WHPCodes",
+            "@id": `${origin}#org`,
+            name: SITE_BRAND,
             url: origin,
             logo: `${origin}/logo.png`,
             contactPoint: { "@type": "ContactPoint", contactType: "customer service", url: `${origin}/contact` }
@@ -76,14 +81,14 @@ export default function AboutPage() {
           <div className="prose prose-lg max-w-none space-y-6" style={{ color: 'var(--text-color)' }}>
             <div className="text-center mb-8">
               <p className="text-xl leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
-                Welcome to <strong style={{ color: 'var(--accent-color)' }}>WHPCodes</strong> — your go-to hub for exclusive Whop promo codes, discounts, and course insights. Check out our <Link href="/blog" className="underline hover:opacity-80" style={{ color: 'var(--accent-color)' }}>latest blog posts</Link> or <Link href="/contact" className="underline hover:opacity-80" style={{ color: 'var(--accent-color)' }}>get in touch</Link>.
+                Welcome to <strong style={{ color: 'var(--accent-color)' }}>{SITE_BRAND}</strong> — your go-to hub for exclusive deals, discounts, and digital product insights. Check out our <Link href="/blog" className="underline hover:opacity-80" style={{ color: 'var(--accent-color)' }}>latest blog posts</Link> or <Link href="/contact" className="underline hover:opacity-80" style={{ color: 'var(--accent-color)' }}>get in touch</Link>.
               </p>
             </div>
 
             <section className="about-v2">
               <div className="space-y-6">
                 <p className="text-lg leading-relaxed">
-                  We curate and maintain one of the largest collections of verified Whop affiliate offers online, helping you save money on premium courses, tools, and digital communities. Whether you're a trader, entrepreneur, or digital learner, we've got codes that unlock real value — without the guesswork.
+                  We curate and maintain one of the largest collections of verified digital product offers online, helping you save money on premium courses, tools, and digital communities. Whether you're a trader, entrepreneur, or digital learner, we've got deals that unlock real value — without the guesswork.
                 </p>
 
                 <div className="about-card bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 p-6 rounded-lg border border-blue-200 dark:border-blue-800">
@@ -91,7 +96,7 @@ export default function AboutPage() {
                     Our Mission
                   </h2>
                   <p className="about-copy-white text-xl text-center font-medium text-gray-900">
-                    Make Whop more affordable and transparent.
+                    Make premium digital products more affordable and transparent.
                   </p>
                 </div>
 
@@ -108,7 +113,7 @@ export default function AboutPage() {
                       </svg>
                     </div>
                     <div>
-                      <strong>8,000+ curated Whop listings</strong>, organised for easy navigation
+                      <strong>8,000+ curated listings</strong>, organised for easy navigation
                     </div>
                   </div>
 
@@ -141,7 +146,7 @@ export default function AboutPage() {
                       </svg>
                     </div>
                     <div>
-                      <strong>Affiliate transparency</strong> — we earn a commission from Whop when you use our links, at no extra cost to you
+                      <strong>Affiliate transparency</strong> — we earn a commission when you use our links, at no extra cost to you
                     </div>
                   </div>
                 </div>
@@ -149,7 +154,7 @@ export default function AboutPage() {
 
                 <div className="about-card bg-gray-50 dark:bg-gray-900/50 p-6 rounded-lg border border-gray-200 dark:border-gray-800">
                   <p className="about-copy-muted text-lg leading-relaxed mb-4 text-gray-900">
-                    We're not affiliated with Whop Inc. directly — we're independent curators and affiliates who use our experience to help others navigate the fast-growing world of online learning and mentorship.
+                    We're independent curators and affiliates who use our experience to help others navigate the fast-growing world of online learning and mentorship.
                   </p>
                 </div>
 

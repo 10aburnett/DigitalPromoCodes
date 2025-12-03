@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useMemo } from 'react';
-import WhopCard from './WhopCard';
+import OfferCard from './OfferCard';
 
 interface VirtualizedWhopListProps {
   whops: any[];
@@ -20,7 +20,7 @@ export default function VirtualizedWhopList({ whops, loading }: VirtualizedWhopL
     if (!shouldVirtualize) {
       // For small lists, render normally
       return whops.map((promo, index) => (
-        <WhopCard
+        <OfferCard
           key={`${promo.id}-${index}`}
           promo={promo}
           priority={index < 6} // Priority loading for first 6 images
@@ -31,7 +31,7 @@ export default function VirtualizedWhopList({ whops, loading }: VirtualizedWhopL
     // For large lists, we can implement more sophisticated virtualization
     // For now, just render all items but with performance optimizations
     return whops.map((promo, index) => (
-      <WhopCard
+      <OfferCard
         key={`${promo.id}-${index}`}
         promo={promo}
         priority={index < 6} // Priority loading for first 6 images

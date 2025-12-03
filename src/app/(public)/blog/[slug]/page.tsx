@@ -7,6 +7,7 @@ import { getBlogPostBySlug } from '@/lib/blog'
 import BlogPostClient from '@/components/BlogPostClient'
 import { generateArticleSchema, generateBreadcrumbSchema, calculateReadingTime, extractHeadings, processContentWithHeadingIds, optimizeInternalLinkingServer, optimizeImageAltText } from '@/lib/blog-utils'
 import { siteOrigin } from '@/lib/site-origin'
+import { SITE_BRAND, SITE_AUTHOR } from '@/lib/brand'
 
 // SSG + ISR configuration
 export const dynamic = 'force-static'
@@ -64,7 +65,7 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
 
     if (!post || !post.published) {
       return {
-        title: 'Blog Post Not Found - WHP Codes',
+        title: `Blog Post Not Found - ${SITE_BRAND}`,
         description: 'The requested blog post could not be found.',
         robots: { index: false, follow: true }
       }
@@ -75,12 +76,12 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
     const metaDescription = post.excerpt ?? undefined;
     const publishedDate = post.publishedAt ? new Date(post.publishedAt).toISOString() : undefined;
 
-    const authorName = post.User?.name || post.authorName || 'WHP Team';
+    const authorName = post.User?.name || post.authorName || SITE_AUTHOR;
 
     return {
-      title: `${post.title} - WHP Blog | Whop Promo Codes & Digital Products ${currentYear}`,
+      title: `${post.title} - ${SITE_BRAND} Blog`,
       description: metaDescription,
-      keywords: `${post.title}, WHP blog, Whop promo codes ${currentYear}, digital products, ${authorName}`,
+      keywords: `${post.title}, blog, deals, digital products, ${authorName}`,
       authors: [{ name: authorName }],
       alternates: {
         canonical
@@ -97,26 +98,25 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
         }
       },
       openGraph: {
-        title: `${post.title} - WHP Blog`,
+        title: `${post.title} - ${SITE_BRAND} Blog`,
         description: metaDescription,
         type: 'article',
         url: canonical,
         publishedTime: publishedDate,
         authors: [authorName],
-        siteName: 'WHP Codes'
+        siteName: SITE_BRAND
       },
       twitter: {
         card: 'summary_large_image',
-        title: `${post.title} - WHP Blog`,
+        title: `${post.title} - ${SITE_BRAND} Blog`,
         description: metaDescription,
-        creator: `@${authorName.replace(/\s+/g, '')}`
       }
     }
   } catch (error) {
     console.error('Error generating blog post metadata:', error)
     return {
-      title: 'Blog Post - WHP Codes',
-      description: 'Read the latest insights about Whop promo codes and digital products.'
+      title: `Blog Post - ${SITE_BRAND}`,
+      description: 'Read the latest insights about deals and digital products.'
     }
   }
 }
@@ -132,7 +132,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     return notFound();
   }
 
-  const authorName = post.User?.name || post.authorName || 'WHP Codes';
+  const authorName = post.User?.name || post.authorName || SITE_AUTHOR;
 
   // Server-rendered BlogPosting schema (minimal, truthful)
   const articleLd = {
@@ -145,7 +145,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     mainEntityOfPage: `${siteOrigin()}/blog/${post.slug}`,
     author: authorName
       ? { '@type': 'Person', name: authorName }
-      : { '@type': 'Organization', name: 'WHP Codes' },
+      : { '@type': 'Organization', name: SITE_BRAND },
   };
 
   // Breadcrumb schema

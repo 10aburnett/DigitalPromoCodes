@@ -7,7 +7,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useSocialProof, createSocialProofFromWhop } from '@/contexts/SocialProofContext';
 import InitialsAvatar from './InitialsAvatar';
 import { WhopLogoSSR } from './WhopLogoSSR';
-import { whopHref } from '@/lib/paths';
+import { offerHref } from '@/lib/paths';
 import { resolveLogoUrl } from '@/lib/image-url';
 
 // Define the promo type directly here to avoid import issues
@@ -29,12 +29,12 @@ interface Promo {
   promoCodeId?: string;
 }
 
-interface WhopCardProps {
+interface OfferCardProps {
   promo: Promo;
   priority?: boolean; // For prioritizing above-the-fold images
 }
 
-export default function WhopCard({ promo, priority = false }: WhopCardProps) {
+export default function OfferCard({ promo, priority = false }: OfferCardProps) {
   const { t, language, isHydrated } = useLanguage();
   const { addNotification } = useSocialProof();
   const pathname = usePathname();
@@ -52,8 +52,8 @@ export default function WhopCard({ promo, priority = false }: WhopCardProps) {
 
   const detailHref =
     (promo as any).href ??
-    (promo.slug ? `/whop/${encodeURIComponent(promo.slug)}` :
-     promo.id   ? `/whop/${encodeURIComponent(promo.id)}`   : '#');
+    (promo.slug ? `/offer/${encodeURIComponent(promo.slug)}` :
+     promo.id   ? `/offer/${encodeURIComponent(promo.id)}`   : '#');
 
   const previewText =
     (promo as any).preview ??
@@ -91,7 +91,7 @@ export default function WhopCard({ promo, priority = false }: WhopCardProps) {
 
     // Use canonical whopHref helper - handles encoding properly (no double-encoding)
     // This ensures colons are encoded as %3a exactly once
-    return whopHref(identifier);
+    return offerHref(identifier);
   };
 
   const handleGetPromoClick = (e: React.MouseEvent) => {

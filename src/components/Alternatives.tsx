@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import WhopCardLink from './WhopCardLink';
+import OfferCardLink from './OfferCardLink';
 import SectionPanel from './SectionPanel';
 import { getBaseUrl } from '@/lib/base-url';
 import { loadNeighbors, getNeighborSlugsFor, getExploreFor } from '@/lib/graph';
@@ -455,7 +455,7 @@ export default function Alternatives({ currentWhopSlug }: { currentWhopSlug: str
             const displayTitle = anchorTexts.get(whop.slug) || whop.name;
 
             return (
-              <WhopCardLink
+              <OfferCardLink
                 key={whop.id}
                 slug={whop.slug}
                 title={displayTitle}

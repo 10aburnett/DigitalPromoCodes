@@ -11,6 +11,8 @@ import { unstable_cache } from 'next/cache';
 import Script from 'next/script';
 import { GA_TRACKING_ID } from '@/lib/analytics';
 import ForceDebugClient from './_force-debug-client';
+import { SITE_BRAND, SITE_DESCRIPTION, SITE_AUTHOR } from '@/lib/brand';
+import { siteOrigin } from '@/lib/site-origin';
 
 const inter = Inter({ 
   subsets: ['latin'],
@@ -54,33 +56,33 @@ export async function generateMetadata(): Promise<Metadata> {
     faviconUrl = `/favicon.ico?v=${STATIC_VERSION}`;
   }
 
+  const origin = siteOrigin();
+
   return {
-    title: `WHPCodes - Best Whop Promo Codes & Discount Codes ${currentYear}`,
-    description: `Find verified Whop promo codes, discount codes & coupons for ${currentYear}. Get exclusive access to premium digital products, courses, & communities at discounted prices. Each code updated daily!`,
-    keywords: 'whop promo codes, whop discount codes, whop coupons, digital product discounts, community access codes, course promo codes, whop deals, exclusive discounts',
-    metadataBase: new URL('https://whpcodes.com'),
+    title: `${SITE_BRAND} - Exclusive Deals & Discounts ${currentYear}`,
+    description: SITE_DESCRIPTION,
+    keywords: 'deals, discounts, promo codes, coupons, digital product discounts, community access codes, course promo codes, exclusive discounts',
+    metadataBase: new URL(origin),
     openGraph: {
-      title: `WHPCodes - Best Whop Promo Codes & Discount Codes ${currentYear}`,
-      description: `Find verified Whop promo codes, discount codes & coupons for ${currentYear}. Get exclusive access to premium digital products, courses, & communities at discounted prices. Each code updated daily!`,
-      url: 'https://whpcodes.com',
+      title: `${SITE_BRAND} - Exclusive Deals & Discounts ${currentYear}`,
+      description: SITE_DESCRIPTION,
+      url: origin,
       type: 'website',
-      siteName: 'WHPCodes',
+      siteName: SITE_BRAND,
       images: [
         {
           url: '/logo.png',
           width: 1200,
           height: 630,
-          alt: 'WHPCodes - Best Whop Promo Codes & Discount Codes'
+          alt: `${SITE_BRAND} - Exclusive Deals & Discounts`
         }
       ],
     },
     twitter: {
       card: 'summary_large_image',
-      title: `Best Whop Promo Codes & Discount Codes ${currentYear} - Exclusive Digital Product Deals`,
-      description: `Find verified Whop promo codes, discount codes & coupons for ${currentYear}. Get exclusive access to premium digital products, courses, & communities at discounted prices. Each code updated daily!`,
+      title: `${SITE_BRAND} - Exclusive Deals & Discounts ${currentYear}`,
+      description: SITE_DESCRIPTION,
       images: ['/logo.png'],
-      creator: '@whpcodes',
-      site: '@whpcodes'
     },
     robots: {
       index: false,
@@ -139,7 +141,7 @@ export default async function RootLayout({
     <html lang="en">
       <head>
         {/* viewport and robots now managed via viewport export and generateMetadata */}
-        <meta name="author" content="WHPCodes" />
+        <meta name="author" content={SITE_AUTHOR} />
         <meta name="language" content="en" />
         <meta name="distribution" content="global" />
         <meta name="rating" content="general" />
@@ -150,7 +152,7 @@ export default async function RootLayout({
         <link rel="preconnect" href="https://www.googletagmanager.com" />
         <link rel="preconnect" href="https://assets.whop.com" crossOrigin="" />
         <link rel="preconnect" href="https://img-v2-prod.whop.com" crossOrigin="" />
-        <link rel="dns-prefetch" href="//whpcodes.com" />
+        {/* dns-prefetch for dynamic origin handled by siteOrigin() */}
         <link rel="dns-prefetch" href="//www.googletagmanager.com" />
         <style dangerouslySetInnerHTML={{__html: `
           :root {
