@@ -127,7 +127,7 @@ model OfferTracking {
   promoCodeId String?
   whopId      String?
   PromoCode   PromoCode? @relation(fields: [promoCodeId], references: [id])
-  Whop        Whop?      @relation(fields: [whopId], references: [id], onDelete: Cascade)
+  Deal        Deal?      @relation(fields: [whopId], references: [id], onDelete: Cascade)
 
   @@index([actionType])
   @@index([createdAt])
@@ -146,7 +146,7 @@ model PromoCode {
   createdAt     DateTime        @default(now())
   updatedAt     DateTime
   OfferTracking OfferTracking[]
-  Whop          Whop            @relation(fields: [whopId], references: [id], onDelete: Cascade)
+  Deal          Deal            @relation(fields: [whopId], references: [id], onDelete: Cascade)
 
   @@index([createdAt])
   @@index([type])
@@ -173,7 +173,7 @@ model PromoCodeSubmission {
   updatedAt        DateTime
   ipAddress        String?
   userAgent        String?
-  Whop             Whop?            @relation(fields: [whopId], references: [id], onDelete: Cascade)
+  Deal             Deal?            @relation(fields: [whopId], references: [id], onDelete: Cascade)
 
   @@index([createdAt])
   @@index([isGeneral])
@@ -191,7 +191,7 @@ model Review {
   updatedAt DateTime
   verified  Boolean  @default(false)
   whopId    String
-  Whop      Whop     @relation(fields: [whopId], references: [id], onDelete: Cascade)
+  Deal      Deal     @relation(fields: [whopId], references: [id], onDelete: Cascade)
 
   @@index([createdAt])
   @@index([rating])
@@ -217,7 +217,7 @@ model User {
   BlogPost  BlogPost[]
 }
 
-model Whop {
+model Deal {
   id                  String                @id
   name                String
   slug                String                @unique
@@ -251,6 +251,7 @@ model Whop {
   PromoCodeSubmission PromoCodeSubmission[]
   Review              Review[]
 
+  @@map("Whop")
   @@index([createdAt])
   @@index([displayOrder])
   @@index([indexingStatus])

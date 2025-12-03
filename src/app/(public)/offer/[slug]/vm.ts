@@ -23,7 +23,7 @@ export async function getWhopViewModel(slug: string, localeParam?: string): Prom
 
   // Fallback fetch (same as existing page logic)
   const whopDbRecord = !whopData
-    ? await prisma.whop.findUnique({
+    ? await prisma.deal.findUnique({
         where: { slug: dbSlug },
         include: { PromoCode: true, Review: true },
       })

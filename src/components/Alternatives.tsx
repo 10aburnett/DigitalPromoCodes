@@ -15,7 +15,7 @@ interface PromoCode {
   code: string | null;
 }
 
-interface AlternativeWhop {
+interface AlternativeDeal {
   id: string;
   name: string;
   slug: string;
@@ -30,7 +30,7 @@ interface AlternativeWhop {
 type AltLink = { slug: string; anchorText: string };
 
 export default function Alternatives({ currentWhopSlug }: { currentWhopSlug: string }) {
-  const [alternatives, setAlternatives] = useState<AlternativeWhop[]>([]);
+  const [alternatives, setAlternatives] = useState<AlternativeDeal[]>([]);
   const [anchorTexts, setAnchorTexts] = useState<Map<string, string>>(new Map());
   const [desc, setDesc] = useState<string>('');
   const [err, setErr] = useState<string | null>(null);
@@ -100,7 +100,7 @@ export default function Alternatives({ currentWhopSlug }: { currentWhopSlug: str
     }
   }
 
-  const getPromoText = (whop: AlternativeWhop) => {
+  const getPromoText = (whop: AlternativeDeal) => {
     const firstPromo = whop.promoCodes?.[0];
     if (!firstPromo) return 'Exclusive Access';
 
@@ -141,7 +141,7 @@ export default function Alternatives({ currentWhopSlug }: { currentWhopSlug: str
           process.env.NEXT_PUBLIC_USE_GRAPH_LINKS === 'true' ||
           process.env.USE_GRAPH_LINKS === 'true';
 
-        let hydratedAlternatives: AlternativeWhop[] = [];
+        let hydratedAlternatives: AlternativeDeal[] = [];
         const anchorBySlug = new Map<string, string>();
         let editorialDescription = '';
 

@@ -74,7 +74,7 @@ export async function DELETE(request: Request) {
     });
 
     // Finally, delete the whops
-    const result = await prisma.whop.deleteMany({
+    const result = await prisma.deal.deleteMany({
       where: { id: { in: ids } },
     });
     

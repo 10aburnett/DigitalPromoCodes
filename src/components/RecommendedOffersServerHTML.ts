@@ -1,7 +1,7 @@
 // src/components/RecommendedWhopsServerHTML.ts
 import 'server-only';
 
-type Whop = {
+type DealData = {
   slug: string;
   name: string;
   description?: string | null;
@@ -19,11 +19,11 @@ function esc(s: string) {
     .replace(/'/g, '&#39;');
 }
 
-export function renderRecommendedHTML(items: Whop[]) {
+export function renderRecommendedHTML(items: DealData[]) {
   if (!items?.length) return '';
 
   const lis = items.map((w) => {
-    const href = `/whop/${encodeURIComponent(w.slug)}`;
+    const href = `/offer/${encodeURIComponent(w.slug)}`;
     const logo = w.logo || '/logo.png';
     const desc = w.description || '&nbsp;';
     const cat  = w.category || '&nbsp;';

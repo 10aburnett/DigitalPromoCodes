@@ -5,14 +5,14 @@ import Image from 'next/image';
 import { normalizeImagePath } from '@/lib/image-utils';
 import InitialsAvatar from '@/components/InitialsAvatar';
 
-interface Whop {
+interface DealLogo {
   id: string;
   name: string;
   logo: string | null;
 }
 
 interface WhopLogoProps {
-  whop: Whop;
+  whop: DealLogo;
 }
 
 export default function WhopLogo({ whop }: WhopLogoProps) {

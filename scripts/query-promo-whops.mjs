@@ -4,7 +4,7 @@ const prisma = new PrismaClient();
 
 async function main() {
   // Find all whops that have at least one promo code (READ ONLY)
-  const whopsWithPromos = await prisma.whop.findMany({
+  const whopsWithPromos = await prisma.deal.findMany({
     where: {
       PromoCode: {
         some: {}  // Has at least one promo code

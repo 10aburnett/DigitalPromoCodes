@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
     
     if (whopId) {
       // Try to find whop by ID first, then by slug if not found
-      const whop = await prisma.whop.findFirst({
+      const whop = await prisma.deal.findFirst({
         where: {
           OR: [
             { id: whopId },
@@ -36,7 +36,7 @@ export async function GET(request: NextRequest) {
     const reviews = await prisma.review.findMany({
       where: whereClause,
       include: {
-        Whop: {
+        Deal: {
           select: {
             id: true,
             name: true,
@@ -126,12 +126,12 @@ export async function POST(request: NextRequest) {
     // Resolve whop - prefer whopSlug, fallback to whopId
     let whop;
     if (whopSlug) {
-      whop = await prisma.whop.findUnique({
+      whop = await prisma.deal.findUnique({
         where: { slug: whopSlug },
         select: { id: true, name: true }
       });
     } else if (whopId) {
-      whop = await prisma.whop.findUnique({
+      whop = await prisma.deal.findUnique({
         where: { id: whopId },
         select: { id: true, name: true }
       });

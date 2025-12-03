@@ -17,7 +17,7 @@ if (!slugs.length) {
 }
 
 try {
-  const rows = await prisma.whop.findMany({
+  const rows = await prisma.deal.findMany({
     where: { slug: { in: slugs } },
     select: {
       slug: true,

@@ -37,7 +37,7 @@ interface PromoCode {
   value: string;
 }
 
-interface Whop {
+interface DealWithPromos {
   id: string;
   name: string;
   slug: string;
@@ -53,7 +53,7 @@ interface Whop {
 }
 
 interface InitialData {
-  whops: Whop[];
+  whops: DealWithPromos[];
   totalUsers: number;
   totalCount: number;
 }
@@ -124,7 +124,7 @@ async function getPagedWhops({
 
     // Fetch with filtering and sorting
     const [whops, totalCount] = await Promise.all([
-      prisma.whop.findMany({
+      prisma.deal.findMany({
         where,
         skip,
         take: limit,
@@ -142,7 +142,7 @@ async function getPagedWhops({
           },
         },
       }),
-      prisma.whop.count({ where }),
+      prisma.deal.count({ where }),
     ]);
 
     // Get user count (DB)

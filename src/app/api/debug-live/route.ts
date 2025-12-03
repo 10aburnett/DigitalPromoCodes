@@ -6,7 +6,7 @@ export async function GET() {
     const slug = 'ayecon-academy-1:1-mentorship';
     
     // Find the whop exactly as the main API does
-    const whop = await prisma.whop.findFirst({
+    const whop = await prisma.deal.findFirst({
       where: { 
         slug: slug,
         publishedAt: { not: null }

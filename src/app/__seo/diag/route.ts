@@ -11,7 +11,7 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: 'Provide slug & locale' }, { status: 400 });
   }
   const path = `/whop/${slug}`;
-  const whop = await prisma.whop.findFirst({
+  const whop = await prisma.deal.findFirst({
     where: { slug },
     select: { indexingStatus: true, retirement: true, redirectToPath: true },
   });

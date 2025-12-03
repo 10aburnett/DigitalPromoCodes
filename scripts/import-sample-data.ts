@@ -17,7 +17,7 @@ async function importSampleData() {
     });
 
     for (const record of records) {
-      await prisma.whop.create({
+      await prisma.deal.create({
         data: {
           name: record.Name,
           description: record.Description,

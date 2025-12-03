@@ -24,7 +24,7 @@ export async function GET() {
         title: true, 
         createdAt: true, 
         status: true,
-        Whop: { select: { name: true, slug: true } }
+        Deal: { select: { name: true, slug: true } }
       }
     });
     
@@ -36,7 +36,7 @@ export async function GET() {
         id: true, 
         title: true, 
         createdAt: true,
-        Whop: { select: { name: true, slug: true } }
+        Deal: { select: { name: true, slug: true } }
       }
     });
     

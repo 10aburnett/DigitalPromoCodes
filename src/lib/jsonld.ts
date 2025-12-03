@@ -7,16 +7,16 @@ export function jsonLdScript(data: unknown) {
 }
 
 type OrgParams = {
-  name: string;              // e.g., "whpcodes"
+  name: string;              // e.g., "DigitalPromoCodes"
   url: string;               // absolute
   logo: string;              // absolute
   sameAs?: string[];         // optional, only real profiles
 };
 
 type SiteParams = {
-  name: string;              // e.g., "whpcodes"
+  name: string;              // e.g., "DigitalPromoCodes"
   url: string;               // absolute homepage
-  searchTarget: string;      // e.g., "https://whpcodes.com/search?q={search_term_string}"
+  searchTarget: string;      // e.g., "https://digitalpromocodes.com/search?q={search_term_string}"
 };
 
 export function buildOrgSite({ org, site }: { org: OrgParams; site: SiteParams }) {

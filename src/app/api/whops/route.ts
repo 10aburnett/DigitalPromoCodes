@@ -58,7 +58,7 @@ const getWhopsOptimized = async (isAdmin: boolean, whereClause: any, sortBy: str
   if (sortBy === 'highest' || sortBy === 'lowest' || sortBy === 'alpha-asc' || sortBy === 'alpha-desc') {
     // For price/alphabetical sorting, fetch all whops first (but with lightweight fields)
     console.log(`Optimized query for custom sorting (${sortBy})...`);
-    const allWhops = await prisma.whop.findMany(baseQuery);
+    const allWhops = await prisma.deal.findMany(baseQuery);
     console.log('Optimized query successful, found', allWhops.length, 'whops');
     
     return allWhops;
@@ -90,7 +90,7 @@ const getWhopsOptimized = async (isAdmin: boolean, whereClause: any, sortBy: str
         break;
     }
     
-    const whops = await prisma.whop.findMany({
+    const whops = await prisma.deal.findMany({
       ...baseQuery,
       orderBy,
       skip: (page - 1) * limit,
@@ -106,7 +106,7 @@ const getWhopsFull = async (isAdmin: boolean, whereClause: any, sortBy: string =
   console.log('Fetching whops with full data (admin/detailed views)');
   
   if (sortBy === 'highest' || sortBy === 'lowest' || sortBy === 'alpha-asc' || sortBy === 'alpha-desc' || sortBy === 'default' || sortBy === 'newest' || sortBy === 'highest-rated') {
-    const allWhops = await prisma.whop.findMany({
+    const allWhops = await prisma.deal.findMany({
       where: whereClause,
       include: { 
         PromoCode: true,
@@ -134,7 +134,7 @@ const getWhopsFull = async (isAdmin: boolean, whereClause: any, sortBy: string =
         orderBy.displayOrder = 'asc';
     }
     
-    const whops = await prisma.whop.findMany({
+    const whops = await prisma.deal.findMany({
       where: whereClause,
       include: { 
         PromoCode: true,
@@ -155,14 +155,14 @@ const getWhopsFull = async (isAdmin: boolean, whereClause: any, sortBy: string =
 // Direct function for counting whops (cache disabled)
 const getWhopCount = async (whereClause: any) => {
   console.log('Counting whops from database (cache disabled)');
-  return await prisma.whop.count({ where: whereClause });
+  return await prisma.deal.count({ where: whereClause });
 };
 
 // Direct function for fetching single whop by slug (cache disabled)
 const getWhopBySlug = async (slug: string, isAdmin: boolean) => {
   console.log(`Fetching whop by slug: ${slug} (cache disabled)`);
   
-  const whop = await prisma.whop.findFirst({
+  const whop = await prisma.deal.findFirst({
     where: { 
       slug: slug,
       publishedAt: isAdmin ? undefined : { not: null }
@@ -813,14 +813,14 @@ export async function GET(request: Request) {
     }
     
     // Get total count for pagination using direct database query
-    const totalCount = await prisma.whop.count({ where: whereClause });
+    const totalCount = await prisma.deal.count({ where: whereClause });
     
     // For price-based sorting and alphabetical sorting only
     if (sortBy === 'highest' || sortBy === 'lowest' || sortBy === 'alpha-asc' || sortBy === 'alpha-desc') {
       console.log(`Fetching ALL whops for custom sorting - sortBy: ${sortBy}`);
       
       // Fetch ALL whops that match the filter criteria
-      const allWhops = await prisma.whop.findMany({
+      const allWhops = await prisma.deal.findMany({
         where: whereClause,
         include: { PromoCode: true }
       });
@@ -1145,7 +1145,7 @@ export async function POST(request: Request) {
     // Only if displayOrder is not explicitly provided
     let displayOrder = data.displayOrder;
     if (displayOrder === undefined) {
-      const highestOrderWhop = await prisma.whop.findFirst({
+      const highestOrderWhop = await prisma.deal.findFirst({
         orderBy: {
           displayOrder: 'desc'
         }
@@ -1170,7 +1170,7 @@ export async function POST(request: Request) {
     });
 
     // Create the new whop using Prisma's create method
-    const whop = await prisma.whop.create({
+    const whop = await prisma.deal.create({
       data: {
         id: whopId,
         name: data.name,

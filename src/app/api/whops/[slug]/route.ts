@@ -42,7 +42,7 @@ export async function GET(
     return NextResponse.json({ error: "Missing slug" }, { status: 400 });
   }
 
-  const whop = await prisma.whop.findUnique({
+  const whop = await prisma.deal.findUnique({
     where: { slug },
     include: {
       PromoCode: true,     // <- return promos unfiltered
@@ -62,7 +62,7 @@ export async function PUT(req: Request, { params }: { params: { slug: string } }
     const slug = decodeURIComponent(params.slug);
 
     // 1) Find the whop by slug (from URL)
-    const whop = await prisma.whop.findUnique({
+    const whop = await prisma.deal.findUnique({
       where: { slug: slug },
       select: { id: true, slug: true },
     });
@@ -82,7 +82,7 @@ export async function PUT(req: Request, { params }: { params: { slug: string } }
     } = data;
 
     // 2) Update the whop itself
-    const updatedWhop = await prisma.whop.update({
+    const updatedWhop = await prisma.deal.update({
       where: { id: whop.id },
       data: { ...whopData, updatedAt: new Date() },
       include: { PromoCode: true },
@@ -161,14 +161,14 @@ export async function DELETE(
     return NextResponse.json({ error: "Missing slug" }, { status: 400 });
   }
 
-  const whop = await prisma.whop.findUnique({
+  const whop = await prisma.deal.findUnique({
     where: { slug },
     select: { id: true, name: true },
   });
   if (!whop) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
-  await prisma.whop.delete({ where: { id: whop.id } });
+  await prisma.deal.delete({ where: { id: whop.id } });
   revalidatePath("/whops");
   return NextResponse.json({ ok: true });
 }

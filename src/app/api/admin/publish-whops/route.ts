@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
       const today = new Date();
       
       // Get unpublished whops count
-      const unpublishedCount = await prisma.whop.count({
+      const unpublishedCount = await prisma.deal.count({
         where: { publishedAt: null }
       });
 
@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
       }
 
       // Get the oldest unpublished whops
-      const whopsToPublish = await prisma.whop.findMany({
+      const whopsToPublish = await prisma.deal.findMany({
         where: { publishedAt: null },
         orderBy: { createdAt: 'asc' },
         take: Math.min(batchSize, unpublishedCount),
@@ -41,7 +41,7 @@ export async function POST(request: NextRequest) {
       });
 
       // Publish them
-      await prisma.whop.updateMany({
+      await prisma.deal.updateMany({
         where: {
           id: { in: whopsToPublish.map(w => w.id) }
         },
@@ -75,8 +75,8 @@ export async function POST(request: NextRequest) {
     } else if (action === 'status') {
       // Get publication status
       const [publishedCount, unpublishedCount] = await Promise.all([
-        prisma.whop.count({ where: { publishedAt: { not: null } } }),
-        prisma.whop.count({ where: { publishedAt: null } })
+        prisma.deal.count({ where: { publishedAt: { not: null } } }),
+        prisma.deal.count({ where: { publishedAt: null } })
       ]);
 
       return NextResponse.json({

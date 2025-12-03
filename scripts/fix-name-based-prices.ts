@@ -57,7 +57,7 @@ async function fixNameBasedPrices(dryRun: boolean = true) {
   try {
     console.log(`🔍 ${dryRun ? 'ANALYZING' : 'FIXING'} prices extracted from course names...\n`);
     
-    const whops = await prisma.whop.findMany({
+    const whops = await prisma.deal.findMany({
       select: {
         id: true,
         name: true,
@@ -163,7 +163,7 @@ async function fixNameBasedPrices(dryRun: boolean = true) {
         correctedCount++;
         
         if (!dryRun) {
-          await prisma.whop.update({
+          await prisma.deal.update({
             where: { id: whop.id },
             data: { price: newPrice }
           });

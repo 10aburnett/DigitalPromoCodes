@@ -9,7 +9,7 @@ async function exportAllData() {
   try {
     // Export all tables
     const data = {
-      whops: await prisma.whop.findMany(),
+      whops: await prisma.deal.findMany(),
       blogPosts: await prisma.blogPost.findMany(),
       comments: await prisma.comment.findMany({
         select: {

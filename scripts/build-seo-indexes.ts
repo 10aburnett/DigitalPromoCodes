@@ -9,8 +9,8 @@ if (process.env.SKIP_SEO_BUILD === '1' || process.env.SKIP_SEO_BUILD === 'true')
 
 process.on('unhandledRejection', e => { console.error('[seo] unhandled', e); process.exit(1); });
 
-// No-locale path builder
-const pathFor = (slug: string) => `/whop/${slug}`;
+// No-locale path builder (canonical route is /offer/)
+const pathFor = (slug: string) => `/offer/${slug}`;
 
 async function hasColumn(table: string, column: string) {
   const rows = await prisma.$queryRaw<Array<{ exists: boolean }>>`
@@ -29,7 +29,7 @@ async function main() {
   
   // Debug logging for preview deployment troubleshooting
   console.log('[seo-gen] host', new URL(process.env.DATABASE_URL!).host);
-  console.log('[seo-gen] ayecon', await prisma.whop.findUnique({ 
+  console.log('[seo-gen] ayecon', await prisma.deal.findUnique({ 
     where: { slug: 'ayecon-academy-1:1-mentorship' }, 
     select: { slug: true, retirement: true, indexingStatus: true, retired: true } 
   }));
@@ -43,13 +43,13 @@ async function main() {
     
     // Get retired paths with fallback to legacy column
     const retired = hasRetirement
-      ? await prisma.whop.findMany({ where: { retirement: 'GONE' }, select: { slug: true } })
-      : await prisma.whop.findMany({ where: { retired: true }, select: { slug: true } });
+      ? await prisma.deal.findMany({ where: { retirement: 'GONE' }, select: { slug: true } })
+      : await prisma.deal.findMany({ where: { retired: true }, select: { slug: true } });
 
     // Get noindex paths with fallback to legacy column
     const noindex = hasRetirement && hasIndexingStatus
-      ? await prisma.whop.findMany({ where: { indexingStatus: 'NOINDEX', retirement: 'NONE' }, select: { slug: true } })
-      : await prisma.whop.findMany({ where: { indexingStatus: 'NOINDEX' }, select: { slug: true } });
+      ? await prisma.deal.findMany({ where: { indexingStatus: 'NOINDEX', retirement: 'NONE' }, select: { slug: true } })
+      : await prisma.deal.findMany({ where: { indexingStatus: 'NOINDEX' }, select: { slug: true } });
 
     const retiredPaths = retired.map(r => pathFor(r.slug));
     const noindexPaths = noindex.map(r => pathFor(r.slug));

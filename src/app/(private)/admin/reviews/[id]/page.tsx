@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-interface Whop {
+interface DealItem {
   id: string;
   name: string;
   slug: string;
@@ -16,10 +16,10 @@ interface Whop {
 const reviewSchema = z.object({
   author: z.string().min(1, "Author name is required"),
   content: z.string().min(3, "Review content is required"),
-  rating: z.union([z.number(), z.string()]).transform((val) => 
+  rating: z.union([z.number(), z.string()]).transform((val) =>
     typeof val === 'string' ? parseFloat(val) : val
   ),
-  whopId: z.string().min(1, "Whop course is required"),
+  whopId: z.string().min(1, "Deal is required"),
   verified: z.boolean().optional().default(false)
 });
 
@@ -27,11 +27,11 @@ type ReviewFormData = z.infer<typeof reviewSchema>;
 
 export default function EditReviewPage({ params }: { params: { id: string } }) {
   const router = useRouter();
-  const [whops, setWhops] = useState<Whop[]>([]);
-  const [filteredWhops, setFilteredWhops] = useState<Whop[]>([]);
+  const [whops, setWhops] = useState<DealItem[]>([]);
+  const [filteredWhops, setFilteredWhops] = useState<DealItem[]>([]);
   const [whopSearch, setWhopSearch] = useState("");
   const [showWhopDropdown, setShowWhopDropdown] = useState(false);
-  const [selectedWhop, setSelectedWhop] = useState<Whop | null>(null);
+  const [selectedWhop, setSelectedWhop] = useState<DealItem | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
@@ -60,7 +60,7 @@ export default function EditReviewPage({ params }: { params: { id: string } }) {
   }, [whopSearch, whops]);
 
   // Handle whop selection
-  const handleWhopSelect = (whop: Whop) => {
+  const handleWhopSelect = (whop: DealItem) => {
     setSelectedWhop(whop);
     setWhopSearch(whop.name);
     setValue("whopId", whop.id);

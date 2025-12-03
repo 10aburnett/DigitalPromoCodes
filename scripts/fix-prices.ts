@@ -211,7 +211,7 @@ async function fixPrices(dryRun: boolean = true) {
     console.log(`🔍 ${dryRun ? 'ANALYZING' : 'FIXING'} price issues...`);
     
     // Get all whops with their current prices
-    const whops = await prisma.whop.findMany({
+    const whops = await prisma.deal.findMany({
       select: {
         id: true,
         name: true,
@@ -238,7 +238,7 @@ async function fixPrices(dryRun: boolean = true) {
         correctedCount++;
         
         if (!dryRun) {
-          await prisma.whop.update({
+          await prisma.deal.update({
             where: { id: whop.id },
             data: { price: correctedPrice }
           });

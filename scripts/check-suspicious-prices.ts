@@ -7,7 +7,7 @@ async function checkSuspiciousPrices() {
     console.log('🔍 Checking for courses with suspicious pricing patterns...\n');
     
     // Find courses where the price appears to be extracted from the course name
-    const whops = await prisma.whop.findMany({
+    const whops = await prisma.deal.findMany({
       select: {
         id: true,
         name: true,

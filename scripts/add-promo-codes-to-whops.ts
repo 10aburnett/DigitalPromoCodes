@@ -43,7 +43,7 @@ async function main() {
 
   for (const mapping of whopPromoMappings) {
     // Find the whop by slug
-    const whop = await prisma.whop.findUnique({
+    const whop = await prisma.deal.findUnique({
       where: { slug: mapping.whopSlug },
       include: { promoCodes: true }
     });
@@ -111,7 +111,7 @@ export async function addPromoCodeToWhop(
   type: 'DISCOUNT' | 'FREE_TRIAL' | 'EXCLUSIVE_ACCESS' | 'BUNDLE_DEAL' | 'LIMITED_TIME',
   value: string
 ) {
-  const whop = await prisma.whop.findUnique({
+  const whop = await prisma.deal.findUnique({
     where: { slug: whopSlug }
   });
 
@@ -150,7 +150,7 @@ export async function addPromoCodeToWhop(
 
 // Function to list all whops and their current promo codes
 export async function listWhopsWithPromoCodes() {
-  const whops = await prisma.whop.findMany({
+  const whops = await prisma.deal.findMany({
     include: {
       promoCodes: true
     },

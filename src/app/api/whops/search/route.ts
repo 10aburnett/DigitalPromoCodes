@@ -13,7 +13,7 @@ export async function GET(request: Request) {
     }
 
     // Optimized search with LIKE pattern and limit
-    const whops = await prisma.whop.findMany({
+    const whops = await prisma.deal.findMany({
       where: {
         name: {
           contains: query,

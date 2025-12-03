@@ -7,7 +7,7 @@ async function findDuplicateAyecon() {
     console.log('🔍 Looking for Ayecon Academy entries...');
     
     // Find all whops with Ayecon in the name
-    const ayeconWhops = await prisma.whop.findMany({
+    const ayeconWhops = await prisma.deal.findMany({
       where: {
         OR: [
           { name: { contains: 'Ayecon', mode: 'insensitive' } },
@@ -38,7 +38,7 @@ async function findDuplicateAyecon() {
     
     // Check which one has the slug we're looking for
     const targetSlug = 'ayecon-academy-1:1-mentorship';
-    const targetWhop = await prisma.whop.findFirst({
+    const targetWhop = await prisma.deal.findFirst({
       where: { slug: targetSlug }
     });
     

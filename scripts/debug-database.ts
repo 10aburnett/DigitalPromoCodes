@@ -12,8 +12,8 @@ async function debugDatabase() {
     
     // Check current counts
     const [publishedCount, unpublishedCount] = await Promise.all([
-      prisma.whop.count({ where: { publishedAt: { not: null } } }),
-      prisma.whop.count({ where: { publishedAt: null } })
+      prisma.deal.count({ where: { publishedAt: { not: null } } }),
+      prisma.deal.count({ where: { publishedAt: null } })
     ]);
     
     console.log(`📊 Current Database State:`);
@@ -22,7 +22,7 @@ async function debugDatabase() {
     console.log(`  Total: ${publishedCount + unpublishedCount}`);
     
     // Check the most recently published whops
-    const recentPublished = await prisma.whop.findMany({
+    const recentPublished = await prisma.deal.findMany({
       where: { publishedAt: { not: null } },
       orderBy: { publishedAt: 'desc' },
       take: 5,
@@ -39,7 +39,7 @@ async function debugDatabase() {
     });
     
     // Check the oldest unpublished whops
-    const oldestUnpublished = await prisma.whop.findMany({
+    const oldestUnpublished = await prisma.deal.findMany({
       where: { publishedAt: null },
       orderBy: { createdAt: 'asc' },
       take: 5,
@@ -57,7 +57,7 @@ async function debugDatabase() {
     
     // Check if there are any whops with very recent publishedAt dates
     const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
-    const recentlyPublished = await prisma.whop.count({
+    const recentlyPublished = await prisma.deal.count({
       where: {
         publishedAt: {
           gte: oneHourAgo
@@ -68,7 +68,7 @@ async function debugDatabase() {
     console.log(`\n⏰ Whops published in the last hour: ${recentlyPublished}`);
     
     // Check if there are any whops that were unpublished recently
-    const recentlyUnpublished = await prisma.whop.count({
+    const recentlyUnpublished = await prisma.deal.count({
       where: {
         updatedAt: {
           gte: oneHourAgo

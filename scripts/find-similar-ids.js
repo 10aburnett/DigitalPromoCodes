@@ -8,7 +8,7 @@ async function findSimilarIds() {
     
     // Look for the ID shown in debug box
     const debugBoxId = 'cmdezcn0b0000dv0ngzzv29o7';
-    const debugBoxWhop = await prisma.whop.findUnique({
+    const debugBoxWhop = await prisma.deal.findUnique({
       where: { id: debugBoxId },
       include: { PromoCode: true }
     });
@@ -27,7 +27,7 @@ async function findSimilarIds() {
     }
     
     // Look for whops with IDs starting with cmdezcn0b
-    const similarWhops = await prisma.whop.findMany({
+    const similarWhops = await prisma.deal.findMany({
       where: {
         id: { startsWith: 'cmdezcn0b' }
       },

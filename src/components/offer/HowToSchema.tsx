@@ -16,7 +16,7 @@ type Props = {
   brand: string;
   currency: string;
   hasTrial?: boolean;
-  siteOrigin: string; // e.g., https://whpcodes.com
+  siteOrigin: string; // e.g., https://digitalpromocodes.com
 };
 
 export default function HowToSchema({

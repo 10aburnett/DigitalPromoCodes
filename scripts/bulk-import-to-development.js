@@ -42,7 +42,7 @@ async function bulkImportProductionData() {
         const chunk = data.whops.slice(i, i + chunkSize);
         console.log(`    Importing whops ${i + 1} to ${Math.min(i + chunkSize, data.whops.length)}...`);
         
-        await prisma.whop.createMany({
+        await prisma.deal.createMany({
           data: chunk,
           skipDuplicates: true
         });
@@ -125,7 +125,7 @@ async function bulkImportProductionData() {
     
     // Verify the import
     const counts = {
-      whops: await prisma.whop.count(),
+      whops: await prisma.deal.count(),
       blogPosts: await prisma.blogPost.count(),
       comments: await prisma.comment.count(),
       users: await prisma.user.count(),

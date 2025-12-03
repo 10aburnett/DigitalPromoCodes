@@ -12,8 +12,8 @@ async function testPublishLimit() {
     
     // Get current counts
     const [publishedCount, unpublishedCount] = await Promise.all([
-      prisma.whop.count({ where: { publishedAt: { not: null } } }),
-      prisma.whop.count({ where: { publishedAt: null } })
+      prisma.deal.count({ where: { publishedAt: { not: null } } }),
+      prisma.deal.count({ where: { publishedAt: null } })
     ]);
     
     console.log(`📊 Current state: ${publishedCount} published, ${unpublishedCount} unpublished`);
@@ -25,7 +25,7 @@ async function testPublishLimit() {
       console.log(`\n🔍 Testing batch size: ${batchSize}`);
       
       // Get unpublished whops
-      const whopsToPublish = await prisma.whop.findMany({
+      const whopsToPublish = await prisma.deal.findMany({
         where: { publishedAt: null },
         take: batchSize,
         select: { id: true }
@@ -39,7 +39,7 @@ async function testPublishLimit() {
       console.log(`📝 Publishing ${whopsToPublish.length} whops...`);
       
       // Publish them
-      await prisma.whop.updateMany({
+      await prisma.deal.updateMany({
         where: {
           id: { in: whopsToPublish.map(w => w.id) }
         },
@@ -47,7 +47,7 @@ async function testPublishLimit() {
       });
       
       // Check count after publishing
-      const newPublishedCount = await prisma.whop.count({
+      const newPublishedCount = await prisma.deal.count({
         where: { publishedAt: { not: null } }
       });
       
@@ -57,7 +57,7 @@ async function testPublishLimit() {
       console.log('⏳ Waiting 3 seconds...');
       await new Promise(resolve => setTimeout(resolve, 3000));
       
-      const finalCount = await prisma.whop.count({
+      const finalCount = await prisma.deal.count({
         where: { publishedAt: { not: null } }
       });
       

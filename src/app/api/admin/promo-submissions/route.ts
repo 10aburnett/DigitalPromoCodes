@@ -45,7 +45,7 @@ export async function GET(request: NextRequest) {
     const ids = [...new Set(subs.map(s => s.whopId).filter(Boolean))] as string[];
 
     // 3) fetch whops by id
-    const whopsById = ids.length ? await prisma.whop.findMany({ 
+    const whopsById = ids.length ? await prisma.deal.findMany({ 
       where: { id: { in: ids } }, 
       select: { id: true, slug: true, name: true } 
     }) : [];

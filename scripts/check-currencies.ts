@@ -7,7 +7,7 @@ async function checkCurrencies() {
     console.log('🔍 Checking for different currencies in course prices...\n');
     
     // Get all whops with non-null prices
-    const allPrices = await prisma.whop.findMany({
+    const allPrices = await prisma.deal.findMany({
       where: {
         price: {
           not: null

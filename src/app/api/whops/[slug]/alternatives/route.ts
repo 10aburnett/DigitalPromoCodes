@@ -133,13 +133,13 @@ export async function GET(req: Request, { params }: { params: { slug: string } }
     }
 
     // Find current whop (try slug first, then ID)
-    let currentWhop = await prisma.whop.findUnique({
+    let currentWhop = await prisma.deal.findUnique({
       where: { slug: key },
       select: { id: true, slug: true, name: true, description: true, category: true, price: true },
     });
 
     if (!currentWhop && looksLikeCuid(key)) {
-      currentWhop = await prisma.whop.findUnique({
+      currentWhop = await prisma.deal.findUnique({
         where: { id: key },
         select: { id: true, slug: true, name: true, description: true, category: true, price: true },
       });
@@ -153,7 +153,7 @@ export async function GET(req: Request, { params }: { params: { slug: string } }
     const currentTopics = extractTopics(currentWhop.name, currentWhop.description || '');
 
     // Get candidate whops for alternatives
-    const candidateWhops = await prisma.whop.findMany({
+    const candidateWhops = await prisma.deal.findMany({
       where: {
         id: { not: currentWhop.id }
       },

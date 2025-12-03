@@ -5,7 +5,7 @@ import { siteOrigin } from '@/lib/site-origin';
 export async function GET() {
   const baseUrl = siteOrigin();
   try {
-    const rows = await prisma.whop.findMany({
+    const rows = await prisma.deal.findMany({
       where: { indexingStatus: 'NOINDEX', retirement: 'NONE' },
       select: { locale: true, slug: true, updatedAt: true },
     });

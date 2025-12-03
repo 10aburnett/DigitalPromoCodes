@@ -9,7 +9,7 @@ export async function GET(request: Request) {
     console.log(`Debug: Looking for whop with slug: ${slug}`);
     
     // Replicate the exact logic from getWhopBySlug
-    const whop = await prisma.whop.findFirst({
+    const whop = await prisma.deal.findFirst({
       where: { 
         slug: slug,
         publishedAt: { not: null }

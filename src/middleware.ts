@@ -68,19 +68,8 @@ export function middleware(request: NextRequest) {
   }
 
   // ========================================
-  // PHASE 3: Return 410 Gone for ALL public routes
-  // Keep /admin and /api functional
+  // PRODUCTION MODE: Normal SEO handling for DigitalPromoCodes
   // ========================================
-  if (!pathname.startsWith('/admin') && !pathname.startsWith('/api')) {
-    return new NextResponse('Gone', {
-      status: 410,
-      headers: {
-        'Content-Type': 'text/plain',
-        'X-Robots-Tag': 'noindex, nofollow, noarchive',
-        'Cache-Control': 'public, max-age=86400', // Cache 410 for 24 hours
-      },
-    });
-  }
 
   // SEO LOGIC FIRST (for offer routes - renamed from whop)
   if (path.startsWith('/offer/') || path.match(/^\/([a-z]{2}(?:-[A-Z]{2})?)\/offer\//)) {
@@ -133,9 +122,10 @@ export function middleware(request: NextRequest) {
       });
     }
 
-    // 5) X-Robots-Tag for NOINDEX
-    // PHASE1-DEINDEX: Force global noindex for ALL public routes
-    res.headers.set('X-Robots-Tag', 'noindex, nofollow, noarchive');
+    // 5) X-Robots-Tag for NOINDEX paths only
+    if (NOINDEX_PATHS.has(path)) {
+      res.headers.set('X-Robots-Tag', 'noindex, follow');
+    }
 
     // 6) fall through to admin/API logic if needed, or return
     if (!path.startsWith('/admin') && !path.startsWith('/api')) {
@@ -257,16 +247,10 @@ export function middleware(request: NextRequest) {
     }
   }
 
-  // PHASE1-DEINDEX: Force X-Robots-Tag for ALL public routes not handled above
-  if (!pathname.startsWith('/admin') && !pathname.startsWith('/api')) {
-    response.headers.set('X-Robots-Tag', 'noindex, nofollow, noarchive');
-  }
-
   return response;
 }
 
 // Configure the paths that middleware should run on
-// PHASE1-DEINDEX: Match ALL routes to ensure X-Robots-Tag is always set
 export const config = {
   matcher: [
     '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|css|js)$).*)',

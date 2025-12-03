@@ -248,9 +248,9 @@ export default function HomePage({ initialWhops, initialTotal, totalUsers, key }
   return (
     <div className="mx-auto w-[90%] md:w-[95%] max-w-[1280px] mt-[50px] md:mt-0">
       <h1 className="text-4xl font-bold text-center mt-2 mb-12">
-        <span style={{ color: 'var(--accent-color)' }}>WHP</span>
-        <span style={{ color: 'var(--text-color)' }}>Codes</span>
-        <span style={{ color: 'var(--text-color)' }}> - Whop Promo Codes, Coupons & Discounts</span>
+        <span style={{ color: 'var(--accent-color)' }}>Digital</span>
+        <span style={{ color: 'var(--text-color)' }}>PromoCodes</span>
+        <span style={{ color: 'var(--text-color)' }}> - Promo Codes, Coupons & Discounts</span>
       </h1>
       
       <div className="mb-1 md:mb-12" data-filter-section>

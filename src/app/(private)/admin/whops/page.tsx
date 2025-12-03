@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
-interface Whop {
+interface DealAdmin {
   id: string;
   name: string;
   slug: string;
@@ -21,7 +21,7 @@ interface Whop {
 }
 
 export default function WhopsAdmin() {
-  const [whops, setWhops] = useState<Whop[]>([]);
+  const [whops, setWhops] = useState<DealAdmin[]>([]);
   const [loading, setLoading] = useState(true);
   const [importing, setImporting] = useState(false);
   const [importResult, setImportResult] = useState<string | null>(null);

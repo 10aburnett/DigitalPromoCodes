@@ -12,7 +12,7 @@ export async function PUT(req: Request, { params }: { params: { slug: string } }
     const key = decodeURIComponent(raw);
 
     // allow either id or slug
-    const whop = await prisma.whop.findFirst({
+    const whop = await prisma.deal.findFirst({
       where: { OR: [{ id: key }, { slug: key }] },
       select: { id: true, slug: true },
     });
@@ -26,7 +26,7 @@ export async function PUT(req: Request, { params }: { params: { slug: string } }
     ] as const;
     for (const f of fields) if (body[f] !== undefined) data[f] = String(body[f]);
 
-    const updated = await prisma.whop.update({
+    const updated = await prisma.deal.update({
       where: { id: whop.id },
       data,
       select: { slug: true }

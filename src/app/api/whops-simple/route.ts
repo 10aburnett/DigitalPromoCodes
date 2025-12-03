@@ -5,7 +5,7 @@ export async function GET() {
   try {
     console.log('Simple whops query starting...');
     
-    const whops = await prisma.whop.findMany({
+    const whops = await prisma.deal.findMany({
       where: { 
         publishedAt: { not: null }
       },

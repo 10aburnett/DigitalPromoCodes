@@ -84,7 +84,7 @@ export async function GET(request: NextRequest) {
 
     // Resolve slug if not provided but we have whopId
     if (!slug && whopId) {
-      const whop = await prisma.whop.findUnique({
+      const whop = await prisma.deal.findUnique({
         where: { id: whopId },
         select: { slug: true }
       });
@@ -97,9 +97,12 @@ export async function GET(request: NextRequest) {
       const whereBase = {
         actionType: 'code_copy' as const,
         OR: [
+          // Current paths (/offer/)
+          { path: { contains: `/offer/${slug}`, mode: 'insensitive' as Prisma.QueryMode } },
+          { path: { contains: `/en/offer/${slug}`, mode: 'insensitive' as Prisma.QueryMode } },
+          // Legacy paths (/whop/) for historical analytics
           { path: { contains: `/whop/${slug}`, mode: 'insensitive' as Prisma.QueryMode } },
           { path: { contains: `/en/whop/${slug}`, mode: 'insensitive' as Prisma.QueryMode } },
-          { path: { contains: `https://whpcodes.com/whop/${slug}`, mode: 'insensitive' as Prisma.QueryMode } }
         ]
       };
 

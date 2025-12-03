@@ -16,7 +16,7 @@ interface PromoCode {
   code: string | null;
 }
 
-interface RecommendedWhop {
+interface RecommendedDeal {
   id: string;
   name: string;
   slug: string;
@@ -100,7 +100,7 @@ async function hydrateViaGraph(currentWhopSlug: string) {
 }
 
 export default function RecommendedWhops({ currentWhopSlug }: RecommendedWhopsProps) {
-  const [recommendations, setRecommendations] = useState<RecommendedWhop[]>([]);
+  const [recommendations, setRecommendations] = useState<RecommendedDeal[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [explore, setExplore] = useState<{ slug: string; name: string; category?: string } | null>(null);
@@ -125,7 +125,7 @@ export default function RecommendedWhops({ currentWhopSlug }: RecommendedWhopsPr
 
         // 1) Graph-first (if flag on)
         const useGraph = process.env.NEXT_PUBLIC_USE_GRAPH_LINKS === 'true' || process.env.USE_GRAPH_LINKS === 'true';
-        let cleanedRecommendations: RecommendedWhop[] = [];
+        let cleanedRecommendations: RecommendedDeal[] = [];
 
         if (useGraph) {
           // Add decisive runtime check for graph presence
@@ -344,7 +344,7 @@ export default function RecommendedWhops({ currentWhopSlug }: RecommendedWhopsPr
   }
 
 
-  const getPromoText = (whop: RecommendedWhop) => {
+  const getPromoText = (whop: RecommendedDeal) => {
     const firstPromo = whop.promoCodes?.[0];
     if (!firstPromo) return 'Exclusive Access';
 

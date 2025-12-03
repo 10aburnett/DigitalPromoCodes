@@ -57,7 +57,7 @@ async function buildSiteGraph(): Promise<void> {
   console.log('🔍 Loading all whops from database...');
 
   // Load all whops from database
-  const allWhops = await prisma.whop.findMany({
+  const allWhops = await prisma.deal.findMany({
     select: {
       id: true,
       slug: true,

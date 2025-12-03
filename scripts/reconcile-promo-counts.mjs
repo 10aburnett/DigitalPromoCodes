@@ -13,7 +13,7 @@ const prisma = new PrismaClient();
 
 async function main() {
   // 1. Get definitive number of promo-code whops from DB
-  const promoCount = await prisma.whop.count({
+  const promoCount = await prisma.deal.count({
     where: { PromoCode: { some: {} } },
   });
 
@@ -51,7 +51,7 @@ async function main() {
   // 6. Find which tracked items are no longer promo in DB
   const allTracked = Object.keys({ ...ck.done, ...ck.rejected });
   const promoSlugs = new Set(
-    (await prisma.whop.findMany({ where: { PromoCode: { some: {} } }, select: { slug: true } }))
+    (await prisma.deal.findMany({ where: { PromoCode: { some: {} } }, select: { slug: true } }))
     .map(r => r.slug)
   );
   const nonPromoTracked = allTracked.filter(s => !promoSlugs.has(s));
@@ -64,7 +64,7 @@ async function main() {
 
   // 7. Find which current promo whops are NOT tracked at all
   const trackedSet = new Set(allTracked);
-  const untrackedPromos = (await prisma.whop.findMany({
+  const untrackedPromos = (await prisma.deal.findMany({
     where: { PromoCode: { some: {} } },
     select: { slug: true }
   })).map(r => r.slug).filter(s => !trackedSet.has(s));

@@ -62,9 +62,9 @@ export default async function BlogPage() {
             <div className="space-y-6">
               {/* Header */}
               <div className="text-center">
-                <h1 className="text-4xl md:text-5xl font-bold py-1" 
+                <h1 className="text-4xl md:text-5xl font-bold py-1"
                     style={{ lineHeight: '1.3', marginBottom: '0.6rem' }}>
-                  <span style={{ color: 'var(--accent-color)' }}>WHP</span>
+                  <span style={{ color: 'var(--accent-color)' }}>DPC</span>
                   <span className="ml-2" style={{ color: 'var(--text-color)' }}>
                     Blog
                   </span>
@@ -122,7 +122,7 @@ export default async function BlogPage() {
             <div className="text-center">
               <h1 className="text-4xl md:text-5xl font-bold py-1"
                   style={{ lineHeight: '1.3', marginBottom: '0.6rem' }}>
-                <span style={{ color: 'var(--accent-color)' }}>WHP</span>
+                <span style={{ color: 'var(--accent-color)' }}>DPC</span>
                 <span className="ml-2" style={{ color: 'var(--text-color)' }}>
                   Blog
                 </span>
@@ -205,9 +205,9 @@ export default async function BlogPage() {
           <div className="space-y-6">
             {/* Header */}
             <div className="text-center">
-              <h1 className="text-4xl md:text-5xl font-bold py-1" 
+              <h1 className="text-4xl md:text-5xl font-bold py-1"
                   style={{ lineHeight: '1.3', marginBottom: '0.6rem' }}>
-                <span style={{ color: 'var(--accent-color)' }}>WHP</span>
+                <span style={{ color: 'var(--accent-color)' }}>DPC</span>
                 <span className="ml-2" style={{ color: 'var(--text-color)' }}>
                   Blog
                 </span>

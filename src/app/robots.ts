@@ -1,11 +1,27 @@
-// Phase 2: Block all crawling for domain deindexing
-// noindex tags from Phase 1 are still in place for consistency
+import type { MetadataRoute } from 'next';
+import { siteOrigin } from '@/lib/site-origin';
 
-export default function robots() {
+// Production robots.txt for DigitalPromoCodes
+// Allows full crawling with sitemap references
+
+export default function robots(): MetadataRoute.Robots {
+  const origin = siteOrigin();
+
   return {
     rules: [
-      { userAgent: '*', disallow: '/' },
+      {
+        userAgent: '*',
+        allow: '/',
+        disallow: ['/admin/', '/api/', '/_next/', '/static/'],
+      },
     ],
-    // No sitemap during deindexing
+    sitemap: [
+      `${origin}/sitemap.xml`,
+      `${origin}/sitemap/whops-a-f.xml`,
+      `${origin}/sitemap/whops-g-m.xml`,
+      `${origin}/sitemap/whops-n-s.xml`,
+      `${origin}/sitemap/whops-t-z.xml`,
+      `${origin}/sitemap-blog.xml`,
+    ],
   };
 }

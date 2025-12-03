@@ -47,7 +47,7 @@ export async function DELETE(request: Request) {
     }
 
     // Get count of whops before deletion for reporting
-    const whopCount = await prisma.whop.count();
+    const whopCount = await prisma.deal.count();
     
     if (whopCount === 0) {
       return NextResponse.json({ 
@@ -67,7 +67,7 @@ export async function DELETE(request: Request) {
     const trackingResult = await prisma.offerTracking.deleteMany();
 
     // Finally, delete all whops
-    const whopResult = await prisma.whop.deleteMany();
+    const whopResult = await prisma.deal.deleteMany();
     
     return NextResponse.json({ 
       message: `Successfully deleted all ${whopResult.count} whops and their associated data`,

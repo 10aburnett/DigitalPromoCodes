@@ -98,7 +98,7 @@ export async function POST(req: Request) {
 
       // If whopId is provided, verify the course exists
       if (parsed.whopId) {
-        const whopExists = await prisma.whop.findUnique({
+        const whopExists = await prisma.deal.findUnique({
           where: { id: parsed.whopId },
           select: { id: true }
         })
@@ -210,7 +210,7 @@ export async function GET(req: Request) {
       take: limit,
       skip: offset,
       include: {
-        Whop: {
+        Deal: {
           select: {
             name: true,
             slug: true

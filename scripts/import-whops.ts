@@ -12,7 +12,7 @@ async function importWhops() {
   console.log(`Importing ${whopsData.length} whops...`);
   
   // Clear existing whops first
-  await prisma.whop.deleteMany();
+  await prisma.deal.deleteMany();
   console.log('Cleared existing whops');
   
   // Import in batches to avoid timeout
@@ -20,7 +20,7 @@ async function importWhops() {
   for (let i = 0; i < whopsData.length; i += batchSize) {
     const batch = whopsData.slice(i, i + batchSize);
     
-    await prisma.whop.createMany({
+    await prisma.deal.createMany({
       data: batch.map((whop: any) => ({
         ...whop,
         createdAt: new Date(whop.createdAt),
@@ -34,8 +34,8 @@ async function importWhops() {
   
   console.log('Import completed!');
   
-  const count = await prisma.whop.count();
-  const unpublished = await prisma.whop.count({ where: { publishedAt: null } });
+  const count = await prisma.deal.count();
+  const unpublished = await prisma.deal.count({ where: { publishedAt: null } });
   
   console.log(`Total whops: ${count}`);
   console.log(`Unpublished whops: ${unpublished}`);

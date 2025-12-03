@@ -24,7 +24,7 @@ export const getStatisticsCached = () =>
       try {
         // Simplified and faster queries
         const [activeWhops, totalCodes] = await Promise.all([
-          prisma.whop.count({
+          prisma.deal.count({
             where: { publishedAt: { not: null } }
           }),
           prisma.promoCode.count()
@@ -35,7 +35,7 @@ export const getStatisticsCached = () =>
         const promoCodesClaimed = Math.max(500, totalCodes * 8); // Estimate: ~8 claims per code
 
         // Get a simple popular whop without complex tracking queries
-        const popularWhop = await prisma.whop.findFirst({
+        const popularWhop = await prisma.deal.findFirst({
           where: {
             publishedAt: { not: null },
             rating: { gte: 4.0 }

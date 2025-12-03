@@ -79,7 +79,7 @@ function difference(a, b) {
 
 async function main() {
   // 1) Pull fresh PROMO set from DB
-  const promos = await prisma.whop.findMany({
+  const promos = await prisma.deal.findMany({
     where: { PromoCode: { some: {} } },
     select: { slug: true, _count: { select: { PromoCode: true } } },
   });

@@ -12,8 +12,8 @@ async function checkWhopStatus() {
     
     // Get current counts
     const [publishedCount, unpublishedCount] = await Promise.all([
-      prisma.whop.count({ where: { publishedAt: { not: null } } }),
-      prisma.whop.count({ where: { publishedAt: null } })
+      prisma.deal.count({ where: { publishedAt: { not: null } } }),
+      prisma.deal.count({ where: { publishedAt: null } })
     ]);
     
     const total = publishedCount + unpublishedCount;
@@ -29,7 +29,7 @@ async function checkWhopStatus() {
       console.log(`\n⏰ At 250 per day, approximately ${daysRemaining} days remaining for full publication`);
       
       // Show next batch preview
-      const nextBatch = await prisma.whop.findMany({
+      const nextBatch = await prisma.deal.findMany({
         where: { publishedAt: null },
         orderBy: { createdAt: 'asc' },
         take: 5,
@@ -48,7 +48,7 @@ async function checkWhopStatus() {
     }
     
     // Show recent publications
-    const recentPublished = await prisma.whop.findMany({
+    const recentPublished = await prisma.deal.findMany({
       where: { publishedAt: { not: null } },
       orderBy: { publishedAt: 'desc' },
       take: 5,

@@ -24,7 +24,7 @@ export const translations = {
     'nav.admin': 'Admin',
     
     // Homepage
-    'home.title': 'OfferHub - Deals, Coupons & Discounts',
+    'home.title': 'DigitalPromoCodes - Deals, Coupons & Discounts',
     'home.subtitle': 'Discover exclusive promo codes and deals for the best digital products',
     'home.cta': 'Browse Deals',
     'home.filterCodes': 'Filter Courses',
@@ -108,7 +108,7 @@ export const translations = {
     // Privacy Policy Content
     'privacy.title': 'Privacy Policy',
     'privacy.introduction.title': 'Introduction',
-    'privacy.introduction.content': 'OfferHub ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website example.com and use our services.',
+    'privacy.introduction.content': 'DigitalPromoCodes ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website digitalpromocodes.com and use our services.',
     'privacy.infoCollect.title': 'Information We Collect',
     'privacy.infoProvide.title': 'Information You Provide',
     'privacy.infoProvide.content': 'Contact information when you reach out to us\nFeedback and comments you submit\nNewsletter subscription information',
@@ -125,20 +125,20 @@ export const translations = {
     'privacy.rights.title': 'Your Rights',
     'privacy.rights.content': 'You have the right to:\n\nAccess your personal information\nCorrect inaccurate information\nRequest deletion of your information\nOpt-out of marketing communications\nObject to processing of your information',
     'privacy.contact.title': 'Contact Us',
-    'privacy.contact.content': 'If you have any questions about this Privacy Policy or our data practices, please contact us:<br><br>Email: <a href="mailto:contact@example.com">contact@example.com</a><br>Website: <a href="/contact">Contact Form</a>',
+    'privacy.contact.content': 'If you have any questions about this Privacy Policy or our data practices, please contact us:<br><br>Email: <a href="mailto:contact@digitalpromocodes.com">contact@digitalpromocodes.com</a><br>Website: <a href="/contact">Contact Form</a>',
     
     // Terms of Service Content
     'terms.title': 'Terms of Service',
     'terms.agreement.title': 'Agreement to Terms',
-    'terms.agreement.content': 'By accessing and using OfferHub ("we," "our," or "us"), you accept and agree to be bound by the terms and provision of this agreement. If you do not agree to abide by the above, please do not use this service.',
+    'terms.agreement.content': 'By accessing and using DigitalPromoCodes ("we," "our," or "us"), you accept and agree to be bound by the terms and provision of this agreement. If you do not agree to abide by the above, please do not use this service.',
     'terms.license.title': 'Use License',
-    'terms.license.content': 'Permission is granted to temporarily download one copy of the materials on OfferHub for personal, non-commercial transitory viewing only. This is the grant of a license, not a transfer of title, and under this license you may not:\n\nModify or copy the materials\nUse the materials for any commercial purpose or for any public display\nAttempt to reverse engineer any software contained on the website\nRemove any copyright or other proprietary notations from the materials',
+    'terms.license.content': 'Permission is granted to temporarily download one copy of the materials on DigitalPromoCodes for personal, non-commercial transitory viewing only. This is the grant of a license, not a transfer of title, and under this license you may not:\n\nModify or copy the materials\nUse the materials for any commercial purpose or for any public display\nAttempt to reverse engineer any software contained on the website\nRemove any copyright or other proprietary notations from the materials',
     'terms.disclaimer.title': 'Disclaimer',
-    'terms.disclaimer.content': 'Information Accuracy: The materials on OfferHub are provided on an \'as is\' basis. We make no warranties, expressed or implied.\nThird-Party Services: We are not responsible for the content, policies, or practices of third-party websites that we link to.\nPromotion Availability: Promotions and discounts are subject to change without notice. We do not guarantee the availability or terms of any promotional offers.',
+    'terms.disclaimer.content': 'Information Accuracy: The materials on DigitalPromoCodes are provided on an \'as is\' basis. We make no warranties, expressed or implied.\nThird-Party Services: We are not responsible for the content, policies, or practices of third-party websites that we link to.\nPromotion Availability: Promotions and discounts are subject to change without notice. We do not guarantee the availability or terms of any promotional offers.',
     'terms.responsible.title': 'Responsible Use',
-    'terms.responsible.content': 'OfferHub promotes responsible use of digital products and services. We encourage users to:\n\nOnly purchase products and services you can afford\nResearch products thoroughly before purchasing\nRead terms and conditions of whop products carefully\nContact whop providers directly for product support\n\nIf you have concerns about any whop product or service, please contact the provider directly or reach out to us through our contact form.',
+    'terms.responsible.content': 'DigitalPromoCodes promotes responsible use of digital products and services. We encourage users to:\n\nOnly purchase products and services you can afford\nResearch products thoroughly before purchasing\nRead terms and conditions of whop products carefully\nContact whop providers directly for product support\n\nIf you have concerns about any whop product or service, please contact the provider directly or reach out to us through our contact form.',
     'terms.contactInfo.title': 'Contact Information',
-    'terms.contactInfo.content': 'If you have any questions about these Terms of Service, please contact us:<br><br>Email: <a href="mailto:legal@example.com">legal@example.com</a><br>Website: <a href="/contact">Contact Form</a>',
+    'terms.contactInfo.content': 'If you have any questions about these Terms of Service, please contact us:<br><br>Email: <a href="mailto:legal@digitalpromocodes.com">legal@digitalpromocodes.com</a><br>Website: <a href="/contact">Contact Form</a>',
     
     // Contact
     'contact.title': 'Contact Us',
@@ -181,7 +181,7 @@ export const translations = {
     'nav.admin': 'Admin',
     
     // Homepage
-    'home.title': 'OfferHub - Códigos de Descuento, Cupones y Descuentos',
+    'home.title': 'DigitalPromoCodes - Códigos de Descuento, Cupones y Descuentos',
     'home.subtitle': 'Descubre códigos promocionales exclusivos y ofertas para los mejores productos digitales',
     'home.cta': 'Ver Ofertas',
     'home.filterCodes': 'Filtrar Códigos',
@@ -265,7 +265,7 @@ export const translations = {
     // Privacy Policy Content
     'privacy.title': 'Política de Privacidad',
     'privacy.introduction.title': 'Introducción',
-    'privacy.introduction.content': 'OfferHub ("nosotros," "nuestro," o "nosotros") se compromete a proteger su privacidad. Esta Política de Privacidad explica cómo recopilamos, utilizamos, divulghiamos y protegemos su información cuando visita nuestro sitio web example.com y utiliza nuestros servicios.',
+    'privacy.introduction.content': 'DigitalPromoCodes ("nosotros," "nuestro," o "nosotros") se compromete a proteger su privacidad. Esta Política de Privacidad explica cómo recopilamos, utilizamos, divulghiamos y protegemos su información cuando visita nuestro sitio web example.com y utiliza nuestros servicios.',
     'privacy.infoCollect.title': 'Información que Recopilamos',
     'privacy.infoProvide.title': 'Información que Nos Proporciona',
     'privacy.infoProvide.content': 'Información de contacto cuando nos contacta\nComentarios y sugerencias que nos envía\nInformación de suscripción a boletines informativo',
@@ -282,20 +282,20 @@ export const translations = {
     'privacy.rights.title': 'Sus Derechos',
     'privacy.rights.content': 'Tiene el derecho de:\n\nAcceder a su información personal\nCorregir información inexacta\nSolicitar la eliminación de su información\nOpcionar la no participación en comunicaciones de marketing\nObjetar el procesamiento de su información',
     'privacy.contact.title': 'Contáctenos',
-    'privacy.contact.content': 'Si tiene alguna pregunta sobre esta Política de Privacidad o nuestras prácticas de datos, por favor contáctenos:<br><br>Correo electrónico: <a href="mailto:contact@example.com">contact@example.com</a><br>Sitio web: <a href="/es/contact">Formulario de Contacto</a>',
+    'privacy.contact.content': 'Si tiene alguna pregunta sobre esta Política de Privacidad o nuestras prácticas de datos, por favor contáctenos:<br><br>Correo electrónico: <a href="mailto:contact@digitalpromocodes.com">contact@digitalpromocodes.com</a><br>Sitio web: <a href="/es/contact">Formulario de Contacto</a>',
     
     // Terms of Service Content
     'terms.title': 'Términos de Servizio',
     'terms.agreement.title': 'Acuerdo de Términos',
-    'terms.agreement.content': 'Al acceder y utilizar OfferHub ("nosotros," "nuestro," o "nosotros"), acepta y acepta estar sujeto a los términos y disposición de este acuerdo. Si no está de acuerdo con lo anterior, por favor no utilice este servicio.',
+    'terms.agreement.content': 'Al acceder y utilizar DigitalPromoCodes ("nosotros," "nuestro," o "nosotros"), acepta y acepta estar sujeto a los términos y disposición de este acuerdo. Si no está de acuerdo con lo anterior, por favor no utilice este servicio.',
     'terms.license.title': 'Licencia de Uso',
-    'terms.license.content': 'Se otorga permiso para descargar temporalmente una copia de los materiales en OfferHub solo para visualización transitoria personal, no comercial. Este es el otorgamiento de una licencia, no una transferencia de título, y bajo esta licencia no puede:\n\nModificar o copiar los materiales\nUsar los materiales para cualquier propósito comercial o para cualquier exhibición pública\nIntentar invertir ingeniería de software contenido en el sitio web\nEliminar cualquier notación de propiedad intelectual o cualquier otra',
+    'terms.license.content': 'Se otorga permiso para descargar temporalmente una copia de los materiales en DigitalPromoCodes solo para visualización transitoria personal, no comercial. Este es el otorgamiento de una licencia, no una transferencia de título, y bajo esta licencia no puede:\n\nModificar o copiar los materiales\nUsar los materiales para cualquier propósito comercial o para cualquier exhibición pública\nIntentar invertir ingeniería de software contenido en el sitio web\nEliminar cualquier notación de propiedad intelectual o cualquier otra',
     'terms.disclaimer.title': 'Renuncia',
-    'terms.disclaimer.content': 'Precisión de la Información: Los materiales en OfferHub se proporcionan en base "tal cual". No hacemos ninguna garantía, expresa o implícita.\nServicios de Terceros: No somos responsables del contenido, políticas o prácticas de sitios web whop terceros a los que enlazamos.\nDisponibilità delle Promozioni: Le promozioni e gli sconti whop sono basati su modifiche senza preavviso. Non garantiamo la disponibilità o i termini di qualsiasi offerta promozionale.',
+    'terms.disclaimer.content': 'Precisión de la Información: Los materiales en DigitalPromoCodes se proporcionan en base "tal cual". No hacemos ninguna garantía, expresa o implícita.\nServicios de Terceros: No somos responsables del contenido, políticas o prácticas de sitios web whop terceros a los que enlazamos.\nDisponibilità delle Promozioni: Le promozioni e gli sconti whop sono basati su modifiche senza preavviso. Non garantiamo la disponibilità o i termini di qualsiasi offerta promozionale.',
     'terms.responsible.title': 'Uso Responsable',
-    'terms.responsible.content': 'OfferHub promueve el uso responsable de productos y servicios digitales. Nosotros animamos a los usuarios a:\n\nSolo comprar productos y servicios que puedan pagar\nInvestigar productos minuciosamente antes de comprar\nLeer cuidadosamente los términos y condiciones de los productos whop\nContactar directamente con los proveedores de whop para product support\n\nSi tiene alguna preocupación sobre cualquier producto o servicio whop, por favor contáctese directamente con el proveedor o comuníquese con nosotros a través del formulario de contacto.',
+    'terms.responsible.content': 'DigitalPromoCodes promueve el uso responsable de productos y servicios digitales. Nosotros animamos a los usuarios a:\n\nSolo comprar productos y servicios que puedan pagar\nInvestigar productos minuciosamente antes de comprar\nLeer cuidadosamente los términos y condiciones de los productos whop\nContactar directamente con los proveedores de whop para product support\n\nSi tiene alguna preocupación sobre cualquier producto o servicio whop, por favor contáctese directamente con el proveedor o comuníquese con nosotros a través del formulario de contacto.',
     'terms.contactInfo.title': 'Contacto',
-    'terms.contactInfo.content': 'Si tiene alguna pregunta sobre estos Términos de Servicio, por favor contáctenos:<br><br>Correo electrónico: <a href="mailto:legal@example.com">legal@example.com</a><br>Sitio web: <a href="/es/contact">Formulario de Contacto</a>',
+    'terms.contactInfo.content': 'Si tiene alguna pregunta sobre estos Términos de Servicio, por favor contáctenos:<br><br>Correo electrónico: <a href="mailto:legal@digitalpromocodes.com">legal@digitalpromocodes.com</a><br>Sitio web: <a href="/es/contact">Formulario de Contacto</a>',
     
     // Contact
     'contact.title': 'Contáctanos',
@@ -338,7 +338,7 @@ export const translations = {
     'nav.admin': 'Admin',
     
     // Homepage
-    'home.title': 'OfferHub - Promocodes, Coupons & Kortingen',
+    'home.title': 'DigitalPromoCodes - Promocodes, Coupons & Kortingen',
     'home.subtitle': 'Ontdek exclusieve promocodes en deals voor de beste digitale producten',
     'home.cta': 'Bekijk Deals',
     'home.filterCodes': 'Filter Codes',
@@ -422,7 +422,7 @@ export const translations = {
     // Privacy Policy Content
     'privacy.title': 'Privacybeleid',
     'privacy.introduction.title': 'Inleiding',
-    'privacy.introduction.content': 'OfferHub ("wij," "ons," of "ons") is geweten om uw privacy te beschermen. Dit Privacybeleid legt uit hoe we uw informatie verzamelen, gebruiken, delen en beschermen wanneer u onze website example.com bezoekt en onze diensten gebruikt.',
+    'privacy.introduction.content': 'DigitalPromoCodes ("wij," "ons," of "ons") is geweten om uw privacy te beschermen. Dit Privacybeleid legt uit hoe we uw informatie verzamelen, gebruiken, delen en beschermen wanneer u onze website example.com bezoekt en onze diensten gebruikt.',
     'privacy.infoCollect.title': 'Informatie die We Verzamelen',
     'privacy.infoProvide.title': 'Informatie die U Ons Verstrekt',
     'privacy.infoProvide.content': 'Contactgegevens wanneer u contact opneemt met ons\nOpmerkingen en suggesties die u indient\nInformatie over nieuwsbriefabonnementen',
@@ -439,20 +439,20 @@ export const translations = {
     'privacy.rights.title': 'Uw Rechten',
     'privacy.rights.content': 'U heeft het recht om:\n\nToegang te krijgen tot uw persoonlijke informatie\nOnnauwkeurige informatie te corrigeren\nEen verzoek te doen om uw informatie te verwijderen\nUitgaan van marketingcommunicatie\nObjecteren tegen het verwerken van uw informatie',
     'privacy.contact.title': 'Neem Contact Op',
-    'privacy.contact.content': 'Als u vragen heeft over dit Privacybeleid of onze gegevenspraktijken, neem dan contact met ons op:<br><br>E-mail: <a href="mailto:contact@example.com">contact@example.com</a><br>Website: <a href="/nl/contact">Contactformulier</a>',
+    'privacy.contact.content': 'Als u vragen heeft over dit Privacybeleid of onze gegevenspraktijken, neem dan contact met ons op:<br><br>E-mail: <a href="mailto:contact@digitalpromocodes.com">contact@digitalpromocodes.com</a><br>Website: <a href="/nl/contact">Contactformulier</a>',
     
     // Terms of Service Content
     'terms.title': 'Servicevoorwaarden',
     'terms.agreement.title': 'Overeenkomst met Servicevoorwaarden',
-    'terms.agreement.content': 'Door toegang te krijgen en te gebruiken OfferHub ("wij," "ons," of "ons"), gaat u akkoord en gaat u ervan uit dat u zich aan de voorwaarden en bepalingen van deze overeenkomst moet houden. Als u niet akkoord gaat met de bovenstaande, gelieve deze dienst niet te gebruiken.',
+    'terms.agreement.content': 'Door toegang te krijgen en te gebruiken DigitalPromoCodes ("wij," "ons," of "ons"), gaat u akkoord en gaat u ervan uit dat u zich aan de voorwaarden en bepalingen van deze overeenkomst moet houden. Als u niet akkoord gaat met de bovenstaande, gelieve deze dienst niet te gebruiken.',
     'terms.license.title': 'Gebruikslicentie',
-    'terms.license.content': 'Er is toestemming verleend om tijdelijk een kopie van de materialen op OfferHub te downloaden voor persoonlijk, niet-commercieel tijdelijk bekijken. Dit is het verlenen van een licentie, niet een titeloverdracht, en onder deze licentie mag u dit niet:\n\nModificar o copiar los materiales\nUsar los materiales para cualquier propósito comercial o para cualquier exhibición pública\nIntentar invertir ingeniería de software contenido en el sitio web\nEliminar cualquier notación de propiedad intelectual o cualquier otra',
+    'terms.license.content': 'Er is toestemming verleend om tijdelijk een kopie van de materialen op DigitalPromoCodes te downloaden voor persoonlijk, niet-commercieel tijdelijk bekijken. Dit is het verlenen van een licentie, niet een titeloverdracht, en onder deze licentie mag u dit niet:\n\nModificar o copiar los materiales\nUsar los materiales para cualquier propósito comercial o para cualquier exhibición pública\nIntentar invertir ingeniería de software contenido en el sitio web\nEliminar cualquier notación de propiedad intelectual o cualquier otra',
     'terms.disclaimer.title': 'Afwijzing',
-    'terms.disclaimer.content': 'Informationsgenauigkeit: De materialen op OfferHub worden "so verkauft". Wir garantieren keine expliziten oder impliziten Garantien.\nDiensten von derden: We zijn niet verantwoordelijk voor de inhoud, beleid of praktijken van derde-partijwhop-websites die we linken naar.\nPromotiebeschikbaarheid: Promoties en kortingen whop zijn onderhevig aan wijzigingen zonder voorafgaande melding. We garanderen niet de beschikbaarheid of voorwaarden van enige promotieaanbieding.',
+    'terms.disclaimer.content': 'Informationsgenauigkeit: De materialen op DigitalPromoCodes worden "so verkauft". Wir garantieren keine expliziten oder impliziten Garantien.\nDiensten von derden: We zijn niet verantwoordelijk voor de inhoud, beleid of praktijken van derde-partijwhop-websites die we linken naar.\nPromotiebeschikbaarheid: Promoties en kortingen whop zijn onderhevig aan wijzigingen zonder voorafgaande melding. We garanderen niet de beschikbaarheid of voorwaarden van enige promotieaanbieding.',
     'terms.responsible.title': 'Verantwoordelijk Gebruik',
-    'terms.responsible.content': 'OfferHub stimuleert verantwoord gebruik van digitale producten en diensten. We aanmoedigen gebruikers om:\n\nAlleen producten en diensten te kopen die ze kunnen betalen\nProdukte grondig te onderzoeken voordat ze worden gekocht\nVoorwaarden en voorwaarden van whop-producten grondig te lezen\nDirect contact opnemen met whop-providers voor productondersteuning\n\nAls u zorgen heeft over een whop-product of -dienst, gelieve direct contact op te nemen met de provider of contacteer ons via ons contactformulier.',
+    'terms.responsible.content': 'DigitalPromoCodes stimuleert verantwoord gebruik van digitale producten en diensten. We aanmoedigen gebruikers om:\n\nAlleen producten en diensten te kopen die ze kunnen betalen\nProdukte grondig te onderzoeken voordat ze worden gekocht\nVoorwaarden en voorwaarden van whop-producten grondig te lezen\nDirect contact opnemen met whop-providers voor productondersteuning\n\nAls u zorgen heeft over een whop-product of -dienst, gelieve direct contact op te nemen met de provider of contacteer ons via ons contactformulier.',
     'terms.contactInfo.title': 'Contactgegevens',
-    'terms.contactInfo.content': 'Als u vragen heeft over deze Servicevoorwaarden, gelieve contact met ons op:<br><br>E-mail: <a href="mailto:legal@example.com">legal@example.com</a><br>Website: <a href="/nl/contact">Contactformulier</a>',
+    'terms.contactInfo.content': 'Als u vragen heeft over deze Servicevoorwaarden, gelieve contact met ons op:<br><br>E-mail: <a href="mailto:legal@digitalpromocodes.com">legal@digitalpromocodes.com</a><br>Website: <a href="/nl/contact">Contactformulier</a>',
     
     // Contact
     'contact.title': 'Neem Contact Op',
@@ -495,7 +495,7 @@ export const translations = {
     'nav.admin': 'Admin',
     
     // Homepage
-    'home.title': 'OfferHub - Promotions Premium de Produits Numériques',
+    'home.title': 'DigitalPromoCodes - Promotions Premium de Produits Numériques',
     'home.subtitle': 'Découvrez des codes promo exclusifs et des offres pour les meilleurs produits numériques',
     'home.cta': 'Voir les Offres',
     'home.filterCodes': 'Filtrer Codes',
@@ -579,7 +579,7 @@ export const translations = {
     // Privacy Policy Content
     'privacy.title': 'Politique de Confidentialité',
     'privacy.introduction.title': 'Introduction',
-    'privacy.introduction.content': 'OfferHub ("nous," "notre," ou "nous") s\'engage à protéger votre vie privée. Cette Politique de Confidentialité explique comment nous collectons, utilisons, divulguons et protégeons vos informations lorsque vous visitez notre site web example.com et utilisez nos services.',
+    'privacy.introduction.content': 'DigitalPromoCodes ("nous," "notre," ou "nous") s\'engage à protéger votre vie privée. Cette Politique de Confidentialité explique comment nous collectons, utilisons, divulguons et protégeons vos informations lorsque vous visitez notre site web example.com et utilisez nos services.',
     'privacy.infoCollect.title': 'Informations que Nous Collectons',
     'privacy.infoProvide.title': 'Informations que Vous Nous Fournissez',
     'privacy.infoProvide.content': 'Informations de contact lorsque vous nous contactez\nCommentaires et suggestions que vous soumettez\nInformations d\'abonnement à la newsletter',
@@ -596,20 +596,20 @@ export const translations = {
     'privacy.rights.title': 'Vos Droits',
     'privacy.rights.content': 'Vous avez le droit de:\n\nAccéder à vos informations personnelles\nCorriger les informations inexactes\nDemander la suppression de vos informations\nRefuser de participer aux communications marketing\nVous opposer au traitement de vos informations',
     'privacy.contact.title': 'Nous Contacter',
-    'privacy.contact.content': 'Si vous avez des questions sur cette Politique de Confidentialité ou nos pratiques de données, veuillez nous contacter:<br><br>E-mail: <a href="mailto:contact@example.com">contact@example.com</a><br>Site web: <a href="/fr/contact">Formulaire de Contact</a>',
+    'privacy.contact.content': 'Si vous avez des questions sur cette Politique de Confidentialité ou nos pratiques de données, veuillez nous contacter:<br><br>E-mail: <a href="mailto:contact@digitalpromocodes.com">contact@digitalpromocodes.com</a><br>Site web: <a href="/fr/contact">Formulaire de Contact</a>',
     
     // Terms of Service Content
     'terms.title': 'Conditions de Service',
     'terms.agreement.title': 'Accord aux Conditions',
-    'terms.agreement.content': 'En accédant et en utilisant OfferHub ("nous," "notre," ou "nous"), vous acceptez et convenez d\'être lié par les termes et dispositions de cet accord. Si vous n\'êtes pas d\'accord avec ce qui précède, veuillez ne pas utiliser ce service.',
+    'terms.agreement.content': 'En accédant et en utilisant DigitalPromoCodes ("nous," "notre," ou "nous"), vous acceptez et convenez d\'être lié par les termes et dispositions de cet accord. Si vous n\'êtes pas d\'accord avec ce qui précède, veuillez ne pas utiliser ce service.',
     'terms.license.title': 'Licence d\'Utilisation',
-    'terms.license.content': 'La permission est accordée de télécharger temporairement une copie des matériaux sur OfferHub pour un visionnage personnel, non commercial et transitoire uniquement. Ceci est l\'octroi d\'une licence, non un transfert de titre, et sous cette licence vous ne pouvez pas:\n\nModifier ou copier les matériaux\nUtiliser les matériaux pour tout usage commercial ou public\nTenter d\'effectuer de l\'ingénierie inverse de tout logiciel contenu sur le site web\nSupprimer toute notation de propriété intellectuelle ou autre',
+    'terms.license.content': 'La permission est accordée de télécharger temporairement une copie des matériaux sur DigitalPromoCodes pour un visionnage personnel, non commercial et transitoire uniquement. Ceci est l\'octroi d\'une licence, non un transfert de titre, et sous cette licence vous ne pouvez pas:\n\nModifier ou copier les matériaux\nUtiliser les matériaux pour tout usage commercial ou public\nTenter d\'effectuer de l\'ingénierie inverse de tout logiciel contenu sur le site web\nSupprimer toute notation de propriété intellectuelle ou autre',
     'terms.disclaimer.title': 'Avis de non-responsabilité',
-    'terms.disclaimer.content': 'Précision des Informations: Les matériaux sur OfferHub sont fournis "en l\'état". Nous ne donnons aucune garantie, expresse ou implicite.\nServices Tiers: Nous ne sommes pas responsables du contenu, des politiques ou des pratiques des sites web whop tiers vers lesquels nous créons des liens.\nDisponibilité des Promotions: Les promotions et remises whop sont sujettes à changement sans préavis. Nous ne garantissons pas la disponibilité ou les termes de toute offre promotionnelle.',
+    'terms.disclaimer.content': 'Précision des Informations: Les matériaux sur DigitalPromoCodes sont fournis "en l\'état". Nous ne donnons aucune garantie, expresse ou implicite.\nServices Tiers: Nous ne sommes pas responsables du contenu, des politiques ou des pratiques des sites web whop tiers vers lesquels nous créons des liens.\nDisponibilité des Promotions: Les promotions et remises whop sont sujettes à changement sans préavis. Nous ne garantissons pas la disponibilité ou les termes de toute offre promotionnelle.',
     'terms.responsible.title': 'Utilisation Responsable',
-    'terms.responsible.content': 'OfferHub promeut l\'utilisation responsable de produits et services numériques. Nous encourageons les utilisateurs à:\n\nN\'acheter que des produits et services qu\'ils peuvent se permettre\nRechercher les produits de manière approfondie avant d\'acheter\nLire attentivement les termes et conditions des produits whop\nContacter directement les fournisseurs whop pour product support\n\nSi vous avez des préoccupations concernant un produit ou service whop, veuillez contacter directement le fournisseur ou nous contacter via notre formulaire de contact.',
+    'terms.responsible.content': 'DigitalPromoCodes promeut l\'utilisation responsable de produits et services numériques. Nous encourageons les utilisateurs à:\n\nN\'acheter que des produits et services qu\'ils peuvent se permettre\nRechercher les produits de manière approfondie avant d\'acheter\nLire attentivement les termes et conditions des produits whop\nContacter directement les fournisseurs whop pour product support\n\nSi vous avez des préoccupations concernant un produit ou service whop, veuillez contacter directement le fournisseur ou nous contacter via notre formulaire de contact.',
     'terms.contactInfo.title': 'Informations de Contact',
-    'terms.contactInfo.content': 'Si vous avez des questions sur ces Conditions de Service, veuillez nous contacter:<br><br>E-mail: <a href="mailto:legal@example.com">legal@example.com</a><br>Site web: <a href="/fr/contact">Formulaire de Contact</a>',
+    'terms.contactInfo.content': 'Si vous avez des questions sur ces Conditions de Service, veuillez nous contacter:<br><br>E-mail: <a href="mailto:legal@digitalpromocodes.com">legal@digitalpromocodes.com</a><br>Site web: <a href="/fr/contact">Formulaire de Contact</a>',
     
     // Contact
     'contact.title': 'Nous Contacter',
@@ -652,7 +652,7 @@ export const translations = {
     'nav.admin': 'Admin',
     
     // Homepage
-    'home.title': 'OfferHub - Deals, Gutscheine & Rabatte',
+    'home.title': 'DigitalPromoCodes - Deals, Gutscheine & Rabatte',
     'home.subtitle': 'Entdecken Sie exklusive Promocodes und Angebote für die besten digitalen Produkte',
     'home.cta': 'Angebote Durchsuchen',
     'home.filterCodes': 'Filter Codes',
@@ -736,7 +736,7 @@ export const translations = {
     // Privacy Policy Content
     'privacy.title': 'Datenschutzrichtlinie',
     'privacy.introduction.title': 'Einleitung',
-    'privacy.introduction.content': 'OfferHub ("wir," "unser," oder "uns") ist darum bemüht, Ihre Privatsphäre zu schützen. Diese Datenschutzrichtlinie erklärt, wie wir Ihre Informationen sammeln, verwenden, offenbaren und schützen, wenn Sie unsere Website example.com besuchen und unsere Dienste nutzen.',
+    'privacy.introduction.content': 'DigitalPromoCodes ("wir," "unser," oder "uns") ist darum bemüht, Ihre Privatsphäre zu schützen. Diese Datenschutzrichtlinie erklärt, wie wir Ihre Informationen sammeln, verwenden, offenbaren und schützen, wenn Sie unsere Website example.com besuchen und unsere Dienste nutzen.',
     'privacy.infoCollect.title': 'Informationen, die wir sammeln',
     'privacy.infoProvide.title': 'Informationen, die Sie uns geben',
     'privacy.infoProvide.content': 'Kontaktdaten, wenn Sie sich bei uns melden\nKommentare und Vorschläge, die Sie einreichen\nInformationen zur Newsletter-Abonnement',
@@ -753,20 +753,20 @@ export const translations = {
     'privacy.rights.title': 'Ihre Rechte',
     'privacy.rights.content': 'Sie haben das Recht:\n\nZugriff auf Ihre persönlichen Informationen zu haben\nUnrichtige Informationen zu korrigieren\nEin Verlangen zu erheben, Ihre Informationen zu löschen\nAusstieg aus Marketingkommunikationen\nWiderspruch gegen das Verarbeiten Ihrer Informationen',
     'privacy.contact.title': 'Kontaktieren Sie Uns',
-    'privacy.contact.content': 'Wenn Sie Fragen oder Bedenken zu dieser Datenschutzrichtlinie oder unseren Datenpraktiken haben, wenden Sie sich bitte an uns:<br><br>E-Mail: <a href="mailto:contact@example.com">contact@example.com</a><br>Website: <a href="/de/contact">Kontaktformular</a>',
+    'privacy.contact.content': 'Wenn Sie Fragen oder Bedenken zu dieser Datenschutzrichtlinie oder unseren Datenpraktiken haben, wenden Sie sich bitte an uns:<br><br>E-Mail: <a href="mailto:contact@digitalpromocodes.com">contact@digitalpromocodes.com</a><br>Website: <a href="/de/contact">Kontaktformular</a>',
     
     // Terms of Service Content
     'terms.title': 'Nutzungsbedingungen',
     'terms.agreement.title': 'Zustimmung zu den Nutzungsbedingungen',
-    'terms.agreement.content': 'Durch den Zugriff und die Nutzung von OfferHub ("wir," "unser," oder "uns") erklären Sie sich damit einverstanden, an die Bedingungen und Bestimmungen dieses Vertrags gebunden zu sein. Wenn Sie dies nicht tun, bitte verwenden Sie diesen Dienst nicht.',
+    'terms.agreement.content': 'Durch den Zugriff und die Nutzung von DigitalPromoCodes ("wir," "unser," oder "uns") erklären Sie sich damit einverstanden, an die Bedingungen und Bestimmungen dieses Vertrags gebunden zu sein. Wenn Sie dies nicht tun, bitte verwenden Sie diesen Dienst nicht.',
     'terms.license.title': 'Licenza di Uso',
-    'terms.license.content': 'Es wird eine Erlaubnis erteilt, temporär eine Kopie der Materialien auf OfferHub herunterzuladen, nur für persönliche, nichtkommerzielle vorübergehende Ansicht. Dies ist das Erteilen einer Lizenz, keine Übertragung des Titels, und unter dieser Lizenz dürfen Sie dies nicht:\n\nModificar o copiar los materiales\nUsar los materiales para cualquier propósito comercial o para cualquier exhibición pública\nIntentar invertir ingeniería de software contenido en el sitio web\nEliminar cualquier notación de propiedad intelectual o cualquier otra',
+    'terms.license.content': 'Es wird eine Erlaubnis erteilt, temporär eine Kopie der Materialien auf DigitalPromoCodes herunterzuladen, nur für persönliche, nichtkommerzielle vorübergehende Ansicht. Dies ist das Erteilen einer Lizenz, keine Übertragung des Titels, und unter dieser Lizenz dürfen Sie dies nicht:\n\nModificar o copiar los materiales\nUsar los materiales para cualquier propósito comercial o para cualquier exhibición pública\nIntentar invertir ingeniería de software contenido en el sitio web\nEliminar cualquier notación de propiedad intelectual o cualquier otra',
     'terms.disclaimer.title': 'Haftungsausschluss',
-    'terms.disclaimer.content': 'Informationsgenauigkeit: Die Materialien auf OfferHub werden "wie besehen" bereitgestellt. Wir gewähren keine ausdrücklichen oder stillschweigenden Garantien.\nDrittanbieterdienste: Wir sind nicht verantwortlich für den Inhalt, die Richtlinien oder Praktiken von Drittanbieter-Websites, zu denen wir verlinken.\nVerfügbarkeit von Promotionen: Promotionen und Rabatte können sich ohne Vorankündigung ändern. Wir garantieren nicht die Verfügbarkeit oder Bedingungen von Werbeangeboten.',
+    'terms.disclaimer.content': 'Informationsgenauigkeit: Die Materialien auf DigitalPromoCodes werden "wie besehen" bereitgestellt. Wir gewähren keine ausdrücklichen oder stillschweigenden Garantien.\nDrittanbieterdienste: Wir sind nicht verantwortlich für den Inhalt, die Richtlinien oder Praktiken von Drittanbieter-Websites, zu denen wir verlinken.\nVerfügbarkeit von Promotionen: Promotionen und Rabatte können sich ohne Vorankündigung ändern. Wir garantieren nicht die Verfügbarkeit oder Bedingungen von Werbeangeboten.',
     'terms.responsible.title': 'Verantwortungsvolle Nutzung',
-    'terms.responsible.content': 'OfferHub fördert den verantwortungsvollen Gebrauch digitaler Produkte und Dienste. Wir ermutigen die Benutzer dazu:\n\nNur Produkte und Dienste zu kaufen, die sie sich leisten können\nProdukte gründlich zu recherchieren, bevor sie gekauft werden\nBedingungen und Bestimmungen von whop-Produkten sorgfältig zu lesen\nDirekt mit whop-Anbietern zu kontaktieren, um Produktunterstützung zu erhalten\n\nWenn Sie Bedenken über ein whop-Produkt oder -Dienst haben, wenden Sie sich bitte direkt an den Anbieter oder kontaktieren Sie uns über unser Kontaktformular.',
+    'terms.responsible.content': 'DigitalPromoCodes fördert den verantwortungsvollen Gebrauch digitaler Produkte und Dienste. Wir ermutigen die Benutzer dazu:\n\nNur Produkte und Dienste zu kaufen, die sie sich leisten können\nProdukte gründlich zu recherchieren, bevor sie gekauft werden\nBedingungen und Bestimmungen von whop-Produkten sorgfältig zu lesen\nDirekt mit whop-Anbietern zu kontaktieren, um Produktunterstützung zu erhalten\n\nWenn Sie Bedenken über ein whop-Produkt oder -Dienst haben, wenden Sie sich bitte direkt an den Anbieter oder kontaktieren Sie uns über unser Kontaktformular.',
     'terms.contactInfo.title': 'Kontaktinformationen',
-    'terms.contactInfo.content': 'Wenn Sie Fragen oder Bedenken zu diesen Nutzungsbedingungen haben, wenden Sie sich bitte an uns:<br><br>E-Mail: <a href="mailto:legal@example.com">legal@example.com</a><br>Website: <a href="/de/contact">Kontaktformular</a>',
+    'terms.contactInfo.content': 'Wenn Sie Fragen oder Bedenken zu diesen Nutzungsbedingungen haben, wenden Sie sich bitte an uns:<br><br>E-Mail: <a href="mailto:legal@digitalpromocodes.com">legal@digitalpromocodes.com</a><br>Website: <a href="/de/contact">Kontaktformular</a>',
     
     // Contact
     'contact.title': 'Kontaktieren Sie Uns',
@@ -809,7 +809,7 @@ export const translations = {
     'nav.admin': 'Admin',
     
     // Homepage
-    'home.title': 'OfferHub - Codici Promo, Coupon e Sconti',
+    'home.title': 'DigitalPromoCodes - Codici Promo, Coupon e Sconti',
     'home.subtitle': 'Scopri codici promo esclusivi e offerte per i migliori prodotti digitali',
     'home.cta': 'Sfoglia Offerte',
     'home.filterCodes': 'Filtra Corsi',
@@ -893,7 +893,7 @@ export const translations = {
     // Privacy Policy Content
     'privacy.title': 'Politica sulla Privacy',
     'privacy.introduction.title': 'Introduzione',
-    'privacy.introduction.content': 'OfferHub ("noi," "nostro," o "nostro") si impegna a proteggere la tua privacy. Questa Politica sulla Privacy spiega come raccogliamo, usiamo, divulghiamo e proteggiamo le tue informazioni quando visiti il nostro sito web example.com e usi i nostri servizi.',
+    'privacy.introduction.content': 'DigitalPromoCodes ("noi," "nostro," o "nostro") si impegna a proteggere la tua privacy. Questa Politica sulla Privacy spiega come raccogliamo, usiamo, divulghiamo e proteggiamo le tue informazioni quando visiti il nostro sito web example.com e usi i nostri servizi.',
     'privacy.infoCollect.title': 'Informazioni che Raccogliamo',
     'privacy.infoProvide.title': 'Informazioni che Vi Forniamo',
     'privacy.infoProvide.content': 'Informazioni di contatto quando ci contatti\nCommenti e suggerimenti che inviate\nInformazioni di iscrizione alla newsletter',
@@ -910,20 +910,20 @@ export const translations = {
     'privacy.rights.title': 'I Tuoi Diritti',
     'privacy.rights.content': 'Hai il diritto di:\n\nAccedere alle tue informazioni personali\nCorreggere informazioni errate\nRichiedere la cancellazione delle tue informazioni\nRifiutare di partecipare a comunicazioni di marketing\nObjettare al trattamento delle tue informazioni',
     'privacy.contact.title': 'Contattaci',
-    'privacy.contact.content': 'Se hai domande o preoccupazioni sulla nostra Politica sulla Privacy o sulle nostre pratiche di gestione dei dati, per favore contattaci:<br><br>E-mail: <a href="mailto:contact@example.com">contact@example.com</a><br>Sito web: <a href="/it/contact">Modulo di contatto</a>',
+    'privacy.contact.content': 'Se hai domande o preoccupazioni sulla nostra Politica sulla Privacy o sulle nostre pratiche di gestione dei dati, per favore contattaci:<br><br>E-mail: <a href="mailto:contact@digitalpromocodes.com">contact@digitalpromocodes.com</a><br>Sito web: <a href="/it/contact">Modulo di contatto</a>',
     
     // Terms of Service Content
     'terms.title': 'Termini di Servizio',
     'terms.agreement.title': 'Accordo sui Termini di Servizio',
-    'terms.agreement.content': 'Accedendo e utilizzando OfferHub ("noi," "nostro," o "nostro"), accetti e accetti di essere vincolato ai termini e disposizioni di questo accordo. Se non accetti quanto sopra, per favore non utilizzare questo servizio.',
+    'terms.agreement.content': 'Accedendo e utilizzando DigitalPromoCodes ("noi," "nostro," o "nostro"), accetti e accetti di essere vincolato ai termini e disposizioni di questo accordo. Se non accetti quanto sopra, per favore non utilizzare questo servizio.',
     'terms.license.title': 'Licenza di Utilizzo',
-    'terms.license.content': 'È concessa la licenza per scaricare temporaneamente una copia dei materiali su OfferHub solo per la visione personale, non commerciale, transitoria. Questo è il conferimento di una licenza, non una trasferimento di titolo, e sotto questa licenza non è consentito:\n\nModificare o copiare i materiali\nUtilizzare i materiali per qualsiasi scopo commerciale o pubblico\nProvare a invertire l\'ingegneria inversa del software contenuto nel sito web\nRimuovere qualsiasi nota di proprietà intellettuale o altra',
+    'terms.license.content': 'È concessa la licenza per scaricare temporaneamente una copia dei materiali su DigitalPromoCodes solo per la visione personale, non commerciale, transitoria. Questo è il conferimento di una licenza, non una trasferimento di titolo, e sotto questa licenza non è consentito:\n\nModificare o copiare i materiali\nUtilizzare i materiali per qualsiasi scopo commerciale o pubblico\nProvare a invertire l\'ingegneria inversa del software contenuto nel sito web\nRimuovere qualsiasi nota di proprietà intellettuale o altra',
     'terms.disclaimer.title': 'Rinuncia',
-    'terms.disclaimer.content': 'Precisione delle Informazioni: I materiali su OfferHub sono forniti "così come sono". Non garantiamo esplicitamente o implicitamente alcuna garanzia.\nServizi di Terze Parti: Non siamo responsabili per il contenuto, le politiche o le pratiche di siti web whop a cui ci siamo collegati.\nDisponibilità delle Promozioni: Le promozioni e gli sconti whop sono soggetti a modifiche senza preavviso. Non garantiamo la disponibilità o i termini di qualsiasi offerta promozionale.',
+    'terms.disclaimer.content': 'Precisione delle Informazioni: I materiali su DigitalPromoCodes sono forniti "così come sono". Non garantiamo esplicitamente o implicitamente alcuna garanzia.\nServizi di Terze Parti: Non siamo responsabili per il contenuto, le politiche o le pratiche di siti web whop a cui ci siamo collegati.\nDisponibilità delle Promozioni: Le promozioni e gli sconti whop sono soggetti a modifiche senza preavviso. Non garantiamo la disponibilità o i termini di qualsiasi offerta promozionale.',
     'terms.responsible.title': 'Utilizzo Responsabile',
-    'terms.responsible.content': 'OfferHub promuove l\'utilizzo responsabile di prodotti e servizi digitali. Incoraggiamo gli utenti a:\n\nAcquistare solo prodotti e servizi che possono permettersi\nIndagare sui prodotti attentamente prima di acquistare\nLeggere attentamente i termini e le condizioni dei prodotti whop\nEntrare in contatto direttamente con i fornitori whop per il supporto del prodotto\n\nSe hai preoccupazioni su un prodotto o servizio whop, per favore entra in contatto direttamente con il fornitore o comunica con noi attraverso il nostro modulo di contatto.',
+    'terms.responsible.content': 'DigitalPromoCodes promuove l\'utilizzo responsabile di prodotti e servizi digitali. Incoraggiamo gli utenti a:\n\nAcquistare solo prodotti e servizi che possono permettersi\nIndagare sui prodotti attentamente prima di acquistare\nLeggere attentamente i termini e le condizioni dei prodotti whop\nEntrare in contatto direttamente con i fornitori whop per il supporto del prodotto\n\nSe hai preoccupazioni su un prodotto o servizio whop, per favore entra in contatto direttamente con il fornitore o comunica con noi attraverso il nostro modulo di contatto.',
     'terms.contactInfo.title': 'Informazioni di Contatto',
-    'terms.contactInfo.content': 'Se hai domande o preoccupazioni su questi Termini di Servizio, per favore contattaci:<br><br>E-mail: <a href="mailto:legal@example.com">legal@example.com</a><br>Sito web: <a href="/it/contact">Modulo di contatto</a>',
+    'terms.contactInfo.content': 'Se hai domande o preoccupazioni su questi Termini di Servizio, per favore contattaci:<br><br>E-mail: <a href="mailto:legal@digitalpromocodes.com">legal@digitalpromocodes.com</a><br>Sito web: <a href="/it/contact">Modulo di contatto</a>',
     
     // Contact
     'contact.title': 'Contattaci',
@@ -966,7 +966,7 @@ export const translations = {
     'nav.admin': 'Admin',
     
     // Homepage
-    'home.title': 'OfferHub - Promoções Premium de Produtos Digitais',
+    'home.title': 'DigitalPromoCodes - Promoções Premium de Produtos Digitais',
     'home.subtitle': 'Descubra códigos promocionais exclusivos e ofertas para os melhores produtos digitais',
     'home.cta': 'Navegar Ofertas',
     'home.filterCodes': 'Filtrar Códigos',
@@ -1050,7 +1050,7 @@ export const translations = {
     // Privacy Policy Content
     'privacy.title': 'Política de Privacidade',
     'privacy.introduction.title': 'Introdução',
-    'privacy.introduction.content': 'OfferHub ("nós," "nosso," ou "nosso") se compromete em proteger sua privacidade. Esta Política de Privacidade explica como coletamos, usamos, divulgamos e protegemos suas informações quando você visita nosso site example.com e usa nossos serviços.',
+    'privacy.introduction.content': 'DigitalPromoCodes ("nós," "nosso," ou "nosso") se compromete em proteger sua privacidade. Esta Política de Privacidade explica como coletamos, usamos, divulgamos e protegemos suas informações quando você visita nosso site example.com e usa nossos serviços.',
     'privacy.infoCollect.title': 'Informações que Coletamos',
     'privacy.infoProvide.title': 'Informações que Você Nos Fornece',
     'privacy.infoProvide.content': 'Informações de contato ao entrar em contato conosco\nComentários e sugestões que você envia\nInformações de assinatura de newsletter',
@@ -1067,20 +1067,20 @@ export const translations = {
     'privacy.rights.title': 'I Tuoi Diritti',
     'privacy.rights.content': 'Hai il diritto di:\n\nAccedere alle tue informazioni personali\nCorreggere informazioni errate\nRichiedere la cancellazione delle tue informazioni\nRifiutare di partecipare a comunicazioni di marketing\nObiettare al trattamento delle tue informazioni',
     'privacy.contact.title': 'Contattaci',
-    'privacy.contact.content': 'Se hai domande o preoccupazioni sulla nostra Politica sulla Privacy o sulle nostre pratiche di gestione dei dati, per favore contattaci:<br><br>E-mail: <a href="mailto:contact@example.com">contact@example.com</a><br>Sito web: <a href="/pt/contact">Modulo di contatto</a>',
+    'privacy.contact.content': 'Se hai domande o preoccupazioni sulla nostra Politica sulla Privacy o sulle nostre pratiche di gestione dei dati, per favore contattaci:<br><br>E-mail: <a href="mailto:contact@digitalpromocodes.com">contact@digitalpromocodes.com</a><br>Sito web: <a href="/pt/contact">Modulo di contatto</a>',
     
     // Terms of Service Content
     'terms.title': 'Termini di Servizio',
     'terms.agreement.title': 'Accordo sui Termini di Servizio',
-    'terms.agreement.content': 'Accedendo e utilizzando OfferHub ("noi," "nostro," o "nostro"), accetti e accetti di essere vincolato ai termini e disposizioni di questo accordo. Se non accetti quanto sopra, per favore non utilizzare questo servizio.',
+    'terms.agreement.content': 'Accedendo e utilizzando DigitalPromoCodes ("noi," "nostro," o "nostro"), accetti e accetti di essere vincolato ai termini e disposizioni di questo accordo. Se non accetti quanto sopra, per favore non utilizzare questo servizio.',
     'terms.license.title': 'Licenza di Utilizzo',
-    'terms.license.content': 'È concessa la licenza per scaricare temporaneamente una copia dei materiali su OfferHub solo per la visione personale, non commerciale, transitoria. Questo è il conferimento di una licenza, ke una trasferimento di titolo, e sotto questa licenza non è consentito:\n\nModificare o copiare i materiali\nUtilizzare i materiali per qualsiasi scopo commerciale o pubblico\nProvare a invertire l\'ingegneria inversa del software contenuto nel sito web\nRimuovere qualsiasi nota di proprietà intellettuale o altra',
+    'terms.license.content': 'È concessa la licenza per scaricare temporaneamente una copia dei materiali su DigitalPromoCodes solo per la visione personale, non commerciale, transitoria. Questo è il conferimento di una licenza, ke una trasferimento di titolo, e sotto questa licenza non è consentito:\n\nModificare o copiare i materiali\nUtilizzare i materiali per qualsiasi scopo commerciale o pubblico\nProvare a invertire l\'ingegneria inversa del software contenuto nel sito web\nRimuovere qualsiasi nota di proprietà intellettuale o altra',
     'terms.disclaimer.title': 'Rinuncia',
-    'terms.disclaimer.content': 'Precisione delle Informazioni: I materiali su OfferHub sono forniti "così come sono". Non garantiamo esplicitamente o implicitamente alcuna garanzia.\nServizi di Terze Parti: Non siamo responsabili per il contenuto, le politiche o le pratiche di siti web whop a cui ci siamo collegati.\nDisponibilità delle Promozioni: Le promozioni e gli sconti whop sono basati su modifiche senza preavviso. Non garantiamo la disponibilità o i termini di qualsiasi offerta promozionale.',
+    'terms.disclaimer.content': 'Precisione delle Informazioni: I materiali su DigitalPromoCodes sono forniti "così come sono". Non garantiamo esplicitamente o implicitamente alcuna garanzia.\nServizi di Terze Parti: Non siamo responsabili per il contenuto, le politiche o le pratiche di siti web whop a cui ci siamo collegati.\nDisponibilità delle Promozioni: Le promozioni e gli sconti whop sono basati su modifiche senza preavviso. Non garantiamo la disponibilità o i termini di qualsiasi offerta promozionale.',
     'terms.responsible.title': 'Utilizzo Responsabile',
-    'terms.responsible.content': 'OfferHub promuove l\'utilizzo responsabile di prodotti e servizi digitali. Animiamo gli utenti a:\n\nAcquistare solo prodotti e servizi che possono permettersi\nIndagare sui prodotti attentamente prima di acquistare\nLeggere attentamente i termini e le condizioni dei prodotti whop\nEntrare in contatto direttamente con i fornitori whop per il supporto del prodotto\n\nSe hai preoccupazioni su un prodotto o servizio whop, per favore entra in contatto direttamente con il fornitore o comunica con noi attraverso il nostro modulo di contatto.',
+    'terms.responsible.content': 'DigitalPromoCodes promuove l\'utilizzo responsabile di prodotti e servizi digitali. Animiamo gli utenti a:\n\nAcquistare solo prodotti e servizi che possono permettersi\nIndagare sui prodotti attentamente prima di acquistare\nLeggere attentamente i termini e le condizioni dei prodotti whop\nEntrare in contatto direttamente con i fornitori whop per il supporto del prodotto\n\nSe hai preoccupazioni su un prodotto o servizio whop, per favore entra in contatto direttamente con il fornitore o comunica con noi attraverso il nostro modulo di contatto.',
     'terms.contactInfo.title': 'Informazioni di Contatto',
-    'terms.contactInfo.content': 'Se hai domande o preoccupazioni su questi Termini di Servizio, per favore contattaci:<br><br>E-mail: <a href="mailto:legal@example.com">legal@example.com</a><br>Sito web: <a href="/pt/contact">Modulo di contatto</a>',
+    'terms.contactInfo.content': 'Se hai domande o preoccupazioni su questi Termini di Servizio, per favore contattaci:<br><br>E-mail: <a href="mailto:legal@digitalpromocodes.com">legal@digitalpromocodes.com</a><br>Sito web: <a href="/pt/contact">Modulo di contatto</a>',
     
     // Contact
     'contact.title': 'Entre em Contato',
@@ -1123,7 +1123,7 @@ export const translations = {
     'nav.admin': '管理员',
     
     // Homepage
-    'home.title': 'OfferHub - 高级数字产品促销',
+    'home.title': 'DigitalPromoCodes - 高级数字产品促销',
     'home.subtitle': '发现最佳数字产品的独家促销代码和优惠',
     'home.cta': '浏览优惠',
     'home.filterCodes': '筛选代码',
@@ -1207,7 +1207,7 @@ export const translations = {
     // Privacy Policy Content
     'privacy.title': '隐私政策',
     'privacy.introduction.title': '介绍',
-    'privacy.introduction.content': 'OfferHub ("我们," "我们的," 或 "我们的") 致力于保护您的隐私。本隐私政策解释了我们如何收集、使用、披露和保护您的信息，当您访问我们的网站 example.com 并使用我们的服务时。',
+    'privacy.introduction.content': 'DigitalPromoCodes ("我们," "我们的," 或 "我们的") 致力于保护您的隐私。本隐私政策解释了我们如何收集、使用、披露和保护您的信息，当您访问我们的网站 example.com 并使用我们的服务时。',
     'privacy.infoCollect.title': '我们收集的信息',
     'privacy.infoProvide.title': '您提供的信息',
     'privacy.infoProvide.content': '联系我们时提供的联系信息\n您提交的评论和建议\n新闻通讯订阅信息',
@@ -1224,20 +1224,20 @@ export const translations = {
     'privacy.rights.title': '您的权利',
     'privacy.rights.content': '您有权：\n\n访问您的个人信息\n纠正不准确的信息\n请求删除您的信息\n退出营销通信\n反对处理您的信息',
     'privacy.contact.title': '联系我们',
-    'privacy.contact.content': '如果您对我们的隐私政策或数据实践有任何问题或关注，请随时与我们联系:<br><br>电子邮件: <a href="mailto:contact@example.com">contact@example.com</a><br>网站: <a href="/zh/contact">联系表单</a>',
+    'privacy.contact.content': '如果您对我们的隐私政策或数据实践有任何问题或关注，请随时与我们联系:<br><br>电子邮件: <a href="mailto:contact@digitalpromocodes.com">contact@digitalpromocodes.com</a><br>网站: <a href="/zh/contact">联系表单</a>',
     
     // Terms of Service Content
     'terms.title': '服务条款',
     'terms.agreement.title': '服务条款协议',
-    'terms.agreement.content': '通过访问和使用 OfferHub ("我们," "我们的," 或 "我们的"), 您同意并同意受本协议的条款和条件的约束。如果您不同意上述内容，请不要使用此服务。',
+    'terms.agreement.content': '通过访问和使用 DigitalPromoCodes ("我们," "我们的," 或 "我们的"), 您同意并同意受本协议的条款和条件的约束。如果您不同意上述内容，请不要使用此服务。',
     'terms.license.title': '使用许可',
-    'terms.license.content': '已授予临时下载 OfferHub 上的材料副本的许可，仅供个人、非商业性临时查看。这是许可，不是转让标题，并且在此许可下，您不得：\n\n修改或复制材料\n将材料用于任何商业目的或公共显示\n尝试反向工程网站上包含的任何软件\n从材料中删除任何知识产权或其他',
+    'terms.license.content': '已授予临时下载 DigitalPromoCodes 上的材料副本的许可，仅供个人、非商业性临时查看。这是许可，不是转让标题，并且在此许可下，您不得：\n\n修改或复制材料\n将材料用于任何商业目的或公共显示\n尝试反向工程网站上包含的任何软件\n从材料中删除任何知识产权或其他',
     'terms.disclaimer.title': '免责声明',
     'terms.disclaimer.content': '信息准确性: 材料在 "按原样" 基础上提供。我们不提供任何明示或暗示的保证。\n第三方服务: 我们不对链接的第三方 whop 网站的内容、政策或实践负责。\n促销可用性: 促销和 whop 折扣可能会无通知更改。我们不保证任何促销优惠的可用性或条款。',
     'terms.responsible.title': '负责任使用',
-    'terms.responsible.content': 'OfferHub 促进数字产品和服务的负责任使用。我们鼓励用户：\n\n仅购买他们可以负担的产品和服务\n在购买前彻底研究产品\n仔细阅读 whop 产品的条款和条件\n直接联系 whop 提供商以获取产品支持\n\n如果您对任何 whop 产品或服务有任何关注或关注，请直接联系提供商或通过我们的联系表单与我们联系。',
+    'terms.responsible.content': 'DigitalPromoCodes 促进数字产品和服务的负责任使用。我们鼓励用户：\n\n仅购买他们可以负担的产品和服务\n在购买前彻底研究产品\n仔细阅读 whop 产品的条款和条件\n直接联系 whop 提供商以获取产品支持\n\n如果您对任何 whop 产品或服务有任何关注或关注，请直接联系提供商或通过我们的联系表单与我们联系。',
     'terms.contactInfo.title': '联系信息',
-    'terms.contactInfo.content': '如果您对这些服务条款有任何问题，请与我们联系:<br><br>电子邮件: <a href="mailto:legal@example.com">legal@example.com</a><br>网站: <a href="/zh/contact">联系表单</a>',
+    'terms.contactInfo.content': '如果您对这些服务条款有任何问题，请与我们联系:<br><br>电子邮件: <a href="mailto:legal@digitalpromocodes.com">legal@digitalpromocodes.com</a><br>网站: <a href="/zh/contact">联系表单</a>',
     
     // Contact
     'contact.title': '联系我们',

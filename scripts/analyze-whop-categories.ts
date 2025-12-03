@@ -35,7 +35,7 @@ async function analyzeWhopCategories() {
     console.log('🔍 Analyzing existing whops to understand categorization needs...\n');
     
     // Get all whops with their names and descriptions
-    const whops = await prisma.whop.findMany({
+    const whops = await prisma.deal.findMany({
       select: {
         id: true,
         name: true,

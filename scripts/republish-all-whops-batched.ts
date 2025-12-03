@@ -13,9 +13,9 @@ async function republishAllWhopsBatched() {
     
     // Get current counts
     const [publishedCount, unpublishedCount, totalCount] = await Promise.all([
-      prisma.whop.count({ where: { publishedAt: { not: null } } }),
-      prisma.whop.count({ where: { publishedAt: null } }),
-      prisma.whop.count()
+      prisma.deal.count({ where: { publishedAt: { not: null } } }),
+      prisma.deal.count({ where: { publishedAt: null } }),
+      prisma.deal.count()
     ]);
     
     console.log(`📊 Current Status:`);
@@ -38,7 +38,7 @@ async function republishAllWhopsBatched() {
       console.log(`\n📦 Processing batch ${batchNum}/${totalBatches}...`);
       
       // Get unpublished whops for this batch
-      const whopsToPublish = await prisma.whop.findMany({
+      const whopsToPublish = await prisma.deal.findMany({
         where: { publishedAt: null },
         take: BATCH_SIZE,
         select: { id: true, name: true },
@@ -54,7 +54,7 @@ async function republishAllWhopsBatched() {
       console.log(`   Examples: ${whopsToPublish.slice(0, 3).map(w => w.name).join(', ')}...`);
       
       // Publish this batch
-      const result = await prisma.whop.updateMany({
+      const result = await prisma.deal.updateMany({
         where: {
           id: { in: whopsToPublish.map(w => w.id) }
         },
@@ -73,8 +73,8 @@ async function republishAllWhopsBatched() {
     
     // Get final counts
     const [finalPublishedCount, finalUnpublishedCount] = await Promise.all([
-      prisma.whop.count({ where: { publishedAt: { not: null } } }),
-      prisma.whop.count({ where: { publishedAt: null } })
+      prisma.deal.count({ where: { publishedAt: { not: null } } }),
+      prisma.deal.count({ where: { publishedAt: null } })
     ]);
     
     console.log(`\n🎉 Batch publishing complete!`);

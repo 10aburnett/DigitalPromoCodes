@@ -19,15 +19,15 @@ export async function GET() {
     });
     
     // Check both possible Ayecon slugs
-    const ayeconWhop1 = await prisma.whop.findFirst({
+    const ayeconWhop1 = await prisma.deal.findFirst({
       where: { slug: 'ayecon-academy-1-1-mentorship' }
     });
-    const ayeconWhop2 = await prisma.whop.findFirst({
+    const ayeconWhop2 = await prisma.deal.findFirst({
       where: { slug: 'ayecon-academy-1:1-mentorship' }
     });
     
     // Find any Ayecon-related whops
-    const ayeconWhops = await prisma.whop.findMany({
+    const ayeconWhops = await prisma.deal.findMany({
       where: { 
         OR: [
           { slug: { contains: 'ayecon' } },

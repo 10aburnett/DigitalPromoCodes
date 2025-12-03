@@ -87,7 +87,7 @@ export async function PUT(request: Request) {
         );
         const averageRating = totalRating / verifiedReviews.length;
         
-        await prisma.whop.update({
+        await prisma.deal.update({
           where: { id: whopId },
           data: { rating: averageRating },
         });

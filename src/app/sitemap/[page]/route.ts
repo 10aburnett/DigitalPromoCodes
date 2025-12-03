@@ -15,7 +15,7 @@ export async function GET(request: Request, { params }: { params: { page: string
     const skip = (page - 1) * WHOPS_PER_SITEMAP;
     
     // Get paginated indexable whops only
-    const whops = await prisma.whop.findMany({
+    const whops = await prisma.deal.findMany({
       where: { indexingStatus: 'INDEX', retirement: 'NONE' },
       select: {
         slug: true,

@@ -139,7 +139,7 @@ async function fuzzyFindWhop(rawUrl: string) {
   const lastSegNoDashes = lastSeg.replace(/-/g, "");
 
   // Try relaxed lookups first (case-insensitive)
-  let candidate = await prisma.whop.findFirst({
+  let candidate = await prisma.deal.findFirst({
     where: {
       OR: [
         { affiliateLink: { equals: norm, mode: "insensitive" as Prisma.QueryMode } },
@@ -213,7 +213,7 @@ export async function POST(req: Request) {
         }
 
         const key = normalizeUrl(r.whopUrl);
-        let whop = await prisma.whop.findFirst({
+        let whop = await prisma.deal.findFirst({
           where: { OR: [{ website: key }, { affiliateLink: key }] },
           select: { id: true, name: true, slug: true, affiliateLink: true, website: true }
         });

@@ -25,7 +25,7 @@ export async function POST(request: Request) {
     }
     
     // Check if the whop exists
-    const whop = await prisma.whop.findUnique({
+    const whop = await prisma.deal.findUnique({
       where: { id: data.whopId },
     });
 

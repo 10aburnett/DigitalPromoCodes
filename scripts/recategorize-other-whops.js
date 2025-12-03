@@ -179,7 +179,7 @@ async function recategorizeOtherWhops() {
     console.log('🔍 Recategorizing whops currently in OTHER category...\n');
     
     // Get all whops in OTHER category
-    const otherWhops = await prisma.whop.findMany({
+    const otherWhops = await prisma.deal.findMany({
       where: { whopCategory: 'OTHER' },
       select: {
         id: true,
@@ -212,7 +212,7 @@ async function recategorizeOtherWhops() {
         });
         
         // Update in database
-        await prisma.whop.update({
+        await prisma.deal.update({
           where: { id: whop.id },
           data: { whopCategory: newCategory }
         });

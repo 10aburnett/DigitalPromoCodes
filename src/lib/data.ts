@@ -23,7 +23,7 @@ export async function getWhopBySlug(slug: string, locale: string = 'en') {
   const colonSwap = decoded.replace(/:/g, '%3A');
   const decolonSwap = decoded.replace(/%3A/gi, ':');
 
-  const whop = await prisma.whop.findFirst({
+  const whop = await prisma.deal.findFirst({
     where: {
       AND: [
         whereIndexable(),
@@ -104,9 +104,12 @@ export async function getWhopBySlug(slug: string, locale: string = 'en') {
   const whereBase = {
     actionType: 'code_copy' as const,
     OR: [
+      // Current paths (/offer/)
+      { path: { contains: `/offer/${whop.slug}`, mode: 'insensitive' as const } },
+      { path: { contains: `/en/offer/${whop.slug}`, mode: 'insensitive' as const } },
+      // Legacy paths (/whop/) for historical analytics
       { path: { contains: `/whop/${whop.slug}`, mode: 'insensitive' as const } },
       { path: { contains: `/en/whop/${whop.slug}`, mode: 'insensitive' as const } },
-      { path: { contains: `https://whpcodes.com/whop/${whop.slug}`, mode: 'insensitive' as const } }
     ]
   };
 
@@ -178,7 +181,7 @@ export async function getWhopBySlugUnfiltered(slug: string, locale: string = 'en
   const colonSwap = decoded.replace(/:/g, '%3A');
   const decolonSwap = decoded.replace(/%3A/gi, ':');
 
-  const whop = await prisma.whop.findFirst({
+  const whop = await prisma.deal.findFirst({
     where: {
       OR: [
         { slug: decoded },
@@ -254,9 +257,12 @@ export async function getWhopBySlugUnfiltered(slug: string, locale: string = 'en
   const whereBase = {
     actionType: 'code_copy' as const,
     OR: [
+      // Current paths (/offer/)
+      { path: { contains: `/offer/${whop.slug}`, mode: 'insensitive' as const } },
+      { path: { contains: `/en/offer/${whop.slug}`, mode: 'insensitive' as const } },
+      // Legacy paths (/whop/) for historical analytics
       { path: { contains: `/whop/${whop.slug}`, mode: 'insensitive' as const } },
       { path: { contains: `/en/whop/${whop.slug}`, mode: 'insensitive' as const } },
-      { path: { contains: `https://whpcodes.com/whop/${whop.slug}`, mode: 'insensitive' as const } }
     ]
   };
 
@@ -314,7 +320,7 @@ export async function getWhopBySlugUnfiltered(slug: string, locale: string = 'en
 }
 
 export async function getIndexableWhops(limit = 5000) {
-  return prisma.whop.findMany({
+  return prisma.deal.findMany({
     where: { 
       indexingStatus: 'INDEX', 
       retirement: 'NONE',
@@ -331,7 +337,7 @@ export async function getIndexableWhops(limit = 5000) {
 }
 
 export async function getNoindexWhops(limit = 50000) {
-  return prisma.whop.findMany({
+  return prisma.deal.findMany({
     where: { 
       indexingStatus: 'NOINDEX',
       retirement: 'NONE',

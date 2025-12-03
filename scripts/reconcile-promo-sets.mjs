@@ -44,7 +44,7 @@ function setDiff(A, B) { const s = new Set(); for (const x of A) if (!B.has(x)) 
 
 async function main() {
   // P: current promo whops (ground truth now)
-  const promoRows = await prisma.whop.findMany({
+  const promoRows = await prisma.deal.findMany({
     where: { PromoCode: { some: {} } },
     select: { slug: true },
   });

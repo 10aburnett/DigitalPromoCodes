@@ -69,7 +69,7 @@ export async function PUT(
       where: { id: params.id },
       data: { verified: true },
       include: {
-        Whop: {
+        Deal: {
           select: {
             id: true,
             name: true,
@@ -97,7 +97,7 @@ export async function PUT(
       );
       const averageRating = totalRating / verifiedReviews.length;
       
-      await prisma.whop.update({
+      await prisma.deal.update({
         where: { id: whopId },
         data: { rating: averageRating },
       });

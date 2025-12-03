@@ -125,19 +125,19 @@ async function main() {
   }
 
   // INDEXABLE (live + index)
-  const indexable = await prisma.whop.findMany({
+  const indexable = await prisma.deal.findMany({
     where: { indexingStatus: 'INDEX', retired: false, retirement: 'NONE' },
     select: { slug: true, locale: true, updatedAt: true },
   })
 
   // NOINDEX (live but noindex)  ❗ EXCLUDE retired/gone
-  const noindex = await prisma.whop.findMany({
+  const noindex = await prisma.deal.findMany({
     where: { indexingStatus: 'NOINDEX', retired: false, retirement: 'NONE' },
     select: { slug: true, locale: true, updatedAt: true },
   })
 
   // GONE (410)  ✅ retired OR explicit GONE
-  const gone = await prisma.whop.findMany({
+  const gone = await prisma.deal.findMany({
     where: { OR: [{ retirement: 'GONE' }, { retired: true }] },
     select: { slug: true, locale: true, updatedAt: true },
   })

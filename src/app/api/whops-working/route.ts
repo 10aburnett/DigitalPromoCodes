@@ -10,7 +10,7 @@ export async function GET(request: Request) {
     
     console.log('Fetching whops with pagination:', { page, limit, offset });
     
-    const whops = await prisma.whop.findMany({
+    const whops = await prisma.deal.findMany({
       where: { 
         publishedAt: { not: null }
       },
@@ -44,7 +44,7 @@ export async function GET(request: Request) {
       category: whop.category
     }));
     
-    const total = await prisma.whop.count({
+    const total = await prisma.deal.count({
       where: { publishedAt: { not: null } }
     });
     

@@ -14,7 +14,7 @@ interface PromoCode {
   value: string;
 }
 
-interface Whop {
+interface DealItem {
   id: string;
   name: string;
   slug: string;
@@ -30,7 +30,7 @@ interface Whop {
 }
 
 interface HomePageServerProps {
-  items: Whop[];
+  items: DealItem[];
   currentPage: number;
   totalPages: number;
   total: number;

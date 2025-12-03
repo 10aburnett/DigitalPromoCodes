@@ -68,18 +68,18 @@ function LayoutContent({ children, faviconUrl }: ConditionalLayoutProps) {
         <div className="container mx-auto px-2 sm:px-4 h-20 md:h-20 lg:h-[72px] xl:h-[72px] flex items-center justify-start md:justify-between gap-2">
           <div className="flex items-center space-x-1 md:space-x-6">
             <Link href={getLocalizedPath('/')} className="flex items-center transition-all duration-200 hover:translate-y-[-1px] hover:opacity-80">
-              <div className="text-xl md:text-2xl font-bold translate-x-[6px] md:translate-x-0" style={{ color: 'var(--accent-color)' }}>
-                WHP<span style={{ color: 'var(--text-color)' }}>CODES</span>
+              <div className="text-lg md:text-xl font-bold translate-x-[6px] md:translate-x-0" style={{ color: 'var(--accent-color)' }}>
+                Digital<span style={{ color: 'var(--text-color)' }}>PromoCodes</span>
               </div>
             </Link>
 
             {/* Separator line - hidden on mobile */}
             <div className="hidden md:block h-8 w-px" style={{ backgroundColor: 'var(--border-color)' }}></div>
 
-            {/* WHPBLOG - hidden on mobile */}
+            {/* Blog link - hidden on mobile */}
             <Link href={getLocalizedPath('/blog')} className="hidden md:flex items-center transition-all duration-200 hover:translate-y-[-1px] hover:opacity-80">
-              <div className="text-2xl font-bold">
-                <span style={{ color: 'var(--accent-color)' }}>WHP</span><span style={{ color: 'var(--text-color)' }}>BLOG</span>
+              <div className="text-xl font-bold">
+                <span style={{ color: 'var(--accent-color)' }}>DPC</span><span style={{ color: 'var(--text-color)' }}>Blog</span>
               </div>
             </Link>
           </div>
@@ -148,13 +148,13 @@ function LayoutContent({ children, faviconUrl }: ConditionalLayoutProps) {
             }}>
               <div className="mx-auto h-1.5 w-10 rounded-full mb-4" style={{ backgroundColor: 'var(--border-color)' }}></div>
               <div className="mt-4 grid grid-cols-2 gap-3 text-center">
-                <Link 
-                  href={getLocalizedPath('/blog')} 
+                <Link
+                  href={getLocalizedPath('/blog')}
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="rounded-lg border px-3 py-2 text-sm hover:bg-gray-50 active:scale-[0.99] transition-all duration-200"
                   style={{ borderColor: 'var(--border-color)', color: 'var(--text-color)' }}
                 >
-                  <span className="font-bold" style={{ color: 'var(--accent-color)' }}>WHP</span><span className="font-bold" style={{ color: 'var(--text-color)' }}>BLOG</span>
+                  <span className="font-bold" style={{ color: 'var(--accent-color)' }}>DPC</span><span className="font-bold" style={{ color: 'var(--text-color)' }}>Blog</span>
                 </Link>
                 <Link 
                   href={getLocalizedPath('/')} 
@@ -225,14 +225,14 @@ function LayoutContent({ children, faviconUrl }: ConditionalLayoutProps) {
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
               <div className="flex flex-col sm:flex-row sm:items-center gap-6 mb-6 sm:mb-0">
                 <Link href={getLocalizedPath('/')} className="transition-all duration-200 hover:translate-y-[-1px] font-bold text-center sm:text-left hover:opacity-80">
-                  <span style={{ color: 'var(--accent-color)' }}>WHP</span><span style={{ color: 'var(--text-color)' }}>CODES</span>
+                  <span style={{ color: 'var(--accent-color)' }}>Digital</span><span style={{ color: 'var(--text-color)' }}>PromoCodes</span>
                 </Link>
                 <div className="flex items-center justify-center sm:justify-start gap-6 text-sm mt-4 sm:mt-0">
                   <div className="h-4 w-px" style={{ backgroundColor: 'var(--border-color)' }}></div>
-                  <Link href={getLocalizedPath('/blog')} className="font-bold transition-all duration-200 hover:translate-y-[-1px] hover:opacity-80" style={{ 
+                  <Link href={getLocalizedPath('/blog')} className="font-bold transition-all duration-200 hover:translate-y-[-1px] hover:opacity-80" style={{
                     fontSize: '0.875rem'
                   }}>
-                    <span style={{ color: 'var(--accent-color)' }}>WHP</span><span style={{ color: 'var(--text-color)' }}>BLOG</span>
+                    <span style={{ color: 'var(--accent-color)' }}>DPC</span><span style={{ color: 'var(--text-color)' }}>Blog</span>
                   </Link>
                   <GeneralPromoSubmissionButton 
                     className="transition-all duration-200 hover:translate-y-[-1px] hover:opacity-80 cursor-pointer"
@@ -327,7 +327,7 @@ function LayoutContent({ children, faviconUrl }: ConditionalLayoutProps) {
                   className="rounded-lg border px-3 py-2 text-sm hover:bg-gray-50 active:scale-[0.99] transition-all duration-200"
                   style={{ borderColor: 'var(--border-color)', color: 'var(--text-color)' }}
                 >
-                  <span className="font-bold" style={{ color: 'var(--accent-color)' }}>WHP</span><span className="font-bold" style={{ color: 'var(--text-color)' }}>BLOG</span>
+                  <span className="font-bold" style={{ color: 'var(--accent-color)' }}>DPC</span><span className="font-bold" style={{ color: 'var(--text-color)' }}>Blog</span>
                 </Link>
                 <button
                   type="button"

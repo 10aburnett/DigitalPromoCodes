@@ -16,7 +16,7 @@ export async function GET(req: Request) {
       });
     }
 
-    const whops = await prisma.whop.findMany({
+    const whops = await prisma.deal.findMany({
       where: { slug: { in: slugs } },
       include: {
         PromoCode: {

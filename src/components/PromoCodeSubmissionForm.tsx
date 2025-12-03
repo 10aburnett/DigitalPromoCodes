@@ -1,27 +1,27 @@
 'use client'
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 
-interface Whop {
+interface DealSearchResult {
   id: string
   name: string
   slug: string
 }
 
 interface PromoCodeSubmissionFormProps {
-  preselectedWhopId?: string // For course-specific submissions
-  preselectedWhopName?: string // For displaying the preselected course name
+  preselectedWhopId?: string // For deal-specific submissions
+  preselectedWhopName?: string // For displaying the preselected deal name
   onClose?: () => void
   onSuccess?: () => void
 }
 
-export default function PromoCodeSubmissionForm({ 
-  preselectedWhopId, 
+export default function PromoCodeSubmissionForm({
+  preselectedWhopId,
   preselectedWhopName,
-  onClose, 
-  onSuccess 
+  onClose,
+  onSuccess
 }: PromoCodeSubmissionFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [searchResults, setSearchResults] = useState<Whop[]>([])
+  const [searchResults, setSearchResults] = useState<DealSearchResult[]>([])
   const [searchTerm, setSearchTerm] = useState('')
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('')
   const [showDropdown, setShowDropdown] = useState(false)
@@ -185,7 +185,7 @@ export default function PromoCodeSubmissionForm({
     }
   }
 
-  const handleCourseSelect = useCallback((whop: Whop) => {
+  const handleCourseSelect = useCallback((whop: DealSearchResult) => {
     setFormData(prev => ({ 
       ...prev, 
       whopId: whop.id, 
@@ -632,9 +632,9 @@ export default function PromoCodeSubmissionForm({
           <div className="mt-6 p-4 rounded-lg transition-theme" 
                style={{ backgroundColor: 'var(--background-tertiary)' }}>
             <p className="text-sm" style={{ color: 'var(--text-color)' }}>
-              <strong>Community Guidelines:</strong> Please only submit legitimate promo codes. 
-              All submissions are reviewed by our team before being published. Thank you for 
-              helping build the WHP community! 🎉
+              <strong>Community Guidelines:</strong> Please only submit legitimate promo codes.
+              All submissions are reviewed by our team before being published. Thank you for
+              helping build the community!
             </p>
           </div>
         </div>

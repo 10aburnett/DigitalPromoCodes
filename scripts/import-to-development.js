@@ -33,7 +33,7 @@ async function importProductionData() {
     // 3. Whops
     console.log('  🎯 Whops...');
     for (const whop of data.whops) {
-      await prisma.whop.create({
+      await prisma.deal.create({
         data: whop
       });
     }

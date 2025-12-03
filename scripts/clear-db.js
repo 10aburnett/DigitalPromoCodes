@@ -22,7 +22,7 @@ async function clearDatabase() {
     console.log('✓ All bulk imports deleted');
     
     // Finally delete all whops
-    await prisma.whop.deleteMany();
+    await prisma.deal.deleteMany();
     console.log('✓ All whops deleted');
     
     console.log('Database cleared successfully!');

@@ -31,7 +31,7 @@ interface Promo {
   clicks: number;
 }
 
-interface Whop {
+interface DealAnalytics {
   id: string;
   name: string;
   slug: string;
@@ -66,7 +66,7 @@ interface AnalyticsData {
     totalCopies: number;
     totalClicks: number;
   };
-  whopAnalytics: Whop[];
+  whopAnalytics: DealAnalytics[];
   dailyActivity: DailyActivity[];
   recentActivity: RecentActivity[];
 }
@@ -114,7 +114,7 @@ export default function AnalyticsPage() {
       // Initialize image states for whops
       if (analyticsData.whopAnalytics) {
         const newImageStates: {[key: string]: { imagePath: string; imageError: boolean }} = {};
-        analyticsData.whopAnalytics.forEach((whop: Whop) => {
+        analyticsData.whopAnalytics.forEach((whop: DealAnalytics) => {
           // Check if logo is empty/null/undefined first
           if (!whop.logo || 
               whop.logo.trim() === '' || 

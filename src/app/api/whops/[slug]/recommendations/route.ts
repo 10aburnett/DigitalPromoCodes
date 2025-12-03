@@ -209,13 +209,13 @@ export async function GET(req: Request, { params }: { params: { slug: string } }
     }
 
     // Try slug first; if not found and it looks like an id, try id.
-    let currentWhop = await prisma.whop.findUnique({
+    let currentWhop = await prisma.deal.findUnique({
       where: { slug: key },
       select: { id: true, slug: true, name: true, description: true, category: true, price: true },
     });
 
     if (!currentWhop && looksLikeCuid(key)) {
-      currentWhop = await prisma.whop.findUnique({
+      currentWhop = await prisma.deal.findUnique({
         where: { id: key },
         select: { id: true, slug: true, name: true, description: true, category: true, price: true },
       });
@@ -229,7 +229,7 @@ export async function GET(req: Request, { params }: { params: { slug: string } }
     const currentTopics = getTopicCategories(currentWhop.description || '', currentWhop.name || '');
     
     // Get all potential candidate whops
-    const candidateWhops = await prisma.whop.findMany({
+    const candidateWhops = await prisma.deal.findMany({
       where: {
         id: { not: currentWhop.id }
       },

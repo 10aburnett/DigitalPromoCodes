@@ -122,7 +122,7 @@ async function getActualDiscountData() {
   console.log('🔍 Getting ALL whops with promo codes from database...');
 
   // Use correct relation name: PromoCode (not promoCodes)
-  const whops = await prisma.whop.findMany({
+  const whops = await prisma.deal.findMany({
     where: {
       PromoCode: {
         some: {}, // ANY promo code (not just promo- prefix)

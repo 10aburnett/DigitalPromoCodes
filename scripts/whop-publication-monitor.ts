@@ -13,9 +13,9 @@ async function monitorWhopPublication() {
     
     // Get current counts
     const [publishedCount, unpublishedCount, totalCount] = await Promise.all([
-      prisma.whop.count({ where: { publishedAt: { not: null } } }),
-      prisma.whop.count({ where: { publishedAt: null } }),
-      prisma.whop.count()
+      prisma.deal.count({ where: { publishedAt: { not: null } } }),
+      prisma.deal.count({ where: { publishedAt: null } }),
+      prisma.deal.count()
     ]);
     
     console.log(`📊 Current Status:`);
@@ -38,7 +38,7 @@ async function monitorWhopPublication() {
     }
     
     // Alert 2: Recently unpublished whops
-    const recentlyUnpublished = await prisma.whop.count({
+    const recentlyUnpublished = await prisma.deal.count({
       where: {
         publishedAt: null,
         updatedAt: {
@@ -54,7 +54,7 @@ async function monitorWhopPublication() {
     }
     
     // Alert 3: Mass update detection (same updatedAt for many whops)
-    const massUpdates = await prisma.whop.groupBy({
+    const massUpdates = await prisma.deal.groupBy({
       by: ['updatedAt'],
       where: {
         updatedAt: {
@@ -82,7 +82,7 @@ async function monitorWhopPublication() {
       // Additional investigation for alerts
       if (unpublishedCount > 0) {
         console.log(`\n🔍 Sample unpublished whops:`);
-        const sampleUnpublished = await prisma.whop.findMany({
+        const sampleUnpublished = await prisma.deal.findMany({
           where: { publishedAt: null },
           select: { name: true, updatedAt: true },
           orderBy: { updatedAt: 'desc' },

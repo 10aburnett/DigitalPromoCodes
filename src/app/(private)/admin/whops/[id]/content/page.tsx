@@ -8,7 +8,7 @@ import FaqEditor from "@/components/admin/FaqEditor";
 import { FaqItem, parseFaqContent } from "@/lib/faq-types";
 import { isMeaningful } from "@/lib/textRender";
 
-interface Whop {
+interface DealContent {
   id: string;
   name: string;
   slug: string;
@@ -22,7 +22,7 @@ interface Whop {
 }
 
 export default function WhopContentEditor() {
-  const [whop, setWhop] = useState<Whop | null>(null);
+  const [whop, setWhop] = useState<DealContent | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);

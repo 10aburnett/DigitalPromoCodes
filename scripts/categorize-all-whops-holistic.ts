@@ -374,7 +374,7 @@ async function categorizeAllWhops(dryRun: boolean = true) {
     console.log(`🔍 ${dryRun ? 'ANALYZING' : 'UPDATING'} all whops for holistic categorization...\n`);
     
     // Get all whops
-    const whops = await prisma.whop.findMany({
+    const whops = await prisma.deal.findMany({
       select: {
         id: true,
         name: true,
@@ -407,7 +407,7 @@ async function categorizeAllWhops(dryRun: boolean = true) {
         updatedCount++;
         
         if (!dryRun) {
-          await prisma.whop.update({
+          await prisma.deal.update({
             where: { id: whop.id },
             data: { whopCategory: newCategory as any }
           });

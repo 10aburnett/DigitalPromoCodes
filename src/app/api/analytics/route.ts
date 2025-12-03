@@ -92,7 +92,7 @@ export async function GET(request: Request) {
     // If we're getting data for a specific whop, add that condition
     if (whopId) {
       // For single whop view
-      const whop = await prisma.whop.findUnique({
+      const whop = await prisma.deal.findUnique({
         where: { id: whopId },
         include: {
           PromoCode: true
@@ -216,7 +216,7 @@ export async function GET(request: Request) {
       // For overall analytics dashboard
       
       // Get all whops
-      const whops = await prisma.whop.findMany({
+      const whops = await prisma.deal.findMany({
         include: {
           PromoCode: true
         }

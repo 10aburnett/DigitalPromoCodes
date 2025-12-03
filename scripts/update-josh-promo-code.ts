@@ -6,7 +6,7 @@ async function main() {
   console.log('Updating Josh Exclusive VIP Access promo code...');
 
   // Find the Josh whop by slug
-  const whop = await prisma.whop.findUnique({
+  const whop = await prisma.deal.findUnique({
     where: { slug: 'josh-exclusive-vip-access' },
     include: { promoCodes: true }
   });

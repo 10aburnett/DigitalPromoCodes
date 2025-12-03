@@ -34,7 +34,7 @@ async function checkEmptyCategories() {
     const emptyCategories = [];
     
     for (const category of allCategories) {
-      const count = await prisma.whop.count({
+      const count = await prisma.deal.count({
         where: { whopCategory: category }
       });
       

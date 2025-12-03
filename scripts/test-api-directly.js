@@ -10,7 +10,7 @@ async function testGetWhopBySlug() {
     const slug = 'ayecon-academy-1:1-mentorship';
     
     // Call the same logic as in the API
-    const whop = await prisma.whop.findFirst({
+    const whop = await prisma.deal.findFirst({
       where: { 
         slug: slug,
         publishedAt: { not: null } // Non-admin, so only published

@@ -41,7 +41,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     // Get whop details if whopId exists
     let whop = null
     if (review.whopId) {
-      whop = await prisma.whop.findUnique({
+      whop = await prisma.deal.findUnique({
         where: { id: review.whopId },
         select: { id: true, name: true, slug: true }
       })

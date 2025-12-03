@@ -508,7 +508,7 @@ export default function EditCasinoPage({
                 {...register("affiliateLink")}
                 type="url"
                 id="affiliateLink"
-                placeholder="https://whpcodes.com/go/whop-name"
+                placeholder="https://digitalpromocodes.com/go/deal-name"
               />
               {errors.affiliateLink && (
                 <p className="admin-error">{errors.affiliateLink.message}</p>

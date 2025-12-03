@@ -246,7 +246,7 @@ async function fixSpecificCourses(dryRun: boolean = true) {
     
     for (const correction of SPECIFIC_COURSE_CORRECTIONS) {
       // Find the course by name
-      const whop = await prisma.whop.findFirst({
+      const whop = await prisma.deal.findFirst({
         where: {
           name: {
             equals: correction.name,
@@ -273,7 +273,7 @@ async function fixSpecificCourses(dryRun: boolean = true) {
           correctedCount++;
           
           if (!dryRun) {
-            await prisma.whop.update({
+            await prisma.deal.update({
               where: { id: whop.id },
               data: { price: correction.correctPrice }
             });

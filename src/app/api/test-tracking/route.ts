@@ -7,7 +7,7 @@ export const revalidate = 0; // Never cache the result
 export async function GET() {
   try {
     // Find the first whop and promo code
-    const whops = await prisma.whop.findMany({
+    const whops = await prisma.deal.findMany({
       include: { PromoCode: true },
       take: 1
     });

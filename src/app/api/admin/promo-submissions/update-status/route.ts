@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
     const submission = await prisma.promoCodeSubmission.findUnique({
       where: { id: submissionId },
       include: { 
-        Whop: true // Note: use exact relation name from schema
+        Deal: true // Note: use exact relation name from schema
       }
     })
 

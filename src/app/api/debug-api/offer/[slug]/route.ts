@@ -27,9 +27,9 @@ export async function GET(_req: Request, { params }: { params: { slug: string } 
 
   // Try several keys to *prove* existence vs. mismatch.
   const [byCanonical, byRaw, byDecoded] = await Promise.all([
-    prisma.whop.findFirst({ where: { slug: canonical }, select: { id: true, slug: true, name: true } }),
-    prisma.whop.findFirst({ where: { slug: raw },       select: { id: true, slug: true, name: true } }),
-    prisma.whop.findFirst({ where: { slug: decoded },   select: { id: true, slug: true, name: true } }),
+    prisma.deal.findFirst({ where: { slug: canonical }, select: { id: true, slug: true, name: true } }),
+    prisma.deal.findFirst({ where: { slug: raw },       select: { id: true, slug: true, name: true } }),
+    prisma.deal.findFirst({ where: { slug: decoded },   select: { id: true, slug: true, name: true } }),
   ]);
 
   // Raw SQL search to bypass Prisma field mismatch

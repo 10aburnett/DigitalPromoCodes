@@ -36,7 +36,7 @@ function hasSufficientContent(w) {
 
 async function main() {
   // 1) Pull ONLY promo whops from DB (ground truth)
-  const promoWhops = await prisma.whop.findMany({
+  const promoWhops = await prisma.deal.findMany({
     where: { PromoCode: { some: {} } },
     select: {
       slug: true,

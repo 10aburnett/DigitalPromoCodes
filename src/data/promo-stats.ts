@@ -25,7 +25,7 @@ const startOfTodayUTC = () => {
 export const getPromoStatsForSlug = cache(async (slug: string): Promise<PromoUsageStats> => {
   try {
     // First, try to get the whop to find its ID
-    const whop = await prisma.whop.findUnique({
+    const whop = await prisma.deal.findUnique({
       where: { slug: slug.toLowerCase() },
       select: { id: true }
     });

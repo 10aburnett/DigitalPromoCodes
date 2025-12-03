@@ -7,7 +7,7 @@ async function checkPriceFormats() {
     console.log('🔍 Checking price formats with all time periods...\n');
     
     // Find prices with slashes
-    const pricesWithSlashes = await prisma.whop.findMany({
+    const pricesWithSlashes = await prisma.deal.findMany({
       where: {
         price: {
           contains: '/'

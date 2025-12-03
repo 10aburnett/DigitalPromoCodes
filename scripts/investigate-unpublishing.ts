@@ -12,7 +12,7 @@ async function investigateUnpublishing() {
 
     // Check when whops were last updated
     console.log('📅 Checking recent database activity:');
-    const recentUpdates = await prisma.whop.findMany({
+    const recentUpdates = await prisma.deal.findMany({
       where: {
         updatedAt: {
           gte: new Date(Date.now() - 24 * 60 * 60 * 1000) // Last 24 hours
@@ -39,7 +39,7 @@ async function investigateUnpublishing() {
 
     // Check for patterns in unpublished whops
     console.log('\n🕵️ Analyzing unpublished whops patterns:');
-    const unpublishedWhops = await prisma.whop.findMany({
+    const unpublishedWhops = await prisma.deal.findMany({
       where: { publishedAt: null },
       select: {
         id: true,
@@ -61,7 +61,7 @@ async function investigateUnpublishing() {
     });
 
     // Check if all unpublished whops have the same updatedAt pattern
-    const unpublishedUpdateTimes = await prisma.whop.groupBy({
+    const unpublishedUpdateTimes = await prisma.deal.groupBy({
       by: ['updatedAt'],
       where: { publishedAt: null },
       _count: { id: true },
@@ -88,8 +88,8 @@ async function investigateUnpublishing() {
     // Check current status
     console.log('\n📊 Current publication status:');
     const [publishedCount, unpublishedCount] = await Promise.all([
-      prisma.whop.count({ where: { publishedAt: { not: null } } }),
-      prisma.whop.count({ where: { publishedAt: null } })
+      prisma.deal.count({ where: { publishedAt: { not: null } } }),
+      prisma.deal.count({ where: { publishedAt: null } })
     ]);
 
     console.log(`  Published: ${publishedCount}`);

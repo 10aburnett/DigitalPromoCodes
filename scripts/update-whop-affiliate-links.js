@@ -6,7 +6,7 @@ async function updateWhopAffiliateLinks() {
   
   try {
     // Get all whops with their current affiliate links
-    const whops = await prisma.whop.findMany({
+    const whops = await prisma.deal.findMany({
       select: {
         id: true,
         name: true,
@@ -43,7 +43,7 @@ async function updateWhopAffiliateLinks() {
         const newLink = url.toString();
         
         // Update the database
-        await prisma.whop.update({
+        await prisma.deal.update({
           where: { id: whop.id },
           data: { affiliateLink: newLink }
         });

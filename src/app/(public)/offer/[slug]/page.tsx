@@ -61,7 +61,7 @@ import { getPageClassification, getRobotsForClassification, shouldIncludeInHrefl
 // export async function generateStaticParams() {
 //   if (process.env.NODE_ENV !== 'production') return [];
 
-//   const rows = await prisma.whop.findMany({
+//   const rows = await prisma.deal.findMany({
 //     where: whereIndexable(),
 //     select: { slug: true },
 //     orderBy: { displayOrder: 'asc' },

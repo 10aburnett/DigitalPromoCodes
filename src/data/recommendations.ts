@@ -50,13 +50,13 @@ export async function getRecommendations(currentWhopSlug: string): Promise<{
 
     // Fallback: if graph has no neighbors, use category-based recommendations
     if (slugs.length === 0) {
-      const currentWhop = await prisma.whop.findFirst({
+      const currentWhop = await prisma.deal.findFirst({
         where: { slug: canonicalSlug },
         select: { category: true }
       });
 
       if (currentWhop?.category) {
-        const categoryWhops = await prisma.whop.findMany({
+        const categoryWhops = await prisma.deal.findMany({
           where: {
             category: currentWhop.category,
             slug: { not: canonicalSlug }
@@ -75,7 +75,7 @@ export async function getRecommendations(currentWhopSlug: string): Promise<{
     }
 
     // Fetch whop details from database - FILTER OUT GONE pages to prevent 404s
-    const whops = await prisma.whop.findMany({
+    const whops = await prisma.deal.findMany({
       where: {
         slug: { in: slugs },
         // Per ChatGPT fix: only exclude GONE pages (match whop detail page logic)
@@ -132,7 +132,7 @@ export async function getRecommendations(currentWhopSlug: string): Promise<{
       const shownSlugs = new Set(items.map(r => r.slug));
 
       if (exploreSlug && !shownSlugs.has(exploreSlug)) {
-        const exploreWhop = await prisma.whop.findFirst({
+        const exploreWhop = await prisma.deal.findFirst({
           where: {
             slug: exploreSlug,
             // Filter out GONE pages to prevent 404s
@@ -195,14 +195,14 @@ export async function getAlternatives(currentWhopSlug: string): Promise<{
 
     // Fallback: if graph has no alternatives, use category-based alternatives
     if (slugs.length === 0) {
-      const currentWhop = await prisma.whop.findFirst({
+      const currentWhop = await prisma.deal.findFirst({
         where: { slug: canonicalSlug },
         select: { category: true }
       });
 
       if (currentWhop?.category) {
         const excludeSlugs = [canonicalSlug, ...Array.from(recSet)];
-        const categoryWhops = await prisma.whop.findMany({
+        const categoryWhops = await prisma.deal.findMany({
           where: {
             category: currentWhop.category,
             slug: { notIn: excludeSlugs } // Exclude current whop and recommendations
@@ -221,7 +221,7 @@ export async function getAlternatives(currentWhopSlug: string): Promise<{
     }
 
     // Fetch whop details from database - FILTER OUT GONE pages to prevent 404s
-    const whops = await prisma.whop.findMany({
+    const whops = await prisma.deal.findMany({
       where: {
         slug: { in: slugs },
         // Per ChatGPT fix: only exclude GONE pages (match whop detail page logic)
@@ -278,7 +278,7 @@ export async function getAlternatives(currentWhopSlug: string): Promise<{
       const shownSlugs = new Set(items.map(r => r.slug));
 
       if (exploreSlug && !shownSlugs.has(exploreSlug)) {
-        const exploreWhop = await prisma.whop.findFirst({
+        const exploreWhop = await prisma.deal.findFirst({
           where: {
             slug: exploreSlug,
             // Filter out GONE pages to prevent 404s

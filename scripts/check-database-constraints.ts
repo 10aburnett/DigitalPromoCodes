@@ -11,7 +11,7 @@ async function checkDatabaseConstraints() {
     console.log('🔍 Checking for database constraints...');
     
     // Try to update a whop to see if there are any constraints
-    const testWhop = await prisma.whop.findFirst({
+    const testWhop = await prisma.deal.findFirst({
       where: { publishedAt: null },
       select: { id: true, name: true }
     });
@@ -24,18 +24,18 @@ async function checkDatabaseConstraints() {
     console.log(`🧪 Testing with whop: ${testWhop.name}`);
     
     // Try to publish the test whop
-    const beforeCount = await prisma.whop.count({
+    const beforeCount = await prisma.deal.count({
       where: { publishedAt: { not: null } }
     });
     
     console.log(`📊 Published count before test: ${beforeCount}`);
     
-    await prisma.whop.update({
+    await prisma.deal.update({
       where: { id: testWhop.id },
       data: { publishedAt: new Date() }
     });
     
-    const afterCount = await prisma.whop.count({
+    const afterCount = await prisma.deal.count({
       where: { publishedAt: { not: null } }
     });
     
@@ -45,7 +45,7 @@ async function checkDatabaseConstraints() {
     console.log('⏳ Waiting 5 seconds...');
     await new Promise(resolve => setTimeout(resolve, 5000));
     
-    const finalCount = await prisma.whop.count({
+    const finalCount = await prisma.deal.count({
       where: { publishedAt: { not: null } }
     });
     

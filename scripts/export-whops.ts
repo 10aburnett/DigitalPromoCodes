@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 async function exportWhops() {
   console.log('Exporting whops from local database...');
   
-  const whops = await prisma.whop.findMany();
+  const whops = await prisma.deal.findMany();
   
   console.log(`Found ${whops.length} whops to export`);
   

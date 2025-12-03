@@ -81,7 +81,7 @@ async function importAndFixCSV(csvFileName) {
 
       try {
         // Check if whop already exists (by name or slug)
-        const existingWhop = await prisma.whop.findFirst({
+        const existingWhop = await prisma.deal.findFirst({
           where: {
             OR: [
               { slug: slug },
@@ -92,7 +92,7 @@ async function importAndFixCSV(csvFileName) {
 
         if (existingWhop) {
           // Update existing whop
-          await prisma.whop.update({
+          await prisma.deal.update({
             where: { id: existingWhop.id },
             data: {
               name: name,
@@ -107,13 +107,13 @@ async function importAndFixCSV(csvFileName) {
           updatedCount++;
         } else {
           // Get highest display order for new whops
-          const highestOrderWhop = await prisma.whop.findFirst({
+          const highestOrderWhop = await prisma.deal.findFirst({
             orderBy: { displayOrder: 'desc' }
           });
           const displayOrder = highestOrderWhop ? highestOrderWhop.displayOrder + 1 : 0;
 
           // Create new whop
-          await prisma.whop.create({
+          await prisma.deal.create({
             data: {
               name: name,
               slug: slug,

@@ -116,14 +116,14 @@ async function main() {
       }
 
       // Check if Whop exists
-      const existing = await prisma.whop.findUnique({
+      const existing = await prisma.deal.findUnique({
         where: { slug },
         select: { id: true, slug: true }
       });
 
       if (existing) {
         // UPDATE existing Whop
-        await prisma.whop.update({
+        await prisma.deal.update({
           where: { slug },
           data: {
             aboutContent: aboutContent || null,

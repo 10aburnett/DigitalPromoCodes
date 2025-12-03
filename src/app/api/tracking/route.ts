@@ -40,7 +40,7 @@ export async function POST(request: Request) {
     const trackingId = `tr_${Date.now()}_${Math.floor(Math.random() * 10000)}`;
 
     // Verify whop exists
-    const whopExists = await prisma.whop.findUnique({
+    const whopExists = await prisma.deal.findUnique({
       where: { id: data.casinoId },
       select: { id: true }
     });

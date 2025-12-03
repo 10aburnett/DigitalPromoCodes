@@ -34,7 +34,7 @@ export async function GET() {
     const whopIds = [...new Set(rows.map(r => r.whopId).filter(Boolean))] as string[];
 
     // 3) Fetch whops by id
-    const whops = whopIds.length ? await prisma.whop.findMany({ 
+    const whops = whopIds.length ? await prisma.deal.findMany({ 
       where: { id: { in: whopIds } }, 
       select: { id: true, slug: true, name: true } 
     }) : [];
@@ -86,7 +86,7 @@ export async function POST(request: NextRequest) {
     let whop = null;
     if (whopId) {
       const idCoerced = /^\d+$/.test(String(whopId)) ? Number(whopId) : String(whopId);
-      whop = await prisma.whop.findUnique({ 
+      whop = await prisma.deal.findUnique({ 
         where: { id: idCoerced as any }, 
         select: { id: true } 
       });
@@ -94,7 +94,7 @@ export async function POST(request: NextRequest) {
     
     if (!whop && (whopSlug || slug)) {
       const slugToUse = decodeURIComponent((whopSlug || slug).toString().trim());
-      whop = await prisma.whop.findFirst({
+      whop = await prisma.deal.findFirst({
         where: { 
           OR: [
             { slug: slugToUse }, 

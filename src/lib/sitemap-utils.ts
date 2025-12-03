@@ -40,7 +40,7 @@ export async function generateWhopSitemap(
       const baseUrl = siteOrigin();
 
       // Fetch whops within the letter range with quality gates
-      const whops = await prisma.whop.findMany({
+      const whops = await prisma.deal.findMany({
         where: {
           AND: [
             whereIndexable(), // Apply existing quality gates (INDEX/INDEXED, not retired/GONE)

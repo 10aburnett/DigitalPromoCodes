@@ -4,7 +4,7 @@ import { prisma } from '@/lib/prisma'
 // GET /api/whops/list - Get list of whops for dropdowns
 export async function GET() {
   try {
-    const whops = await prisma.whop.findMany({
+    const whops = await prisma.deal.findMany({
       select: {
         id: true,
         name: true,

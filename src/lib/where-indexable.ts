@@ -12,7 +12,7 @@ import { Prisma } from '@prisma/client';
 // Accept both prod and backup conventions
 const INDEX_OK = ['INDEXED', 'INDEX'] as const;
 
-export function whereIndexable(): Prisma.WhopWhereInput {
+export function whereIndexable(): Prisma.DealWhereInput {
   return {
     // indexing allowed
     OR: [

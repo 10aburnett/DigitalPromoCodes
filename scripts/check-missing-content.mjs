@@ -10,7 +10,7 @@ const slugs = fs.readFileSync('/tmp/promo-missing.txt', 'utf8')
   .map(s => s.trim())
   .filter(Boolean);
 
-const existing = await prisma.whopContent.findMany({
+const existing = await prisma.dealContent.findMany({
   where: { whopSlug: { in: slugs } },
   select: { whopSlug: true }
 });

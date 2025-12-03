@@ -6,23 +6,23 @@ export async function GET() {
     console.log('Debug: Starting whops query...');
     
     // First, check total whops
-    const totalWhops = await prisma.whop.count();
+    const totalWhops = await prisma.deal.count();
     console.log(`Debug: Total whops in database: ${totalWhops}`);
     
     // Check published whops
-    const publishedWhops = await prisma.whop.count({
+    const publishedWhops = await prisma.deal.count({
       where: { publishedAt: { not: null } }
     });
     console.log(`Debug: Published whops: ${publishedWhops}`);
     
     // Check unpublished whops
-    const unpublishedWhops = await prisma.whop.count({
+    const unpublishedWhops = await prisma.deal.count({
       where: { publishedAt: null }
     });
     console.log(`Debug: Unpublished whops: ${unpublishedWhops}`);
     
     // Get first published whop
-    const firstPublishedWhop = await prisma.whop.findFirst({
+    const firstPublishedWhop = await prisma.deal.findFirst({
       where: { publishedAt: { not: null } },
       select: {
         id: true,

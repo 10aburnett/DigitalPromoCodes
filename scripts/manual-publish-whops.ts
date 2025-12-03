@@ -12,8 +12,8 @@ async function manualPublishWhops() {
     
     // Get current counts
     const [publishedCount, unpublishedCount] = await Promise.all([
-      prisma.whop.count({ where: { publishedAt: { not: null } } }),
-      prisma.whop.count({ where: { publishedAt: null } })
+      prisma.deal.count({ where: { publishedAt: { not: null } } }),
+      prisma.deal.count({ where: { publishedAt: null } })
     ]);
     
     console.log(`📊 Current Status:`);
@@ -30,7 +30,7 @@ async function manualPublishWhops() {
     console.log(`\n🚀 Publishing next ${batchSize} whops...`);
     
     // Get the oldest unpublished whops
-    const whopsToPublish = await prisma.whop.findMany({
+    const whopsToPublish = await prisma.deal.findMany({
       where: { publishedAt: null },
       orderBy: { createdAt: 'asc' },
       take: batchSize,
@@ -51,7 +51,7 @@ async function manualPublishWhops() {
     
     // Publish them
     const today = new Date();
-    await prisma.whop.updateMany({
+    await prisma.deal.updateMany({
       where: {
         id: { in: whopsToPublish.map(w => w.id) }
       },
@@ -63,8 +63,8 @@ async function manualPublishWhops() {
     
     // Get updated counts
     const [newPublishedCount, newUnpublishedCount] = await Promise.all([
-      prisma.whop.count({ where: { publishedAt: { not: null } } }),
-      prisma.whop.count({ where: { publishedAt: null } })
+      prisma.deal.count({ where: { publishedAt: { not: null } } }),
+      prisma.deal.count({ where: { publishedAt: null } })
     ]);
     
     console.log(`\n📊 Updated Status:`);

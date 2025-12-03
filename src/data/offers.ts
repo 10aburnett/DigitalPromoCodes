@@ -18,7 +18,7 @@ async function fetchWhopDirect(slug: string) {
   // Use lowercase decoded slug for DB lookup (DB stores literal colons, not %3a)
   const decoded = decodeURIComponent(slug);
   const dbSlug = decoded.toLowerCase();
-  const whop = await prisma.whop.findFirst({
+  const whop = await prisma.deal.findFirst({
     where: { slug: dbSlug },
     include: {
       PromoCode: true,
@@ -64,7 +64,7 @@ export const getWhopsOptimizedCached = (page = 1, limit = 15) =>
       logCache('MISS getWhopsOptimized', { page, limit });
 
       // Fetch whops with pagination
-      const whops = await prisma.whop.findMany({
+      const whops = await prisma.deal.findMany({
         where: whereIndexable(),
         select: {
           id: true,
@@ -112,7 +112,7 @@ export const getWhopsAllCached = (page = 1, limit = 15) =>
       logCache('MISS getWhopsAll', { page, limit });
 
       // NOTE: no whereIndexable() — show every whop in DB
-      const whops = await prisma.whop.findMany({
+      const whops = await prisma.deal.findMany({
         select: {
           id: true,
           name: true,

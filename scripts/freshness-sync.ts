@@ -31,7 +31,7 @@ function nowIso(): string {
 }
 
 async function getWhopsWithCodes() {
-  return await prisma.whop.findMany({
+  return await prisma.deal.findMany({
     where: {
       PromoCode: {
         some: {},  // Has at least one promo code

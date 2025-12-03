@@ -7,7 +7,7 @@ async function debugAyeconPromoCodes() {
     console.log('🔍 Debugging Ayecon Academy promo codes...');
     
     // Find the Ayecon Academy whop by slug
-    const whop = await prisma.whop.findFirst({
+    const whop = await prisma.deal.findFirst({
       where: { 
         slug: 'ayecon-academy-1:1-mentorship'
       }

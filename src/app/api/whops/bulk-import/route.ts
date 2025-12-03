@@ -202,7 +202,7 @@ export async function POST(request: Request) {
           .trim('-');
 
         // Check if whop already exists
-        const existingWhop = await prisma.whop.findFirst({
+        const existingWhop = await prisma.deal.findFirst({
           where: { 
             OR: [
               { slug: slug },
@@ -224,7 +224,7 @@ export async function POST(request: Request) {
         }
 
         // Get highest display order
-        const highestOrderWhop = await prisma.whop.findFirst({
+        const highestOrderWhop = await prisma.deal.findFirst({
           orderBy: { displayOrder: 'desc' }
         });
         const displayOrder = highestOrderWhop ? highestOrderWhop.displayOrder + 1 : 0;
@@ -240,7 +240,7 @@ export async function POST(request: Request) {
         }
 
         // Create whop
-        const whop = await prisma.whop.create({
+        const whop = await prisma.deal.create({
           data: {
             id: require('crypto').randomUUID(),
             name: rowData.name,

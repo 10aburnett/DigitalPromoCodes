@@ -17,7 +17,7 @@ export async function GET(_req: Request, { params }: { params: { slug: string } 
   // Use lowercase decoded slug for DB lookup (DB stores literal colons, not %3a)
   const canonical = decoded.toLowerCase();
 
-  const direct = await prisma.whop.findFirst({
+  const direct = await prisma.deal.findFirst({
     where: { slug: canonical },
     select: { id: true, slug: true, name: true, indexingStatus: true, retirement: true }
   });

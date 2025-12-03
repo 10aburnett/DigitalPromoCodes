@@ -6,7 +6,7 @@ async function main() {
   console.log('Adding sample promo codes to existing whops...');
 
   // Get first 5 whops to add promo codes to
-  const whops = await prisma.whop.findMany({
+  const whops = await prisma.deal.findMany({
     take: 5,
     include: { promoCodes: true }
   });
