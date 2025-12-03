@@ -2,10 +2,11 @@
 // Safe, server-friendly logo URL resolver (NO event handlers needed on server)
 
 import { coerceWhopLogoUrl } from './whopImage';
+import { siteOrigin } from './site-origin';
 
 // Asset origin for production - matches next.config.js ASSET_ORIGIN
 const ASSET_ORIGIN = process.env.NODE_ENV === 'production'
-  ? 'https://whpcodes.com'
+  ? siteOrigin()
   : '';
 
 export function resolveLogoUrl(input?: string | null): string {
@@ -40,7 +41,7 @@ export function resolveLogoUrl(input?: string | null): string {
   }
 
   // For paths that don't start with known directories, assume they're in data/logos/
-  // This handles cases like "foo.png" -> "https://whpcodes.com/data/logos/foo.png"
+  // This handles cases like "foo.png" -> "${ASSET_ORIGIN}/data/logos/foo.png"
   return ASSET_ORIGIN
     ? `${ASSET_ORIGIN}/data/logos/${cleanPath}`
     : `/data/logos/${cleanPath}`;

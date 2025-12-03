@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import { SITE_BRAND } from '@/lib/brand';
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -163,7 +164,7 @@ export default function LoginPage() {
         <div className="text-center mb-10">
           <div className="flex justify-center mb-6">
             <div className="text-4xl font-bold text-[#6366f1]">
-              WHPCodes
+              {SITE_BRAND}
             </div>
           </div>
           <h1 className="text-xl font-bold text-white mb-2">Admin Portal</h1>
@@ -258,7 +259,7 @@ export default function LoginPage() {
           {/* Footer */}
           <div className="px-8 py-4 bg-[#373946] border-t border-[#404055]">
             <p className="text-xs text-[#a7a9b4] text-center">
-              Secure admin access • WHPCodes Management Portal
+              Secure admin access • {SITE_BRAND} Management Portal
             </p>
           </div>
         </div>

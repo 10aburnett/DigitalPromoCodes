@@ -2,6 +2,7 @@
 import { unstable_cache } from 'next/cache';
 import { prisma } from '@/lib/prisma';
 import { whereIndexable } from '@/lib/where-indexable';
+import { siteOrigin } from '@/lib/site-origin';
 
 /**
  * Sitemap generation utilities (Phase F2)
@@ -36,7 +37,7 @@ export async function generateWhopSitemap(
 ): Promise<SitemapEntry[]> {
   return unstable_cache(
     async () => {
-      const baseUrl = process.env.SITE_ORIGIN || 'https://whpcodes.com';
+      const baseUrl = siteOrigin();
 
       // Fetch whops within the letter range with quality gates
       const whops = await prisma.whop.findMany({
@@ -63,7 +64,7 @@ export async function generateWhopSitemap(
       console.log(`[SITEMAP] Generated ${whops.length} entries for range ${rangeStart}-${rangeEnd}`);
 
       return whops.map((whop) => ({
-        url: `${baseUrl}/whop/${whop.slug}`,
+        url: `${baseUrl}/offer/${whop.slug}`,
         lastmod: toIso(whop.updatedAt),
         changefreq: 'weekly' as const,
         priority: 0.8,

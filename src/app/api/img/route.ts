@@ -1,10 +1,11 @@
 // src/app/api/img/route.ts
 import { NextResponse } from 'next/server';
 import { dlog } from '@/lib/debug';
+import { siteOrigin } from '@/lib/site-origin';
 
 // Domain allow-list for image proxy
 const ALLOWED_DOMAINS = [
-  'whpcodes.com',
+  new URL(siteOrigin()).hostname,
   'localhost',
   'whop.com',
   // Whop ImgProxy CDN hosts (fix for img-v2-prod errors)
@@ -44,7 +45,7 @@ export async function GET(req: Request) {
 
   // Handle relative URLs by converting to absolute
   const ASSET_ORIGIN = process.env.NODE_ENV === 'production'
-    ? 'https://whpcodes.com'
+    ? siteOrigin()
     : `http://localhost:${process.env.PORT || 3000}`;
 
   const absoluteSrc = src.startsWith('http') ? src : `${ASSET_ORIGIN}${src.startsWith('/') ? src : `/${src}`}`;

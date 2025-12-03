@@ -1,5 +1,6 @@
 // app/sitemap.xml/route.ts
 import { NextResponse } from 'next/server';
+import { siteOrigin } from '@/lib/site-origin';
 
 /**
  * Sitemap Index (Phase F1)
@@ -13,7 +14,7 @@ export const dynamic = 'force-static';
 export const revalidate = 3600; // 1 hour cache
 
 export async function GET() {
-  const baseUrl = process.env.SITE_ORIGIN || 'https://whpcodes.com';
+  const baseUrl = siteOrigin();
   const now = new Date().toISOString();
 
   // List of all sitemap shards

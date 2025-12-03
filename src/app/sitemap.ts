@@ -1,10 +1,12 @@
 import type { MetadataRoute } from 'next';
+import { siteOrigin } from '@/lib/site-origin';
 
 export default function sitemap(): MetadataRoute.Sitemap {
+  const origin = siteOrigin();
   // Minimal sitemap for domain deindexing - only robots.txt to satisfy XML validation
   return [
     {
-      url: 'https://whpcodes.com/robots.txt',
+      url: `${origin}/robots.txt`,
       lastModified: new Date(),
     },
   ];

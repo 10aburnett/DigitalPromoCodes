@@ -335,8 +335,66 @@ The model name itself is NOT exposed to Google - only the URL route matters.
 
 **Phase 1 Status:** COMPLETE (2025-12-03)
 **Phase 2 (Route + Component Renaming):** COMPLETE (2025-12-03)
-**Phase 3 (Metadata + JSON-LD):** NOT STARTED
+**Phase 3 (Metadata + JSON-LD):** COMPLETE (2025-12-03)
+**Phase 3.5 (Env/URL + Sitemaps):** COMPLETE (2025-12-03)
 **Phase 4 (Visual Rebrand):** NOT STARTED
+
+---
+
+## Phase 3 – Metadata + JSON-LD
+
+- [x] Created `src/lib/brand.ts` with centralized brand constants
+- [x] Updated root layout metadata to use brand helpers
+- [x] Updated all public page metadata (home, about, contact, blog, terms, privacy)
+- [x] Updated JSON-LD schemas (Organization, WebSite, BlogPosting, ContactPage)
+- [x] Updated footer copyright and mobile logo in ConditionalLayout
+- [x] Updated blog RSS feed to use brand constants
+- [x] Bulk i18n replacements across all 8 locales
+
+---
+
+## Phase 3.5 – Env/URL & Sitemaps
+
+- [x] All sitemaps now use `siteOrigin()`:
+  - `src/app/sitemap.xml/route.ts`
+  - `src/app/sitemap-static.xml/route.ts`
+  - `src/app/sitemap-blog.xml/route.ts`
+  - `src/app/sitemap/[page]/route.ts`
+  - `src/app/sitemap/hubs.xml/route.ts`
+  - `src/app/deindex-sitemap/route.ts`
+  - `src/app/sitemap.ts`
+  - `src/lib/sitemap-utils.ts`
+- [x] All sitemaps emit `/offer/` not `/whop/` URLs
+- [x] Blog utilities (`src/lib/blog-utils.ts`) use `siteOrigin()` + brand constants
+- [x] Image URL helpers (`src/lib/image-url.ts`, `src/lib/urls.ts`) use `siteOrigin()`
+- [x] API routes (`src/app/api/img/`, `src/app/api/whops/`) use `siteOrigin()`
+- [x] ShareIcons component uses `window.location.origin` for client-side
+- [x] HowToSection uses brand constants for ImageObject schema
+- [x] Offer page uses `siteOrigin()` for HowToSchema
+- [x] Email templates (`src/lib/email.ts`, `src/lib/resend-email.ts`) use brand constants
+- [x] Admin layouts show `{SITE_BRAND}` instead of hardcoded text
+- [x] Admin login page uses brand constants
+- [x] Admin enquiries page uses brand constants for email templates
+
+### Remaining whpcodes.com References (Acceptable)
+
+| File | Line | Type | Reason |
+|------|------|------|--------|
+| admin/casinos/[id] | 511 | Placeholder | Admin input placeholder (internal only) |
+| admin/whops/[id] | 442 | Placeholder | Admin input placeholder (internal only) |
+| offer/[slug] | 398 | Comment | Commented out code with PHASE1-DEINDEX |
+| promo-stats route | 102 | DB query | Historical analytics path matching |
+| HowToSchema | 19 | Comment | TypeScript comment example |
+| data.ts | 109, 259 | DB query | Historical analytics path matching |
+| site-origin.ts | 12 | Error msg | Example in error message |
+| jsonld.ts | 19 | Comment | TypeScript interface comment |
+
+### Audit Summary (Phase 3.5 Complete)
+
+**Before Phase 3:** ~172 WHPCodes references
+**After Phase 3.5:** 9 remaining (all acceptable per table above)
+
+All SEO-facing surfaces now use centralized brand configuration.
 
 ---
 

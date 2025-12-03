@@ -1,8 +1,9 @@
 // src/lib/urls.ts
 import 'server-only';
 import { isLocale, isLocaleEnabled, type Locale } from './schema-locale';
+import { siteOrigin } from './site-origin';
 
-const ORIGIN = process.env.NEXT_PUBLIC_SITE_URL || 'https://whpcodes.com';
+const ORIGIN = siteOrigin();
 
 export function absoluteUrl(path = '/') {
   if (!path.startsWith('/')) return path; // already absolute

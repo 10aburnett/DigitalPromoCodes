@@ -1,7 +1,9 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { siteOrigin } from '@/lib/site-origin';
 
 export async function GET() {
+  const baseUrl = siteOrigin();
   try {
     const rows = await prisma.whop.findMany({
       where: { indexingStatus: 'NOINDEX', retirement: 'NONE' },
@@ -12,7 +14,7 @@ export async function GET() {
       '<?xml version="1.0" encoding="UTF-8"?>',
       '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
       ...rows.map(r =>
-        `<url><loc>https://whpcodes.com/whop/${r.slug}</loc><lastmod>${(r.updatedAt ?? new Date()).toISOString()}</lastmod></url>`
+        `<url><loc>${baseUrl}/offer/${r.slug}</loc><lastmod>${(r.updatedAt ?? new Date()).toISOString()}</lastmod></url>`
       ),
       '</urlset>',
     ].join('');

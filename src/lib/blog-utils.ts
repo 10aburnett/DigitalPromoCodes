@@ -1,6 +1,8 @@
 /**
  * Blog utility functions for SEO optimization
  */
+import { siteOrigin } from '@/lib/site-origin';
+import { SITE_BRAND, SITE_AUTHOR } from '@/lib/brand';
 
 /**
  * Calculate estimated reading time for blog content
@@ -68,10 +70,12 @@ export function generateArticleSchema(post: {
   const modifiedDate = post.updatedAt ? new Date(post.updatedAt).toISOString() : publishedDate
   const readingTime = calculateReadingTime(post.content)
   
+  const origin = siteOrigin();
+
   // Extract first image from content for schema
   const imageMatch = post.content.match(/<img[^>]+src="([^"]+)"/i)
-  const imageUrl = imageMatch ? imageMatch[1] : 'https://whpcodes.com/logo.png'
-  
+  const imageUrl = imageMatch ? imageMatch[1] : `${origin}/logo.png`
+
   return {
     '@context': 'https://schema.org',
     '@type': 'BlogPosting',
@@ -80,29 +84,29 @@ export function generateArticleSchema(post: {
     'image': imageUrl,
     'author': {
       '@type': 'Person',
-      'name': (post as any).authorName || post.author?.name || 'WHP Team',
-      'url': 'https://whpcodes.com'
+      'name': (post as any).authorName || post.author?.name || SITE_AUTHOR,
+      'url': origin
     },
     'publisher': {
       '@type': 'Organization',
-      'name': 'WHP Codes',
-      'url': 'https://whpcodes.com',
+      'name': SITE_BRAND,
+      'url': origin,
       'logo': {
         '@type': 'ImageObject',
-        'url': 'https://whpcodes.com/logo.png'
+        'url': `${origin}/logo.png`
       }
     },
     'datePublished': publishedDate,
     'dateModified': modifiedDate,
     'mainEntityOfPage': {
       '@type': 'WebPage',
-      '@id': `https://whpcodes.com/blog/${post.slug}`
+      '@id': `${origin}/blog/${post.slug}`
     },
-    'url': `https://whpcodes.com/blog/${post.slug}`,
+    'url': `${origin}/blog/${post.slug}`,
     'wordCount': post.content.replace(/<[^>]*>/g, '').split(/\s+/).length,
     'timeRequired': `PT${readingTime}M`,
     'genre': 'Technology',
-    'keywords': `Whop promo codes, digital products, ${post.title}, discount codes`,
+    'keywords': `deals, digital products, ${post.title}, discount codes`,
     'articleSection': 'Digital Products',
     'inLanguage': 'en-US'
   }
@@ -112,6 +116,7 @@ export function generateArticleSchema(post: {
  * Generate breadcrumb schema markup
  */
 export function generateBreadcrumbSchema(postTitle: string, slug: string) {
+  const origin = siteOrigin();
   return {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
@@ -120,19 +125,19 @@ export function generateBreadcrumbSchema(postTitle: string, slug: string) {
         '@type': 'ListItem',
         'position': 1,
         'name': 'Home',
-        'item': 'https://whpcodes.com'
+        'item': origin
       },
       {
         '@type': 'ListItem',
         'position': 2,
         'name': 'Blog',
-        'item': 'https://whpcodes.com/blog'
+        'item': `${origin}/blog`
       },
       {
         '@type': 'ListItem',
         'position': 3,
         'name': postTitle,
-        'item': `https://whpcodes.com/blog/${slug}`
+        'item': `${origin}/blog/${slug}`
       }
     ]
   }
@@ -208,10 +213,11 @@ export function extractImagesForSchema(content: string): string[] {
   const imgRegex = /<img[^>]+src="([^"]+)"/gi
   let match
   
+  const origin = siteOrigin();
   while ((match = imgRegex.exec(content)) !== null) {
     const src = match[1]
     // Convert relative URLs to absolute
-    const absoluteUrl = src.startsWith('http') ? src : `https://whpcodes.com${src}`
+    const absoluteUrl = src.startsWith('http') ? src : `${origin}${src}`
     images.push(absoluteUrl)
   }
   

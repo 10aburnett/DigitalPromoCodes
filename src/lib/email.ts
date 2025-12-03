@@ -1,4 +1,6 @@
 import nodemailer from 'nodemailer';
+import { SITE_BRAND, CONTACT_EMAIL } from '@/lib/brand';
+import { siteOrigin } from '@/lib/site-origin';
 
 interface EmailConfig {
   host: string;
@@ -59,7 +61,7 @@ export const sendContactEmail = async (data: ContactEmailData): Promise<void> =>
         </div>
         
         <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e9ecef; color: #666; font-size: 12px;">
-          <p>This email was sent from the WHPCodes contact form.</p>
+          <p>This email was sent from the ${SITE_BRAND} contact form.</p>
           <p>Reply directly to this email to respond to ${data.name} at ${data.email}</p>
         </div>
       </div>
@@ -79,15 +81,16 @@ export const sendContactEmail = async (data: ContactEmailData): Promise<void> =>
 // Send auto-reply email to the user
 export const sendAutoReply = async (data: ContactEmailData): Promise<void> => {
   const transporter = createTransporter();
-  
+  const origin = siteOrigin();
+
   const mailOptions = {
-    from: process.env.SMTP_FROM || 'whpcodes@gmail.com',
+    from: process.env.SMTP_FROM || CONTACT_EMAIL,
     to: data.email,
-    subject: `Thank you for contacting WHPCodes - We've received your message`,
+    subject: `Thank you for contacting us - We've received your message`,
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
         <h2 style="color: #6366f1; border-bottom: 2px solid #6366f1; padding-bottom: 10px;">
-          Thank you for contacting WHPCodes
+          Thank you for contacting ${SITE_BRAND}
         </h2>
         
         <p>Hi ${data.name},</p>
@@ -110,11 +113,11 @@ export const sendAutoReply = async (data: ContactEmailData): Promise<void> => {
           </ul>
         </div>
         
-        <p>In the meantime, feel free to explore our latest promo codes and deals at <a href="https://whpcodes.com" style="color: #6366f1;">WHPCodes.com</a></p>
-        
+        <p>In the meantime, feel free to explore our latest deals at <a href="${origin}" style="color: #6366f1;">${SITE_BRAND}</a></p>
+
         <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e9ecef; color: #666; font-size: 12px;">
-          <p>Best regards,<br>The WHPCodes Team</p>
-          <p>Visit us: <a href="https://whpcodes.com" style="color: #6366f1;">https://whpcodes.com</a></p>
+          <p>Best regards,<br>The ${SITE_BRAND} Team</p>
+          <p>Visit us: <a href="${origin}" style="color: #6366f1;">${origin}</a></p>
         </div>
       </div>
     `,

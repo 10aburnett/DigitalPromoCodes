@@ -709,7 +709,7 @@ export default async function WhopPage({ params }: { params: { slug: string } })
         brand={whopFormatted.name}
         currency={extractCurrency(whopFormatted.price)}
         hasTrial={hasTrial(whopFormatted.price)}
-        siteOrigin="https://whpcodes.com"
+        siteOrigin={siteOrigin()}
       />
 
       {/* Step 2-4: Primary Entity + BreadcrumbList + Offers + FAQ + HowTo JSON-LD Schema */}

@@ -2,6 +2,7 @@
 import { NextResponse } from 'next/server';
 import { unstable_cache } from 'next/cache';
 import { entriesToXML, type SitemapEntry } from '@/lib/sitemap-utils';
+import { siteOrigin } from '@/lib/site-origin';
 
 /**
  * Hubs Sitemap (Phase F3)
@@ -16,7 +17,7 @@ export const dynamic = 'force-static';
 export const revalidate = 3600; // 1 hour cache
 
 async function buildHubsXml(): Promise<string> {
-  const baseUrl = process.env.SITE_ORIGIN || 'https://whpcodes.com';
+  const baseUrl = siteOrigin();
   const now = new Date().toISOString();
 
   // Define all static hub pages

@@ -1,6 +1,8 @@
 import Image from "next/image";
 import proofManifest from "@data/proof-manifest.json";
 import { fileSlug } from "@/lib/slug-utils";
+import { siteOrigin } from "@/lib/site-origin";
+import { SITE_BRAND } from "@/lib/brand";
 
 // Check if proof exists for a slug using the manifest
 function proofExists(slug: string) {
@@ -123,9 +125,9 @@ export default function HowToSection({ slug, brand, currency, hasTrial, lastTest
                 __html: JSON.stringify({
                   "@context": "https://schema.org",
                   "@type": "ImageObject",
-                  contentUrl: `https://whpcodes.com${B}`,
-                  caption: `Promo code proof on Whop — ${before} → ${after} (ex-VAT), verified ${new Date(lastTestedISO).toLocaleDateString('en-GB')}`,
-                  author: "WHPCODES",
+                  contentUrl: `${siteOrigin()}${B}`,
+                  caption: `Promo code proof — ${before} → ${after} (ex-VAT), verified ${new Date(lastTestedISO).toLocaleDateString('en-GB')}`,
+                  author: SITE_BRAND,
                   datePublished: lastTestedISO,
                 }),
               }}

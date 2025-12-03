@@ -8,6 +8,7 @@ import '../../../styles/quill.css';
 import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
+import { SITE_BRAND } from '@/lib/brand';
 
 export default function AdminLayout({
   children,
@@ -124,7 +125,7 @@ export default function AdminLayout({
                   className="flex items-center hover:opacity-80 transition-opacity duration-200 bg-transparent border-none cursor-pointer"
                 >
                   <div className="text-2xl font-bold text-[#6366f1] mr-2">
-                    WHPCodes
+                    {SITE_BRAND}
                   </div>
                 </button>
               </div>

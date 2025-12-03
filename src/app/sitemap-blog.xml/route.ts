@@ -1,7 +1,8 @@
 import { prisma } from '@/lib/prisma';
+import { siteOrigin } from '@/lib/site-origin';
 
 export async function GET() {
-  const baseUrl = 'https://whpcodes.com';
+  const baseUrl = siteOrigin();
   
   try {
     console.log('Generating blog sitemap...');

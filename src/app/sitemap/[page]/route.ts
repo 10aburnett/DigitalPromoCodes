@@ -1,4 +1,5 @@
 import { prisma } from '@/lib/prisma';
+import { siteOrigin } from '@/lib/site-origin';
 
 const WHOPS_PER_SITEMAP = 1000; // Reasonable chunk size
 
@@ -6,7 +7,7 @@ const WHOPS_PER_SITEMAP = 1000; // Reasonable chunk size
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: Request, { params }: { params: { page: string } }) {
-  const baseUrl = 'https://whpcodes.com';
+  const baseUrl = siteOrigin();
   const page = parseInt(params?.page || '1') || 1;
   
   try {
@@ -35,7 +36,7 @@ export async function GET(request: Request, { params }: { params: { page: string
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   ${whops.map(whop => `
   <url>
-    <loc>${baseUrl}/whop/${whop.slug}</loc>
+    <loc>${baseUrl}/offer/${whop.slug}</loc>
     <lastmod>${whop.updatedAt.toISOString().split('T')[0]}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>

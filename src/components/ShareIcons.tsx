@@ -7,11 +7,14 @@ interface ShareIconsProps {
   url: string;
 }
 
+// Client-side origin detection
+const getOrigin = () => typeof window !== 'undefined' ? window.location.origin : '';
+
 export default function ShareIcons({ title, url }: ShareIconsProps) {
   const [copied, setCopied] = useState(false);
-  
+
   // Make sure we have a fully qualified URL
-  const fullUrl = url.startsWith('http') ? url : `https://whpcodes.com${url}`;
+  const fullUrl = url.startsWith('http') ? url : `${getOrigin()}${url}`;
   
   const handleCopyLink = () => {
     navigator.clipboard.writeText(fullUrl);

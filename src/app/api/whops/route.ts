@@ -8,6 +8,7 @@ import { verify } from "jsonwebtoken";
 import { JWT_SECRET } from "@/lib/auth-utils";
 import { normalizeImagePath } from "@/lib/image-utils";
 import { unstable_cache } from "next/cache";
+import { siteOrigin } from "@/lib/site-origin";
 
 export const runtime = 'nodejs'; // Ensure Node.js runtime (not Edge)
 export const dynamic = 'force-dynamic'; // Explicitly mark this route as dynamic
@@ -325,7 +326,7 @@ function transformWhopDataForUI(whop: any) {
     console.log(`Transforming whop data for UI, whop ID: ${whop.id}`);
 
   // Get asset origin for images
-  const ASSET_ORIGIN = process.env.ASSET_ORIGIN || 'https://whpcodes.com';
+  const ASSET_ORIGIN = process.env.ASSET_ORIGIN || siteOrigin();
 
   // Clean up fields
   const displayName = whop.name || 'Unknown Whop';
@@ -441,7 +442,7 @@ function transformWhopDataForUI(whop: any) {
       firstPromoTitle: whop?.PromoCode?.[0]?.title
     });
     // Return a safe fallback object
-    const ASSET_ORIGIN = process.env.ASSET_ORIGIN || 'https://whpcodes.com';
+    const ASSET_ORIGIN = process.env.ASSET_ORIGIN || siteOrigin();
     return {
       id: whop?.id || 'unknown',
       whopName: whop?.name || 'Unknown Whop',

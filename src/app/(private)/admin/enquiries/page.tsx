@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
+import { SITE_BRAND } from '@/lib/brand';
 
 interface ContactSubmission {
   id: string;
@@ -118,10 +119,10 @@ export default function EnquiriesAdmin() {
     
     const replyBody = `Hi ${name},
 
-                    Thank you for contacting WHPCodes.
+                    Thank you for contacting ${SITE_BRAND}.
                     We have received your message and will get back to you soon.
                     Best regards,
-                    WHPCodes Team
+                    ${SITE_BRAND} Team
 
 ---
 
