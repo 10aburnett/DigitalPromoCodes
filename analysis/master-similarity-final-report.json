@@ -1,0 +1,527 @@
+{
+  "metadata": {
+    "generatedAt": "2025-12-04T15:58:59.609Z",
+    "inputFile": "data/content/master/successes-final-with-openers.jsonl",
+    "outputFile": "data/content/master/successes-PUBLISH-READY.jsonl",
+    "totalEntries": 8208,
+    "totalPairsSampled": 5000,
+    "thresholds": {
+      "maxRougeL": 0.7,
+      "maxCosine": 0.85
+    }
+  },
+  "summary": {
+    "rougeL": {
+      "violationCount": 0,
+      "violationPct": 0
+    },
+    "cosine": {
+      "violationCount": 28,
+      "violationPct": 0.5599999999999999
+    }
+  },
+  "topPairsByRougeL": [
+    {
+      "slug1": "lockedinwithbrandon",
+      "slug2": "blockmage",
+      "rougeL": 0.4485749690210657
+    },
+    {
+      "slug1": "tnt-store",
+      "slug2": "pgr-club",
+      "rougeL": 0.44783715012722647
+    },
+    {
+      "slug1": "fittobe",
+      "slug2": "digital-asset-accelerator",
+      "rougeL": 0.44364508393285373
+    },
+    {
+      "slug1": "pham-collectibles-pokalerts",
+      "slug2": "anomaly-enterprise",
+      "rougeL": 0.44274809160305345
+    },
+    {
+      "slug1": "zn-picks-premium-",
+      "slug2": "redblack-officials",
+      "rougeL": 0.4405705229793978
+    },
+    {
+      "slug1": "lockedinwithbrandon",
+      "slug2": "heat-archive-slips",
+      "rougeL": 0.43176178660049624
+    },
+    {
+      "slug1": "rippy-tiktok-5-stores",
+      "slug2": "vip-za-2",
+      "rougeL": 0.428927680798005
+    },
+    {
+      "slug1": "zn-picks-premium-",
+      "slug2": "grind-mode",
+      "rougeL": 0.42835595776772245
+    },
+    {
+      "slug1": "q-tech",
+      "slug2": "capture-ecom",
+      "rougeL": 0.4253164556962025
+    },
+    {
+      "slug1": "utopia-40",
+      "slug2": "the-options-cartel-full-access",
+      "rougeL": 0.41242236024844725
+    },
+    {
+      "slug1": "trade-the-unknown",
+      "slug2": "simple-repair-services",
+      "rougeL": 0.41123882503192843
+    },
+    {
+      "slug1": "bully-prestige-group",
+      "slug2": "papecheck-picks-premium",
+      "rougeL": 0.4096080910240202
+    },
+    {
+      "slug1": "barracca81-lifetime",
+      "slug2": "monkey-invest-rookie",
+      "rougeL": 0.4060356652949245
+    },
+    {
+      "slug1": "ultimate",
+      "slug2": "top-tier-vip-access",
+      "rougeL": 0.4037339556592765
+    },
+    {
+      "slug1": "daetradez-signals-discord",
+      "slug2": "otc-discord-access",
+      "rougeL": 0.4010088272383354
+    },
+    {
+      "slug1": "strikers-7-days",
+      "slug2": "premium-plays-",
+      "rougeL": 0.40047961630695444
+    },
+    {
+      "slug1": "daetradez-signals-discord",
+      "slug2": "trader-society",
+      "rougeL": 0.39950678175092486
+    },
+    {
+      "slug1": "edgeforge-1-1-mentorship",
+      "slug2": "a-z-trading-guide-",
+      "rougeL": 0.3990498812351544
+    },
+    {
+      "slug1": "trade-with-rick-order-flow",
+      "slug2": "wealth-mania-premium",
+      "rougeL": 0.39722863741339487
+    },
+    {
+      "slug1": "q-tech",
+      "slug2": "one-day-access",
+      "rougeL": 0.3965728274173807
+    },
+    {
+      "slug1": "fortune-collective",
+      "slug2": "leads",
+      "rougeL": 0.39467312348668276
+    },
+    {
+      "slug1": "envy-trades",
+      "slug2": "avyn-trades-l-private-bot",
+      "rougeL": 0.39433293978748524
+    },
+    {
+      "slug1": "bootcamp-webinar-special",
+      "slug2": "trader-society",
+      "rougeL": 0.39419588875453443
+    },
+    {
+      "slug1": "barracca81-lifetime",
+      "slug2": "redblack-officials",
+      "rougeL": 0.3941176470588235
+    },
+    {
+      "slug1": "the-brand-partner-playbook",
+      "slug2": "panda-stocks-all-access",
+      "rougeL": 0.39195979899497485
+    },
+    {
+      "slug1": "kript-arna-ninja",
+      "slug2": "archangel-x-upgrade",
+      "rougeL": 0.3915492957746479
+    },
+    {
+      "slug1": "edgeforge-1-1-mentorship",
+      "slug2": "personal-mentorship-program",
+      "rougeL": 0.39108910891089116
+    },
+    {
+      "slug1": "daetradez-signals-discord",
+      "slug2": "wealth-mania-premium",
+      "rougeL": 0.39024390243902435
+    },
+    {
+      "slug1": "ttsp-bets",
+      "slug2": "one-day-access",
+      "rougeL": 0.389873417721519
+    },
+    {
+      "slug1": "tradedifferent",
+      "slug2": "otc-discord-access",
+      "rougeL": 0.3892445582586428
+    },
+    {
+      "slug1": "q-tech",
+      "slug2": "atm-operations",
+      "rougeL": 0.38861386138613857
+    },
+    {
+      "slug1": "q-tech",
+      "slug2": "digital-asset-accelerator",
+      "rougeL": 0.3880239520958084
+    },
+    {
+      "slug1": "caleb-picks-vip-access",
+      "slug2": "murdahgg-picks",
+      "rougeL": 0.38734177215189874
+    },
+    {
+      "slug1": "zn-picks-premium-",
+      "slug2": "edu-elite-30-platinum",
+      "rougeL": 0.38653001464128844
+    },
+    {
+      "slug1": "instant-discord-full-access",
+      "slug2": "the-hustlers-room-premium",
+      "rougeL": 0.38600723763570566
+    },
+    {
+      "slug1": "strikers-7-days",
+      "slug2": "the-options-cartel-full-access",
+      "rougeL": 0.3857493857493858
+    },
+    {
+      "slug1": "data-engineer-academy",
+      "slug2": "six-figure-editor",
+      "rougeL": 0.38366336633663367
+    },
+    {
+      "slug1": "monthlyannually",
+      "slug2": "meme-mafia",
+      "rougeL": 0.3833333333333333
+    },
+    {
+      "slug1": "trading",
+      "slug2": "boutique-hotel-mastermind-subs",
+      "rougeL": 0.38313253012048193
+    },
+    {
+      "slug1": "q-tech",
+      "slug2": "blockmage",
+      "rougeL": 0.3829268292682927
+    },
+    {
+      "slug1": "majorleaguetrading-monthly",
+      "slug2": "trim-trading-monthly",
+      "rougeL": 0.38287153652392947
+    },
+    {
+      "slug1": "daetradez-signals-discord",
+      "slug2": "5k-app-challenge",
+      "rougeL": 0.38154613466334164
+    },
+    {
+      "slug1": "chrollobetts-all-stars",
+      "slug2": "yearly-access",
+      "rougeL": 0.38139534883720927
+    },
+    {
+      "slug1": "barracca81-lifetime",
+      "slug2": "archangel-x-upgrade",
+      "rougeL": 0.3805555555555556
+    },
+    {
+      "slug1": "jenna-b-fit-5",
+      "slug2": "-the-ofm-incubator-",
+      "rougeL": 0.38020833333333337
+    },
+    {
+      "slug1": "90-day-mentorship",
+      "slug2": "bronze-membership",
+      "rougeL": 0.37983587338804226
+    },
+    {
+      "slug1": "instant-access-quarterly",
+      "slug2": "email-marketing-service",
+      "rougeL": 0.37980769230769235
+    },
+    {
+      "slug1": "tradingplace",
+      "slug2": "wealth-mania-premium",
+      "rougeL": 0.37922705314009664
+    },
+    {
+      "slug1": "lockedinwithbrandon",
+      "slug2": "anomaly-enterprise",
+      "rougeL": 0.3776932826362484
+    },
+    {
+      "slug1": "youtube-consulting",
+      "slug2": "surebety-czsk",
+      "rougeL": 0.37711313394018203
+    }
+  ],
+  "topPairsByCosine": [
+    {
+      "slug1": "q-tech",
+      "slug2": "digital-asset-accelerator",
+      "cosine": 0.8788909585542445
+    },
+    {
+      "slug1": "revolutio",
+      "slug2": "one-day-access",
+      "cosine": 0.8785092353605093
+    },
+    {
+      "slug1": "pham-collectibles-pokalerts",
+      "slug2": "anomaly-enterprise",
+      "cosine": 0.8750819053566543
+    },
+    {
+      "slug1": "cryptonairz",
+      "slug2": "crypto-wealth-network",
+      "cosine": 0.8744291508109748
+    },
+    {
+      "slug1": "canary-chain",
+      "slug2": "boutique-hotel-mastermind-subs",
+      "cosine": 0.8741060214187218
+    },
+    {
+      "slug1": "q-tech",
+      "slug2": "blockmage",
+      "cosine": 0.8734487409969246
+    },
+    {
+      "slug1": "trade-the-unknown",
+      "slug2": "simple-repair-services",
+      "cosine": 0.8709220644083483
+    },
+    {
+      "slug1": "tradedifferent",
+      "slug2": "trim-trading-monthly",
+      "cosine": 0.8694263952711742
+    },
+    {
+      "slug1": "lockedinwithbrandon",
+      "slug2": "blockmage",
+      "cosine": 0.867726390865216
+    },
+    {
+      "slug1": "canary-chain",
+      "slug2": "ats-learning",
+      "cosine": 0.8662827311673801
+    },
+    {
+      "slug1": "canary-chain",
+      "slug2": "simple-repair-services",
+      "cosine": 0.8643673142493047
+    },
+    {
+      "slug1": "q-tech",
+      "slug2": "capture-ecom",
+      "cosine": 0.8610730278317044
+    },
+    {
+      "slug1": "trading",
+      "slug2": "ats-learning",
+      "cosine": 0.8610657060263273
+    },
+    {
+      "slug1": "lockedinwithbrandon",
+      "slug2": "heat-archive-slips",
+      "cosine": 0.8597198008599818
+    },
+    {
+      "slug1": "q-tech",
+      "slug2": "atm-operations",
+      "cosine": 0.8591694410413286
+    },
+    {
+      "slug1": "fortune-collective",
+      "slug2": "paper-traders-full-access",
+      "cosine": 0.8581608072090204
+    },
+    {
+      "slug1": "dont-be-exit-liquidity",
+      "slug2": "mster-adego",
+      "cosine": 0.8571108763809218
+    },
+    {
+      "slug1": "majorleaguetrading-monthly",
+      "slug2": "trim-trading-monthly",
+      "cosine": 0.8570717925857986
+    },
+    {
+      "slug1": "kingdom-decoratives-llc",
+      "slug2": "adverclash",
+      "cosine": 0.8563415334689128
+    },
+    {
+      "slug1": "q-tech",
+      "slug2": "one-day-access",
+      "cosine": 0.8546064414766538
+    },
+    {
+      "slug1": "viral-edits",
+      "slug2": "silver-spoon-bets",
+      "cosine": 0.854589566878419
+    },
+    {
+      "slug1": "dont-be-exit-liquidity",
+      "slug2": "full-access",
+      "cosine": 0.8538656319843787
+    },
+    {
+      "slug1": "how-2-legally-rob-the-banks",
+      "slug2": "leads",
+      "cosine": 0.8536212595972
+    },
+    {
+      "slug1": "odds-matter-vip-discord",
+      "slug2": "bookiemeshine-sports-picks",
+      "cosine": 0.8524545040433952
+    },
+    {
+      "slug1": "pay2playuniversity-course",
+      "slug2": "mster-adego",
+      "cosine": 0.8522296971042137
+    },
+    {
+      "slug1": "trading",
+      "slug2": "boutique-hotel-mastermind-subs",
+      "cosine": 0.8516174969280924
+    },
+    {
+      "slug1": "pay2playuniversity-course",
+      "slug2": "12-months-trapp-membership",
+      "cosine": 0.8512728922288293
+    },
+    {
+      "slug1": "swayleo-digital",
+      "slug2": "closer-launchpad",
+      "cosine": 0.850999637763211
+    },
+    {
+      "slug1": "youtube-consulting",
+      "slug2": "surebety-czsk",
+      "cosine": 0.8497684979020493
+    },
+    {
+      "slug1": "private-mentorship",
+      "slug2": "the-options-cartel-full-access",
+      "cosine": 0.8495285787256568
+    },
+    {
+      "slug1": "canary-chain",
+      "slug2": "trendy-designer-wear",
+      "cosine": 0.8489919970831902
+    },
+    {
+      "slug1": "trading",
+      "slug2": "fameu",
+      "cosine": 0.8489262587778371
+    },
+    {
+      "slug1": "grit-gains-society",
+      "slug2": "adverclash",
+      "cosine": 0.8483791802338456
+    },
+    {
+      "slug1": "kingdom-decoratives-llc",
+      "slug2": "destiny-awaits-coaching",
+      "cosine": 0.848261246727609
+    },
+    {
+      "slug1": "uncharted-vip-access",
+      "slug2": "trim-trading-monthly",
+      "cosine": 0.8476733161407957
+    },
+    {
+      "slug1": "dont-be-exit-liquidity",
+      "slug2": "elite-traders-society",
+      "cosine": 0.8473286262868808
+    },
+    {
+      "slug1": "dont-be-exit-liquidity",
+      "slug2": "otc-discord-access",
+      "cosine": 0.8471440730560118
+    },
+    {
+      "slug1": "capital-hunters",
+      "slug2": "aped-in",
+      "cosine": 0.8470062783579962
+    },
+    {
+      "slug1": "majorleaguetrading-monthly",
+      "slug2": "paper-traders-full-access",
+      "cosine": 0.8469201456014583
+    },
+    {
+      "slug1": "fx-flow-trading-discord",
+      "slug2": "quantum-algo-trading",
+      "cosine": 0.8466563774604019
+    },
+    {
+      "slug1": "uncharted-vip-access",
+      "slug2": "paper-traders-full-access",
+      "cosine": 0.8454983124330746
+    },
+    {
+      "slug1": "instant-access-quarterly",
+      "slug2": "full-access",
+      "cosine": 0.8453892909043501
+    },
+    {
+      "slug1": "daetradez-signals-discord",
+      "slug2": "otc-discord-access",
+      "cosine": 0.8452527594055165
+    },
+    {
+      "slug1": "crypto-pattern-traders-suite",
+      "slug2": "the-options-cartel-full-access",
+      "cosine": 0.8443384071594433
+    },
+    {
+      "slug1": "veatur-universe",
+      "slug2": "stratoholics-anonymous",
+      "cosine": 0.8437898170394846
+    },
+    {
+      "slug1": "d-picks-telegram",
+      "slug2": "bookahits",
+      "cosine": 0.8431891639760493
+    },
+    {
+      "slug1": "dont-be-exit-liquidity",
+      "slug2": "eztrades-pro-access",
+      "cosine": 0.8429462776371234
+    },
+    {
+      "slug1": "kript-arna-ninja",
+      "slug2": "cryptoalphas-hub-dolphin",
+      "cosine": 0.8428376299524143
+    },
+    {
+      "slug1": "valhalla-mentorship",
+      "slug2": "the-options-cartel-full-access",
+      "cosine": 0.8424937852982873
+    },
+    {
+      "slug1": "canary-chain",
+      "slug2": "los-hacks-del-mercado",
+      "cosine": 0.8423758622385237
+    }
+  ]
+}
