@@ -1,0 +1,309 @@
+{
+  "metadata": {
+    "generatedAt": "2025-12-03T23:15:12.302Z",
+    "inputFile": "data/content/master/successes.jsonl",
+    "outputFile": "data/content/master/successes-rewritten.jsonl",
+    "elapsedSeconds": 1.351
+  },
+  "summary": {
+    "totalEntries": 8212,
+    "processed": 8208,
+    "skipped": 4,
+    "errors": 0,
+    "totalPhraseReplacements": 168173,
+    "avgReplacementsPerEntry": "20.49"
+  },
+  "fingerprintDistribution": {
+    "aboutTemplates": [
+      {
+        "template": "question_hook",
+        "count": 710
+      },
+      {
+        "template": "problem_solution",
+        "count": 667
+      },
+      {
+        "template": "story_lead",
+        "count": 675
+      },
+      {
+        "template": "outcome_focused",
+        "count": 679
+      },
+      {
+        "template": "feature_breakdown",
+        "count": 685
+      },
+      {
+        "template": "community_angle",
+        "count": 671
+      },
+      {
+        "template": "transparency_focus",
+        "count": 653
+      },
+      {
+        "template": "empowerment_tone",
+        "count": 669
+      },
+      {
+        "template": "discovery_based",
+        "count": 692
+      },
+      {
+        "template": "skeptic_conversion",
+        "count": 700
+      },
+      {
+        "template": "scenario_based",
+        "count": 698
+      },
+      {
+        "template": "short_punchy",
+        "count": 709
+      }
+    ],
+    "redeemTemplates": [
+      {
+        "template": "quick_unlock",
+        "count": 1003
+      },
+      {
+        "template": "full_walkthrough",
+        "count": 1027
+      },
+      {
+        "template": "checkout_focused",
+        "count": 1075
+      },
+      {
+        "template": "account_setup_first",
+        "count": 985
+      },
+      {
+        "template": "mobile_journey",
+        "count": 1026
+      },
+      {
+        "template": "code_first_approach",
+        "count": 1035
+      },
+      {
+        "template": "verification_heavy",
+        "count": 1020
+      },
+      {
+        "template": "streamlined_process",
+        "count": 1037
+      }
+    ],
+    "promoTemplates": [
+      {
+        "template": "savings_highlight",
+        "count": 704
+      },
+      {
+        "template": "code_focused",
+        "count": 689
+      },
+      {
+        "template": "tier_comparison",
+        "count": 713
+      },
+      {
+        "template": "value_breakdown",
+        "count": 692
+      },
+      {
+        "template": "limited_offer",
+        "count": 689
+      },
+      {
+        "template": "straightforward",
+        "count": 637
+      },
+      {
+        "template": "new_member_welcome",
+        "count": 671
+      },
+      {
+        "template": "comparison_to_full_price",
+        "count": 653
+      },
+      {
+        "template": "feature_discount_combo",
+        "count": 693
+      },
+      {
+        "template": "renewal_friendly",
+        "count": 656
+      },
+      {
+        "template": "access_level_focus",
+        "count": 715
+      },
+      {
+        "template": "benefit_first",
+        "count": 696
+      }
+    ],
+    "termsTemplates": [
+      {
+        "template": "standard_bullets",
+        "count": 804
+      },
+      {
+        "template": "numbered_steps",
+        "count": 828
+      },
+      {
+        "template": "grouped_sections",
+        "count": 831
+      },
+      {
+        "template": "conversational_brief",
+        "count": 791
+      },
+      {
+        "template": "transparency_focused",
+        "count": 831
+      },
+      {
+        "template": "faq_style",
+        "count": 881
+      },
+      {
+        "template": "minimal_essential",
+        "count": 774
+      },
+      {
+        "template": "disclaimer_heavy",
+        "count": 804
+      },
+      {
+        "template": "billing_focused",
+        "count": 818
+      },
+      {
+        "template": "restriction_clear",
+        "count": 846
+      }
+    ],
+    "faqProfiles": [
+      {
+        "profile": "standard_comprehensive",
+        "count": 1618
+      },
+      {
+        "profile": "skeptic_focused",
+        "count": 1579
+      },
+      {
+        "profile": "beginner_oriented",
+        "count": 1715
+      },
+      {
+        "profile": "value_focused",
+        "count": 1657
+      },
+      {
+        "profile": "technical_practical",
+        "count": 1639
+      }
+    ],
+    "styleProfiles": [
+      {
+        "style": "neutral_informational",
+        "count": 874
+      },
+      {
+        "style": "light_conversational",
+        "count": 828
+      },
+      {
+        "style": "value_benefit_led",
+        "count": 821
+      },
+      {
+        "style": "risk_transparency",
+        "count": 806
+      },
+      {
+        "style": "community_support",
+        "count": 821
+      },
+      {
+        "style": "expert_guide",
+        "count": 830
+      },
+      {
+        "style": "beginner_friendly",
+        "count": 765
+      },
+      {
+        "style": "promotional_light",
+        "count": 845
+      },
+      {
+        "style": "concise_minimalist",
+        "count": 773
+      },
+      {
+        "style": "rich_descriptive",
+        "count": 845
+      }
+    ],
+    "semanticAngles": [
+      {
+        "angle": "community_support",
+        "count": 603
+      },
+      {
+        "angle": "expert_insight",
+        "count": 718
+      },
+      {
+        "angle": "onboarding_simplicity",
+        "count": 692
+      },
+      {
+        "angle": "transparency_safety",
+        "count": 693
+      },
+      {
+        "angle": "affordability",
+        "count": 675
+      },
+      {
+        "angle": "access_flexibility",
+        "count": 644
+      },
+      {
+        "angle": "educational_focus",
+        "count": 719
+      },
+      {
+        "angle": "performance_speed",
+        "count": 681
+      },
+      {
+        "angle": "personalization",
+        "count": 702
+      },
+      {
+        "angle": "risk_management",
+        "count": 709
+      },
+      {
+        "angle": "outcome_results",
+        "count": 686
+      },
+      {
+        "angle": "member_autonomy",
+        "count": 686
+      }
+    ]
+  },
+  "errors": []
+}

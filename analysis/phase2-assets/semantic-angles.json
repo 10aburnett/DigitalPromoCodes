@@ -1,0 +1,237 @@
+{
+  "metadata": {
+    "type": "semantic_angles",
+    "count": 12,
+    "generatedAt": "2025-12-03T21:50:00.000Z"
+  },
+  "angles": [
+    {
+      "id": 1,
+      "name": "community_support",
+      "description": "Emphasizes belonging, peer help, shared learning",
+      "primaryFocus": "The community aspect and peer support",
+      "keyPhrases": [
+        "connect with like-minded",
+        "learn alongside others",
+        "share experiences",
+        "supportive community",
+        "peer discussions",
+        "collaborative learning",
+        "group accountability"
+      ],
+      "valueProposition": "You're not doing this alone—join others on the same path",
+      "bestFor": ["communities", "group programs", "discord servers", "membership groups"],
+      "avoidWhen": ["solo tools", "automated services", "one-time purchases"],
+      "applicationGuidance": "Lead with community benefits, mention member count if impressive, highlight interaction opportunities, emphasize shared journey"
+    },
+    {
+      "id": 2,
+      "name": "expert_insight",
+      "description": "Focuses on creator credentials and expertise",
+      "primaryFocus": "The expertise and track record of the creator",
+      "keyPhrases": [
+        "years of experience",
+        "proven methodology",
+        "expert guidance",
+        "professional insights",
+        "developed by",
+        "curated by experts",
+        "industry knowledge"
+      ],
+      "valueProposition": "Learn from someone who's been there and done it",
+      "bestFor": ["courses", "mentorships", "educational content", "signal providers with track record"],
+      "avoidWhen": ["new creators", "aggregated content", "community-sourced"],
+      "applicationGuidance": "Mention creator background early, reference methodology, position as authoritative source"
+    },
+    {
+      "id": 3,
+      "name": "onboarding_simplicity",
+      "description": "Highlights how easy it is to get started",
+      "primaryFocus": "Low barrier to entry, simple setup",
+      "keyPhrases": [
+        "easy to get started",
+        "no complex setup",
+        "quick access",
+        "straightforward process",
+        "beginner-friendly",
+        "simple onboarding",
+        "instant access"
+      ],
+      "valueProposition": "Get started quickly without technical hurdles",
+      "bestFor": ["tools", "instant-access products", "beginner programs"],
+      "avoidWhen": ["complex platforms", "advanced-only content"],
+      "applicationGuidance": "Emphasize simplicity, mention quick setup time, reassure about ease of use"
+    },
+    {
+      "id": 4,
+      "name": "transparency_safety",
+      "description": "Emphasizes clear terms, honest expectations",
+      "primaryFocus": "No hidden catches, honest about what you get",
+      "keyPhrases": [
+        "clear terms",
+        "no hidden fees",
+        "transparent pricing",
+        "honest expectations",
+        "what you see is what you get",
+        "upfront about",
+        "no surprises"
+      ],
+      "valueProposition": "Know exactly what you're getting before you commit",
+      "bestFor": ["subscription services", "recurring billing products"],
+      "avoidWhen": ["already-skeptical audience might see it as defensive"],
+      "applicationGuidance": "Be explicit about terms, mention cancellation policy, address common concerns proactively"
+    },
+    {
+      "id": 5,
+      "name": "affordability",
+      "description": "Focuses on value for money and savings",
+      "primaryFocus": "Good deal, worth the investment",
+      "keyPhrases": [
+        "affordable access",
+        "great value",
+        "save on",
+        "discounted price",
+        "budget-friendly",
+        "cost-effective",
+        "more for less"
+      ],
+      "valueProposition": "Get premium value without the premium price tag",
+      "bestFor": ["promo code offers", "discounted products", "competitive pricing"],
+      "avoidWhen": ["luxury positioning", "premium-only branding"],
+      "applicationGuidance": "Highlight savings, compare to alternatives, emphasize what's included for the price"
+    },
+    {
+      "id": 6,
+      "name": "access_flexibility",
+      "description": "Emphasizes multiple options and user choice",
+      "primaryFocus": "Options to fit different needs and budgets",
+      "keyPhrases": [
+        "multiple tiers",
+        "choose what fits",
+        "flexible options",
+        "different levels",
+        "pick your plan",
+        "customize your access",
+        "scale as needed"
+      ],
+      "valueProposition": "Find the option that matches your specific needs",
+      "bestFor": ["tiered products", "multi-plan offerings", "scalable services"],
+      "avoidWhen": ["single-tier products", "one-size-fits-all"],
+      "applicationGuidance": "Present options clearly, help user self-select, mention upgrade paths"
+    },
+    {
+      "id": 7,
+      "name": "educational_focus",
+      "description": "Highlights learning and skill development",
+      "primaryFocus": "Building knowledge and capabilities",
+      "keyPhrases": [
+        "learn how to",
+        "educational resources",
+        "skill development",
+        "comprehensive curriculum",
+        "step-by-step learning",
+        "knowledge building",
+        "training materials"
+      ],
+      "valueProposition": "Develop skills that last beyond the subscription",
+      "bestFor": ["courses", "educational platforms", "skill-based communities"],
+      "avoidWhen": ["done-for-you services", "signal-only products"],
+      "applicationGuidance": "Focus on what user will learn, mention curriculum structure, highlight lasting value"
+    },
+    {
+      "id": 8,
+      "name": "performance_speed",
+      "description": "Emphasizes efficiency and quick results",
+      "primaryFocus": "Getting results faster",
+      "keyPhrases": [
+        "save time",
+        "faster results",
+        "efficient approach",
+        "streamlined process",
+        "quick turnaround",
+        "accelerate your",
+        "shortcut to"
+      ],
+      "valueProposition": "Get where you want to go faster",
+      "bestFor": ["tools", "automation", "signal services", "done-for-you"],
+      "avoidWhen": ["long-term educational programs", "community-focused products"],
+      "applicationGuidance": "Quantify time savings if possible, emphasize efficiency, mention quick wins"
+    },
+    {
+      "id": 9,
+      "name": "personalization",
+      "description": "Focuses on tailored experience and individual fit",
+      "primaryFocus": "Customized to user's specific situation",
+      "keyPhrases": [
+        "tailored to you",
+        "personalized approach",
+        "fits your style",
+        "adapted to your needs",
+        "customizable",
+        "your unique situation",
+        "individual attention"
+      ],
+      "valueProposition": "Not one-size-fits-all—this adapts to you",
+      "bestFor": ["mentorship", "coaching", "personalized services"],
+      "avoidWhen": ["mass-market products", "standardized content"],
+      "applicationGuidance": "Mention customization options, acknowledge different user needs, emphasize adaptability"
+    },
+    {
+      "id": 10,
+      "name": "risk_management",
+      "description": "Emphasizes protecting capital and smart decisions",
+      "primaryFocus": "Minimizing downside, protecting investments",
+      "keyPhrases": [
+        "protect your capital",
+        "risk management",
+        "smart decisions",
+        "avoid common mistakes",
+        "capital preservation",
+        "calculated approach",
+        "measured risk"
+      ],
+      "valueProposition": "Make informed decisions and avoid costly mistakes",
+      "bestFor": ["trading education", "investment tools", "financial products"],
+      "avoidWhen": ["high-risk gambling products", "get-rich-quick positioning"],
+      "applicationGuidance": "Address risk openly, mention protective strategies, emphasize informed decision-making"
+    },
+    {
+      "id": 11,
+      "name": "outcome_results",
+      "description": "Focuses on what users will achieve",
+      "primaryFocus": "End results and achievements",
+      "keyPhrases": [
+        "achieve your goals",
+        "see results",
+        "reach your targets",
+        "accomplish more",
+        "measurable outcomes",
+        "track your progress",
+        "real improvements"
+      ],
+      "valueProposition": "Focus on what you'll actually accomplish",
+      "bestFor": ["goal-oriented products", "performance tools", "results-based programs"],
+      "avoidWhen": ["entertainment products", "general communities"],
+      "applicationGuidance": "Be specific about potential outcomes, include qualifiers, focus on user's end goals"
+    },
+    {
+      "id": 12,
+      "name": "member_autonomy",
+      "description": "Emphasizes user control and independence",
+      "primaryFocus": "User empowerment and self-direction",
+      "keyPhrases": [
+        "you decide",
+        "your choice",
+        "take control",
+        "independent decisions",
+        "self-directed",
+        "in your hands",
+        "on your terms"
+      ],
+      "valueProposition": "Tools and knowledge to make your own informed decisions",
+      "bestFor": ["educational content", "tools", "resources that empower"],
+      "avoidWhen": ["done-for-you services", "managed accounts"],
+      "applicationGuidance": "Emphasize user agency, position as enabler not director, respect user's decision-making"
+    }
+  ]
+}

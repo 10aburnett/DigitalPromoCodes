@@ -1,0 +1,332 @@
+{
+  "metadata": {
+    "generatedAt": "2025-12-03T23:29:18.707Z",
+    "thresholds": {
+      "maxPhraseOccurrences": 500,
+      "maxSentenceSimilarity": 0.95,
+      "maxRougeLSimilarity": 0.8,
+      "maxPageSimilarity": 0.83,
+      "maxTemplatePrototypeSimilarity": 0.8,
+      "maxFingerprintDuplicates": 10
+    }
+  },
+  "summary": {
+    "totalEntries": 8208,
+    "passedAllChecks": 0,
+    "failedChecks": 8208,
+    "overallStatus": "FAILED"
+  },
+  "checks": {
+    "phraseFrequency": {
+      "status": "FAILED",
+      "threshold": 500,
+      "violationsCount": 1773,
+      "topViolations": [
+        {
+          "phrase": "then re-apply the",
+          "count": 7587
+        },
+        {
+          "phrase": "code before you",
+          "count": 7569
+        },
+        {
+          "phrase": "before you confirm.",
+          "count": 7567
+        },
+        {
+          "phrase": "code before you confirm.",
+          "count": 7566
+        },
+        {
+          "phrase": "the on-screen checkout",
+          "count": 7543
+        },
+        {
+          "phrase": "on-screen checkout instructions",
+          "count": 7519
+        },
+        {
+          "phrase": "the on-screen checkout instructions",
+          "count": 7519
+        },
+        {
+          "phrase": "may differ over",
+          "count": 7515
+        },
+        {
+          "phrase": "differ over time.",
+          "count": 7515
+        },
+        {
+          "phrase": "may differ over time.",
+          "count": 7515
+        },
+        {
+          "phrase": "use is governed",
+          "count": 7391
+        },
+        {
+          "phrase": "is governed by",
+          "count": 7391
+        },
+        {
+          "phrase": "governed by the",
+          "count": 7391
+        },
+        {
+          "phrase": "by the seller's",
+          "count": 7391
+        },
+        {
+          "phrase": "the seller's policy",
+          "count": 7391
+        },
+        {
+          "phrase": "use is governed by",
+          "count": 7391
+        },
+        {
+          "phrase": "is governed by the",
+          "count": 7391
+        },
+        {
+          "phrase": "governed by the seller's",
+          "count": 7391
+        },
+        {
+          "phrase": "by the seller's policy",
+          "count": 7391
+        },
+        {
+          "phrase": "use is governed by the",
+          "count": 7391
+        }
+      ]
+    },
+    "fingerprintUniqueness": {
+      "status": "PASSED",
+      "threshold": 10,
+      "uniqueFingerprints": 8204,
+      "duplicatesOverThreshold": 0,
+      "worstDuplicates": []
+    },
+    "htmlValidation": {
+      "status": "FAILED",
+      "passed": 7398,
+      "failed": 810
+    },
+    "similarityCheck": {
+      "status": "WARNING",
+      "highSimilarityCount": 8208
+    }
+  },
+  "phraseFrequencyDistribution": {
+    "total": 2068355,
+    "over80": 1773,
+    "over50": 21849,
+    "over30": 32139,
+    "top50Phrases": [
+      {
+        "phrase": "then re-apply the",
+        "count": 7587
+      },
+      {
+        "phrase": "code before you",
+        "count": 7569
+      },
+      {
+        "phrase": "before you confirm.",
+        "count": 7567
+      },
+      {
+        "phrase": "code before you confirm.",
+        "count": 7566
+      },
+      {
+        "phrase": "the on-screen checkout",
+        "count": 7543
+      },
+      {
+        "phrase": "on-screen checkout instructions",
+        "count": 7519
+      },
+      {
+        "phrase": "the on-screen checkout instructions",
+        "count": 7519
+      },
+      {
+        "phrase": "may differ over",
+        "count": 7515
+      },
+      {
+        "phrase": "differ over time.",
+        "count": 7515
+      },
+      {
+        "phrase": "may differ over time.",
+        "count": 7515
+      },
+      {
+        "phrase": "use is governed",
+        "count": 7391
+      },
+      {
+        "phrase": "is governed by",
+        "count": 7391
+      },
+      {
+        "phrase": "governed by the",
+        "count": 7391
+      },
+      {
+        "phrase": "by the seller's",
+        "count": 7391
+      },
+      {
+        "phrase": "the seller's policy",
+        "count": 7391
+      },
+      {
+        "phrase": "use is governed by",
+        "count": 7391
+      },
+      {
+        "phrase": "is governed by the",
+        "count": 7391
+      },
+      {
+        "phrase": "governed by the seller's",
+        "count": 7391
+      },
+      {
+        "phrase": "by the seller's policy",
+        "count": 7391
+      },
+      {
+        "phrase": "use is governed by the",
+        "count": 7391
+      },
+      {
+        "phrase": "is governed by the seller's",
+        "count": 7391
+      },
+      {
+        "phrase": "governed by the seller's policy",
+        "count": 7391
+      },
+      {
+        "phrase": "vary based on",
+        "count": 7002
+      },
+      {
+        "phrase": "may vary based",
+        "count": 6867
+      },
+      {
+        "phrase": "may vary based on",
+        "count": 6867
+      },
+      {
+        "phrase": "the best code",
+        "count": 6799
+      },
+      {
+        "phrase": "best code before",
+        "count": 6790
+      },
+      {
+        "phrase": "the best code before",
+        "count": 6790
+      },
+      {
+        "phrase": "re-apply the best",
+        "count": 6781
+      },
+      {
+        "phrase": "then re-apply the best",
+        "count": 6781
+      },
+      {
+        "phrase": "re-apply the best code",
+        "count": 6781
+      },
+      {
+        "phrase": "then re-apply the best code",
+        "count": 6781
+      },
+      {
+        "phrase": "re-apply the best code before",
+        "count": 6781
+      },
+      {
+        "phrase": "best code before you",
+        "count": 6765
+      },
+      {
+        "phrase": "the best code before you",
+        "count": 6765
+      },
+      {
+        "phrase": "best code before you confirm.",
+        "count": 6763
+      },
+      {
+        "phrase": "offer and creator.",
+        "count": 6706
+      },
+      {
+        "phrase": "visit whop.com and",
+        "count": 6588
+      },
+      {
+        "phrase": "navigate to the",
+        "count": 6467
+      },
+      {
+        "phrase": "and navigate to",
+        "count": 6175
+      },
+      {
+        "phrase": "whop.com and navigate",
+        "count": 6158
+      },
+      {
+        "phrase": "visit whop.com and navigate",
+        "count": 6158
+      },
+      {
+        "phrase": "whop.com and navigate to",
+        "count": 6158
+      },
+      {
+        "phrase": "visit whop.com and navigate to",
+        "count": 6158
+      },
+      {
+        "phrase": "and navigate to the",
+        "count": 6121
+      },
+      {
+        "phrase": "whop.com and navigate to the",
+        "count": 6104
+      },
+      {
+        "phrase": "the creator's stated",
+        "count": 6083
+      },
+      {
+        "phrase": "billing terms and",
+        "count": 5962
+      },
+      {
+        "phrase": "on the creator's",
+        "count": 5909
+      },
+      {
+        "phrase": "depend on the",
+        "count": 5861
+      }
+    ]
+  }
+}

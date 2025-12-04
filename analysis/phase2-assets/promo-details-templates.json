@@ -1,0 +1,321 @@
+{
+  "metadata": {
+    "type": "promo_details_templates",
+    "count": 12,
+    "generatedAt": "2025-12-03T22:00:00.000Z"
+  },
+  "templates": [
+    {
+      "id": 1,
+      "name": "savings_highlight",
+      "description": "Leads with the discount amount, emphasizes savings",
+      "structure": {
+        "intro": "savings_statement",
+        "body": "discount_details",
+        "closing": "action_prompt"
+      },
+      "openers": [
+        "Save {discount}% on your {product} membership",
+        "Get {discount}% off when you join {product}",
+        "Enjoy {discount}% savings on {product}",
+        "Unlock {discount}% off your {product} subscription"
+      ],
+      "bodyElements": [
+        "discount_percentage",
+        "applicable_tiers",
+        "code_instructions"
+      ],
+      "closingStyles": [
+        "Apply the code at checkout to see your savings",
+        "Enter the code during purchase to activate the discount",
+        "Use the code when you subscribe to claim your savings"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "code_focused",
+      "description": "Centers on the promo code itself and how to use it",
+      "structure": {
+        "intro": "code_presentation",
+        "body": "usage_instructions",
+        "closing": "verification_reminder"
+      },
+      "openers": [
+        "Use code {code} to unlock your discount",
+        "Apply code {code} for exclusive savings",
+        "The code {code} gives you access to special pricing",
+        "Enter {code} to activate your member discount"
+      ],
+      "bodyElements": [
+        "code_display",
+        "step_by_step_usage",
+        "where_to_apply"
+      ],
+      "closingStyles": [
+        "Confirm the discount appears before completing payment",
+        "Check that the savings show on your order summary",
+        "Verify the reduced price displays at checkout"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "tier_comparison",
+      "description": "Breaks down the discount by membership tier",
+      "structure": {
+        "intro": "tier_overview",
+        "body": "tier_breakdown",
+        "closing": "selection_guidance"
+      },
+      "openers": [
+        "This discount applies across different membership levels",
+        "The code works on multiple subscription tiers",
+        "Choose your tier and apply the discount",
+        "Different membership options are available with this offer"
+      ],
+      "bodyElements": [
+        "tier_list",
+        "price_per_tier",
+        "features_per_tier"
+      ],
+      "closingStyles": [
+        "Select the tier that fits your needs and apply the code",
+        "Pick your membership level to see the discounted price",
+        "Choose your plan and the savings will apply automatically"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "value_breakdown",
+      "description": "Explains what you get for the discounted price",
+      "structure": {
+        "intro": "value_statement",
+        "body": "feature_list",
+        "closing": "deal_summary"
+      },
+      "openers": [
+        "Here's what you get with this discounted membership",
+        "Your subscription includes these features at a reduced rate",
+        "At this price, you receive full access to",
+        "The discounted membership comes with"
+      ],
+      "bodyElements": [
+        "included_features",
+        "access_details",
+        "value_highlights"
+      ],
+      "closingStyles": [
+        "All this at a reduced price with the code",
+        "These features are included at the discounted rate",
+        "Get everything listed above for less with the promo code"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "limited_offer",
+      "description": "Emphasizes time-sensitivity without being pushy",
+      "structure": {
+        "intro": "offer_context",
+        "body": "discount_details",
+        "closing": "timing_note"
+      },
+      "openers": [
+        "This promotional code is currently active",
+        "The offer is available for a limited period",
+        "This discount is part of a current promotion",
+        "Take advantage of this active offer"
+      ],
+      "bodyElements": [
+        "discount_amount",
+        "applicable_products",
+        "validity_context"
+      ],
+      "closingStyles": [
+        "Promotions may change, so consider acting while available",
+        "Availability may vary, verify at checkout",
+        "Check the offer is still active when you're ready to subscribe"
+      ]
+    },
+    {
+      "id": 6,
+      "name": "straightforward",
+      "description": "Simple, direct presentation of the discount",
+      "structure": {
+        "intro": "direct_statement",
+        "body": "key_details",
+        "closing": "simple_cta"
+      },
+      "openers": [
+        "Get {discount}% off {product}",
+        "{discount}% discount available for {product}",
+        "Promotional pricing: {discount}% off",
+        "Member discount: {discount}%"
+      ],
+      "bodyElements": [
+        "discount_percentage",
+        "product_name",
+        "code_if_needed"
+      ],
+      "closingStyles": [
+        "Apply at checkout",
+        "Use when subscribing",
+        "Enter during purchase"
+      ]
+    },
+    {
+      "id": 7,
+      "name": "new_member_welcome",
+      "description": "Frames discount as a welcome offer for newcomers",
+      "structure": {
+        "intro": "welcome_message",
+        "body": "offer_details",
+        "closing": "getting_started"
+      },
+      "openers": [
+        "New to {product}? Start with a discount",
+        "First time joining? Here's a welcome offer",
+        "Begin your membership with special pricing",
+        "Get started with a new member discount"
+      ],
+      "bodyElements": [
+        "new_member_discount",
+        "what_you_get",
+        "how_to_claim"
+      ],
+      "closingStyles": [
+        "Apply the code as a new subscriber",
+        "Claim your welcome discount when signing up",
+        "Use the offer when you create your membership"
+      ]
+    },
+    {
+      "id": 8,
+      "name": "comparison_to_full_price",
+      "description": "Shows the difference between regular and discounted price",
+      "structure": {
+        "intro": "price_comparison",
+        "body": "savings_breakdown",
+        "closing": "value_statement"
+      },
+      "openers": [
+        "Regular price vs. discounted price",
+        "See how much you save with this code",
+        "Compare the standard rate to the promotional price",
+        "The difference with and without the discount"
+      ],
+      "bodyElements": [
+        "regular_price",
+        "discounted_price",
+        "savings_amount"
+      ],
+      "closingStyles": [
+        "The savings add up over your subscription",
+        "Keep the difference and get the same access",
+        "Same features, better price"
+      ]
+    },
+    {
+      "id": 9,
+      "name": "feature_discount_combo",
+      "description": "Pairs specific features with the discount offer",
+      "structure": {
+        "intro": "feature_highlight",
+        "body": "feature_discount_pairs",
+        "closing": "combined_value"
+      },
+      "openers": [
+        "Access {feature} at a discounted rate",
+        "Get {feature} included with your savings",
+        "{feature} is part of this discounted membership",
+        "The discount includes access to {feature}"
+      ],
+      "bodyElements": [
+        "key_feature",
+        "discount_amount",
+        "additional_features"
+      ],
+      "closingStyles": [
+        "All features at the reduced price",
+        "Full access with the discount applied",
+        "Everything included at the promotional rate"
+      ]
+    },
+    {
+      "id": 10,
+      "name": "renewal_friendly",
+      "description": "Addresses how the discount applies to ongoing billing",
+      "structure": {
+        "intro": "billing_context",
+        "body": "renewal_details",
+        "closing": "ongoing_value"
+      },
+      "openers": [
+        "The discount applies to your subscription",
+        "Here's how the promotional pricing works",
+        "Understanding your discounted billing",
+        "What to expect with the discount on your subscription"
+      ],
+      "bodyElements": [
+        "initial_discount",
+        "renewal_terms",
+        "billing_cycle"
+      ],
+      "closingStyles": [
+        "Review the terms to understand how billing works",
+        "Check the subscription details for renewal information",
+        "See the checkout page for full billing details"
+      ]
+    },
+    {
+      "id": 11,
+      "name": "access_level_focus",
+      "description": "Emphasizes what level of access the discount unlocks",
+      "structure": {
+        "intro": "access_statement",
+        "body": "access_details",
+        "closing": "access_value"
+      },
+      "openers": [
+        "Unlock {access_level} access at a discount",
+        "Get {access_level} membership for less",
+        "The code grants discounted {access_level} access",
+        "{access_level} tier available with promotional pricing"
+      ],
+      "bodyElements": [
+        "access_level",
+        "what_access_includes",
+        "discount_details"
+      ],
+      "closingStyles": [
+        "Full {access_level} access at the reduced rate",
+        "Everything in {access_level} tier, discounted",
+        "Claim your {access_level} membership with savings"
+      ]
+    },
+    {
+      "id": 12,
+      "name": "benefit_first",
+      "description": "Leads with benefits before mentioning the discount",
+      "structure": {
+        "intro": "benefit_highlight",
+        "body": "benefits_with_discount",
+        "closing": "benefit_cta"
+      },
+      "openers": [
+        "Gain access to {benefit} with this membership",
+        "Start {benefit_action} with your subscription",
+        "Your membership provides {benefit}",
+        "Members enjoy {benefit} and more"
+      ],
+      "bodyElements": [
+        "primary_benefit",
+        "secondary_benefits",
+        "discount_mention"
+      ],
+      "closingStyles": [
+        "Get these benefits at the discounted price",
+        "All of this is available with the promo code savings",
+        "Access the full benefits at a reduced rate"
+      ]
+    }
+  ]
+}

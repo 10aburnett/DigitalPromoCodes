@@ -1,0 +1,1248 @@
+{
+  "metadata": {
+    "generatedAt": "2025-12-03T23:30:06.962Z",
+    "thresholds": {
+      "minAboutWords": 80,
+      "minRedeemSteps": 3,
+      "minPromoBullets": 3,
+      "minTermsBullets": 2,
+      "minFaqCount": 3,
+      "maxAboutWords": 500
+    },
+    "totalFlagged": 88
+  },
+  "entries": [
+    {
+      "slug": "momentum-monthly",
+      "issues": [
+        "About too short (62 words)"
+      ],
+      "metrics": {
+        "slug": "momentum-monthly",
+        "aboutWordCount": 62,
+        "redeemStepCount": 5,
+        "promoBulletCount": 5,
+        "termsBulletCount": 5,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "premium",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "premium",
+        "aboutWordCount": 137,
+        "redeemStepCount": 0,
+        "promoBulletCount": 5,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "bundle",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "bundle",
+        "aboutWordCount": 137,
+        "redeemStepCount": 0,
+        "promoBulletCount": 4,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "supercar-income",
+      "issues": [
+        "About too short (76 words)"
+      ],
+      "metrics": {
+        "slug": "supercar-income",
+        "aboutWordCount": 76,
+        "redeemStepCount": 5,
+        "promoBulletCount": 5,
+        "termsBulletCount": 5,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "-anubis-crypto",
+      "issues": [
+        "About too short (53 words)"
+      ],
+      "metrics": {
+        "slug": "-anubis-crypto",
+        "aboutWordCount": 53,
+        "redeemStepCount": 5,
+        "promoBulletCount": 5,
+        "termsBulletCount": 5,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "-botting-fr",
+      "issues": [
+        "About too short (53 words)"
+      ],
+      "metrics": {
+        "slug": "-botting-fr",
+        "aboutWordCount": 53,
+        "redeemStepCount": 5,
+        "promoBulletCount": 5,
+        "termsBulletCount": 5,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "daniel-g-lifetime-sales-skool",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "daniel-g-lifetime-sales-skool",
+        "aboutWordCount": 145,
+        "redeemStepCount": 0,
+        "promoBulletCount": 5,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "500-challenge",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "500-challenge",
+        "aboutWordCount": 141,
+        "redeemStepCount": 0,
+        "promoBulletCount": 5,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "billionaire-traders-club",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "billionaire-traders-club",
+        "aboutWordCount": 137,
+        "redeemStepCount": 0,
+        "promoBulletCount": 5,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "autosnkr-premium-access",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "autosnkr-premium-access",
+        "aboutWordCount": 133,
+        "redeemStepCount": 0,
+        "promoBulletCount": 5,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "vip-na-3-mesiace",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "vip-na-3-mesiace",
+        "aboutWordCount": 132,
+        "redeemStepCount": 0,
+        "promoBulletCount": 5,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "who-am-i-alicia-studio",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "who-am-i-alicia-studio",
+        "aboutWordCount": 131,
+        "redeemStepCount": 0,
+        "promoBulletCount": 5,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "yearly-plan",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "yearly-plan",
+        "aboutWordCount": 134,
+        "redeemStepCount": 0,
+        "promoBulletCount": 5,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "vertical-marketing-service",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "vertical-marketing-service",
+        "aboutWordCount": 135,
+        "redeemStepCount": 0,
+        "promoBulletCount": 5,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "trading-with-greg",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "trading-with-greg",
+        "aboutWordCount": 125,
+        "redeemStepCount": 0,
+        "promoBulletCount": 5,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "the-gods-of-parlay-high-roller",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "the-gods-of-parlay-high-roller",
+        "aboutWordCount": 139,
+        "redeemStepCount": 0,
+        "promoBulletCount": 5,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "tribu-sin-excusas",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "tribu-sin-excusas",
+        "aboutWordCount": 134,
+        "redeemStepCount": 0,
+        "promoBulletCount": 5,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "the-elite-crypto-insiders",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "the-elite-crypto-insiders",
+        "aboutWordCount": 137,
+        "redeemStepCount": 0,
+        "promoBulletCount": 5,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "sports",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "sports",
+        "aboutWordCount": 131,
+        "redeemStepCount": 0,
+        "promoBulletCount": 5,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "spoofer-pro",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "spoofer-pro",
+        "aboutWordCount": 130,
+        "redeemStepCount": 0,
+        "promoBulletCount": 5,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "single-1-on-1-coaching-call",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "single-1-on-1-coaching-call",
+        "aboutWordCount": 134,
+        "redeemStepCount": 0,
+        "promoBulletCount": 5,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "tb-master-mentor-program",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "tb-master-mentor-program",
+        "aboutWordCount": 135,
+        "redeemStepCount": 0,
+        "promoBulletCount": 5,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "the-stoictraders-mentorship",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "the-stoictraders-mentorship",
+        "aboutWordCount": 133,
+        "redeemStepCount": 0,
+        "promoBulletCount": 5,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "the-seo-boardroom",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "the-seo-boardroom",
+        "aboutWordCount": 135,
+        "redeemStepCount": 0,
+        "promoBulletCount": 5,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "startupfba-amazon-leads",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "startupfba-amazon-leads",
+        "aboutWordCount": 139,
+        "redeemStepCount": 0,
+        "promoBulletCount": 5,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "slam-dunk-bets",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "slam-dunk-bets",
+        "aboutWordCount": 131,
+        "redeemStepCount": 0,
+        "promoBulletCount": 5,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "storm-vs-wings",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "storm-vs-wings",
+        "aboutWordCount": 132,
+        "redeemStepCount": 0,
+        "promoBulletCount": 5,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "shorts-launchpad",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "shorts-launchpad",
+        "aboutWordCount": 134,
+        "redeemStepCount": 0,
+        "promoBulletCount": 5,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "rushmark-media",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "rushmark-media",
+        "aboutWordCount": 132,
+        "redeemStepCount": 0,
+        "promoBulletCount": 5,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "quanbotold-product-1",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "quanbotold-product-1",
+        "aboutWordCount": 127,
+        "redeemStepCount": 0,
+        "promoBulletCount": 5,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "premium-discord-twitter",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "premium-discord-twitter",
+        "aboutWordCount": 142,
+        "redeemStepCount": 0,
+        "promoBulletCount": 5,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "sigmavue",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "sigmavue",
+        "aboutWordCount": 137,
+        "redeemStepCount": 0,
+        "promoBulletCount": 5,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "premium-all-access",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "premium-all-access",
+        "aboutWordCount": 130,
+        "redeemStepCount": 0,
+        "promoBulletCount": 5,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "power-club",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "power-club",
+        "aboutWordCount": 134,
+        "redeemStepCount": 0,
+        "promoBulletCount": 5,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "premium-discord-more",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "premium-discord-more",
+        "aboutWordCount": 137,
+        "redeemStepCount": 0,
+        "promoBulletCount": 5,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "organic-trades-discord-monthly",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "organic-trades-discord-monthly",
+        "aboutWordCount": 136,
+        "redeemStepCount": 0,
+        "promoBulletCount": 5,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "nextwave-plus-membership",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "nextwave-plus-membership",
+        "aboutWordCount": 133,
+        "redeemStepCount": 0,
+        "promoBulletCount": 5,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "only-profit-car-rental",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "only-profit-car-rental",
+        "aboutWordCount": 132,
+        "redeemStepCount": 0,
+        "promoBulletCount": 5,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "member-acess",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "member-acess",
+        "aboutWordCount": 132,
+        "redeemStepCount": 0,
+        "promoBulletCount": 5,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "options-1-1-coaching-6-months",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "options-1-1-coaching-6-months",
+        "aboutWordCount": 137,
+        "redeemStepCount": 0,
+        "promoBulletCount": 5,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "nepq-fundamentals-insurance",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "nepq-fundamentals-insurance",
+        "aboutWordCount": 140,
+        "redeemStepCount": 0,
+        "promoBulletCount": 5,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "personal-plan-to-get-ex-back",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "personal-plan-to-get-ex-back",
+        "aboutWordCount": 133,
+        "redeemStepCount": 0,
+        "promoBulletCount": 5,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "nepq-fundamentals-remainder",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "nepq-fundamentals-remainder",
+        "aboutWordCount": 131,
+        "redeemStepCount": 0,
+        "promoBulletCount": 5,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "otm-exclusive-vip",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "otm-exclusive-vip",
+        "aboutWordCount": 136,
+        "redeemStepCount": 0,
+        "promoBulletCount": 5,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "mastermindcom-9-seats-at-",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "mastermindcom-9-seats-at-",
+        "aboutWordCount": 131,
+        "redeemStepCount": 0,
+        "promoBulletCount": 5,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "model-ascension-lifetime",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "model-ascension-lifetime",
+        "aboutWordCount": 134,
+        "redeemStepCount": 0,
+        "promoBulletCount": 5,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "learn-to-invest-like-trump",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "learn-to-invest-like-trump",
+        "aboutWordCount": 129,
+        "redeemStepCount": 0,
+        "promoBulletCount": 5,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "max-tornow-ai-agent",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "max-tornow-ai-agent",
+        "aboutWordCount": 141,
+        "redeemStepCount": 0,
+        "promoBulletCount": 5,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "max-play-51",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "max-play-51",
+        "aboutWordCount": 138,
+        "redeemStepCount": 0,
+        "promoBulletCount": 5,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "kazumis-university-deposits",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "kazumis-university-deposits",
+        "aboutWordCount": 135,
+        "redeemStepCount": 0,
+        "promoBulletCount": 5,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "lead-generation-location-1",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "lead-generation-location-1",
+        "aboutWordCount": 135,
+        "redeemStepCount": 0,
+        "promoBulletCount": 5,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "legacy-wealth-blueprint-12mo",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "legacy-wealth-blueprint-12mo",
+        "aboutWordCount": 127,
+        "redeemStepCount": 0,
+        "promoBulletCount": 5,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "knightlocks-monthly-premium",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "knightlocks-monthly-premium",
+        "aboutWordCount": 135,
+        "redeemStepCount": 0,
+        "promoBulletCount": 5,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "lenstvo-crypto",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "lenstvo-crypto",
+        "aboutWordCount": 128,
+        "redeemStepCount": 0,
+        "promoBulletCount": 5,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "johndaytrading-lab",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "johndaytrading-lab",
+        "aboutWordCount": 132,
+        "redeemStepCount": 0,
+        "promoBulletCount": 5,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "inner-circle-course-only",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "inner-circle-course-only",
+        "aboutWordCount": 144,
+        "redeemStepCount": 0,
+        "promoBulletCount": 5,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "itrade-yearly-access",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "itrade-yearly-access",
+        "aboutWordCount": 135,
+        "redeemStepCount": 0,
+        "promoBulletCount": 5,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "globus-agency",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "globus-agency",
+        "aboutWordCount": 142,
+        "redeemStepCount": 0,
+        "promoBulletCount": 5,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "funding-kingdom-opera-en-vivo",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "funding-kingdom-opera-en-vivo",
+        "aboutWordCount": 135,
+        "redeemStepCount": 0,
+        "promoBulletCount": 5,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "edge-your-bets",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "edge-your-bets",
+        "aboutWordCount": 135,
+        "redeemStepCount": 0,
+        "promoBulletCount": 5,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "e-commerce-scaling-secrets-",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "e-commerce-scaling-secrets-",
+        "aboutWordCount": 131,
+        "redeemStepCount": 0,
+        "promoBulletCount": 5,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "dropkiller-br",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "dropkiller-br",
+        "aboutWordCount": 132,
+        "redeemStepCount": 0,
+        "promoBulletCount": 5,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "dr-baltimore-10",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "dr-baltimore-10",
+        "aboutWordCount": 129,
+        "redeemStepCount": 0,
+        "promoBulletCount": 5,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "doubleup-sports-monthly",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "doubleup-sports-monthly",
+        "aboutWordCount": 134,
+        "redeemStepCount": 0,
+        "promoBulletCount": 5,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "curso-completo-de-media-buying",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "curso-completo-de-media-buying",
+        "aboutWordCount": 137,
+        "redeemStepCount": 0,
+        "promoBulletCount": 5,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "chaincandy",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "chaincandy",
+        "aboutWordCount": 135,
+        "redeemStepCount": 0,
+        "promoBulletCount": 5,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "daniel-g-hubzome-lda-speaking",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "daniel-g-hubzome-lda-speaking",
+        "aboutWordCount": 129,
+        "redeemStepCount": 0,
+        "promoBulletCount": 5,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "daniel-g-x-d2d-con",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "daniel-g-x-d2d-con",
+        "aboutWordCount": 132,
+        "redeemStepCount": 0,
+        "promoBulletCount": 5,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "done-for-you-social-media",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "done-for-you-social-media",
+        "aboutWordCount": 141,
+        "redeemStepCount": 0,
+        "promoBulletCount": 5,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "cdl-sportsbook-pass",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "cdl-sportsbook-pass",
+        "aboutWordCount": 138,
+        "redeemStepCount": 0,
+        "promoBulletCount": 5,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "chart-chasers-gold",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "chart-chasers-gold",
+        "aboutWordCount": 132,
+        "redeemStepCount": 0,
+        "promoBulletCount": 5,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "byeb-deposit",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "byeb-deposit",
+        "aboutWordCount": 137,
+        "redeemStepCount": 0,
+        "promoBulletCount": 5,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "crush-media",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "crush-media",
+        "aboutWordCount": 134,
+        "redeemStepCount": 0,
+        "promoBulletCount": 5,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "consulting-mastery",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "consulting-mastery",
+        "aboutWordCount": 134,
+        "redeemStepCount": 0,
+        "promoBulletCount": 5,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "conversionmind-ai-system-pro",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "conversionmind-ai-system-pro",
+        "aboutWordCount": 141,
+        "redeemStepCount": 0,
+        "promoBulletCount": 5,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "black-belt-sales-program",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "black-belt-sales-program",
+        "aboutWordCount": 136,
+        "redeemStepCount": 0,
+        "promoBulletCount": 5,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "ascension-incubator-12-mo",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "ascension-incubator-12-mo",
+        "aboutWordCount": 133,
+        "redeemStepCount": 0,
+        "promoBulletCount": 5,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "bands-vip-signals-chat-access",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "bands-vip-signals-chat-access",
+        "aboutWordCount": 135,
+        "redeemStepCount": 0,
+        "promoBulletCount": 5,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "accs-standard",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "accs-standard",
+        "aboutWordCount": 138,
+        "redeemStepCount": 0,
+        "promoBulletCount": 5,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "all-access-monthly-wins",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "all-access-monthly-wins",
+        "aboutWordCount": 134,
+        "redeemStepCount": 0,
+        "promoBulletCount": 5,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "academia",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "academia",
+        "aboutWordCount": 137,
+        "redeemStepCount": 0,
+        "promoBulletCount": 5,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "-oms-community-wholetek",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "-oms-community-wholetek",
+        "aboutWordCount": 143,
+        "redeemStepCount": 0,
+        "promoBulletCount": 5,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "1-elite-suite-payment-plan",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "1-elite-suite-payment-plan",
+        "aboutWordCount": 135,
+        "redeemStepCount": 0,
+        "promoBulletCount": 5,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "academia-de-trading-1",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "academia-de-trading-1",
+        "aboutWordCount": 131,
+        "redeemStepCount": 0,
+        "promoBulletCount": 5,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "-7-day-free-trial-bundle-",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "-7-day-free-trial-bundle-",
+        "aboutWordCount": 137,
+        "redeemStepCount": 0,
+        "promoBulletCount": 5,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "637",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "637",
+        "aboutWordCount": 130,
+        "redeemStepCount": 0,
+        "promoBulletCount": 5,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "-the-ofm-incubator-",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "-the-ofm-incubator-",
+        "aboutWordCount": 132,
+        "redeemStepCount": 0,
+        "promoBulletCount": 5,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    },
+    {
+      "slug": "2-million-dollar-dna-insider",
+      "issues": [
+        "Too few redeem steps (0)"
+      ],
+      "metrics": {
+        "slug": "2-million-dollar-dna-insider",
+        "aboutWordCount": 144,
+        "redeemStepCount": 0,
+        "promoBulletCount": 5,
+        "termsBulletCount": 4,
+        "faqCount": 5
+      }
+    }
+  ]
+}

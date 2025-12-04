@@ -1,0 +1,254 @@
+{
+  "metadata": {
+    "type": "terms_templates",
+    "count": 10,
+    "generatedAt": "2025-12-03T22:00:00.000Z"
+  },
+  "templates": [
+    {
+      "id": 1,
+      "name": "standard_bullets",
+      "description": "Classic bulleted list of terms and conditions",
+      "structure": "bullet_list",
+      "format": "unordered_list",
+      "introStyles": [
+        "Please review these terms before subscribing:",
+        "Important details to consider:",
+        "Key information about this offer:",
+        "Before you subscribe, note the following:"
+      ],
+      "termCategories": [
+        "validity",
+        "restrictions",
+        "billing",
+        "cancellation",
+        "results_disclaimer"
+      ],
+      "closingStyles": [
+        "Review all terms at checkout.",
+        "Full details available on the subscription page.",
+        "See the official terms on the creator's page."
+      ]
+    },
+    {
+      "id": 2,
+      "name": "numbered_steps",
+      "description": "Numbered list format for easy scanning",
+      "structure": "numbered_list",
+      "format": "ordered_list",
+      "introStyles": [
+        "Terms and conditions:",
+        "What you should know:",
+        "Key points about this subscription:",
+        "Terms to be aware of:"
+      ],
+      "termCategories": [
+        "code_usage",
+        "plan_coverage",
+        "billing_cycle",
+        "cancellation_policy",
+        "disclaimer"
+      ],
+      "closingStyles": [
+        "Confirm all details at checkout.",
+        "Verify terms before completing your purchase.",
+        "Check the final terms on the payment page."
+      ]
+    },
+    {
+      "id": 3,
+      "name": "grouped_sections",
+      "description": "Terms organized by category with headers",
+      "structure": "sectioned",
+      "format": "grouped_with_headers",
+      "introStyles": [
+        "This offer comes with the following terms:",
+        "Here's what applies to this promotion:",
+        "Review these conditions:",
+        "The following terms apply:"
+      ],
+      "termCategories": [
+        "offer_details",
+        "usage_restrictions",
+        "payment_terms",
+        "cancellation_and_refunds",
+        "general_disclaimers"
+      ],
+      "closingStyles": [
+        "Additional terms may apply at checkout.",
+        "Refer to the official page for complete terms.",
+        "Full conditions available on the subscription page."
+      ]
+    },
+    {
+      "id": 4,
+      "name": "conversational_brief",
+      "description": "Informal, brief explanation of key terms",
+      "structure": "paragraph",
+      "format": "short_paragraphs",
+      "introStyles": [
+        "A few things to know:",
+        "Quick notes about this offer:",
+        "Here's the important stuff:",
+        "Just so you know:"
+      ],
+      "termCategories": [
+        "main_restrictions",
+        "billing_basics",
+        "flexibility"
+      ],
+      "closingStyles": [
+        "That's the main stuff—check checkout for details.",
+        "Those are the key points to keep in mind.",
+        "Pretty straightforward—verify at checkout."
+      ]
+    },
+    {
+      "id": 5,
+      "name": "transparency_focused",
+      "description": "Emphasizes honesty and clarity about limitations",
+      "structure": "transparency_list",
+      "format": "clear_statements",
+      "introStyles": [
+        "We want to be upfront about these terms:",
+        "Here's what you should know beforehand:",
+        "For full transparency:",
+        "To be clear about this offer:"
+      ],
+      "termCategories": [
+        "what_is_included",
+        "what_is_not_included",
+        "pricing_clarity",
+        "results_honesty",
+        "cancellation_transparency"
+      ],
+      "closingStyles": [
+        "No hidden catches—these are the terms.",
+        "That's everything—no surprises.",
+        "Full terms confirmed at checkout."
+      ]
+    },
+    {
+      "id": 6,
+      "name": "faq_style",
+      "description": "Terms presented as questions and answers",
+      "structure": "qa_format",
+      "format": "question_answer_pairs",
+      "introStyles": [
+        "Common questions about the terms:",
+        "You might be wondering:",
+        "Questions about this offer:",
+        "Terms explained:"
+      ],
+      "termCategories": [
+        "code_questions",
+        "billing_questions",
+        "cancellation_questions",
+        "restriction_questions"
+      ],
+      "closingStyles": [
+        "More questions? Check the official page.",
+        "Additional details at checkout.",
+        "See the subscription page for more."
+      ]
+    },
+    {
+      "id": 7,
+      "name": "minimal_essential",
+      "description": "Only the most essential terms, very brief",
+      "structure": "minimal",
+      "format": "short_bullets",
+      "introStyles": [
+        "Key terms:",
+        "Note:",
+        "Terms:",
+        "Conditions:"
+      ],
+      "termCategories": [
+        "validity",
+        "main_restriction",
+        "billing_note"
+      ],
+      "closingStyles": [
+        "See checkout for full terms.",
+        "Full details on payment page.",
+        "Complete terms at checkout."
+      ]
+    },
+    {
+      "id": 8,
+      "name": "disclaimer_heavy",
+      "description": "Emphasizes disclaimers and realistic expectations",
+      "structure": "disclaimer_focused",
+      "format": "emphasized_disclaimers",
+      "introStyles": [
+        "Important disclaimers to consider:",
+        "Please be aware of the following:",
+        "Before subscribing, understand that:",
+        "Key disclaimers:"
+      ],
+      "termCategories": [
+        "results_disclaimer",
+        "no_guarantees",
+        "individual_variation",
+        "market_risks",
+        "educational_nature"
+      ],
+      "closingStyles": [
+        "Make informed decisions based on your situation.",
+        "Consider your circumstances before subscribing.",
+        "Evaluate whether this fits your needs."
+      ]
+    },
+    {
+      "id": 9,
+      "name": "billing_focused",
+      "description": "Centers on payment and billing terms",
+      "structure": "billing_emphasis",
+      "format": "payment_details",
+      "introStyles": [
+        "Billing and payment terms:",
+        "How billing works:",
+        "Payment information:",
+        "Subscription billing details:"
+      ],
+      "termCategories": [
+        "initial_charge",
+        "renewal_billing",
+        "payment_methods",
+        "cancellation_process",
+        "refund_policy"
+      ],
+      "closingStyles": [
+        "Review billing details at checkout.",
+        "Confirm payment terms before subscribing.",
+        "See final billing info on payment page."
+      ]
+    },
+    {
+      "id": 10,
+      "name": "restriction_clear",
+      "description": "Clearly outlines what the code does and doesn't cover",
+      "structure": "restrictions_focus",
+      "format": "does_and_doesnt",
+      "introStyles": [
+        "What this code covers:",
+        "Offer applicability:",
+        "This promotion applies to:",
+        "Code restrictions:"
+      ],
+      "termCategories": [
+        "applicable_plans",
+        "non_applicable_plans",
+        "stacking_rules",
+        "usage_limits",
+        "geographic_restrictions"
+      ],
+      "closingStyles": [
+        "Verify applicability at checkout.",
+        "Confirm the code works for your selection.",
+        "Check that your plan is covered."
+      ]
+    }
+  ]
+}

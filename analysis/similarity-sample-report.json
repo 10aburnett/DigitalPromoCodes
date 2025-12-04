@@ -1,0 +1,1136 @@
+{
+  "metadata": {
+    "generatedAt": "2025-12-04T00:07:41.805Z",
+    "inputFile": "data/content/master/successes-rewritten-grammar-fixed.jsonl",
+    "totalEntries": 8208,
+    "numAnchors": 300,
+    "comparisonsPerAnchor": 200,
+    "minMainWords": 40,
+    "thresholds": {
+      "COSINE_HIGH_THRESHOLD": 0.85,
+      "ROUGE_L_HIGH_THRESHOLD": 0.7,
+      "COSINE_ROUGE_GATE": 0.7
+    },
+    "elapsedSeconds": 90.994,
+    "totalPairsChecked": 60000
+  },
+  "summary": {
+    "cosineHighCount": 10345,
+    "cosineHighPercentage": 17.241666666666667,
+    "rougeHighCount": 0,
+    "rougeHighPercentage": 0,
+    "cosineBins": {
+      "0.0-0.2": 0,
+      "0.2-0.4": 0,
+      "0.4-0.6": 33,
+      "0.6-0.7": 270,
+      "0.7-0.8": 18464,
+      "0.8-0.9": 40766,
+      "0.9-1.0": 467
+    }
+  },
+  "topPairsByCosine": [
+    {
+      "slug1": "motw",
+      "slug2": "anabolic-whales",
+      "score": 0.9443533620014672
+    },
+    {
+      "slug1": "ventures-vault",
+      "slug2": "infinity-solutions",
+      "score": 0.9424511247299803
+    },
+    {
+      "slug1": "pgr-club",
+      "slug2": "clubcloser",
+      "score": 0.941008641636541
+    },
+    {
+      "slug1": "builder-accelerator-financing",
+      "slug2": "ai-wealth",
+      "score": 0.94005598161609
+    },
+    {
+      "slug1": "model-ascension-lifetime",
+      "slug2": "500-challenge",
+      "score": 0.9397097984329177
+    },
+    {
+      "slug1": "model-ascension-lifetime",
+      "slug2": "the-stoictraders-mentorship",
+      "score": 0.9389190478213536
+    },
+    {
+      "slug1": "motw",
+      "slug2": "stronger-muslim",
+      "score": 0.9379232274822877
+    },
+    {
+      "slug1": "model-ascension-lifetime",
+      "slug2": "bg-advanced-trading-content",
+      "score": 0.9360383668176877
+    },
+    {
+      "slug1": "quantum-futures-mentorship",
+      "slug2": "scaling-with-systems",
+      "score": 0.9359998480815853
+    },
+    {
+      "slug1": "model-ascension-lifetime",
+      "slug2": "pronosticodeportivo-vip",
+      "score": 0.935944954084165
+    },
+    {
+      "slug1": "she-got-options",
+      "slug2": "cno-research",
+      "score": 0.9355167771351492
+    },
+    {
+      "slug1": "kr4zh-picks",
+      "slug2": "vip-trading-group",
+      "score": 0.9352096285349176
+    },
+    {
+      "slug1": "rankupacademy",
+      "slug2": "next-level-picks",
+      "score": 0.9338385261161181
+    },
+    {
+      "slug1": "fittobe",
+      "slug2": "allen",
+      "score": 0.9335266642447039
+    },
+    {
+      "slug1": "team-final-form-physiques-5",
+      "slug2": "stp-inner-circle",
+      "score": 0.9316434386107509
+    },
+    {
+      "slug1": "hoejabs",
+      "slug2": "xbles",
+      "score": 0.931434553561803
+    },
+    {
+      "slug1": "model-ascension-lifetime",
+      "slug2": "quanbotold-product-1",
+      "score": 0.9312273256961242
+    },
+    {
+      "slug1": "she-got-options",
+      "slug2": "ancientagency",
+      "score": 0.9307848952942214
+    },
+    {
+      "slug1": "martins-whop",
+      "slug2": "stronger-muslim",
+      "score": 0.9304079767688045
+    },
+    {
+      "slug1": "model-ascension-lifetime",
+      "slug2": "tb-master-mentor-program",
+      "score": 0.9302150658486656
+    },
+    {
+      "slug1": "top-barbers-4",
+      "slug2": "ascension-incubator-12-mo",
+      "score": 0.9301807255991051
+    },
+    {
+      "slug1": "the-winning-circle",
+      "slug2": "health-pillars-masterclass",
+      "score": 0.9296954457730382
+    },
+    {
+      "slug1": "fxvdriixn-trades",
+      "slug2": "donovancd27s-whop",
+      "score": 0.929003203168403
+    },
+    {
+      "slug1": "financially-free-entourage",
+      "slug2": "poketools",
+      "score": 0.9283639067199357
+    },
+    {
+      "slug1": "empowerher-hub",
+      "slug2": "beyond-clinical-care",
+      "score": 0.9283275400871138
+    },
+    {
+      "slug1": "kpp-remote-training",
+      "slug2": "ai-wealth",
+      "score": 0.9282670454545454
+    },
+    {
+      "slug1": "appointmentsettercom",
+      "slug2": "pure-motion-picks-vip",
+      "score": 0.9273775306986847
+    },
+    {
+      "slug1": "parlaycapital-premium",
+      "slug2": "-7-jou-7-chans",
+      "score": 0.9272677646006545
+    },
+    {
+      "slug1": "top-barbers-4",
+      "slug2": "htb-secure-spot",
+      "score": 0.9271983051578685
+    },
+    {
+      "slug1": "appointmentsettercom",
+      "slug2": "strike-picks",
+      "score": 0.9266701495046482
+    },
+    {
+      "slug1": "the-real-sales-academy",
+      "slug2": "trading-tribe",
+      "score": 0.9262324433219704
+    },
+    {
+      "slug1": "the-flow-zone",
+      "slug2": "justtrades",
+      "score": 0.9261789827599172
+    },
+    {
+      "slug1": "rankupacademy",
+      "slug2": "orderblox-pro",
+      "score": 0.925821888978209
+    },
+    {
+      "slug1": "ventures-vault",
+      "slug2": "pulsewave-indicator",
+      "score": 0.9257814351687164
+    },
+    {
+      "slug1": "ascend-university-access",
+      "slug2": "stp-inner-circle",
+      "score": 0.9255507246878405
+    },
+    {
+      "slug1": "leotrade-hub",
+      "slug2": "memelogy",
+      "score": 0.9255109731692827
+    },
+    {
+      "slug1": "ventures-vault",
+      "slug2": "amplify-views",
+      "score": 0.9254457094394887
+    },
+    {
+      "slug1": "gopacksgo",
+      "slug2": "lanes-coaching-entriprises",
+      "score": 0.9254201536845166
+    },
+    {
+      "slug1": "kpp-remote-training",
+      "slug2": "better-member",
+      "score": 0.9253199652596933
+    },
+    {
+      "slug1": "fxvdriixn-trades",
+      "slug2": "all-day-webinar-june-2025",
+      "score": 0.9252249457027614
+    },
+    {
+      "slug1": "otm-exclusive-vip",
+      "slug2": "stepharo-pickz",
+      "score": 0.924510806514692
+    },
+    {
+      "slug1": "kazumis-university-all-access",
+      "slug2": "tp-express",
+      "score": 0.924176147322391
+    },
+    {
+      "slug1": "model-ascension-lifetime",
+      "slug2": "test-whop",
+      "score": 0.9241655602660662
+    },
+    {
+      "slug1": "resell-degens-inner-circle",
+      "slug2": "eminence-pro-course",
+      "score": 0.9240581657295642
+    },
+    {
+      "slug1": "the-flow-zone",
+      "slug2": "mlb-major-league-bookies",
+      "score": 0.9239153242559998
+    },
+    {
+      "slug1": "top-barbers-4",
+      "slug2": "bizlaunchio",
+      "score": 0.9237024342455928
+    },
+    {
+      "slug1": "gritty-grads-mentorship",
+      "slug2": "paul-bickford-solutions",
+      "score": 0.9236020556408431
+    },
+    {
+      "slug1": "built-different",
+      "slug2": "empowerher-hub",
+      "score": 0.9233652879627712
+    },
+    {
+      "slug1": "she-got-options",
+      "slug2": "nogo-solutions",
+      "score": 0.9232755215073981
+    },
+    {
+      "slug1": "the-real-sales-academy",
+      "slug2": "chef-bets",
+      "score": 0.923108848481502
+    },
+    {
+      "slug1": "ventures-vault",
+      "slug2": "agentdash",
+      "score": 0.9229013989900511
+    },
+    {
+      "slug1": "the-maverick",
+      "slug2": "meldex",
+      "score": 0.9226219139428794
+    },
+    {
+      "slug1": "make-money-on-tiktok",
+      "slug2": "faceless-premium-vip",
+      "score": 0.9225707605494953
+    },
+    {
+      "slug1": "skillset-solutions",
+      "slug2": "webitsolution",
+      "score": 0.9225252197372068
+    },
+    {
+      "slug1": "betbrew",
+      "slug2": "trademello",
+      "score": 0.9224713939747764
+    },
+    {
+      "slug1": "max-play-514",
+      "slug2": "max-play-525",
+      "score": 0.9223354040727498
+    },
+    {
+      "slug1": "only-levels",
+      "slug2": "estate-automated",
+      "score": 0.9222958664522867
+    },
+    {
+      "slug1": "kr4zh-picks",
+      "slug2": "breakout-creators-club",
+      "score": 0.922269771098972
+    },
+    {
+      "slug1": "kpp-remote-training",
+      "slug2": "faceless-success",
+      "score": 0.9222504024366271
+    },
+    {
+      "slug1": "make-money-on-tiktok",
+      "slug2": "take-profit-team",
+      "score": 0.9220365795031531
+    },
+    {
+      "slug1": "quantum-futures-mentorship",
+      "slug2": "locatelli-acquisition",
+      "score": 0.921673992721234
+    },
+    {
+      "slug1": "top-barbers-4",
+      "slug2": "grow-ai",
+      "score": 0.921638867574229
+    },
+    {
+      "slug1": "peak-performance-accelerator",
+      "slug2": "cw",
+      "score": 0.9216101631316551
+    },
+    {
+      "slug1": "rankupacademy",
+      "slug2": "hoejabs",
+      "score": 0.9212588457404705
+    },
+    {
+      "slug1": "close-real-sales",
+      "slug2": "solestory-scaling",
+      "score": 0.9212027415321655
+    },
+    {
+      "slug1": "youtube-mentorship-program",
+      "slug2": "optionlab-blueprint",
+      "score": 0.9211714527799217
+    },
+    {
+      "slug1": "fittobe",
+      "slug2": "signals-live-education",
+      "score": 0.9210890862849704
+    },
+    {
+      "slug1": "top-barbers-4",
+      "slug2": "software-solutions-ai",
+      "score": 0.9209813270568036
+    },
+    {
+      "slug1": "model-ascension-lifetime",
+      "slug2": "spoofer-pro",
+      "score": 0.9207961863506497
+    },
+    {
+      "slug1": "the-flow-zone",
+      "slug2": "sniper",
+      "score": 0.9206511781541687
+    },
+    {
+      "slug1": "osa-balance-payment",
+      "slug2": "scale-suite",
+      "score": 0.9206068688372815
+    },
+    {
+      "slug1": "wolf-pack-pro-copy-trading",
+      "slug2": "billionaire-traders-club",
+      "score": 0.9205669185915147
+    },
+    {
+      "slug1": "built-different",
+      "slug2": "beat-the-odds",
+      "score": 0.920534784924436
+    },
+    {
+      "slug1": "betbrew",
+      "slug2": "nepq-inner-circle-platinum",
+      "score": 0.920503866215609
+    },
+    {
+      "slug1": "tf-vip-zugang",
+      "slug2": "yearly-tier-",
+      "score": 0.9203592009102803
+    },
+    {
+      "slug1": "kazumis-university-all-access",
+      "slug2": "apex-fitness-and-mind-mastery",
+      "score": 0.9201878424716052
+    },
+    {
+      "slug1": "cpa-weekly-program",
+      "slug2": "agency-partner-package",
+      "score": 0.920148490116981
+    },
+    {
+      "slug1": "tus-primeros-20k-escuela",
+      "slug2": "the-ecom-wolf-pack",
+      "score": 0.9200414505590975
+    },
+    {
+      "slug1": "model-ascension-lifetime",
+      "slug2": "single-1-on-1-coaching-call",
+      "score": 0.9199417399752428
+    },
+    {
+      "slug1": "gritty-grads-mentorship",
+      "slug2": "million-dollar-workshop",
+      "score": 0.9197724551972595
+    },
+    {
+      "slug1": "top-barbers-4",
+      "slug2": "crypto-academy",
+      "score": 0.9197175772100181
+    },
+    {
+      "slug1": "appointmentsettercom",
+      "slug2": "adverthead",
+      "score": 0.919676906446491
+    },
+    {
+      "slug1": "kazumis-university-all-access",
+      "slug2": "the-collective",
+      "score": 0.9196450627389451
+    },
+    {
+      "slug1": "richoffmaps-community",
+      "slug2": "payet-soccer",
+      "score": 0.9195818817527118
+    },
+    {
+      "slug1": "everything-is-planned-new-m",
+      "slug2": "pokecompareeu",
+      "score": 0.9195142438410095
+    },
+    {
+      "slug1": "make-money-on-tiktok",
+      "slug2": "nepq-fundamentals",
+      "score": 0.9194720390374023
+    },
+    {
+      "slug1": "tf-vip-zugang",
+      "slug2": "wolf-pack-pro-copy-trading",
+      "score": 0.9194628221582936
+    },
+    {
+      "slug1": "empowerher-hub",
+      "slug2": "stb-finance",
+      "score": 0.9194536444183758
+    },
+    {
+      "slug1": "rankupacademy",
+      "slug2": "paperroutepicks",
+      "score": 0.9192595291956638
+    },
+    {
+      "slug1": "tf-vip-zugang",
+      "slug2": "premium-discord-twitter",
+      "score": 0.9192457239153049
+    },
+    {
+      "slug1": "tf-vip-zugang",
+      "slug2": "one-year-millonaire-trading",
+      "score": 0.9191504676705432
+    },
+    {
+      "slug1": "model-ascension-lifetime",
+      "slug2": "cam-easty-deposit",
+      "score": 0.9191010589507909
+    },
+    {
+      "slug1": "aj-trading",
+      "slug2": "loot-trading-inner-circle",
+      "score": 0.918975064739515
+    },
+    {
+      "slug1": "optigrow",
+      "slug2": "simplexmedia",
+      "score": 0.9186951627452806
+    },
+    {
+      "slug1": "she-got-options",
+      "slug2": "wannabe-traders",
+      "score": 0.9185808189942447
+    },
+    {
+      "slug1": "tf-vip-zugang",
+      "slug2": "betropolis-vip",
+      "score": 0.9182071565383282
+    },
+    {
+      "slug1": "everything-is-planned-new-m",
+      "slug2": "tf-vip-zugang",
+      "score": 0.9181410168656456
+    },
+    {
+      "slug1": "242-just-picks",
+      "slug2": "premium-assist",
+      "score": 0.9181284087052911
+    },
+    {
+      "slug1": "fxvdriixn-trades",
+      "slug2": "dominate-the-decade-mastery",
+      "score": 0.9180577078671108
+    },
+    {
+      "slug1": "rankupacademy",
+      "slug2": "the-wealthy-creative",
+      "score": 0.9179471500188182
+    }
+  ],
+  "topPairsByRougeL": [
+    {
+      "slug1": "ventures-vault",
+      "slug2": "infinity-solutions",
+      "score": 0.6631467793030624,
+      "cosine": 0.9424511247299803
+    },
+    {
+      "slug1": "model-ascension-lifetime",
+      "slug2": "500-challenge",
+      "score": 0.626746506986028,
+      "cosine": 0.9397097984329177
+    },
+    {
+      "slug1": "resell-degens-inner-circle",
+      "slug2": "eminence-pro-course",
+      "score": 0.6224256292906178,
+      "cosine": 0.9240581657295642
+    },
+    {
+      "slug1": "kr4zh-picks",
+      "slug2": "vip-trading-group",
+      "score": 0.6222707423580787,
+      "cosine": 0.9352096285349176
+    },
+    {
+      "slug1": "appointmentsettercom",
+      "slug2": "pure-motion-picks-vip",
+      "score": 0.6123778501628665,
+      "cosine": 0.9273775306986847
+    },
+    {
+      "slug1": "model-ascension-lifetime",
+      "slug2": "startupfba-amazon-leads",
+      "score": 0.6115537848605577,
+      "cosine": 0.9171250114672171
+    },
+    {
+      "slug1": "ascend-university-access",
+      "slug2": "autostratic",
+      "score": 0.6115515288788222,
+      "cosine": 0.9174492249322714
+    },
+    {
+      "slug1": "fxvdriixn-trades",
+      "slug2": "donovancd27s-whop",
+      "score": 0.6095661846496108,
+      "cosine": 0.929003203168403
+    },
+    {
+      "slug1": "otm-exclusive-vip",
+      "slug2": "big-gains-club-premium",
+      "score": 0.6095238095238096,
+      "cosine": 0.9099206614062143
+    },
+    {
+      "slug1": "model-ascension-lifetime",
+      "slug2": "pronosticodeportivo-vip",
+      "score": 0.6,
+      "cosine": 0.935944954084165
+    },
+    {
+      "slug1": "she-got-options",
+      "slug2": "the-aesthetic-god-formula",
+      "score": 0.5997770345596434,
+      "cosine": 0.872986800613286
+    },
+    {
+      "slug1": "model-ascension-lifetime",
+      "slug2": "bg-advanced-trading-content",
+      "score": 0.5991735537190083,
+      "cosine": 0.9360383668176877
+    },
+    {
+      "slug1": "tus-primeros-20k-escuela",
+      "slug2": "the-ecom-wolf-pack",
+      "score": 0.5982905982905983,
+      "cosine": 0.9200414505590975
+    },
+    {
+      "slug1": "kazumis-university-all-access",
+      "slug2": "louiesportz",
+      "score": 0.5973451327433629,
+      "cosine": 0.9158811620083811
+    },
+    {
+      "slug1": "model-ascension-lifetime",
+      "slug2": "single-1-on-1-coaching-call",
+      "score": 0.5926680244399184,
+      "cosine": 0.9199417399752428
+    },
+    {
+      "slug1": "rankupacademy",
+      "slug2": "tursonz-trading",
+      "score": 0.5921052631578947,
+      "cosine": 0.858344266829428
+    },
+    {
+      "slug1": "bet-with-the-best-ufc",
+      "slug2": "green-queen-parlays",
+      "score": 0.590318772136954,
+      "cosine": 0.9153390672778371
+    },
+    {
+      "slug1": "quantum-futures-mentorship",
+      "slug2": "scaling-with-systems",
+      "score": 0.5894263217097863,
+      "cosine": 0.9359998480815853
+    },
+    {
+      "slug1": "max-play-514",
+      "slug2": "max-play-525",
+      "score": 0.5892661555312158,
+      "cosine": 0.9223354040727498
+    },
+    {
+      "slug1": "otm-exclusive-vip",
+      "slug2": "stepharo-pickz",
+      "score": 0.5865284974093266,
+      "cosine": 0.924510806514692
+    },
+    {
+      "slug1": "only-levels",
+      "slug2": "estate-automated",
+      "score": 0.5834207764952781,
+      "cosine": 0.9222958664522867
+    },
+    {
+      "slug1": "parlaycapital-premium",
+      "slug2": "the-goat-den-full-access",
+      "score": 0.5813692480359147,
+      "cosine": 0.9170820049196063
+    },
+    {
+      "slug1": "close-real-sales",
+      "slug2": "master-your-credit-community",
+      "score": 0.5792349726775955,
+      "cosine": 0.8640698758748014
+    },
+    {
+      "slug1": "she-got-options",
+      "slug2": "francescas-fitness",
+      "score": 0.5785876993166287,
+      "cosine": 0.8636362349909116
+    },
+    {
+      "slug1": "only-levels",
+      "slug2": "summit-academy-inner-circle",
+      "score": 0.5735449735449736,
+      "cosine": 0.917421621693298
+    },
+    {
+      "slug1": "parlaycapital-premium",
+      "slug2": "-7-jou-7-chans",
+      "score": 0.5733333333333333,
+      "cosine": 0.9272677646006545
+    },
+    {
+      "slug1": "motw",
+      "slug2": "revolutio",
+      "score": 0.5726872246696035,
+      "cosine": 0.8343217493392772
+    },
+    {
+      "slug1": "motw",
+      "slug2": "anabolic-whales",
+      "score": 0.5707865168539327,
+      "cosine": 0.9443533620014672
+    },
+    {
+      "slug1": "model-ascension-lifetime",
+      "slug2": "spoofer-pro",
+      "score": 0.5667686034658511,
+      "cosine": 0.9207961863506497
+    },
+    {
+      "slug1": "performance-golf-zone-13-",
+      "slug2": "tb-master-mentor-program",
+      "score": 0.5659617321248741,
+      "cosine": 0.9173670471754105
+    },
+    {
+      "slug1": "top-barbers-4",
+      "slug2": "htb-secure-spot",
+      "score": 0.5654565456545655,
+      "cosine": 0.9271983051578685
+    },
+    {
+      "slug1": "parlaycapital-premium",
+      "slug2": "operator-accelerator",
+      "score": 0.5648148148148149,
+      "cosine": 0.9059613197561607
+    },
+    {
+      "slug1": "king-trading",
+      "slug2": "creatorlink-elite",
+      "score": 0.5647607934655776,
+      "cosine": 0.9082307618107853
+    },
+    {
+      "slug1": "fxvdriixn-trades",
+      "slug2": "tp-express",
+      "score": 0.5642151481888036,
+      "cosine": 0.9143079790292516
+    },
+    {
+      "slug1": "parlaycapital-premium",
+      "slug2": "shadow-me-wholesaling-deals",
+      "score": 0.5631284916201118,
+      "cosine": 0.9069241103423067
+    },
+    {
+      "slug1": "performance-golf-zone-13-",
+      "slug2": "betbigben-mvp-access",
+      "score": 0.56312625250501,
+      "cosine": 0.9087053679477015
+    },
+    {
+      "slug1": "make-money-on-tiktok",
+      "slug2": "-gold-tier-fyndit",
+      "score": 0.5629139072847682,
+      "cosine": 0.9107981716901471
+    },
+    {
+      "slug1": "leotrade-hub",
+      "slug2": "memelogy",
+      "score": 0.5627802690582959,
+      "cosine": 0.9255109731692827
+    },
+    {
+      "slug1": "bet-with-the-best-ufc",
+      "slug2": "taller-de-trading-marzo",
+      "score": 0.5625717566016073,
+      "cosine": 0.8935397935616936
+    },
+    {
+      "slug1": "max-maserati-model-20-elite",
+      "slug2": "1-day-pass",
+      "score": 0.5625,
+      "cosine": 0.9089994825303584
+    },
+    {
+      "slug1": "model-ascension-lifetime",
+      "slug2": "quanbotold-product-1",
+      "score": 0.5612244897959184,
+      "cosine": 0.9312273256961242
+    },
+    {
+      "slug1": "everything-is-planned-new-m",
+      "slug2": "green-queen-parlays",
+      "score": 0.5599999999999999,
+      "cosine": 0.8862809454422466
+    },
+    {
+      "slug1": "model-ascension-lifetime",
+      "slug2": "tb-master-mentor-program",
+      "score": 0.5598377281947262,
+      "cosine": 0.9302150658486656
+    },
+    {
+      "slug1": "tf-vip-zugang",
+      "slug2": "yearly-tier-",
+      "score": 0.5596529284164858,
+      "cosine": 0.9203592009102803
+    },
+    {
+      "slug1": "make-money-on-tiktok",
+      "slug2": "-7-jou-7-chans",
+      "score": 0.5596432552954294,
+      "cosine": 0.9108537505349685
+    },
+    {
+      "slug1": "make-money-on-tiktok",
+      "slug2": "faceless-premium-vip",
+      "score": 0.5590200445434299,
+      "cosine": 0.9225707605494953
+    },
+    {
+      "slug1": "parlaycapital-premium",
+      "slug2": "arch-for-a-year",
+      "score": 0.5587229190421892,
+      "cosine": 0.904341925361013
+    },
+    {
+      "slug1": "parlaycapital-premium",
+      "slug2": "agent-developer-mentorship",
+      "score": 0.5586592178770948,
+      "cosine": 0.9082539904367408
+    },
+    {
+      "slug1": "kazumis-university-all-access",
+      "slug2": "tp-express",
+      "score": 0.5584988962472407,
+      "cosine": 0.924176147322391
+    },
+    {
+      "slug1": "tf-vip-zugang",
+      "slug2": "bettingthepitch-premium",
+      "score": 0.5583424209378407,
+      "cosine": 0.916123530518099
+    },
+    {
+      "slug1": "kazumis-university-all-access",
+      "slug2": "livecops-server",
+      "score": 0.5580890336590663,
+      "cosine": 0.905674815411384
+    },
+    {
+      "slug1": "betbrew",
+      "slug2": "arcana2024",
+      "score": 0.5579399141630901,
+      "cosine": 0.9162233708827495
+    },
+    {
+      "slug1": "tf-vip-zugang",
+      "slug2": "barkworthy-watchlist-access",
+      "score": 0.5579302587176601,
+      "cosine": 0.9152131691467464
+    },
+    {
+      "slug1": "elev8-meta-ad-accounts",
+      "slug2": "bike4sail-crypto-sm-alerts",
+      "score": 0.5577142857142857,
+      "cosine": 0.8978456942502926
+    },
+    {
+      "slug1": "fxvdriixn-trades",
+      "slug2": "canvas-world",
+      "score": 0.557628979143798,
+      "cosine": 0.9078338066398615
+    },
+    {
+      "slug1": "kazumis-university-all-access",
+      "slug2": "the-collective",
+      "score": 0.5572687224669602,
+      "cosine": 0.9196450627389451
+    },
+    {
+      "slug1": "ascend-university-access",
+      "slug2": "getcom-professional",
+      "score": 0.5572254335260115,
+      "cosine": 0.9115931864622724
+    },
+    {
+      "slug1": "gritty-grads-mentorship",
+      "slug2": "paul-bickford-solutions",
+      "score": 0.5571587125416205,
+      "cosine": 0.9236020556408431
+    },
+    {
+      "slug1": "betbrew",
+      "slug2": "dvtrendz-33-trading-indicator",
+      "score": 0.5568797399783315,
+      "cosine": 0.8948297709138866
+    },
+    {
+      "slug1": "the-flow-zone",
+      "slug2": "mlb-major-league-bookies",
+      "score": 0.5544147843942505,
+      "cosine": 0.9239153242559998
+    },
+    {
+      "slug1": "betbrew",
+      "slug2": "nepq-fundamentals",
+      "score": 0.5543710021321961,
+      "cosine": 0.9176077296562059
+    },
+    {
+      "slug1": "top-barbers-4",
+      "slug2": "grow-ai",
+      "score": 0.5542427497314716,
+      "cosine": 0.921638867574229
+    },
+    {
+      "slug1": "king-trading",
+      "slug2": "viralgeneratorai",
+      "score": 0.5536332179930796,
+      "cosine": 0.827710307190451
+    },
+    {
+      "slug1": "kazumis-university-all-access",
+      "slug2": "bet-with-the-best-ufc",
+      "score": 0.5533869115958668,
+      "cosine": 0.8960538976617508
+    },
+    {
+      "slug1": "the-flow-zone",
+      "slug2": "veans-values-premium",
+      "score": 0.5533262935586061,
+      "cosine": 0.9145844879013697
+    },
+    {
+      "slug1": "model-ascension-lifetime",
+      "slug2": "the-stoictraders-mentorship",
+      "score": 0.5529767911200807,
+      "cosine": 0.9389190478213536
+    },
+    {
+      "slug1": "performance-golf-zone-13-",
+      "slug2": "hybrid-high-performer-8-m",
+      "score": 0.5523809523809523,
+      "cosine": 0.9150324171218379
+    },
+    {
+      "slug1": "parlaycapital-premium",
+      "slug2": "elevated-technologies-sys",
+      "score": 0.5514874141876431,
+      "cosine": 0.9079057606265016
+    },
+    {
+      "slug1": "model-ascension-lifetime",
+      "slug2": "-maverick-investments-vip",
+      "score": 0.5513626834381551,
+      "cosine": 0.9071720024261071
+    },
+    {
+      "slug1": "tus-primeros-20k-escuela",
+      "slug2": "bg-advanced-trading-content",
+      "score": 0.5508474576271186,
+      "cosine": 0.9108576868895147
+    },
+    {
+      "slug1": "tf-vip-zugang",
+      "slug2": "operator-accelerator",
+      "score": 0.5507900677200903,
+      "cosine": 0.9147142327850675
+    },
+    {
+      "slug1": "make-money-on-tiktok",
+      "slug2": "neverbrokeagain-premium",
+      "score": 0.5503791982665223,
+      "cosine": 0.8911951438736953
+    },
+    {
+      "slug1": "fxvdriixn-trades",
+      "slug2": "zeefuturetradess-vip-signals",
+      "score": 0.5497835497835498,
+      "cosine": 0.9114040812856113
+    },
+    {
+      "slug1": "wolf-pack-pro-copy-trading",
+      "slug2": "vip-pass",
+      "score": 0.5488958990536278,
+      "cosine": 0.9036357330254235
+    },
+    {
+      "slug1": "tf-vip-zugang",
+      "slug2": "betropolis-vip",
+      "score": 0.5486338797814208,
+      "cosine": 0.9182071565383282
+    },
+    {
+      "slug1": "make-money-on-tiktok",
+      "slug2": "legacy-wealth-blueprint",
+      "score": 0.5486338797814208,
+      "cosine": 0.9092399312100643
+    },
+    {
+      "slug1": "model-ascension-lifetime",
+      "slug2": "johnson-pang",
+      "score": 0.5485592315901815,
+      "cosine": 0.9173491951431599
+    },
+    {
+      "slug1": "the-winning-circle",
+      "slug2": "health-pillars-masterclass",
+      "score": 0.5483503981797497,
+      "cosine": 0.9296954457730382
+    },
+    {
+      "slug1": "top-barbers-4",
+      "slug2": "software-solutions-ai",
+      "score": 0.548314606741573,
+      "cosine": 0.9209813270568036
+    },
+    {
+      "slug1": "seo-fundamentals-masterclass",
+      "slug2": "datsq9-1-week-pass",
+      "score": 0.5471898197242842,
+      "cosine": 0.900872234092614
+    },
+    {
+      "slug1": "tf-vip-zugang",
+      "slug2": "key2locks-picks",
+      "score": 0.5468245425188375,
+      "cosine": 0.9025054312920815
+    },
+    {
+      "slug1": "skillset-solutions",
+      "slug2": "webitsolution",
+      "score": 0.5468085106382979,
+      "cosine": 0.9225252197372068
+    },
+    {
+      "slug1": "kazumis-university-all-access",
+      "slug2": "tsth-premium-discord",
+      "score": 0.5432639649507118,
+      "cosine": 0.9016491579179988
+    },
+    {
+      "slug1": "performance-golf-zone-13-",
+      "slug2": "3-cold-callers",
+      "score": 0.5431841831425598,
+      "cosine": 0.9063311136748422
+    },
+    {
+      "slug1": "digital-asset",
+      "slug2": "gold-blueprint",
+      "score": 0.5422612513721186,
+      "cosine": 0.9178266915317875
+    },
+    {
+      "slug1": "tf-vip-zugang",
+      "slug2": "premium-discord-twitter",
+      "score": 0.5421319796954316,
+      "cosine": 0.9192457239153049
+    },
+    {
+      "slug1": "performance-golf-zone-13-",
+      "slug2": "the-ecom-wolf-pack",
+      "score": 0.5418821096173733,
+      "cosine": 0.9103991051249144
+    },
+    {
+      "slug1": "kazumis-university-all-access",
+      "slug2": "short-form-masterclass",
+      "score": 0.541813898704358,
+      "cosine": 0.8972466889116006
+    },
+    {
+      "slug1": "tus-primeros-20k-escuela",
+      "slug2": "vip-silver-crypto-group",
+      "score": 0.5417118093174432,
+      "cosine": 0.9127346884202868
+    },
+    {
+      "slug1": "model-ascension-lifetime",
+      "slug2": "cam-easty-deposit",
+      "score": 0.5416666666666666,
+      "cosine": 0.9191010589507909
+    },
+    {
+      "slug1": "kickstart-capital-service",
+      "slug2": "mrlocks",
+      "score": 0.5414847161572053,
+      "cosine": 0.8962944731806212
+    },
+    {
+      "slug1": "kazumis-university-all-access",
+      "slug2": "the-wholesale-lair-access",
+      "score": 0.5412541254125413,
+      "cosine": 0.8939748686400933
+    },
+    {
+      "slug1": "gopacksgo",
+      "slug2": "lanes-coaching-entriprises",
+      "score": 0.5412026726057906,
+      "cosine": 0.9254201536845166
+    },
+    {
+      "slug1": "peak-performance-accelerator",
+      "slug2": "ai-fusion-megapack",
+      "score": 0.540948275862069,
+      "cosine": 0.9083713511895612
+    },
+    {
+      "slug1": "top-barbers-4",
+      "slug2": "bizlaunchio",
+      "score": 0.5408388520971302,
+      "cosine": 0.9237024342455928
+    },
+    {
+      "slug1": "top-barbers-4",
+      "slug2": "eduardo51-essential",
+      "score": 0.5407725321888412,
+      "cosine": 0.8979346793216468
+    },
+    {
+      "slug1": "kr4zh-picks",
+      "slug2": "pay-to-win",
+      "score": 0.5395449620801733,
+      "cosine": 0.874505519631551
+    },
+    {
+      "slug1": "otm-exclusive-vip",
+      "slug2": "finansowa-edukacja-my-product",
+      "score": 0.5394456289978679,
+      "cosine": 0.8917529148426981
+    },
+    {
+      "slug1": "fxvdriixn-trades",
+      "slug2": "15-daily-vip-discount",
+      "score": 0.5388026607538803,
+      "cosine": 0.8962271626030925
+    },
+    {
+      "slug1": "fxvdriixn-trades",
+      "slug2": "bettor-central-premium",
+      "score": 0.5387931034482759,
+      "cosine": 0.883144040372394
+    }
+  ]
+}

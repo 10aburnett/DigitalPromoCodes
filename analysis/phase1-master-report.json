@@ -1,0 +1,4536 @@
+{
+  "metadata": {
+    "generatedAt": "2025-12-03T21:47:39.410Z",
+    "inputFile": "data/content/master/successes.jsonl",
+    "totalEntries": 8212
+  },
+  "summary": {
+    "totalUniqueNgrams": 4201033,
+    "ngramsOver1000": 1587,
+    "ngramsOver500": 3123,
+    "ngramsOver300": 4981
+  },
+  "sectionAnalysis": {
+    "about": {
+      "section": "aboutcontent",
+      "totalEntries": 8212,
+      "avgWordCount": 124,
+      "avgSentenceCount": 8.4,
+      "topNgrams": [
+        [
+          "miss out on",
+          7432
+        ],
+        [
+          "don't miss out",
+          7112
+        ],
+        [
+          "don't miss out on",
+          7112
+        ],
+        [
+          "your trading",
+          5638
+        ],
+        [
+          "whether you're",
+          4478
+        ],
+        [
+          "opportunity to",
+          4251
+        ],
+        [
+          "enhance your",
+          4170
+        ],
+        [
+          "miss out on the",
+          4115
+        ],
+        [
+          "don't miss out on the",
+          4017
+        ],
+        [
+          "designed to",
+          3965
+        ],
+        [
+          "creator and",
+          3882
+        ],
+        [
+          "by creator and",
+          3871
+        ],
+        [
+          "creator and plan.",
+          3864
+        ],
+        [
+          "by creator and plan.",
+          3862
+        ],
+        [
+          "vary by creator",
+          3684
+        ],
+        [
+          "vary by creator and",
+          3684
+        ],
+        [
+          "vary by creator and plan.",
+          3681
+        ],
+        [
+          "results vary",
+          3599
+        ],
+        [
+          "results vary by",
+          3599
+        ],
+        [
+          "results vary by creator",
+          3599
+        ],
+        [
+          "results vary by creator and",
+          3599
+        ],
+        [
+          "results vary by creator and plan.",
+          3598
+        ],
+        [
+          "out on this",
+          3254
+        ],
+        [
+          "miss out on this",
+          3254
+        ],
+        [
+          "is designed",
+          3198
+        ],
+        [
+          "the chance to",
+          3116
+        ],
+        [
+          "don't miss out on this",
+          3080
+        ],
+        [
+          "this platform",
+          3048
+        ],
+        [
+          "on the chance",
+          3018
+        ],
+        [
+          "out on the chance",
+          3018
+        ],
+        [
+          "on the chance to",
+          3018
+        ],
+        [
+          "miss out on the chance",
+          3018
+        ],
+        [
+          "out on the chance to",
+          3018
+        ],
+        [
+          "miss out on the chance to",
+          3018
+        ],
+        [
+          "don't miss out on the chance",
+          2954
+        ],
+        [
+          "don't miss out on the chance to",
+          2954
+        ],
+        [
+          "whether you're a",
+          2910
+        ],
+        [
+          "to enhance your",
+          2907
+        ],
+        [
+          "today! results",
+          2743
+        ],
+        [
+          "today! results vary",
+          2736
+        ],
+        [
+          "today! results vary by",
+          2736
+        ],
+        [
+          "today! results vary by creator",
+          2736
+        ],
+        [
+          "today! results vary by creator and",
+          2736
+        ],
+        [
+          "today! results vary by creator and plan.",
+          2736
+        ],
+        [
+          "improve your",
+          2714
+        ],
+        [
+          "promo code,",
+          2622
+        ],
+        [
+          "elevate your",
+          2558
+        ],
+        [
+          "designed for",
+          2409
+        ],
+        [
+          "insights and",
+          2294
+        ],
+        [
+          "enhance their",
+          2233
+        ],
+        [
+          "chance to save",
+          2149
+        ],
+        [
+          "chance to save on",
+          2149
+        ],
+        [
+          "to improve your",
+          2133
+        ],
+        [
+          "code offers",
+          2086
+        ],
+        [
+          "promo code offers",
+          2086
+        ],
+        [
+          "to enhance their",
+          2054
+        ],
+        [
+          "your betting",
+          2053
+        ],
+        [
+          "looking to enhance",
+          2045
+        ],
+        [
+          "to help you",
+          1961
+        ],
+        [
+          "the chance to save",
+          1904
+        ],
+        [
+          "the chance to save on",
+          1904
+        ],
+        [
+          "gain access",
+          1891
+        ],
+        [
+          "gain access to",
+          1889
+        ],
+        [
+          "this opportunity",
+          1884
+        ],
+        [
+          "by utilizing",
+          1883
+        ],
+        [
+          "on the chance to save",
+          1873
+        ],
+        [
+          "out on the chance to save",
+          1873
+        ],
+        [
+          "on the chance to save on",
+          1873
+        ],
+        [
+          "miss out on the chance to save",
+          1873
+        ],
+        [
+          "out on the chance to save on",
+          1873
+        ],
+        [
+          "this program",
+          1873
+        ],
+        [
+          "this opportunity to",
+          1826
+        ],
+        [
+          "and elevate",
+          1816
+        ],
+        [
+          "and elevate your",
+          1805
+        ],
+        [
+          "is designed to",
+          1800
+        ],
+        [
+          "on this opportunity",
+          1728
+        ],
+        [
+          "out on this opportunity",
+          1728
+        ],
+        [
+          "on this opportunity to",
+          1728
+        ],
+        [
+          "miss out on this opportunity",
+          1728
+        ],
+        [
+          "out on this opportunity to",
+          1728
+        ],
+        [
+          "miss out on this opportunity to",
+          1728
+        ],
+        [
+          "explore the",
+          1714
+        ],
+        [
+          "don't miss out on this opportunity",
+          1633
+        ],
+        [
+          "don't miss out on this opportunity to",
+          1633
+        ],
+        [
+          "options and",
+          1627
+        ],
+        [
+          "looking to enhance their",
+          1606
+        ],
+        [
+          "at checkout.",
+          1576
+        ],
+        [
+          "and see what",
+          1575
+        ],
+        [
+          "included and",
+          1571
+        ],
+        [
+          "compare what's",
+          1570
+        ],
+        [
+          "what's included",
+          1570
+        ],
+        [
+          "compare what's included",
+          1570
+        ],
+        [
+          "what's included and",
+          1570
+        ],
+        [
+          "included and decide",
+          1570
+        ],
+        [
+          "and decide at",
+          1570
+        ],
+        [
+          "decide at checkout.",
+          1570
+        ],
+        [
+          "compare what's included and",
+          1570
+        ],
+        [
+          "what's included and decide",
+          1570
+        ],
+        [
+          "included and decide at",
+          1570
+        ],
+        [
+          "and decide at checkout.",
+          1570
+        ]
+      ],
+      "topOpeners": [
+        [
+          "don't miss out on",
+          7086
+        ],
+        [
+          "results vary by creator",
+          3600
+        ],
+        [
+          "compare what's included and",
+          1495
+        ],
+        [
+          "explore current options and",
+          1476
+        ],
+        [
+          "look for time-limited perks",
+          1474
+        ],
+        [
+          "start with the entry",
+          1444
+        ],
+        [
+          "whether you're a beginner",
+          1323
+        ],
+        [
+          "check the latest availability",
+          1320
+        ],
+        [
+          "with a focus on",
+          1248
+        ],
+        [
+          "whether you're a seasoned",
+          912
+        ],
+        [
+          "whether you're looking to",
+          654
+        ],
+        [
+          "unlock the potential of",
+          643
+        ],
+        [
+          "unlock your potential with",
+          586
+        ],
+        [
+          "this platform is designed",
+          519
+        ],
+        [
+          "this program is designed",
+          517
+        ],
+        [
+          "if you're looking to",
+          504
+        ],
+        [
+          "explore the benefits today!",
+          473
+        ],
+        [
+          "whether you're just starting",
+          420
+        ],
+        [
+          "unlock your trading potential",
+          417
+        ],
+        [
+          "start your journey today!",
+          372
+        ],
+        [
+          "start exploring today!",
+          344
+        ],
+        [
+          "by utilizing the available",
+          341
+        ],
+        [
+          "whether you're a novice",
+          339
+        ],
+        [
+          "by utilizing the current",
+          288
+        ],
+        [
+          "explore the possibilities today!",
+          277
+        ],
+        [
+          "don’t miss out on",
+          240
+        ],
+        [
+          "many users have reported",
+          236
+        ],
+        [
+          "this service is designed",
+          217
+        ],
+        [
+          "explore the offerings today!",
+          215
+        ],
+        [
+          "with a monthly subscription",
+          212
+        ],
+        [
+          "this platform provides a",
+          207
+        ],
+        [
+          "this platform delivers a",
+          192
+        ],
+        [
+          "by utilizing this offer,",
+          188
+        ],
+        [
+          "check it out today!",
+          188
+        ],
+        [
+          "this platform includes a",
+          181
+        ],
+        [
+          "start your journey today",
+          175
+        ],
+        [
+          "discover the benefits of",
+          172
+        ],
+        [
+          "take advantage of this",
+          169
+        ],
+        [
+          "00 per month, you",
+          163
+        ],
+        [
+          "more importantly, you'll get",
+          160
+        ],
+        [
+          "users have praised the",
+          160
+        ],
+        [
+          "with a monthly fee",
+          150
+        ],
+        [
+          "start exploring the benefits",
+          141
+        ],
+        [
+          "by utilizing this special",
+          134
+        ],
+        [
+          "members benefit from a",
+          128
+        ],
+        [
+          "by joining, you can",
+          124
+        ],
+        [
+          "this exclusive offer provides",
+          121
+        ],
+        [
+          "unlock incredible savings with",
+          115
+        ],
+        [
+          "many users have praised",
+          114
+        ],
+        [
+          "the platform is user-friendly",
+          113
+        ]
+      ],
+      "topSkeletons": [
+        [
+          "results vary by creator and plan.",
+          3598
+        ],
+        [
+          "don't miss out on the chance",
+          2954
+        ],
+        [
+          "don't miss out on this opportunity",
+          1633
+        ],
+        [
+          "compare what's included and decide at",
+          1495
+        ],
+        [
+          "explore current options and see what",
+          1476
+        ],
+        [
+          "look for time-limited perks on the",
+          1474
+        ],
+        [
+          "start with the entry tier and",
+          1444
+        ],
+        [
+          "check the latest availability before you",
+          1320
+        ],
+        [
+          "don't miss out on this chance",
+          1259
+        ],
+        [
+          "don't miss out on the opportunity",
+          1063
+        ],
+        [
+          "whether you're a beginner or an",
+          748
+        ],
+        [
+          "for just $[NUM].",
+          568
+        ],
+        [
+          "whether you're a beginner or looking",
+          490
+        ],
+        [
+          "explore the benefits today!",
+          473
+        ],
+        [
+          "whether you're a seasoned bettor or",
+          463
+        ],
+        [
+          "unlock your trading potential with the",
+          417
+        ],
+        [
+          "start your journey today!",
+          372
+        ],
+        [
+          "start exploring today!",
+          344
+        ],
+        [
+          "whether you're just starting or looking",
+          336
+        ],
+        [
+          "explore the possibilities today!",
+          277
+        ],
+        [
+          "whether you're a novice or an",
+          250
+        ],
+        [
+          "by utilizing the available discounts, you",
+          246
+        ],
+        [
+          "explore the offerings today!",
+          215
+        ],
+        [
+          "by utilizing the current offers available,",
+          206
+        ],
+        [
+          "check it out today!",
+          188
+        ],
+        [
+          "by utilizing this offer, you can",
+          177
+        ],
+        [
+          "if you're looking to enhance your",
+          175
+        ],
+        [
+          "unlock the potential of your trading",
+          156
+        ],
+        [
+          "by utilizing this special offer, you",
+          133
+        ],
+        [
+          "more importantly, you'll get consistent value.",
+          129
+        ],
+        [
+          "whether you're looking to enhance your",
+          128
+        ],
+        [
+          "this program is designed to help",
+          125
+        ],
+        [
+          "if you're looking to improve your",
+          122
+        ],
+        [
+          "don't miss out on this opportunity—check",
+          121
+        ],
+        [
+          "discover the benefits of using the",
+          113
+        ],
+        [
+          "start exploring the benefits today!",
+          113
+        ],
+        [
+          "before buying, check the plan details,",
+          105
+        ],
+        [
+          "before you buy, examine the plan",
+          104
+        ],
+        [
+          "whether you're a seasoned trader or",
+          100
+        ],
+        [
+          "individual results differ by creator and",
+          97
+        ],
+        [
+          "don’t miss out on this opportunity",
+          95
+        ],
+        [
+          "whether you're looking to improve your",
+          92
+        ],
+        [
+          "this exclusive offer provides access to",
+          91
+        ],
+        [
+          "whether you're looking to refine your",
+          85
+        ],
+        [
+          "results can vary by creator and",
+          84
+        ],
+        [
+          "outcomes can differ by creator and",
+          84
+        ],
+        [
+          "take advantage of this opportunity to",
+          84
+        ],
+        [
+          "unlock the potential of sports betting",
+          82
+        ],
+        [
+          "whether you're a novice or a",
+          81
+        ],
+        [
+          "offers ongoing support look for time-limited",
+          80
+        ]
+      ]
+    },
+    "howToRedeem": {
+      "section": "howtoredeemcontent",
+      "totalEntries": 8212,
+      "avgStepCount": 5,
+      "stepCountDistribution": {
+        "0": 84,
+        "3": 4,
+        "4": 129,
+        "5": 7990,
+        "6": 1,
+        "33": 1,
+        "64": 3
+      },
+      "topStepPatterns": [
+        [
+          "visit whop.com and navigate to",
+          6147
+        ],
+        [
+          "select your desired subscription plan",
+          1356
+        ],
+        [
+          "review your order details and",
+          1103
+        ],
+        [
+          "complete your purchase and start",
+          1024
+        ],
+        [
+          "review your order details to",
+          728
+        ],
+        [
+          "complete your purchase and enjoy",
+          660
+        ],
+        [
+          "complete your purchase to start",
+          641
+        ],
+        [
+          "complete your purchase to enjoy",
+          588
+        ],
+        [
+          "review the description, plan details,",
+          556
+        ],
+        [
+          "proceed to checkout and enter",
+          489
+        ],
+        [
+          "complete your payment details and",
+          454
+        ],
+        [
+          "visit the official whop listing",
+          425
+        ],
+        [
+          "confirm payment and any account",
+          415
+        ],
+        [
+          "select a plan that fits",
+          411
+        ],
+        [
+          "visit whop.com and sign in",
+          362
+        ],
+        [
+          "complete your purchase by providing",
+          351
+        ],
+        [
+          "enter the available discount during",
+          334
+        ],
+        [
+          "enter the discount code in",
+          331
+        ],
+        [
+          "select your desired membership option",
+          327
+        ],
+        [
+          "choose a plan that fits",
+          321
+        ],
+        [
+          "select your desired membership tier",
+          317
+        ],
+        [
+          "access the dashboard and follow",
+          297
+        ],
+        [
+          "access your membership and start",
+          292
+        ],
+        [
+          "look for the discount field",
+          291
+        ],
+        [
+          "enter any applicable discount in",
+          288
+        ],
+        [
+          "select your desired membership plan",
+          275
+        ],
+        [
+          "enter the required information to",
+          273
+        ],
+        [
+          "access your dashboard and follow",
+          272
+        ],
+        [
+          "enter the available discount in",
+          266
+        ],
+        [
+          "enter your payment details to",
+          261
+        ],
+        [
+          "complete your purchase to access",
+          257
+        ],
+        [
+          "complete your payment information and",
+          242
+        ],
+        [
+          "confirm payment and complete any",
+          237
+        ],
+        [
+          "enter the current offer in",
+          226
+        ],
+        [
+          "select the membership option that",
+          222
+        ],
+        [
+          "review your order and ensure",
+          215
+        ],
+        [
+          "look for the available discount",
+          209
+        ],
+        [
+          "select the subscription option that",
+          200
+        ],
+        [
+          "confirm your purchase and start",
+          170
+        ],
+        [
+          "proceed to checkout and paste",
+          168
+        ],
+        [
+          "access your course materials and",
+          168
+        ],
+        [
+          "review your order and confirm",
+          166
+        ],
+        [
+          "sign in or create an",
+          165
+        ],
+        [
+          "review description, plan details, and",
+          164
+        ],
+        [
+          "copy the provided discount code",
+          163
+        ],
+        [
+          "open official whop listing and",
+          163
+        ],
+        [
+          "access dashboard and follow creator",
+          163
+        ],
+        [
+          "select your subscription plan and",
+          163
+        ],
+        [
+          "complete your purchase by entering",
+          158
+        ],
+        [
+          "complete your payment to activate",
+          157
+        ]
+      ],
+      "topVerbs": [],
+      "topNgrams": [
+        [
+          "the on-screen",
+          7597
+        ],
+        [
+          "on-screen checkout",
+          7535
+        ],
+        [
+          "the on-screen checkout",
+          7535
+        ],
+        [
+          "checkout instructions",
+          7513
+        ],
+        [
+          "on-screen checkout instructions",
+          7510
+        ],
+        [
+          "the on-screen checkout instructions",
+          7510
+        ],
+        [
+          "whop.com and",
+          6590
+        ],
+        [
+          "visit whop.com",
+          6577
+        ],
+        [
+          "visit whop.com and",
+          6577
+        ],
+        [
+          "navigate to",
+          6501
+        ],
+        [
+          "navigate to the",
+          6440
+        ],
+        [
+          "and navigate",
+          6148
+        ],
+        [
+          "and navigate to",
+          6148
+        ],
+        [
+          "whop.com and navigate",
+          6147
+        ],
+        [
+          "visit whop.com and navigate",
+          6147
+        ],
+        [
+          "whop.com and navigate to",
+          6147
+        ],
+        [
+          "visit whop.com and navigate to",
+          6147
+        ],
+        [
+          "and navigate to the",
+          6095
+        ],
+        [
+          "whop.com and navigate to the",
+          6094
+        ],
+        [
+          "visit whop.com and navigate to the",
+          6094
+        ],
+        [
+          "complete your",
+          5453
+        ],
+        [
+          "your purchase",
+          5071
+        ],
+        [
+          "complete your purchase",
+          4097
+        ],
+        [
+          "through the",
+          3847
+        ],
+        [
+          "via the on-screen",
+          3794
+        ],
+        [
+          "through the on-screen",
+          3788
+        ],
+        [
+          "via the on-screen checkout",
+          3761
+        ],
+        [
+          "through the on-screen checkout",
+          3761
+        ],
+        [
+          "through the on-screen checkout instructions",
+          3752
+        ],
+        [
+          "via the on-screen checkout instructions",
+          3748
+        ],
+        [
+          "select your",
+          3631
+        ],
+        [
+          "your desired",
+          3318
+        ],
+        [
+          "select your desired",
+          3200
+        ],
+        [
+          "discount code",
+          3047
+        ],
+        [
+          "the discount",
+          2698
+        ],
+        [
+          "confirm your",
+          2613
+        ],
+        [
+          "at checkout",
+          2450
+        ],
+        [
+          "the checkout",
+          2446
+        ],
+        [
+          "to checkout",
+          2423
+        ],
+        [
+          "proceed to checkout",
+          2406
+        ],
+        [
+          "your payment",
+          2386
+        ],
+        [
+          "the designated",
+          2364
+        ],
+        [
+          "in the designated",
+          2354
+        ],
+        [
+          "designated field",
+          2343
+        ],
+        [
+          "the designated field",
+          2343
+        ],
+        [
+          "in the designated field",
+          2333
+        ],
+        [
+          "review your",
+          2332
+        ],
+        [
+          "review your order",
+          2326
+        ],
+        [
+          "purchase and",
+          2121
+        ],
+        [
+          "checkout process",
+          2113
+        ],
+        [
+          "the checkout process",
+          2112
+        ],
+        [
+          "the available",
+          2055
+        ],
+        [
+          "and click on",
+          2048
+        ],
+        [
+          "to your cart",
+          2003
+        ],
+        [
+          "your purchase and",
+          1982
+        ],
+        [
+          "order details",
+          1964
+        ],
+        [
+          "your order details",
+          1964
+        ],
+        [
+          "and proceed",
+          1960
+        ],
+        [
+          "and proceed to",
+          1957
+        ],
+        [
+          "details and",
+          1916
+        ],
+        [
+          "review your order details",
+          1856
+        ],
+        [
+          "available discount",
+          1856
+        ],
+        [
+          "subscription plan",
+          1844
+        ],
+        [
+          "purchase to",
+          1793
+        ],
+        [
+          "the available discount",
+          1793
+        ],
+        [
+          "your purchase to",
+          1780
+        ],
+        [
+          "complete your purchase and",
+          1764
+        ],
+        [
+          "and confirm",
+          1736
+        ],
+        [
+          "desired subscription",
+          1704
+        ],
+        [
+          "and proceed to checkout",
+          1687
+        ],
+        [
+          "complete your purchase to",
+          1687
+        ],
+        [
+          "your savings",
+          1668
+        ],
+        [
+          "add it to your",
+          1606
+        ],
+        [
+          "and add it to",
+          1605
+        ],
+        [
+          "it to your cart",
+          1605
+        ],
+        [
+          "and add it to your",
+          1605
+        ],
+        [
+          "add it to your cart",
+          1605
+        ],
+        [
+          "and add it to your cart",
+          1604
+        ],
+        [
+          "the desired",
+          1549
+        ],
+        [
+          "select the desired",
+          1521
+        ],
+        [
+          "your desired subscription",
+          1496
+        ],
+        [
+          "access your",
+          1493
+        ],
+        [
+          "select your desired subscription",
+          1479
+        ],
+        [
+          "desired subscription plan",
+          1460
+        ],
+        [
+          "subscription plan and",
+          1450
+        ],
+        [
+          "code in the",
+          1416
+        ],
+        [
+          "your desired subscription plan",
+          1365
+        ],
+        [
+          "to apply your",
+          1357
+        ],
+        [
+          "select your desired subscription plan",
+          1356
+        ],
+        [
+          "code in the designated",
+          1293
+        ],
+        [
+          "checkout to",
+          1290
+        ],
+        [
+          "at checkout to",
+          1285
+        ],
+        [
+          "details and confirm",
+          1284
+        ],
+        [
+          "code in the designated field",
+          1279
+        ],
+        [
+          "during the checkout",
+          1227
+        ],
+        [
+          "during the checkout process",
+          1227
+        ],
+        [
+          "confirm your order",
+          1211
+        ],
+        [
+          "desired subscription plan and",
+          1207
+        ],
+        [
+          "order details and",
+          1204
+        ],
+        [
+          "your order details and",
+          1204
+        ]
+      ]
+    },
+    "faq": {
+      "section": "faqcontent",
+      "totalEntries": 8212,
+      "avgFAQCount": 4.9,
+      "faqCountDistribution": {
+        "4": 569,
+        "5": 7643
+      },
+      "topQuestionOpeners": [
+        [
+          "can i stack multiple",
+          6161
+        ],
+        [
+          "how do i use",
+          5940
+        ],
+        [
+          "is this deal legitimate?",
+          5890
+        ],
+        [
+          "what benefits do i",
+          2040
+        ],
+        [
+          "how do i redeem",
+          938
+        ],
+        [
+          "how can i cancel",
+          841
+        ],
+        [
+          "can i get a",
+          815
+        ],
+        [
+          "is there a discount",
+          814
+        ],
+        [
+          "who provides support?",
+          813
+        ],
+        [
+          "how often are new",
+          778
+        ],
+        [
+          "what features are included",
+          657
+        ],
+        [
+          "can i gift a",
+          419
+        ],
+        [
+          "is there a free",
+          389
+        ],
+        [
+          "what if i have",
+          377
+        ],
+        [
+          "can features change after",
+          374
+        ],
+        [
+          "what happens if i",
+          367
+        ],
+        [
+          "what benefits come with",
+          334
+        ],
+        [
+          "how can i contact",
+          333
+        ],
+        [
+          "how often do new",
+          310
+        ],
+        [
+          "what can i expect",
+          271
+        ],
+        [
+          "what types of courses",
+          224
+        ],
+        [
+          "how is my personal",
+          204
+        ],
+        [
+          "how do i get",
+          200
+        ],
+        [
+          "what happens if an",
+          200
+        ],
+        [
+          "are there regional or",
+          199
+        ],
+        [
+          "how often are the",
+          198
+        ],
+        [
+          "can i purchase from",
+          191
+        ],
+        [
+          "will taxes be added",
+          187
+        ],
+        [
+          "what are bundles or",
+          187
+        ],
+        [
+          "do discounts expire?",
+          187
+        ],
+        [
+          "can i upgrade later",
+          186
+        ],
+        [
+          "is my payment information",
+          180
+        ],
+        [
+          "what is the refund",
+          180
+        ],
+        [
+          "how do i access",
+          162
+        ],
+        [
+          "what types of offers",
+          149
+        ],
+        [
+          "how do i turn",
+          143
+        ],
+        [
+          "are there rules on",
+          142
+        ],
+        [
+          "does this subscription renew",
+          137
+        ],
+        [
+          "are refunds guaranteed for",
+          136
+        ],
+        [
+          "how do i contact",
+          135
+        ],
+        [
+          "can i change the",
+          133
+        ],
+        [
+          "where can i read",
+          132
+        ],
+        [
+          "why doesn't a discount",
+          132
+        ],
+        [
+          "i didn't receive an",
+          131
+        ],
+        [
+          "do i keep access",
+          130
+        ],
+        [
+          "i can't access the",
+          130
+        ],
+        [
+          "my payment failed —",
+          127
+        ],
+        [
+          "where can i see",
+          126
+        ],
+        [
+          "is there a trial",
+          125
+        ],
+        [
+          "what is included in",
+          125
+        ]
+      ],
+      "topQuestionPatterns": [
+        [
+          "is this deal legitimate?",
+          5890
+        ],
+        [
+          "can i stack multiple offers?",
+          2965
+        ],
+        [
+          "how do i redeem access?",
+          813
+        ],
+        [
+          "is there a discount available?",
+          813
+        ],
+        [
+          "can i get a refund?",
+          813
+        ],
+        [
+          "who provides support?",
+          813
+        ],
+        [
+          "can i gift a purchase to someone else?",
+          419
+        ],
+        [
+          "is there a free trial?",
+          389
+        ],
+        [
+          "can features change after i subscribe?",
+          374
+        ],
+        [
+          "what benefits do i get with my membership?",
+          365
+        ],
+        [
+          "what benefits do i get with my subscription?",
+          335
+        ],
+        [
+          "how can i cancel my subscription?",
+          312
+        ],
+        [
+          "how can i cancel my membership?",
+          297
+        ],
+        [
+          "how often do new offers become available?",
+          235
+        ],
+        [
+          "how often are new offers available?",
+          211
+        ],
+        [
+          "what benefits do i get from joining the",
+          205
+        ],
+        [
+          "how is my personal data handled?",
+          201
+        ],
+        [
+          "how do i get a receipt or invoice?",
+          200
+        ],
+        [
+          "what happens if an offer ends during checkout?",
+          200
+        ],
+        [
+          "are there regional or age restrictions?",
+          199
+        ],
+        [
+          "can i purchase from outside my country?",
+          191
+        ],
+        [
+          "will taxes be added at checkout?",
+          187
+        ],
+        [
+          "what are bundles or add-ons?",
+          187
+        ],
+        [
+          "do discounts expire?",
+          187
+        ],
+        [
+          "can i upgrade later to a bigger bundle?",
+          186
+        ],
+        [
+          "what types of courses are available?",
+          186
+        ],
+        [
+          "is my payment information secure?",
+          180
+        ],
+        [
+          "can i stack multiple discounts?",
+          144
+        ],
+        [
+          "what is the refund policy?",
+          144
+        ],
+        [
+          "how do i turn off auto-renewal?",
+          143
+        ],
+        [
+          "are there rules on sharing or reselling content?",
+          142
+        ],
+        [
+          "can i stack multiple offers for additional savings?",
+          140
+        ],
+        [
+          "does this subscription renew automatically?",
+          137
+        ],
+        [
+          "are refunds guaranteed for digital products?",
+          136
+        ],
+        [
+          "how do i contact support?",
+          135
+        ],
+        [
+          "can i change the email on my order?",
+          133
+        ],
+        [
+          "where can i read the terms and policies?",
+          132
+        ],
+        [
+          "why doesn't a discount apply at checkout?",
+          132
+        ],
+        [
+          "what if i have issues redeeming my discount?",
+          132
+        ],
+        [
+          "i didn't receive an access email — what",
+          131
+        ],
+        [
+          "do i keep access if i cancel?",
+          130
+        ],
+        [
+          "i can't access the content i purchased.",
+          130
+        ],
+        [
+          "my payment failed — what can i try?",
+          127
+        ],
+        [
+          "where can i see service updates or outages?",
+          126
+        ],
+        [
+          "how do i access the content after purchase?",
+          126
+        ],
+        [
+          "is there a trial or introductory rate?",
+          125
+        ],
+        [
+          "how do i redeem a discount during checkout?",
+          125
+        ],
+        [
+          "how often are new offers released?",
+          124
+        ],
+        [
+          "will i get a notice before renewal?",
+          122
+        ],
+        [
+          "how do i request a refund or cancellation?",
+          122
+        ]
+      ],
+      "topAnswerOpeners": [
+        [
+          "typically, stacking multiple offers is",
+          1725
+        ],
+        [
+          "typically, you cannot stack multiple",
+          1713
+        ],
+        [
+          "generally, stacking multiple offers is",
+          1128
+        ],
+        [
+          "to redeem access, visit the",
+          493
+        ],
+        [
+          "gifting depends on the creator's",
+          423
+        ],
+        [
+          "support is typically provided through",
+          411
+        ],
+        [
+          "some products include free trials",
+          387
+        ],
+        [
+          "creators may update features or",
+          382
+        ],
+        [
+          "to use discounts for the",
+          360
+        ],
+        [
+          "to redeem access, sign in",
+          306
+        ],
+        [
+          "refund policies vary and are",
+          290
+        ],
+        [
+          "yes, the deals offered through",
+          286
+        ],
+        [
+          "you can cancel your subscription",
+          283
+        ],
+        [
+          "if you encounter any issues",
+          277
+        ],
+        [
+          "to use the discounts, simply",
+          262
+        ],
+        [
+          "typically, only one discount can",
+          261
+        ],
+        [
+          "to use discounts, simply enter",
+          247
+        ],
+        [
+          "refunds are subject to the",
+          236
+        ],
+        [
+          "you can cancel your membership",
+          206
+        ],
+        [
+          "if an offer changes mid-checkout,",
+          205
+        ],
+        [
+          "receipts are typically emailed after",
+          204
+        ],
+        [
+          "see the privacy policy linked",
+          202
+        ],
+        [
+          "some offers or content may",
+          199
+        ],
+        [
+          "international availability varies.",
+          195
+        ],
+        [
+          "upgrade options vary.",
+          190
+        ],
+        [
+          "bundles combine multiple items at",
+          187
+        ],
+        [
+          "most offers are time-limited and",
+          187
+        ],
+        [
+          "payments are processed by established",
+          180
+        ],
+        [
+          "your subscription includes access to",
+          166
+        ],
+        [
+          "generally, you cannot stack multiple",
+          163
+        ],
+        [
+          "refund policies vary; please refer",
+          153
+        ],
+        [
+          "your membership includes access to",
+          150
+        ],
+        [
+          "go to your account or",
+          147
+        ],
+        [
+          "most content is licensed for",
+          144
+        ],
+        [
+          "typically only one discount is",
+          142
+        ],
+        [
+          "refund policies vary by creator.",
+          140
+        ],
+        [
+          "use the support or contact",
+          140
+        ],
+        [
+          "to use discounts, simply visit",
+          139
+        ],
+        [
+          "many subscriptions renew automatically unless",
+          137
+        ],
+        [
+          "digital products often have specific",
+          134
+        ],
+        [
+          "in many cases, you can",
+          133
+        ],
+        [
+          "creators often link terms, privacy,",
+          132
+        ],
+        [
+          "offers may expire, have eligibility",
+          131
+        ],
+        [
+          "access after cancellation depends on",
+          130
+        ],
+        [
+          "sign out and back in,",
+          130
+        ],
+        [
+          "stacking multiple offers may not",
+          130
+        ],
+        [
+          "check spam/junk folders and ensure",
+          129
+        ],
+        [
+          "after payment, you'll receive access",
+          126
+        ],
+        [
+          "some creators offer trials or",
+          125
+        ],
+        [
+          "on the checkout page, look",
+          125
+        ]
+      ],
+      "topAnswerNgrams": [
+        [
+          "the product",
+          39457
+        ],
+        [
+          "on the product",
+          39038
+        ],
+        [
+          "product page.",
+          38180
+        ],
+        [
+          "the product page.",
+          38180
+        ],
+        [
+          "on the product page.",
+          38051
+        ],
+        [
+          "details on the",
+          37615
+        ],
+        [
+          "latest details",
+          37512
+        ],
+        [
+          "the latest details",
+          37512
+        ],
+        [
+          "review the latest",
+          37511
+        ],
+        [
+          "latest details on",
+          37511
+        ],
+        [
+          "the latest details on",
+          37511
+        ],
+        [
+          "latest details on the",
+          37510
+        ],
+        [
+          "details on the product",
+          37510
+        ],
+        [
+          "the latest details on the",
+          37510
+        ],
+        [
+          "latest details on the product",
+          37506
+        ],
+        [
+          "the latest details on the product",
+          37506
+        ],
+        [
+          "review the latest details",
+          37504
+        ],
+        [
+          "review the latest details on",
+          37504
+        ],
+        [
+          "review the latest details on the",
+          37504
+        ],
+        [
+          "review the latest details on the product",
+          37502
+        ],
+        [
+          "details on the product page.",
+          37470
+        ],
+        [
+          "latest details on the product page.",
+          37469
+        ],
+        [
+          "the latest details on the product page.",
+          37469
+        ],
+        [
+          "so review the",
+          37467
+        ],
+        [
+          "can vary, so",
+          37466
+        ],
+        [
+          "so review the latest",
+          37456
+        ],
+        [
+          "so review the latest details",
+          37456
+        ],
+        [
+          "so review the latest details on",
+          37456
+        ],
+        [
+          "so review the latest details on the",
+          37456
+        ],
+        [
+          "results and",
+          37453
+        ],
+        [
+          "and eligibility",
+          37446
+        ],
+        [
+          "eligibility can",
+          37446
+        ],
+        [
+          "results and eligibility",
+          37446
+        ],
+        [
+          "and eligibility can",
+          37446
+        ],
+        [
+          "results and eligibility can",
+          37446
+        ],
+        [
+          "vary, so review",
+          37442
+        ],
+        [
+          "vary, so review the",
+          37442
+        ],
+        [
+          "vary, so review the latest",
+          37441
+        ],
+        [
+          "vary, so review the latest details",
+          37441
+        ],
+        [
+          "vary, so review the latest details on",
+          37441
+        ],
+        [
+          "can vary, so review",
+          37440
+        ],
+        [
+          "can vary, so review the",
+          37440
+        ],
+        [
+          "can vary, so review the latest",
+          37440
+        ],
+        [
+          "can vary, so review the latest details",
+          37440
+        ],
+        [
+          "eligibility can vary,",
+          37437
+        ],
+        [
+          "and eligibility can vary,",
+          37437
+        ],
+        [
+          "eligibility can vary, so",
+          37437
+        ],
+        [
+          "results and eligibility can vary,",
+          37437
+        ],
+        [
+          "and eligibility can vary, so",
+          37437
+        ],
+        [
+          "results and eligibility can vary, so",
+          37437
+        ],
+        [
+          "eligibility can vary, so review",
+          37434
+        ],
+        [
+          "and eligibility can vary, so review",
+          37434
+        ],
+        [
+          "eligibility can vary, so review the",
+          37434
+        ],
+        [
+          "results and eligibility can vary, so review",
+          37434
+        ],
+        [
+          "and eligibility can vary, so review the",
+          37434
+        ],
+        [
+          "eligibility can vary, so review the latest",
+          37434
+        ],
+        [
+          "compare tiers",
+          8557
+        ],
+        [
+          "side before",
+          8557
+        ],
+        [
+          "before choosing",
+          8557
+        ],
+        [
+          "choosing the",
+          8557
+        ],
+        [
+          "you prefer.",
+          8557
+        ],
+        [
+          "compare tiers side",
+          8557
+        ],
+        [
+          "tiers side by",
+          8557
+        ],
+        [
+          "side by side",
+          8557
+        ],
+        [
+          "by side before",
+          8557
+        ],
+        [
+          "side before choosing",
+          8557
+        ],
+        [
+          "before choosing the",
+          8557
+        ],
+        [
+          "choosing the option",
+          8557
+        ],
+        [
+          "the option you",
+          8557
+        ],
+        [
+          "option you prefer.",
+          8557
+        ],
+        [
+          "compare tiers side by",
+          8557
+        ],
+        [
+          "tiers side by side",
+          8557
+        ],
+        [
+          "side by side before",
+          8557
+        ],
+        [
+          "by side before choosing",
+          8557
+        ],
+        [
+          "side before choosing the",
+          8557
+        ],
+        [
+          "before choosing the option",
+          8557
+        ],
+        [
+          "choosing the option you",
+          8557
+        ],
+        [
+          "the option you prefer.",
+          8557
+        ],
+        [
+          "compare tiers side by side",
+          8557
+        ],
+        [
+          "tiers side by side before",
+          8557
+        ],
+        [
+          "side by side before choosing",
+          8557
+        ],
+        [
+          "by side before choosing the",
+          8557
+        ],
+        [
+          "side before choosing the option",
+          8557
+        ],
+        [
+          "before choosing the option you",
+          8557
+        ],
+        [
+          "choosing the option you prefer.",
+          8557
+        ],
+        [
+          "compare tiers side by side before",
+          8557
+        ],
+        [
+          "tiers side by side before choosing",
+          8557
+        ],
+        [
+          "side by side before choosing the",
+          8557
+        ],
+        [
+          "by side before choosing the option",
+          8557
+        ],
+        [
+          "side before choosing the option you",
+          8557
+        ],
+        [
+          "before choosing the option you prefer.",
+          8557
+        ],
+        [
+          "compare tiers side by side before choosing",
+          8557
+        ],
+        [
+          "tiers side by side before choosing the",
+          8557
+        ],
+        [
+          "side by side before choosing the option",
+          8557
+        ],
+        [
+          "by side before choosing the option you",
+          8557
+        ],
+        [
+          "side before choosing the option you prefer.",
+          8557
+        ],
+        [
+          "are unsure,",
+          8556
+        ],
+        [
+          "unsure, compare",
+          8556
+        ],
+        [
+          "you are unsure,",
+          8556
+        ],
+        [
+          "are unsure, compare",
+          8556
+        ]
+      ]
+    },
+    "promoDetails": {
+      "section": "promodetailscontent",
+      "totalEntries": 8212,
+      "avgItemCount": 4.9,
+      "topItemOpeners": [
+        [
+          "expect one code per",
+          7629
+        ],
+        [
+          "become part of a",
+          1036
+        ],
+        [
+          "access a community of",
+          977
+        ],
+        [
+          "join a supportive community",
+          935
+        ],
+        [
+          "utilize the current offer",
+          844
+        ],
+        [
+          "make use of the",
+          840
+        ],
+        [
+          "review vat/gst and currency",
+          758
+        ],
+        [
+          "enjoy a special offer",
+          514
+        ],
+        [
+          "identify whether this is",
+          419
+        ],
+        [
+          "take advantage of a",
+          359
+        ],
+        [
+          "join a vibrant community",
+          320
+        ],
+        [
+          "confirm code eligibility for",
+          301
+        ],
+        [
+          "leverage the available offer",
+          296
+        ],
+        [
+          "benefit from the present",
+          288
+        ],
+        [
+          "benefit from the active",
+          282
+        ],
+        [
+          "leverage the present offer",
+          276
+        ],
+        [
+          "leverage the active offer",
+          262
+        ],
+        [
+          "benefit from the available",
+          261
+        ],
+        [
+          "access exclusive content and",
+          253
+        ],
+        [
+          "check whether the promo",
+          252
+        ],
+        [
+          "join with the tier",
+          245
+        ],
+        [
+          "choose from various pricing",
+          206
+        ],
+        [
+          "take advantage of special",
+          165
+        ],
+        [
+          "review page mentions discord",
+          163
+        ],
+        [
+          "enjoy a free trial",
+          157
+        ],
+        [
+          "receive ongoing support and",
+          146
+        ],
+        [
+          "benefit from expert insights",
+          138
+        ],
+        [
+          "enter the available discount",
+          129
+        ],
+        [
+          "join a community focused",
+          129
+        ],
+        [
+          "redeem the available discount",
+          128
+        ],
+        [
+          "use the available discount",
+          127
+        ],
+        [
+          "choose from a variety",
+          127
+        ],
+        [
+          "access live trading sessions",
+          124
+        ],
+        [
+          "enjoy a user-friendly interface",
+          123
+        ],
+        [
+          "benefit from expert guidance",
+          113
+        ],
+        [
+          "access expert sports betting",
+          112
+        ],
+        [
+          "access exclusive trading insights",
+          110
+        ],
+        [
+          "access exclusive training materials",
+          104
+        ],
+        [
+          "choose from various subscription",
+          103
+        ],
+        [
+          "take advantage of limited-time",
+          103
+        ],
+        [
+          "access exclusive insights and",
+          97
+        ],
+        [
+          "access the program through",
+          94
+        ],
+        [
+          "benefit from a supportive",
+          91
+        ],
+        [
+          "access exclusive trading techniques",
+          90
+        ],
+        [
+          "access exclusive savings with",
+          89
+        ],
+        [
+          "benefit from a user-friendly",
+          89
+        ],
+        [
+          "access exclusive resources tailored",
+          80
+        ],
+        [
+          "access exclusive trading approaches",
+          79
+        ],
+        [
+          "access exclusive content tailored",
+          77
+        ],
+        [
+          "access exclusive tools and",
+          76
+        ]
+      ],
+      "topNgrams": [
+        [
+          "and creator.",
+          7935
+        ],
+        [
+          "by offer and",
+          7935
+        ],
+        [
+          "offer and creator.",
+          7935
+        ],
+        [
+          "by offer and creator.",
+          7935
+        ],
+        [
+          "the offer page",
+          7912
+        ],
+        [
+          "offer page for",
+          7912
+        ],
+        [
+          "the offer page for",
+          7912
+        ],
+        [
+          "vary by offer",
+          7893
+        ],
+        [
+          "vary by offer and",
+          7893
+        ],
+        [
+          "vary by offer and creator.",
+          7893
+        ],
+        [
+          "at checkout",
+          7889
+        ],
+        [
+          "details vary",
+          7888
+        ],
+        [
+          "details vary by",
+          7888
+        ],
+        [
+          "details vary by offer",
+          7888
+        ],
+        [
+          "details vary by offer and",
+          7888
+        ],
+        [
+          "details vary by offer and creator.",
+          7888
+        ],
+        [
+          "creator. check",
+          7870
+        ],
+        [
+          "exact inclusions.",
+          7870
+        ],
+        [
+          "and creator. check",
+          7870
+        ],
+        [
+          "creator. check the",
+          7870
+        ],
+        [
+          "check the offer",
+          7870
+        ],
+        [
+          "page for exact",
+          7870
+        ],
+        [
+          "for exact inclusions.",
+          7870
+        ],
+        [
+          "offer and creator. check",
+          7870
+        ],
+        [
+          "and creator. check the",
+          7870
+        ],
+        [
+          "creator. check the offer",
+          7870
+        ],
+        [
+          "check the offer page",
+          7870
+        ],
+        [
+          "offer page for exact",
+          7870
+        ],
+        [
+          "page for exact inclusions.",
+          7870
+        ],
+        [
+          "by offer and creator. check",
+          7870
+        ],
+        [
+          "offer and creator. check the",
+          7870
+        ],
+        [
+          "and creator. check the offer",
+          7870
+        ],
+        [
+          "creator. check the offer page",
+          7870
+        ],
+        [
+          "check the offer page for",
+          7870
+        ],
+        [
+          "the offer page for exact",
+          7870
+        ],
+        [
+          "offer page for exact inclusions.",
+          7870
+        ],
+        [
+          "by offer and creator. check the",
+          7870
+        ],
+        [
+          "offer and creator. check the offer",
+          7870
+        ],
+        [
+          "and creator. check the offer page",
+          7870
+        ],
+        [
+          "creator. check the offer page for",
+          7870
+        ],
+        [
+          "the offer page for exact inclusions.",
+          7870
+        ],
+        [
+          "by offer and creator. check the offer",
+          7870
+        ],
+        [
+          "offer and creator. check the offer page",
+          7870
+        ],
+        [
+          "and creator. check the offer page for",
+          7870
+        ],
+        [
+          "vary by offer and creator. check",
+          7869
+        ],
+        [
+          "vary by offer and creator. check the",
+          7869
+        ],
+        [
+          "check the offer page for exact",
+          7868
+        ],
+        [
+          "creator. check the offer page for exact",
+          7868
+        ],
+        [
+          "check the offer page for exact inclusions.",
+          7868
+        ],
+        [
+          "details vary by offer and creator. check",
+          7866
+        ],
+        [
+          "pricing and",
+          7861
+        ],
+        [
+          "and availability",
+          7831
+        ],
+        [
+          "pricing and availability",
+          7824
+        ],
+        [
+          "inclusions. pricing",
+          7820
+        ],
+        [
+          "inclusions. pricing and",
+          7820
+        ],
+        [
+          "inclusions. pricing and availability",
+          7820
+        ],
+        [
+          "availability can",
+          7787
+        ],
+        [
+          "exact inclusions. pricing",
+          7787
+        ],
+        [
+          "and availability can",
+          7787
+        ],
+        [
+          "for exact inclusions. pricing",
+          7787
+        ],
+        [
+          "exact inclusions. pricing and",
+          7787
+        ],
+        [
+          "page for exact inclusions. pricing",
+          7787
+        ],
+        [
+          "for exact inclusions. pricing and",
+          7787
+        ],
+        [
+          "exact inclusions. pricing and availability",
+          7787
+        ],
+        [
+          "offer page for exact inclusions. pricing",
+          7787
+        ],
+        [
+          "page for exact inclusions. pricing and",
+          7787
+        ],
+        [
+          "for exact inclusions. pricing and availability",
+          7787
+        ],
+        [
+          "the offer page for exact inclusions. pricing",
+          7787
+        ],
+        [
+          "offer page for exact inclusions. pricing and",
+          7787
+        ],
+        [
+          "page for exact inclusions. pricing and availability",
+          7787
+        ],
+        [
+          "pricing and availability can",
+          7786
+        ],
+        [
+          "inclusions. pricing and availability can",
+          7784
+        ],
+        [
+          "can change.",
+          7783
+        ],
+        [
+          "availability can change.",
+          7783
+        ],
+        [
+          "and availability can change.",
+          7783
+        ],
+        [
+          "pricing and availability can change.",
+          7783
+        ],
+        [
+          "exact inclusions. pricing and availability can",
+          7783
+        ],
+        [
+          "inclusions. pricing and availability can change.",
+          7783
+        ],
+        [
+          "for exact inclusions. pricing and availability can",
+          7783
+        ],
+        [
+          "exact inclusions. pricing and availability can change.",
+          7783
+        ],
+        [
+          "checkout when",
+          7752
+        ],
+        [
+          "at checkout when",
+          7752
+        ],
+        [
+          "change. the",
+          7718
+        ],
+        [
+          "change. the coupon",
+          7718
+        ],
+        [
+          "when eligible.",
+          7717
+        ],
+        [
+          "checkout when eligible.",
+          7717
+        ],
+        [
+          "at checkout when eligible.",
+          7717
+        ],
+        [
+          "coupon applies",
+          7714
+        ],
+        [
+          "the coupon applies",
+          7714
+        ],
+        [
+          "coupon applies at",
+          7714
+        ],
+        [
+          "applies at checkout",
+          7714
+        ],
+        [
+          "the coupon applies at",
+          7714
+        ],
+        [
+          "coupon applies at checkout",
+          7714
+        ],
+        [
+          "applies at checkout when",
+          7714
+        ],
+        [
+          "the coupon applies at checkout",
+          7714
+        ],
+        [
+          "coupon applies at checkout when",
+          7714
+        ],
+        [
+          "the coupon applies at checkout when",
+          7714
+        ],
+        [
+          "change. the coupon applies",
+          7712
+        ],
+        [
+          "change. the coupon applies at",
+          7712
+        ],
+        [
+          "change. the coupon applies at checkout",
+          7712
+        ]
+      ]
+    },
+    "terms": {
+      "section": "termscontent",
+      "totalEntries": 8212,
+      "avgItemCount": 4.9,
+      "topItemOpeners": [
+        [
+          "promotions may not stack",
+          5246
+        ],
+        [
+          "discounts may vary based",
+          4061
+        ],
+        [
+          "taxes and currency are",
+          3114
+        ],
+        [
+          "offers may vary based",
+          2492
+        ],
+        [
+          "discounts and offers may",
+          2108
+        ],
+        [
+          "discounts are subject to",
+          1679
+        ],
+        [
+          "usage limits may apply;",
+          1298
+        ],
+        [
+          "review offer is valid",
+          1283
+        ],
+        [
+          "offers are subject to",
+          1024
+        ],
+        [
+          "check for any expiry",
+          994
+        ],
+        [
+          "subject to whop terms",
+          852
+        ],
+        [
+          "usage limits may apply",
+          620
+        ],
+        [
+          "discounts are applicable only",
+          527
+        ],
+        [
+          "some deals cannot be",
+          456
+        ],
+        [
+          "refunds, if any, follow",
+          451
+        ],
+        [
+          "terms and conditions apply",
+          415
+        ],
+        [
+          "check for expiry dates",
+          412
+        ],
+        [
+          "misuse or policy violations",
+          404
+        ],
+        [
+          "ensure to check for",
+          391
+        ],
+        [
+          "review offer is subject",
+          370
+        ],
+        [
+          "comply with applicable laws",
+          351
+        ],
+        [
+          "membership is billed monthly",
+          326
+        ],
+        [
+          "check for any usage",
+          307
+        ],
+        [
+          "check the website for",
+          257
+        ],
+        [
+          "terms and conditions apply;",
+          252
+        ],
+        [
+          "for subscriptions, manage cancellations",
+          247
+        ],
+        [
+          "purchases are processed on",
+          240
+        ],
+        [
+          "submit refund or dispute",
+          239
+        ],
+        [
+          "all sales are final;",
+          218
+        ],
+        [
+          "subscription renews automatically unless",
+          183
+        ],
+        [
+          "check the terms on",
+          181
+        ],
+        [
+          "discounts may not be",
+          176
+        ],
+        [
+          "check the expiry date",
+          171
+        ],
+        [
+          "limit one discount per",
+          171
+        ],
+        [
+          "one discount code can",
+          168
+        ],
+        [
+          "confirm any specific terms",
+          164
+        ],
+        [
+          "ensure to apply the",
+          149
+        ],
+        [
+          "access to resources is",
+          147
+        ],
+        [
+          "review offer is available",
+          144
+        ],
+        [
+          "limitations may apply to",
+          142
+        ],
+        [
+          "current offers may vary",
+          138
+        ],
+        [
+          "limited-time offers may have",
+          134
+        ],
+        [
+          "access to certain features",
+          127
+        ],
+        [
+          "access to the community",
+          125
+        ],
+        [
+          "memberships may have specific",
+          119
+        ],
+        [
+          "terms and conditions are",
+          115
+        ],
+        [
+          "review offer may have",
+          114
+        ],
+        [
+          "check the specific terms",
+          107
+        ],
+        [
+          "access to course materials",
+          105
+        ],
+        [
+          "terms and conditions may",
+          97
+        ]
+      ],
+      "topNgrams": [
+        [
+          "at checkout.",
+          11697
+        ],
+        [
+          "renewal cadence",
+          8182
+        ],
+        [
+          "and renewal",
+          7935
+        ],
+        [
+          "and renewal cadence",
+          7935
+        ],
+        [
+          "the seller's",
+          7635
+        ],
+        [
+          "governed by",
+          7395
+        ],
+        [
+          "is governed",
+          7393
+        ],
+        [
+          "seller's policy",
+          7393
+        ],
+        [
+          "use is governed",
+          7393
+        ],
+        [
+          "is governed by",
+          7393
+        ],
+        [
+          "governed by the",
+          7393
+        ],
+        [
+          "by the seller's",
+          7393
+        ],
+        [
+          "the seller's policy",
+          7393
+        ],
+        [
+          "seller's policy on",
+          7393
+        ],
+        [
+          "policy on whop.",
+          7393
+        ],
+        [
+          "use is governed by",
+          7393
+        ],
+        [
+          "is governed by the",
+          7393
+        ],
+        [
+          "governed by the seller's",
+          7393
+        ],
+        [
+          "by the seller's policy",
+          7393
+        ],
+        [
+          "the seller's policy on",
+          7393
+        ],
+        [
+          "seller's policy on whop.",
+          7393
+        ],
+        [
+          "use is governed by the",
+          7393
+        ],
+        [
+          "is governed by the seller's",
+          7393
+        ],
+        [
+          "governed by the seller's policy",
+          7393
+        ],
+        [
+          "by the seller's policy on",
+          7393
+        ],
+        [
+          "the seller's policy on whop.",
+          7393
+        ],
+        [
+          "use is governed by the seller's",
+          7393
+        ],
+        [
+          "is governed by the seller's policy",
+          7393
+        ],
+        [
+          "governed by the seller's policy on",
+          7393
+        ],
+        [
+          "by the seller's policy on whop.",
+          7393
+        ],
+        [
+          "use is governed by the seller's policy",
+          7393
+        ],
+        [
+          "is governed by the seller's policy on",
+          7393
+        ],
+        [
+          "governed by the seller's policy on whop.",
+          7393
+        ],
+        [
+          "vary based on",
+          6924
+        ],
+        [
+          "may vary based",
+          6866
+        ],
+        [
+          "may vary based on",
+          6866
+        ],
+        [
+          "the creator's",
+          6152
+        ],
+        [
+          "creator's stated",
+          6083
+        ],
+        [
+          "the creator's stated",
+          6083
+        ],
+        [
+          "billing terms",
+          5964
+        ],
+        [
+          "whop. billing",
+          5962
+        ],
+        [
+          "cadence are",
+          5962
+        ],
+        [
+          "are displayed",
+          5962
+        ],
+        [
+          "displayed at",
+          5962
+        ],
+        [
+          "on whop. billing",
+          5962
+        ],
+        [
+          "whop. billing terms",
+          5962
+        ],
+        [
+          "billing terms and",
+          5962
+        ],
+        [
+          "terms and renewal",
+          5962
+        ],
+        [
+          "renewal cadence are",
+          5962
+        ],
+        [
+          "cadence are displayed",
+          5962
+        ],
+        [
+          "are displayed at",
+          5962
+        ],
+        [
+          "displayed at checkout.",
+          5962
+        ],
+        [
+          "policy on whop. billing",
+          5962
+        ],
+        [
+          "on whop. billing terms",
+          5962
+        ],
+        [
+          "whop. billing terms and",
+          5962
+        ],
+        [
+          "billing terms and renewal",
+          5962
+        ],
+        [
+          "terms and renewal cadence",
+          5962
+        ],
+        [
+          "and renewal cadence are",
+          5962
+        ],
+        [
+          "renewal cadence are displayed",
+          5962
+        ],
+        [
+          "cadence are displayed at",
+          5962
+        ],
+        [
+          "are displayed at checkout.",
+          5962
+        ],
+        [
+          "seller's policy on whop. billing",
+          5962
+        ],
+        [
+          "policy on whop. billing terms",
+          5962
+        ],
+        [
+          "on whop. billing terms and",
+          5962
+        ],
+        [
+          "whop. billing terms and renewal",
+          5962
+        ],
+        [
+          "billing terms and renewal cadence",
+          5962
+        ],
+        [
+          "terms and renewal cadence are",
+          5962
+        ],
+        [
+          "and renewal cadence are displayed",
+          5962
+        ],
+        [
+          "renewal cadence are displayed at",
+          5962
+        ],
+        [
+          "cadence are displayed at checkout.",
+          5962
+        ],
+        [
+          "the seller's policy on whop. billing",
+          5962
+        ],
+        [
+          "seller's policy on whop. billing terms",
+          5962
+        ],
+        [
+          "policy on whop. billing terms and",
+          5962
+        ],
+        [
+          "on whop. billing terms and renewal",
+          5962
+        ],
+        [
+          "whop. billing terms and renewal cadence",
+          5962
+        ],
+        [
+          "billing terms and renewal cadence are",
+          5962
+        ],
+        [
+          "terms and renewal cadence are displayed",
+          5962
+        ],
+        [
+          "and renewal cadence are displayed at",
+          5962
+        ],
+        [
+          "renewal cadence are displayed at checkout.",
+          5962
+        ],
+        [
+          "by the seller's policy on whop. billing",
+          5962
+        ],
+        [
+          "the seller's policy on whop. billing terms",
+          5962
+        ],
+        [
+          "seller's policy on whop. billing terms and",
+          5962
+        ],
+        [
+          "policy on whop. billing terms and renewal",
+          5962
+        ],
+        [
+          "on whop. billing terms and renewal cadence",
+          5962
+        ],
+        [
+          "whop. billing terms and renewal cadence are",
+          5962
+        ],
+        [
+          "billing terms and renewal cadence are displayed",
+          5962
+        ],
+        [
+          "terms and renewal cadence are displayed at",
+          5962
+        ],
+        [
+          "and renewal cadence are displayed at checkout.",
+          5962
+        ],
+        [
+          "on the creator's",
+          5907
+        ],
+        [
+          "depend on the",
+          5859
+        ],
+        [
+          "and currency",
+          5844
+        ],
+        [
+          "taxes and currency",
+          5844
+        ],
+        [
+          "checkout. refund",
+          5844
+        ],
+        [
+          "refund options",
+          5844
+        ],
+        [
+          "options depend",
+          5844
+        ],
+        [
+          "stated policy.",
+          5844
+        ],
+        [
+          "at checkout. refund",
+          5844
+        ],
+        [
+          "checkout. refund options",
+          5844
+        ],
+        [
+          "refund options depend",
+          5844
+        ],
+        [
+          "options depend on",
+          5844
+        ]
+      ]
+    }
+  },
+  "globalPatterns": {
+    "topGlobalNgrams": [
+      [
+        "at checkout",
+        14751
+      ],
+      [
+        "at checkout.",
+        13276
+      ],
+      [
+        "availability can",
+        9845
+      ],
+      [
+        "code before",
+        9413
+      ],
+      [
+        "renewal cadence",
+        8463
+      ],
+      [
+        "and creator.",
+        7945
+      ],
+      [
+        "offer and creator.",
+        7937
+      ],
+      [
+        "and renewal",
+        7935
+      ],
+      [
+        "and renewal cadence",
+        7935
+      ],
+      [
+        "by offer and",
+        7935
+      ],
+      [
+        "by offer and creator.",
+        7935
+      ],
+      [
+        "the offer page",
+        7917
+      ],
+      [
+        "offer page for",
+        7912
+      ],
+      [
+        "the offer page for",
+        7912
+      ],
+      [
+        "creator. check",
+        7894
+      ],
+      [
+        "vary by offer",
+        7893
+      ],
+      [
+        "vary by offer and",
+        7893
+      ],
+      [
+        "vary by offer and creator.",
+        7893
+      ],
+      [
+        "pricing and",
+        7888
+      ],
+      [
+        "details vary",
+        7888
+      ],
+      [
+        "details vary by",
+        7888
+      ],
+      [
+        "details vary by offer",
+        7888
+      ],
+      [
+        "details vary by offer and",
+        7888
+      ],
+      [
+        "details vary by offer and creator.",
+        7888
+      ],
+      [
+        "and creator. check",
+        7875
+      ],
+      [
+        "check the offer",
+        7872
+      ],
+      [
+        "offer and creator. check",
+        7872
+      ],
+      [
+        "exact inclusions.",
+        7870
+      ],
+      [
+        "creator. check the",
+        7870
+      ],
+      [
+        "page for exact",
+        7870
+      ],
+      [
+        "for exact inclusions.",
+        7870
+      ],
+      [
+        "and creator. check the",
+        7870
+      ],
+      [
+        "creator. check the offer",
+        7870
+      ],
+      [
+        "check the offer page",
+        7870
+      ],
+      [
+        "offer page for exact",
+        7870
+      ],
+      [
+        "page for exact inclusions.",
+        7870
+      ],
+      [
+        "by offer and creator. check",
+        7870
+      ],
+      [
+        "offer and creator. check the",
+        7870
+      ],
+      [
+        "and creator. check the offer",
+        7870
+      ],
+      [
+        "creator. check the offer page",
+        7870
+      ],
+      [
+        "check the offer page for",
+        7870
+      ],
+      [
+        "the offer page for exact",
+        7870
+      ],
+      [
+        "offer page for exact inclusions.",
+        7870
+      ],
+      [
+        "by offer and creator. check the",
+        7870
+      ],
+      [
+        "offer and creator. check the offer",
+        7870
+      ],
+      [
+        "and creator. check the offer page",
+        7870
+      ],
+      [
+        "creator. check the offer page for",
+        7870
+      ],
+      [
+        "the offer page for exact inclusions.",
+        7870
+      ],
+      [
+        "by offer and creator. check the offer",
+        7870
+      ],
+      [
+        "offer and creator. check the offer page",
+        7870
+      ],
+      [
+        "and creator. check the offer page for",
+        7870
+      ],
+      [
+        "vary by offer and creator. check",
+        7869
+      ],
+      [
+        "vary by offer and creator. check the",
+        7869
+      ],
+      [
+        "check the offer page for exact",
+        7868
+      ],
+      [
+        "creator. check the offer page for exact",
+        7868
+      ],
+      [
+        "check the offer page for exact inclusions.",
+        7868
+      ],
+      [
+        "details vary by offer and creator. check",
+        7866
+      ],
+      [
+        "and availability",
+        7832
+      ],
+      [
+        "pricing and availability",
+        7825
+      ],
+      [
+        "inclusions. pricing",
+        7820
+      ],
+      [
+        "inclusions. pricing and",
+        7820
+      ],
+      [
+        "inclusions. pricing and availability",
+        7820
+      ],
+      [
+        "exact inclusions. pricing",
+        7787
+      ],
+      [
+        "and availability can",
+        7787
+      ],
+      [
+        "for exact inclusions. pricing",
+        7787
+      ],
+      [
+        "exact inclusions. pricing and",
+        7787
+      ],
+      [
+        "page for exact inclusions. pricing",
+        7787
+      ],
+      [
+        "for exact inclusions. pricing and",
+        7787
+      ],
+      [
+        "exact inclusions. pricing and availability",
+        7787
+      ],
+      [
+        "offer page for exact inclusions. pricing",
+        7787
+      ],
+      [
+        "page for exact inclusions. pricing and",
+        7787
+      ],
+      [
+        "for exact inclusions. pricing and availability",
+        7787
+      ],
+      [
+        "the offer page for exact inclusions. pricing",
+        7787
+      ],
+      [
+        "offer page for exact inclusions. pricing and",
+        7787
+      ],
+      [
+        "page for exact inclusions. pricing and availability",
+        7787
+      ],
+      [
+        "pricing and availability can",
+        7786
+      ],
+      [
+        "inclusions. pricing and availability can",
+        7784
+      ],
+      [
+        "can change.",
+        7783
+      ],
+      [
+        "availability can change.",
+        7783
+      ],
+      [
+        "and availability can change.",
+        7783
+      ],
+      [
+        "pricing and availability can change.",
+        7783
+      ],
+      [
+        "exact inclusions. pricing and availability can",
+        7783
+      ],
+      [
+        "inclusions. pricing and availability can change.",
+        7783
+      ],
+      [
+        "for exact inclusions. pricing and availability can",
+        7783
+      ],
+      [
+        "exact inclusions. pricing and availability can change.",
+        7783
+      ],
+      [
+        "checkout when",
+        7752
+      ],
+      [
+        "at checkout when",
+        7752
+      ],
+      [
+        "change. the",
+        7718
+      ],
+      [
+        "change. the coupon",
+        7718
+      ],
+      [
+        "when eligible.",
+        7717
+      ],
+      [
+        "checkout when eligible.",
+        7717
+      ],
+      [
+        "at checkout when eligible.",
+        7717
+      ],
+      [
+        "coupon applies",
+        7714
+      ],
+      [
+        "the coupon applies",
+        7714
+      ],
+      [
+        "coupon applies at",
+        7714
+      ],
+      [
+        "applies at checkout",
+        7714
+      ],
+      [
+        "the coupon applies at",
+        7714
+      ],
+      [
+        "coupon applies at checkout",
+        7714
+      ],
+      [
+        "applies at checkout when",
+        7714
+      ],
+      [
+        "the coupon applies at checkout",
+        7714
+      ],
+      [
+        "coupon applies at checkout when",
+        7714
+      ],
+      [
+        "the coupon applies at checkout when",
+        7714
+      ],
+      [
+        "change. the coupon applies",
+        7712
+      ],
+      [
+        "change. the coupon applies at",
+        7712
+      ],
+      [
+        "change. the coupon applies at checkout",
+        7712
+      ],
+      [
+        "change. the coupon applies at checkout when",
+        7712
+      ],
+      [
+        "can change. the",
+        7710
+      ],
+      [
+        "availability can change. the",
+        7710
+      ],
+      [
+        "can change. the coupon",
+        7710
+      ],
+      [
+        "and availability can change. the",
+        7710
+      ],
+      [
+        "availability can change. the coupon",
+        7710
+      ],
+      [
+        "can change. the coupon applies",
+        7710
+      ],
+      [
+        "applies at checkout when eligible.",
+        7710
+      ],
+      [
+        "pricing and availability can change. the",
+        7710
+      ],
+      [
+        "and availability can change. the coupon",
+        7710
+      ],
+      [
+        "availability can change. the coupon applies",
+        7710
+      ],
+      [
+        "can change. the coupon applies at",
+        7710
+      ],
+      [
+        "coupon applies at checkout when eligible.",
+        7710
+      ],
+      [
+        "inclusions. pricing and availability can change. the",
+        7710
+      ],
+      [
+        "pricing and availability can change. the coupon",
+        7710
+      ],
+      [
+        "and availability can change. the coupon applies",
+        7710
+      ],
+      [
+        "availability can change. the coupon applies at",
+        7710
+      ],
+      [
+        "can change. the coupon applies at checkout",
+        7710
+      ],
+      [
+        "the coupon applies at checkout when eligible.",
+        7710
+      ],
+      [
+        "your trading",
+        7669
+      ],
+      [
+        "one code per",
+        7645
+      ],
+      [
+        "currency is",
+        7643
+      ],
+      [
+        "the seller's",
+        7635
+      ],
+      [
+        "expect one code",
+        7632
+      ],
+      [
+        "checkout on",
+        7631
+      ],
+      [
+        "checkout on whop;",
+        7631
+      ],
+      [
+        "per checkout",
+        7629
+      ],
+      [
+        "code per checkout",
+        7629
+      ],
+      [
+        "per checkout on",
+        7629
+      ],
+      [
+        "expect one code per",
+        7629
+      ],
+      [
+        "one code per checkout",
+        7629
+      ],
+      [
+        "code per checkout on",
+        7629
+      ],
+      [
+        "per checkout on whop;",
+        7629
+      ],
+      [
+        "one code per checkout on",
+        7629
+      ],
+      [
+        "code per checkout on whop;",
+        7629
+      ],
+      [
+        "one code per checkout on whop;",
+        7629
+      ],
+      [
+        "expect one code per checkout",
+        7628
+      ],
+      [
+        "expect one code per checkout on",
+        7628
+      ],
+      [
+        "expect one code per checkout on whop;",
+        7628
+      ],
+      [
+        "your region.",
+        7624
+      ],
+      [
+        "for your region.",
+        7621
+      ],
+      [
+        "currency is shown",
+        7610
+      ],
+      [
+        "is shown for",
+        7610
+      ],
+      [
+        "shown for your",
+        7610
+      ],
+      [
+        "currency is shown for",
+        7610
+      ],
+      [
+        "is shown for your",
+        7610
+      ],
+      [
+        "currency is shown for your",
+        7610
+      ],
+      [
+        "the on-screen",
+        7609
+      ],
+      [
+        "shown for your region.",
+        7609
+      ],
+      [
+        "is shown for your region.",
+        7609
+      ],
+      [
+        "currency is shown for your region.",
+        7609
+      ],
+      [
+        "eligible. currency",
+        7608
+      ],
+      [
+        "when eligible. currency",
+        7608
+      ],
+      [
+        "eligible. currency is",
+        7608
+      ],
+      [
+        "checkout when eligible. currency",
+        7608
+      ],
+      [
+        "when eligible. currency is",
+        7608
+      ],
+      [
+        "eligible. currency is shown",
+        7608
+      ],
+      [
+        "at checkout when eligible. currency",
+        7608
+      ],
+      [
+        "checkout when eligible. currency is",
+        7608
+      ],
+      [
+        "when eligible. currency is shown",
+        7608
+      ],
+      [
+        "eligible. currency is shown for",
+        7608
+      ],
+      [
+        "at checkout when eligible. currency is",
+        7608
+      ],
+      [
+        "checkout when eligible. currency is shown",
+        7608
+      ],
+      [
+        "when eligible. currency is shown for",
+        7608
+      ],
+      [
+        "eligible. currency is shown for your",
+        7608
+      ],
+      [
+        "at checkout when eligible. currency is shown",
+        7608
+      ],
+      [
+        "checkout when eligible. currency is shown for",
+        7608
+      ],
+      [
+        "when eligible. currency is shown for your",
+        7608
+      ],
+      [
+        "eligible. currency is shown for your region.",
+        7608
+      ],
+      [
+        "the best code",
+        7607
+      ],
+      [
+        "applies at checkout when eligible. currency",
+        7601
+      ],
+      [
+        "coupon applies at checkout when eligible. currency",
+        7601
+      ],
+      [
+        "applies at checkout when eligible. currency is",
+        7601
+      ],
+      [
+        "best code before",
+        7596
+      ],
+      [
+        "the best code before",
+        7596
+      ],
+      [
+        "then re-apply",
+        7587
+      ],
+      [
+        "re-apply the",
+        7587
+      ],
+      [
+        "then re-apply the",
+        7587
+      ],
+      [
+        "re-apply the best",
+        7587
+      ],
+      [
+        "then re-apply the best",
+        7587
+      ],
+      [
+        "re-apply the best code",
+        7587
+      ],
+      [
+        "then re-apply the best code",
+        7587
+      ],
+      [
+        "re-apply the best code before",
+        7587
+      ],
+      [
+        "then re-apply the best code before",
+        7587
+      ],
+      [
+        "code before you",
+        7569
+      ],
+      [
+        "best code before you",
+        7568
+      ],
+      [
+        "the best code before you",
+        7568
+      ],
+      [
+        "you confirm.",
+        7567
+      ],
+      [
+        "before you confirm.",
+        7567
+      ],
+      [
+        "code before you confirm.",
+        7566
+      ],
+      [
+        "best code before you confirm.",
+        7566
+      ],
+      [
+        "re-apply the best code before you",
+        7566
+      ],
+      [
+        "the best code before you confirm.",
+        7566
+      ],
+      [
+        "then re-apply the best code before you",
+        7566
+      ],
+      [
+        "re-apply the best code before you confirm.",
+        7566
+      ]
+    ],
+    "totalUniqueNgrams": 4201033,
+    "ngramsOver1000": 1587,
+    "ngramsOver500": 3123,
+    "ngramsOver300": 4981
+  },
+  "pageFingerprints": {
+    "aboutWordCountDistribution": {
+      "50": 169,
+      "100": 7991,
+      "150": 52
+    },
+    "aboutSentenceCountDistribution": {
+      "3": 3,
+      "4": 3,
+      "5": 16,
+      "6": 89,
+      "7": 1146,
+      "8": 3782,
+      "9": 2382,
+      "10": 585,
+      "11": 123,
+      "12": 45,
+      "13": 18,
+      "14": 7,
+      "15": 7,
+      "16": 2,
+      "17": 1,
+      "19": 2,
+      "20": 1
+    },
+    "redeemStepCountDistribution": {
+      "0": 84,
+      "4": 68,
+      "5": 8055,
+      "6": 1,
+      "50": 1,
+      "65": 3
+    },
+    "promoItemCountDistribution": {
+      "4": 4,
+      "5": 8207,
+      "6": 1
+    },
+    "termsItemCountDistribution": {
+      "4": 162,
+      "5": 8050
+    },
+    "faqCountDistribution": {
+      "4": 569,
+      "5": 7643
+    }
+  }
+}

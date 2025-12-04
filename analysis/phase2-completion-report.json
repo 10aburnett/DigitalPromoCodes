@@ -1,0 +1,181 @@
+{
+  "metadata": {
+    "reportType": "phase2_completion",
+    "generatedAt": "2025-12-03T22:05:00.000Z",
+    "phase": "Phase 2: Asset Generation",
+    "status": "COMPLETE"
+  },
+  "summary": {
+    "totalAssetFiles": 9,
+    "allAssetsReady": true,
+    "readyForPhase3": true
+  },
+  "templatesGenerated": {
+    "about_templates": {
+      "file": "about-templates.json",
+      "count": 12,
+      "description": "Structural templates for About sections with varied intros, bodies, and closings"
+    },
+    "redeem_templates": {
+      "file": "redeem-templates.json",
+      "count": 8,
+      "description": "How-to-redeem templates with 4-7 step variations and different verb styles"
+    },
+    "promo_details_templates": {
+      "file": "promo-details-templates.json",
+      "count": 12,
+      "description": "Promo details templates covering savings, codes, tiers, and value"
+    },
+    "terms_templates": {
+      "file": "terms-templates.json",
+      "count": 10,
+      "description": "Terms and conditions templates with varied formats and focuses"
+    },
+    "faq_profiles": {
+      "file": "faq-profiles.json",
+      "count": 5,
+      "description": "FAQ question/answer profiles for different audience types"
+    },
+    "total_templates": 47
+  },
+  "styleProfiles": {
+    "file": "style-profiles.json",
+    "count": 10,
+    "profiles": [
+      "neutral_informational",
+      "light_conversational",
+      "value_benefit_led",
+      "risk_transparency",
+      "community_support",
+      "expert_guide",
+      "beginner_friendly",
+      "promotional_light",
+      "concise_minimalist",
+      "rich_descriptive"
+    ]
+  },
+  "semanticAngles": {
+    "file": "semantic-angles.json",
+    "count": 12,
+    "angles": [
+      "community_support",
+      "expert_insight",
+      "onboarding_simplicity",
+      "transparency_safety",
+      "affordability",
+      "access_flexibility",
+      "educational_focus",
+      "performance_speed",
+      "personalization",
+      "risk_management",
+      "outcome_results",
+      "member_autonomy"
+    ]
+  },
+  "phraseVariants": {
+    "file": "phrase-packs.json",
+    "totalPacks": 7,
+    "totalVariants": 430,
+    "packs": {
+      "at_checkout": {
+        "originalOccurrences": 14751,
+        "variants": 80
+      },
+      "dont_miss_out_on": {
+        "originalOccurrences": 7112,
+        "variants": 70
+      },
+      "results_vary_by_creator_and_plan": {
+        "originalOccurrences": 3598,
+        "variants": 50
+      },
+      "enhance_your_trading": {
+        "originalOccurrences": 4170,
+        "variants": 55
+      },
+      "availability_can_vary": {
+        "originalOccurrences": 9845,
+        "variants": 75
+      },
+      "compare_whats_included": {
+        "originalOccurrences": 1570,
+        "variants": 30
+      },
+      "renewal_cadence": {
+        "originalOccurrences": 8463,
+        "variants": 70
+      }
+    }
+  },
+  "sentenceVariants": {
+    "file": "sentence-packs.json",
+    "totalPacks": 8,
+    "totalVariants": 160,
+    "packs": {
+      "dont_miss_out_opener": {
+        "originalOccurrences": 7086,
+        "variants": 25
+      },
+      "results_vary_opener": {
+        "originalOccurrences": 3600,
+        "variants": 20
+      },
+      "compare_whats_included_opener": {
+        "originalOccurrences": 1495,
+        "variants": 15
+      },
+      "whether_youre_beginner_opener": {
+        "originalOccurrences": 1323,
+        "variants": 15
+      },
+      "this_platform_offers_opener": {
+        "originalOccurrences": 3048,
+        "variants": 20
+      },
+      "check_final_price_opener": {
+        "originalOccurrences": 1576,
+        "variants": 15
+      },
+      "explore_current_options_opener": {
+        "originalOccurrences": 1476,
+        "variants": 15
+      },
+      "unlock_potential_opener": {
+        "originalOccurrences": 643,
+        "variants": 15
+      }
+    }
+  },
+  "assetFilesList": [
+    "analysis/phase2-assets/about-templates.json",
+    "analysis/phase2-assets/redeem-templates.json",
+    "analysis/phase2-assets/promo-details-templates.json",
+    "analysis/phase2-assets/terms-templates.json",
+    "analysis/phase2-assets/faq-profiles.json",
+    "analysis/phase2-assets/style-profiles.json",
+    "analysis/phase2-assets/semantic-angles.json",
+    "analysis/phase2-assets/phrase-packs.json",
+    "analysis/phase2-assets/sentence-packs.json"
+  ],
+  "phase3Requirements": {
+    "fingerprintFormula": "hash(slug) % N for each asset type",
+    "combinatorialSpace": {
+      "aboutTemplates": 12,
+      "redeemTemplates": 8,
+      "promoTemplates": 12,
+      "termsTemplates": 10,
+      "faqProfiles": 5,
+      "styleProfiles": 10,
+      "semanticAngles": 12,
+      "totalCombinations": "12 × 8 × 12 × 10 × 5 × 10 × 12 = 6,912,000 unique combinations"
+    },
+    "phraseVariantCoverage": "430 phrase variants to replace 49,509 phrase occurrences",
+    "sentenceVariantCoverage": "160 sentence variants to replace 20,247 sentence occurrences"
+  },
+  "nextSteps": [
+    "Phase 3: Build deterministic rewrite engine",
+    "Assign fingerprints to each of 8,212 whops using hash(slug)",
+    "Apply templates, styles, angles, phrase/sentence variants",
+    "Phase 4: Verify uniqueness with frequency analysis"
+  ]
+}

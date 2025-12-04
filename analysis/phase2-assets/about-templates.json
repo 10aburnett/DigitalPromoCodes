@@ -1,0 +1,297 @@
+{
+  "metadata": {
+    "type": "about_templates",
+    "count": 12,
+    "generatedAt": "2025-12-03T21:50:00.000Z"
+  },
+  "templates": [
+    {
+      "id": 1,
+      "name": "question_hook",
+      "description": "Opens with an engaging question to draw the reader in",
+      "structure": {
+        "intro": "question",
+        "body": "answer_with_features",
+        "closing": "cta"
+      },
+      "skeleton": "<p>[Question about user's goal/challenge]?</p><p>[Product name] [provides/offers] [core value proposition]. [Feature 1], [feature 2], and [feature 3] [are designed to/help you] [achieve outcome].</p><p>[Brief benefit statement]. [CTA sentence].</p>",
+      "openers": [
+        "Looking for a better way to {goal}?",
+        "Wondering how to {achieve outcome}?",
+        "Ready to take your {activity} to the next level?",
+        "Want access to {valuable resource}?",
+        "Searching for {solution type}?"
+      ],
+      "closings": [
+        "Check it out and see what works for your situation.",
+        "Explore the options and find your fit.",
+        "Take a look at what's available.",
+        "See if it matches what you need."
+      ]
+    },
+    {
+      "id": 2,
+      "name": "problem_solution",
+      "description": "Identifies a pain point then presents the solution",
+      "structure": {
+        "intro": "problem_statement",
+        "body": "solution_presentation",
+        "closing": "benefit_summary"
+      },
+      "skeleton": "<p>[Problem statement about common challenge]. [Acknowledgment of difficulty].</p><p>[Product name] [addresses/tackles/solves] this by [solution approach]. [Feature details]. [How it helps].</p><p>[Outcome users can expect]. [Qualifier about results].</p>",
+      "openers": [
+        "Finding reliable {resource type} can be challenging.",
+        "Getting started with {activity} often feels overwhelming.",
+        "Many {user type} struggle to {achieve goal}.",
+        "Navigating the {industry} space isn't always straightforward.",
+        "Access to quality {resource} has traditionally been {difficult/expensive}."
+      ],
+      "closings": [
+        "Results depend on individual effort and market conditions.",
+        "Outcomes vary based on how you apply what's offered.",
+        "What you get out depends on what you put in.",
+        "Individual experiences will differ."
+      ]
+    },
+    {
+      "id": 3,
+      "name": "story_lead",
+      "description": "Opens with a relatable narrative or scenario",
+      "structure": {
+        "intro": "scenario",
+        "body": "solution_reveal",
+        "closing": "invitation"
+      },
+      "skeleton": "<p>[Relatable scenario for target user]. [Common experience or frustration].</p><p>[Product name] [was created/exists] to [address this]. [Key differentiator]. [What members get access to].</p><p>[Invitation to explore]. [Note about options/tiers].</p>",
+      "openers": [
+        "Picture this: you're {common scenario}.",
+        "You've been {common struggle}. Sound familiar?",
+        "Most {user type} start out {common starting point}.",
+        "If you've ever felt {common frustration}, you're not alone.",
+        "The journey to {goal} often starts with {common experience}."
+      ],
+      "closings": [
+        "See what tier fits your goals.",
+        "Check out the available options.",
+        "Take a look and decide what works.",
+        "Explore what's on offer."
+      ]
+    },
+    {
+      "id": 4,
+      "name": "outcome_focused",
+      "description": "Leads with the end result users want to achieve",
+      "structure": {
+        "intro": "outcome_promise",
+        "body": "how_it_works",
+        "closing": "qualifier"
+      },
+      "skeleton": "<p>[Desired outcome statement]. [Product name] [is built around/focuses on] helping you [achieve this].</p><p>[Method/approach used]. [Key features that enable the outcome]. [What sets it apart].</p><p>[Realistic expectation setting]. [Invitation to learn more].</p>",
+      "openers": [
+        "Better {outcomes} start with better {inputs}.",
+        "Improving your {metric} is the goal here.",
+        "The aim is simple: help you {achieve X}.",
+        "This is about getting you closer to {goal}.",
+        "Building {skill/portfolio/results} takes the right support."
+      ],
+      "closings": [
+        "Results vary—explore and see if it fits.",
+        "Not everyone gets the same results, but the tools are there.",
+        "What you achieve depends on multiple factors.",
+        "Take a look and assess for yourself."
+      ]
+    },
+    {
+      "id": 5,
+      "name": "feature_breakdown",
+      "description": "Systematically presents key features and their benefits",
+      "structure": {
+        "intro": "product_intro",
+        "body": "feature_list",
+        "closing": "summary"
+      },
+      "skeleton": "<p>[Product name] [offers/includes/provides] [broad category of value].</p><p>[Feature 1] [gives you/enables/provides] [benefit]. [Feature 2] [helps with/supports] [use case]. [Feature 3] [is designed for] [specific need].</p><p>[Who it's suited for]. [How to get started].</p>",
+      "openers": [
+        "Here's what {product} brings to the table.",
+        "{Product} combines several tools in one place.",
+        "This platform packs {feature category} into a single subscription.",
+        "Access to {feature type} is the core offering.",
+        "The package includes {overview of features}."
+      ],
+      "closings": [
+        "Compare the tiers to find what suits you.",
+        "Review the options and pick your level.",
+        "Check the features against your needs.",
+        "See which plan aligns with your goals."
+      ]
+    },
+    {
+      "id": 6,
+      "name": "community_angle",
+      "description": "Emphasizes the community and peer support aspects",
+      "structure": {
+        "intro": "community_intro",
+        "body": "community_benefits",
+        "closing": "join_invitation"
+      },
+      "skeleton": "<p>[Product name] [connects you with/gives access to] a [community description].</p><p>[What community offers]. [Types of members]. [Interaction opportunities]. [Support available].</p><p>[Who benefits most]. [How to join].</p>",
+      "openers": [
+        "Join a group of {user type} working toward similar goals.",
+        "Connect with others who are {pursuing similar outcomes}.",
+        "This isn't just a product—it's a community.",
+        "Surround yourself with {type of people}.",
+        "Learning alongside peers makes a difference."
+      ],
+      "closings": [
+        "See if the community fits what you're looking for.",
+        "Check out who else is involved.",
+        "Take a look at the member benefits.",
+        "Explore the community aspects."
+      ]
+    },
+    {
+      "id": 7,
+      "name": "transparency_focus",
+      "description": "Emphasizes clear terms, honest expectations, no surprises",
+      "structure": {
+        "intro": "transparency_statement",
+        "body": "clear_offering",
+        "closing": "honest_qualifier"
+      },
+      "skeleton": "<p>[Transparency statement about the product]. [What you get is clearly defined].</p><p>[Specific inclusions]. [What's NOT included or promised]. [How pricing works].</p><p>[Honest assessment of who it's for]. [Encouragement to review details].</p>",
+      "openers": [
+        "Here's exactly what you're getting.",
+        "No hidden terms—this is what's included.",
+        "Transparency matters. Here's the breakdown.",
+        "What you see is what you get.",
+        "Let's be clear about what this offers."
+      ],
+      "closings": [
+        "Review the full details before deciding.",
+        "Read through the terms so there are no surprises.",
+        "Make sure it aligns with your expectations.",
+        "Check everything before you commit."
+      ]
+    },
+    {
+      "id": 8,
+      "name": "empowerment_tone",
+      "description": "Focuses on user agency and taking control",
+      "structure": {
+        "intro": "empowerment_statement",
+        "body": "tools_provided",
+        "closing": "action_prompt"
+      },
+      "skeleton": "<p>[Empowerment statement]. [Product name] [puts you in control of/equips you with] [capability].</p><p>[Tools available]. [How they support independence]. [What you can do with them].</p><p>[Encouragement to take action]. [Note about personal responsibility].</p>",
+      "openers": [
+        "Take control of your {area}.",
+        "Your {outcomes} are in your hands.",
+        "Empower yourself with the right tools.",
+        "Stop relying on {old method}—build your own {capability}.",
+        "It's time to own your {journey/results}."
+      ],
+      "closings": [
+        "The tools are here—what you do with them is up to you.",
+        "Take the first step when you're ready.",
+        "Start when it makes sense for you.",
+        "The opportunity is there if you want it."
+      ]
+    },
+    {
+      "id": 9,
+      "name": "discovery_based",
+      "description": "Invites exploration and discovery of the platform",
+      "structure": {
+        "intro": "discovery_invitation",
+        "body": "what_to_explore",
+        "closing": "gentle_cta"
+      },
+      "skeleton": "<p>[Invitation to discover/explore]. [Product name] [offers/contains] [areas to explore].</p><p>[First discovery point]. [Second discovery point]. [Third discovery point]. [How they connect].</p><p>[Encouragement to browse]. [Low-pressure closing].</p>",
+      "openers": [
+        "Discover what {product} has to offer.",
+        "There's a lot to explore here.",
+        "See what's available inside {product}.",
+        "Browse through the features and resources.",
+        "Take your time exploring what's included."
+      ],
+      "closings": [
+        "Browse around and see what catches your interest.",
+        "No rush—explore at your own pace.",
+        "Take a look when you have time.",
+        "See if anything resonates with your goals."
+      ]
+    },
+    {
+      "id": 10,
+      "name": "skeptic_conversion",
+      "description": "Addresses common doubts and builds trust",
+      "structure": {
+        "intro": "acknowledge_skepticism",
+        "body": "address_concerns",
+        "closing": "trust_building"
+      },
+      "skeleton": "<p>[Acknowledgment of common skepticism]. [Validation that caution is reasonable].</p><p>[How this product addresses concerns]. [Evidence or differentiators]. [What makes it worth considering].</p><p>[Suggestion to verify independently]. [No-pressure approach].</p>",
+      "openers": [
+        "If you've been burned before, you're right to be cautious.",
+        "Skeptical? That's understandable.",
+        "Not sure if this is legit? Fair question.",
+        "You've probably seen promises that didn't pan out.",
+        "It's smart to question what's being offered."
+      ],
+      "closings": [
+        "Do your own research and decide.",
+        "Check it out skeptically—that's fine.",
+        "Verify what matters to you before committing.",
+        "Take your time making a decision."
+      ]
+    },
+    {
+      "id": 11,
+      "name": "scenario_based",
+      "description": "Presents different user scenarios and how the product fits",
+      "structure": {
+        "intro": "scenario_setup",
+        "body": "multiple_scenarios",
+        "closing": "find_your_fit"
+      },
+      "skeleton": "<p>[Product name] [works for different situations]. [General applicability statement].</p><p>[Scenario 1]: [how product helps]. [Scenario 2]: [how product helps]. [Scenario 3]: [how product helps].</p><p>[Invitation to identify your scenario]. [Flexibility note].</p>",
+      "openers": [
+        "Whether you're {scenario A} or {scenario B}, there's something here.",
+        "Different goals, different needs—same platform.",
+        "This works for {type 1}, {type 2}, and {type 3}.",
+        "No matter where you're starting from...",
+        "From {beginner scenario} to {advanced scenario}..."
+      ],
+      "closings": [
+        "Find which scenario matches yours.",
+        "See where you fit in.",
+        "Pick the path that makes sense for you.",
+        "Identify your starting point and go from there."
+      ]
+    },
+    {
+      "id": 12,
+      "name": "short_punchy",
+      "description": "Brief, direct, action-oriented with minimal fluff",
+      "structure": {
+        "intro": "direct_statement",
+        "body": "quick_features",
+        "closing": "quick_cta"
+      },
+      "skeleton": "<p>[Direct statement about product]. [One-line value prop].</p><p>[Feature 1]. [Feature 2]. [Feature 3].</p><p>[Quick CTA]. [Brief qualifier].</p>",
+      "openers": [
+        "{Product}: {one-line description}.",
+        "Get {benefit} with {product}.",
+        "{Product} = {core offering}.",
+        "Here's the deal: {concise value prop}.",
+        "Simple: {what it does}."
+      ],
+      "closings": [
+        "Check it out.",
+        "See the options.",
+        "Take a look.",
+        "Explore."
+      ]
+    }
+  ]
+}

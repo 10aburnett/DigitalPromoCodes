@@ -1,0 +1,197 @@
+{
+  "metadata": {
+    "type": "sentence_variation_packs",
+    "generatedAt": "2025-12-03T21:50:00.000Z",
+    "basedOn": "Phase 1 analysis - top repeated sentence openers"
+  },
+  "packs": {
+    "dont_miss_out_opener": {
+      "originalPattern": "Don't miss out on {opportunity}",
+      "occurrences": 7086,
+      "variations": [
+        "Here's your chance to {benefit}",
+        "Take advantage of this {opportunity}",
+        "Seize this opportunity to {benefit}",
+        "Now's the time to {action}",
+        "This is your moment to {benefit}",
+        "Grab this chance to {action}",
+        "Your opportunity to {benefit} is here",
+        "Make the most of this {opportunity}",
+        "Get in on this {opportunity}",
+        "Act now to {benefit}",
+        "This is the time to {action}",
+        "Consider this opportunity to {benefit}",
+        "Take this chance to {action}",
+        "Here's an opportunity to {benefit}",
+        "Jump on this chance to {action}",
+        "Lock in your {benefit}",
+        "Secure your access to {benefit}",
+        "Claim your {opportunity}",
+        "Your window to {benefit}",
+        "This opportunity lets you {action}",
+        "With this offer, you can {benefit}",
+        "Here's how to {action}",
+        "Ready to {benefit}?",
+        "Looking to {action}? Here's your chance",
+        "Want to {benefit}? This is it"
+      ]
+    },
+    "results_vary_opener": {
+      "originalPattern": "Results vary by creator and plan",
+      "occurrences": 3600,
+      "variations": [
+        "Outcomes differ based on individual factors",
+        "What you achieve depends on your situation",
+        "Individual experiences will vary",
+        "Your results may differ from others",
+        "Experiences depend on multiple factors",
+        "Outcomes are influenced by various elements",
+        "Each person's results are unique",
+        "What you get out of it depends on what you put in",
+        "Success varies from person to person",
+        "Your mileage may vary",
+        "Individual outcomes are different for everyone",
+        "Results hinge on personal effort and circumstances",
+        "Experiences are shaped by individual choices",
+        "Outcomes reflect individual situations",
+        "Results depend on how you apply what's offered",
+        "What you experience depends on your engagement",
+        "Your outcome is tied to your specific situation",
+        "Results are not uniform across all users",
+        "Individual factors influence what you achieve",
+        "Experiences differ based on personal application"
+      ]
+    },
+    "compare_whats_included_opener": {
+      "originalPattern": "Compare what's included and decide at checkout",
+      "occurrences": 1495,
+      "variations": [
+        "Review the features and make your choice",
+        "Look at the options and pick what fits",
+        "Check the tiers and select your level",
+        "Browse the plans and choose accordingly",
+        "Examine what each tier offers before deciding",
+        "See what's in each plan and decide",
+        "Explore the options available to you",
+        "Consider what each membership includes",
+        "Evaluate the features and pick your plan",
+        "Assess the offerings and make a decision",
+        "Look over the plans and select",
+        "Review your options before committing",
+        "Check out the different levels available",
+        "See which plan aligns with your needs",
+        "Find the tier that matches your goals"
+      ]
+    },
+    "whether_youre_beginner_opener": {
+      "originalPattern": "Whether you're a beginner or experienced",
+      "occurrences": 1323,
+      "variations": [
+        "No matter your experience level",
+        "From newcomers to veterans",
+        "For both beginners and advanced users",
+        "Regardless of where you're starting",
+        "At any skill level",
+        "Whether just starting out or well-established",
+        "For those new and those experienced alike",
+        "Across all experience levels",
+        "From first-timers to seasoned pros",
+        "Whatever your background",
+        "No matter how much experience you have",
+        "For newcomers and experts",
+        "At every stage of your journey",
+        "Whether you're new to this or not",
+        "From complete beginners to advanced practitioners"
+      ]
+    },
+    "this_platform_offers_opener": {
+      "originalPattern": "This platform offers/provides {features}",
+      "occurrences": 3048,
+      "variations": [
+        "You get access to {features}",
+        "The membership includes {features}",
+        "What's included: {features}",
+        "Features include {features}",
+        "Inside you'll find {features}",
+        "Members receive {features}",
+        "The subscription comes with {features}",
+        "Included in your membership: {features}",
+        "You'll have access to {features}",
+        "Part of the package: {features}",
+        "What you get: {features}",
+        "The offering includes {features}",
+        "Your subscription grants access to {features}",
+        "Available to members: {features}",
+        "The product delivers {features}",
+        "Here's what's included: {features}",
+        "Access includes {features}",
+        "Subscribers get {features}",
+        "The package contains {features}",
+        "Within the membership: {features}"
+      ]
+    },
+    "check_final_price_opener": {
+      "originalPattern": "Check the final price at checkout",
+      "occurrences": 1576,
+      "variations": [
+        "Verify the total before completing payment",
+        "Confirm the price on the checkout page",
+        "Review the final amount before paying",
+        "See the total at the payment step",
+        "Make sure the price is correct before submitting",
+        "Double-check the amount during checkout",
+        "Look at the final total before you pay",
+        "Ensure the price reflects the discount",
+        "Check your order total before confirming",
+        "Verify the discounted price shows correctly",
+        "Confirm the savings appear at checkout",
+        "Review the pricing before you finalize",
+        "See the updated total when you check out",
+        "Make sure the discount is applied before paying",
+        "Check that the code worked before completing"
+      ]
+    },
+    "explore_current_options_opener": {
+      "originalPattern": "Explore current options and see what's available",
+      "occurrences": 1476,
+      "variations": [
+        "Browse the available plans",
+        "Check out what's on offer",
+        "See what options exist",
+        "Look at the current offerings",
+        "Review what's available now",
+        "Discover the current plans",
+        "Take a look at what's offered",
+        "Survey the available options",
+        "Find out what plans are available",
+        "Examine the current options",
+        "See what membership levels exist",
+        "Check the current availability",
+        "Browse through the offerings",
+        "Look into what's currently offered",
+        "Explore the available tiers"
+      ]
+    },
+    "unlock_potential_opener": {
+      "originalPattern": "Unlock your potential with {product}",
+      "occurrences": 643,
+      "variations": [
+        "Develop your skills with {product}",
+        "Grow with {product}",
+        "Build your capabilities using {product}",
+        "Advance with the help of {product}",
+        "Progress using {product}",
+        "Level up through {product}",
+        "Improve with {product}",
+        "Strengthen your abilities via {product}",
+        "Enhance your skills with {product}",
+        "Take your skills further with {product}",
+        "Reach new heights with {product}",
+        "Expand your knowledge using {product}",
+        "Accelerate your growth with {product}",
+        "Push forward with {product}",
+        "Move ahead using {product}"
+      ]
+    }
+  }
+}

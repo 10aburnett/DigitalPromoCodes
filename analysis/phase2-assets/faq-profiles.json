@@ -1,0 +1,329 @@
+{
+  "metadata": {
+    "type": "faq_profiles",
+    "count": 5,
+    "generatedAt": "2025-12-03T21:50:00.000Z"
+  },
+  "profiles": [
+    {
+      "id": 1,
+      "name": "standard_comprehensive",
+      "description": "Balanced coverage of common questions",
+      "questionCount": 5,
+      "tone": "neutral_informational",
+      "questions": [
+        {
+          "type": "code_validity",
+          "variations": [
+            "Is this promo code still active?",
+            "Does this discount code still work?",
+            "Is the code currently valid?",
+            "Can I still use this promo code?",
+            "Is this offer still available?"
+          ]
+        },
+        {
+          "type": "stacking",
+          "variations": [
+            "Can I combine this with other discounts?",
+            "Is it possible to stack multiple codes?",
+            "Can I use more than one promo code?",
+            "Do multiple discounts work together?",
+            "Can this code be combined with other offers?"
+          ]
+        },
+        {
+          "type": "redemption_process",
+          "variations": [
+            "How do I apply this code?",
+            "What's the process to use this discount?",
+            "Where do I enter the promo code?",
+            "How do I redeem this offer?",
+            "What steps do I follow to use the code?"
+          ]
+        },
+        {
+          "type": "plan_coverage",
+          "variations": [
+            "Which plans does this code work on?",
+            "Does this discount apply to all tiers?",
+            "What memberships can use this code?",
+            "Is this valid for every subscription level?",
+            "Which membership options accept this code?"
+          ]
+        },
+        {
+          "type": "limitations",
+          "variations": [
+            "Are there any restrictions on this offer?",
+            "What limitations should I know about?",
+            "Are there conditions for using this code?",
+            "What are the terms of this discount?",
+            "Is there anything that would prevent me from using this?"
+          ]
+        }
+      ],
+      "answerStyle": {
+        "length": "medium",
+        "includeQualifiers": true,
+        "tone": "helpful"
+      }
+    },
+    {
+      "id": 2,
+      "name": "skeptic_focused",
+      "description": "Addresses trust and legitimacy concerns",
+      "questionCount": 5,
+      "tone": "transparency_focused",
+      "questions": [
+        {
+          "type": "legitimacy",
+          "variations": [
+            "Is this a legitimate offer?",
+            "Is this discount real?",
+            "Can I trust this promo code?",
+            "Is this an official promotion?",
+            "Is this offer authentic?"
+          ]
+        },
+        {
+          "type": "hidden_costs",
+          "variations": [
+            "Are there any hidden fees?",
+            "Will I be charged extra later?",
+            "What's the catch?",
+            "Are there surprise charges?",
+            "Is the price I see the final price?"
+          ]
+        },
+        {
+          "type": "cancellation",
+          "variations": [
+            "Can I cancel if I'm not satisfied?",
+            "What's the cancellation policy?",
+            "Is there a refund option?",
+            "Can I get my money back?",
+            "How do I cancel if needed?"
+          ]
+        },
+        {
+          "type": "code_source",
+          "variations": [
+            "Where does this code come from?",
+            "How did you get this promo code?",
+            "Is this an affiliate offer?",
+            "Who provides this discount?",
+            "What's the source of this code?"
+          ]
+        },
+        {
+          "type": "expiration",
+          "variations": [
+            "When does this code expire?",
+            "Is there a deadline for this offer?",
+            "How long is this discount valid?",
+            "Does this code have an expiration date?",
+            "Until when can I use this?"
+          ]
+        }
+      ],
+      "answerStyle": {
+        "length": "medium-long",
+        "includeQualifiers": true,
+        "tone": "transparent"
+      }
+    },
+    {
+      "id": 3,
+      "name": "beginner_oriented",
+      "description": "Simple questions for newcomers",
+      "questionCount": 5,
+      "tone": "beginner_friendly",
+      "questions": [
+        {
+          "type": "what_is_it",
+          "variations": [
+            "What exactly is this product?",
+            "What do I get with this subscription?",
+            "What's included in this membership?",
+            "Can you explain what this offers?",
+            "What am I signing up for?"
+          ]
+        },
+        {
+          "type": "who_is_it_for",
+          "variations": [
+            "Is this suitable for beginners?",
+            "Do I need experience to use this?",
+            "Is this good for someone just starting?",
+            "Can a beginner benefit from this?",
+            "Is prior knowledge required?"
+          ]
+        },
+        {
+          "type": "getting_started",
+          "variations": [
+            "How do I get started after signing up?",
+            "What happens after I subscribe?",
+            "What are the first steps after joining?",
+            "How do I access everything after payment?",
+            "What should I do once I'm a member?"
+          ]
+        },
+        {
+          "type": "support",
+          "variations": [
+            "Is there support if I have questions?",
+            "Who can I contact for help?",
+            "Is assistance available for members?",
+            "Where do I go if I need help?",
+            "Is there customer support?"
+          ]
+        },
+        {
+          "type": "code_usage",
+          "variations": [
+            "How do I use the discount code?",
+            "Where exactly do I put the code?",
+            "Can you walk me through using the code?",
+            "What do I do with the promo code?",
+            "How does the code work?"
+          ]
+        }
+      ],
+      "answerStyle": {
+        "length": "short-medium",
+        "includeQualifiers": false,
+        "tone": "encouraging"
+      }
+    },
+    {
+      "id": 4,
+      "name": "value_focused",
+      "description": "Questions about worth and comparison",
+      "questionCount": 5,
+      "tone": "value_benefit_led",
+      "questions": [
+        {
+          "type": "savings_amount",
+          "variations": [
+            "How much will I save with this code?",
+            "What's the discount percentage?",
+            "How much does this code take off?",
+            "What savings can I expect?",
+            "How big is the discount?"
+          ]
+        },
+        {
+          "type": "comparison",
+          "variations": [
+            "How does this compare to similar offerings?",
+            "Is this a good deal compared to alternatives?",
+            "What makes this offer stand out?",
+            "Why should I choose this over others?",
+            "Is this competitively priced?"
+          ]
+        },
+        {
+          "type": "what_you_get",
+          "variations": [
+            "What do I get for this price?",
+            "What's the value included?",
+            "What features come with the subscription?",
+            "What am I paying for exactly?",
+            "What's included in the price?"
+          ]
+        },
+        {
+          "type": "best_tier",
+          "variations": [
+            "Which plan offers the best value?",
+            "What tier should I choose?",
+            "Which membership level is recommended?",
+            "What's the most popular plan?",
+            "Which option gives the most for the money?"
+          ]
+        },
+        {
+          "type": "long_term_value",
+          "variations": [
+            "Is there long-term value in this subscription?",
+            "Will I keep getting value over time?",
+            "Is this worth subscribing to long-term?",
+            "Does the value continue after the first month?",
+            "Is ongoing membership worthwhile?"
+          ]
+        }
+      ],
+      "answerStyle": {
+        "length": "medium",
+        "includeQualifiers": true,
+        "tone": "value_oriented"
+      }
+    },
+    {
+      "id": 5,
+      "name": "technical_practical",
+      "description": "Practical and logistical questions",
+      "questionCount": 5,
+      "tone": "neutral_informational",
+      "questions": [
+        {
+          "type": "payment_methods",
+          "variations": [
+            "What payment methods are accepted?",
+            "Can I pay with credit card?",
+            "What ways can I pay?",
+            "Do you accept PayPal?",
+            "What payment options are available?"
+          ]
+        },
+        {
+          "type": "access_delivery",
+          "variations": [
+            "How do I access the content after purchase?",
+            "When will I get access?",
+            "Is access instant after payment?",
+            "How is the content delivered?",
+            "Where do I find everything after subscribing?"
+          ]
+        },
+        {
+          "type": "account_requirements",
+          "variations": [
+            "Do I need to create an account?",
+            "What information is required to sign up?",
+            "Is account creation necessary?",
+            "What do I need to provide to join?",
+            "Are there account requirements?"
+          ]
+        },
+        {
+          "type": "renewal_billing",
+          "variations": [
+            "How does billing work?",
+            "When will I be charged again?",
+            "Is this a recurring subscription?",
+            "How does the renewal process work?",
+            "What's the billing cycle?"
+          ]
+        },
+        {
+          "type": "device_access",
+          "variations": [
+            "Can I access this on mobile?",
+            "What devices are supported?",
+            "Is there an app?",
+            "Can I use this on multiple devices?",
+            "What platforms can I access this from?"
+          ]
+        }
+      ],
+      "answerStyle": {
+        "length": "short-medium",
+        "includeQualifiers": false,
+        "tone": "factual"
+      }
+    }
+  ]
+}

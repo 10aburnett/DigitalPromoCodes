@@ -1,0 +1,138 @@
+{
+  "metadata": {
+    "type": "redeem_templates",
+    "count": 8,
+    "generatedAt": "2025-12-03T21:50:00.000Z"
+  },
+  "templates": [
+    {
+      "id": 1,
+      "name": "quick_unlock",
+      "stepCount": 4,
+      "description": "Fastest path - minimal steps, action-oriented",
+      "steps": [
+        "Go to {product_page_url} and select your plan",
+        "Add the promo code {code} in the discount field",
+        "Confirm the discount is applied to your total",
+        "Complete payment to unlock access"
+      ],
+      "verbStyle": "direct_action",
+      "tone": "efficient"
+    },
+    {
+      "id": 2,
+      "name": "full_walkthrough",
+      "stepCount": 7,
+      "description": "Detailed guide with verification at each stage",
+      "steps": [
+        "Visit the official {product_name} page",
+        "Browse the available membership tiers and compare features",
+        "Select the plan that matches your needs",
+        "Look for the promo code or discount field during checkout",
+        "Enter {code} and click apply",
+        "Verify the discount appears in your order summary",
+        "Complete the checkout process to finalize your subscription"
+      ],
+      "verbStyle": "instructional",
+      "tone": "thorough"
+    },
+    {
+      "id": 3,
+      "name": "checkout_focused",
+      "stepCount": 5,
+      "description": "Emphasizes the checkout and code application process",
+      "steps": [
+        "Navigate to {product_name}'s signup page",
+        "Choose your preferred tier or plan",
+        "Proceed to checkout and locate the coupon field",
+        "Apply code {code} to see your savings",
+        "Submit payment to complete enrollment"
+      ],
+      "verbStyle": "process_oriented",
+      "tone": "practical"
+    },
+    {
+      "id": 4,
+      "name": "account_setup_first",
+      "stepCount": 6,
+      "description": "Leads with account creation before applying discount",
+      "steps": [
+        "Head to {product_name} and create your account",
+        "Verify your email if required",
+        "Log in and explore the available plans",
+        "Select the membership level you want",
+        "At checkout, enter promo code {code}",
+        "Confirm and pay to activate your membership"
+      ],
+      "verbStyle": "sequential",
+      "tone": "methodical"
+    },
+    {
+      "id": 5,
+      "name": "mobile_journey",
+      "stepCount": 5,
+      "description": "Optimized for mobile users",
+      "steps": [
+        "Open {product_page_url} on your device",
+        "Tap on the plan you want to join",
+        "Find the promo code box at checkout",
+        "Enter {code} and tap Apply",
+        "Complete your purchase"
+      ],
+      "verbStyle": "tap_oriented",
+      "tone": "casual"
+    },
+    {
+      "id": 6,
+      "name": "code_first_approach",
+      "stepCount": 4,
+      "description": "Prioritizes having the code ready before starting",
+      "steps": [
+        "Copy the code {code} before you begin",
+        "Go to {product_name} and pick your plan",
+        "Paste the code at checkout",
+        "Pay the discounted price"
+      ],
+      "verbStyle": "preparation_focused",
+      "tone": "direct"
+    },
+    {
+      "id": 7,
+      "name": "verification_heavy",
+      "stepCount": 6,
+      "description": "Multiple confirmation points for cautious users",
+      "steps": [
+        "Visit the {product_name} offer page",
+        "Review the plan details and pricing before proceeding",
+        "Add your chosen plan to cart",
+        "Enter code {code} and verify it's accepted",
+        "Check that the final price reflects the discount",
+        "Complete the secure checkout"
+      ],
+      "verbStyle": "verification_focused",
+      "tone": "careful"
+    },
+    {
+      "id": 8,
+      "name": "streamlined_process",
+      "stepCount": 4,
+      "description": "No-nonsense, straight to the point",
+      "steps": [
+        "Access {product_name}",
+        "Select a plan",
+        "Use code {code} at checkout",
+        "Finish your order"
+      ],
+      "verbStyle": "minimal",
+      "tone": "brief"
+    }
+  ],
+  "verbVariations": {
+    "visit": ["Go to", "Head to", "Navigate to", "Access", "Open", "Visit"],
+    "select": ["Choose", "Pick", "Select", "Decide on", "Go with"],
+    "enter": ["Enter", "Input", "Type in", "Add", "Paste", "Put in"],
+    "apply": ["Apply", "Use", "Activate", "Submit", "Click apply on"],
+    "complete": ["Complete", "Finish", "Finalize", "Submit", "Confirm", "Process"],
+    "verify": ["Verify", "Confirm", "Check", "Ensure", "Make sure"]
+  }
+}

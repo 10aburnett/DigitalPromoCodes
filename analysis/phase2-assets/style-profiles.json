@@ -1,0 +1,189 @@
+{
+  "metadata": {
+    "type": "style_profiles",
+    "count": 10,
+    "generatedAt": "2025-12-03T21:50:00.000Z"
+  },
+  "profiles": [
+    {
+      "id": 1,
+      "name": "neutral_informational",
+      "description": "Facts-first, balanced tone without emotional language",
+      "characteristics": {
+        "sentenceLength": "medium (12-20 words)",
+        "tone": "neutral, objective",
+        "formality": "medium",
+        "rhythm": "steady, consistent",
+        "useOfQuestions": "rare",
+        "useOfExclamations": "never",
+        "paragraphLength": "3-4 sentences"
+      },
+      "preferredConnectors": ["Additionally", "Furthermore", "Also", "This includes", "The platform provides"],
+      "avoidedPatterns": ["!", "amazing", "incredible", "best", "guaranteed"],
+      "openerStyles": ["statement", "definition", "description"],
+      "example": "This subscription provides access to trading signals and educational resources. Members receive daily market analysis and can participate in community discussions. The platform includes tools for tracking performance."
+    },
+    {
+      "id": 2,
+      "name": "light_conversational",
+      "description": "Friendly, approachable, like talking to a knowledgeable friend",
+      "characteristics": {
+        "sentenceLength": "varied (8-18 words)",
+        "tone": "friendly, warm",
+        "formality": "low-medium",
+        "rhythm": "flowing, natural",
+        "useOfQuestions": "occasional",
+        "useOfExclamations": "rare",
+        "paragraphLength": "2-3 sentences"
+      },
+      "preferredConnectors": ["Plus", "And", "You'll also", "On top of that", "Here's the thing"],
+      "avoidedPatterns": ["hereby", "pursuant", "aforementioned", "shall"],
+      "openerStyles": ["question", "relatable_statement", "direct_address"],
+      "example": "So you're looking to level up your trading game? This community might be worth checking out. You get access to signals, some solid educational content, and a group of people working toward similar goals."
+    },
+    {
+      "id": 3,
+      "name": "value_benefit_led",
+      "description": "Emphasizes what the user gains, outcomes-focused",
+      "characteristics": {
+        "sentenceLength": "medium (10-16 words)",
+        "tone": "positive, outcome-focused",
+        "formality": "medium",
+        "rhythm": "punchy, benefit-driven",
+        "useOfQuestions": "occasional",
+        "useOfExclamations": "minimal",
+        "paragraphLength": "2-4 sentences"
+      },
+      "preferredConnectors": ["This means", "You get", "The benefit is", "This helps you", "What you gain"],
+      "avoidedPatterns": ["maybe", "might", "possibly", "we hope"],
+      "openerStyles": ["benefit_statement", "outcome_promise", "value_proposition"],
+      "example": "Save on your membership while getting full access to premium features. You get daily signals, live trading sessions, and a library of educational content. This means more value without paying full price."
+    },
+    {
+      "id": 4,
+      "name": "risk_transparency",
+      "description": "Upfront about limitations, honest about what to expect",
+      "characteristics": {
+        "sentenceLength": "medium-long (14-22 words)",
+        "tone": "honest, measured",
+        "formality": "medium-high",
+        "rhythm": "deliberate, careful",
+        "useOfQuestions": "rare",
+        "useOfExclamations": "never",
+        "paragraphLength": "3-4 sentences"
+      },
+      "preferredConnectors": ["However", "That said", "It's worth noting", "Keep in mind", "Be aware that"],
+      "avoidedPatterns": ["guaranteed", "always", "never fails", "100%", "risk-free"],
+      "openerStyles": ["honest_assessment", "balanced_view", "disclaimer_aware"],
+      "example": "This platform offers trading signals and educational resources. However, results vary based on market conditions and individual decisions. It's worth noting that past performance doesn't guarantee future outcomes. Review the terms before committing."
+    },
+    {
+      "id": 5,
+      "name": "community_support",
+      "description": "Emphasizes belonging, peer connection, shared journey",
+      "characteristics": {
+        "sentenceLength": "medium (12-18 words)",
+        "tone": "inclusive, supportive",
+        "formality": "low-medium",
+        "rhythm": "warm, inviting",
+        "useOfQuestions": "occasional",
+        "useOfExclamations": "rare",
+        "paragraphLength": "2-3 sentences"
+      },
+      "preferredConnectors": ["Together", "With the community", "Alongside others", "You're not alone", "Join others who"],
+      "avoidedPatterns": ["alone", "solo", "individual only", "isolated"],
+      "openerStyles": ["community_invitation", "belonging_statement", "peer_reference"],
+      "example": "Join a community of traders working toward their goals. You'll connect with others who share your interests, exchange ideas, and learn from different perspectives. It's about growing together rather than going it alone."
+    },
+    {
+      "id": 6,
+      "name": "expert_guide",
+      "description": "Authoritative, knowledgeable, positions the creator as an expert",
+      "characteristics": {
+        "sentenceLength": "medium-long (14-20 words)",
+        "tone": "authoritative, confident",
+        "formality": "medium-high",
+        "rhythm": "measured, professional",
+        "useOfQuestions": "rare",
+        "useOfExclamations": "never",
+        "paragraphLength": "3-4 sentences"
+      },
+      "preferredConnectors": ["Based on", "Research shows", "Experience demonstrates", "The methodology includes", "This approach"],
+      "avoidedPatterns": ["I think", "probably", "maybe", "kind of", "sort of"],
+      "openerStyles": ["credential_lead", "methodology_statement", "expert_positioning"],
+      "example": "This program draws on years of market experience and proven methodologies. The curriculum covers technical analysis, risk management, and trade execution. Members gain access to frameworks that have been refined through extensive real-world application."
+    },
+    {
+      "id": 7,
+      "name": "beginner_friendly",
+      "description": "Simple language, no jargon, welcoming to newcomers",
+      "characteristics": {
+        "sentenceLength": "short-medium (8-14 words)",
+        "tone": "encouraging, patient",
+        "formality": "low",
+        "rhythm": "simple, clear",
+        "useOfQuestions": "frequent",
+        "useOfExclamations": "occasional",
+        "paragraphLength": "2-3 sentences"
+      },
+      "preferredConnectors": ["Simply put", "In other words", "This just means", "Basically", "Here's what that means"],
+      "avoidedPatterns": ["obviously", "as you know", "clearly", "advanced terminology without explanation"],
+      "openerStyles": ["welcoming_question", "simple_introduction", "newcomer_acknowledgment"],
+      "example": "New to trading? No problem. This community is built for people just starting out. You'll find easy-to-follow guides and a supportive group ready to help you learn the basics."
+    },
+    {
+      "id": 8,
+      "name": "promotional_light",
+      "description": "Enthusiastic but not spammy, highlights the offer",
+      "characteristics": {
+        "sentenceLength": "short-medium (8-16 words)",
+        "tone": "enthusiastic, positive",
+        "formality": "low-medium",
+        "rhythm": "upbeat, energetic",
+        "useOfQuestions": "occasional",
+        "useOfExclamations": "occasional (not excessive)",
+        "paragraphLength": "2-3 sentences"
+      },
+      "preferredConnectors": ["Right now", "Currently", "For a limited time", "Here's your chance", "Take advantage of"],
+      "avoidedPatterns": ["BUY NOW", "HURRY", "LAST CHANCE", "excessive caps", "multiple exclamation marks"],
+      "openerStyles": ["offer_highlight", "deal_introduction", "savings_mention"],
+      "example": "Here's a chance to access premium trading tools at a discount. Use the code to save on your membership. You'll get all the features—signals, education, community—at a better price."
+    },
+    {
+      "id": 9,
+      "name": "concise_minimalist",
+      "description": "Short sentences, direct, no fluff",
+      "characteristics": {
+        "sentenceLength": "short (5-12 words)",
+        "tone": "direct, efficient",
+        "formality": "medium",
+        "rhythm": "staccato, punchy",
+        "useOfQuestions": "rare",
+        "useOfExclamations": "rare",
+        "paragraphLength": "1-2 sentences"
+      },
+      "preferredConnectors": ["Also", "Plus", "And", "Includes"],
+      "avoidedPatterns": ["long introductions", "filler words", "redundant phrases", "unnecessary qualifiers"],
+      "openerStyles": ["direct_statement", "feature_list", "quick_summary"],
+      "example": "Trading signals. Daily analysis. Active community. All included. Use the code. Save on membership."
+    },
+    {
+      "id": 10,
+      "name": "rich_descriptive",
+      "description": "Detailed, thorough explanations, paints a full picture",
+      "characteristics": {
+        "sentenceLength": "long (18-28 words)",
+        "tone": "thorough, detailed",
+        "formality": "medium-high",
+        "rhythm": "flowing, expansive",
+        "useOfQuestions": "occasional",
+        "useOfExclamations": "rare",
+        "paragraphLength": "4-5 sentences"
+      },
+      "preferredConnectors": ["Furthermore", "In addition to this", "This is complemented by", "Beyond that", "What's more"],
+      "avoidedPatterns": ["etc.", "and so on", "and more", "vague references"],
+      "openerStyles": ["comprehensive_overview", "detailed_introduction", "full_context"],
+      "example": "This comprehensive trading community offers members access to a wide range of resources designed to support their trading journey. The platform includes daily market analysis prepared by experienced traders, along with educational modules covering everything from fundamental concepts to advanced strategies. Members also benefit from an active discussion forum where they can exchange ideas, ask questions, and share insights with fellow traders who are navigating similar challenges."
+    }
+  ]
+}
