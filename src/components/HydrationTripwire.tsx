@@ -13,8 +13,8 @@ function safeParse(el: Element | null) {
 }
 
 export default function HydrationTripwire({
-  targetId = 'whop-meta',
-  snapshotId = 'whop-meta-snapshot',
+  targetId = 'dpc-meta',
+  snapshotId = 'dpc-meta-snapshot',
 }: { targetId?: string; snapshotId?: string }) {
   useEffect(() => {
     // Only activate if debug is enabled

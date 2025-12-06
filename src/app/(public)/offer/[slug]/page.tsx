@@ -661,7 +661,7 @@ export default async function DealPage({ params }: { params: { slug: string } })
   };
 
   // Create unique key for remounting when slug changes
-  const pageKey = `whop-${params.slug}`;
+  const pageKey = `dpc-offer-${params.slug}`;
 
   // Prepare fallback FAQ data for the collapsible component (used only if no database FAQ content)
   const fallbackFaqData = [

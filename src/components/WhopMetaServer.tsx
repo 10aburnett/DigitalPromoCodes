@@ -90,14 +90,14 @@ export default function WhopMetaServer({ usageStats, freshnessData, debugOnly }:
       {/* Usage Metrics - Server Rendered */}
       {(!debugOnly || ['last', 'today', 'total', 'verified'].includes(debugOnly)) && (
         <section
-          id="whop-meta"
+          id="dpc-meta"
           data-hash={serverHash}
           className="rounded-lg p-4 border mt-6"
           style={{ backgroundColor: 'var(--background-secondary)', borderColor: 'var(--border-color)' }}
         >
           {/* Server snapshot for client diffing */}
           <script
-            id="whop-meta-snapshot"
+            id="dpc-meta-snapshot"
             type="application/json"
             dangerouslySetInnerHTML={{ __html: JSON.stringify(snapshot) }}
           />
