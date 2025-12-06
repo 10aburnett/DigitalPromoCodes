@@ -51,6 +51,7 @@ interface ExploreLink {
   slug: string;
   name: string;
   logo?: string | null;
+  blurb?: string | null;
   category?: string | null;
   rating?: number | null;
   ratingCount?: number;
@@ -170,6 +171,8 @@ export async function getRecommendations(currentWhopSlug: string): Promise<{
             slug: true,
             name: true,
             logo: true,
+            description: true,
+            aboutContent: true,
             category: true,
             rating: true,
             _count: { select: { Review: true } }
@@ -181,6 +184,7 @@ export async function getRecommendations(currentWhopSlug: string): Promise<{
             slug: normalizeSlug(exploreWhop.slug), // Ensure canonical slug
             name: exploreWhop.name,
             logo: exploreWhop.logo,
+            blurb: getSecondSentence(exploreWhop.aboutContent) || exploreWhop.description,
             category: exploreWhop.category ?? undefined,
             rating: exploreWhop.rating,
             ratingCount: exploreWhop._count?.Review ?? 0
@@ -319,6 +323,8 @@ export async function getAlternatives(currentWhopSlug: string): Promise<{
             slug: true,
             name: true,
             logo: true,
+            description: true,
+            aboutContent: true,
             category: true,
             rating: true,
             _count: { select: { Review: true } }
@@ -330,6 +336,7 @@ export async function getAlternatives(currentWhopSlug: string): Promise<{
             slug: normalizeSlug(exploreWhop.slug), // Ensure canonical slug
             name: exploreWhop.name,
             logo: exploreWhop.logo,
+            blurb: getSecondSentence(exploreWhop.aboutContent) || exploreWhop.description,
             category: exploreWhop.category ?? undefined,
             rating: exploreWhop.rating,
             ratingCount: exploreWhop._count?.Review ?? 0

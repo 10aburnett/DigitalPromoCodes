@@ -16,6 +16,7 @@ type ExploreLink = {
   slug: string;
   name: string;
   logo?: string | null;
+  blurb?: string | null;
   category?: string | null;
   rating?: number | null;
   ratingCount?: number;
@@ -59,6 +60,7 @@ export default function AlternativesServer({
             slug={explore.slug}
             name={explore.name}
             logo={resolveLogoUrl(explore.logo)}
+            description={explore.blurb}
             category={explore.category}
             rating={explore.rating}
             ratingCount={explore.ratingCount ?? 0}
