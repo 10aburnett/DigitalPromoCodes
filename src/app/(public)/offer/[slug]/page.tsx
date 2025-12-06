@@ -614,6 +614,20 @@ export default async function DealPage({ params }: { params: { slug: string } })
   const promoCode = firstPromo?.code || null;
   const promoTitle = "Exclusive Access"; // Always show "Exclusive Access" on detail pages
 
+  // TASK 1: Helper boolean for hiding promo-code UI when no codes
+  const hasPromoCodes =
+    Array.isArray(whopFormatted.promoCodes) &&
+    whopFormatted.promoCodes.length > 0;
+
+  // TASK 2: Helper booleans for conditional jump links
+  const hasOverview =
+    isMeaningful(whopFormatted.aboutContent) ||
+    isMeaningful(whopFormatted.description);
+  const hasRedemption = true; // Always show - has fallback content
+  const hasDetails = true; // Always show - has fallback content
+  const hasFeatures = isMeaningful(whopFormatted.featuresContent);
+  const hasTerms = true; // Always show - has fallback content
+
   // Helper function to check if whop has a promo code
   const hasPromoCode = (whopName: string): boolean => {
     // Now all promo codes are in database - if promoCode exists, we have a promo
@@ -702,7 +716,7 @@ export default async function DealPage({ params }: { params: { slug: string } })
   }
 
   return (
-    <main key={pageKey} className="min-h-screen py-12 pt-24 transition-theme" style={{ backgroundColor: 'var(--background-color)', color: 'var(--text-color)' }}>
+    <main key={pageKey} className="dpc-offer-page min-h-screen py-12 pt-24 transition-theme" style={{ backgroundColor: 'var(--background-color)', color: 'var(--text-color)' }}>
       {/* HowTo Schema for SEO */}
       <HowToSchema
         slug={params.slug}
@@ -712,7 +726,7 @@ export default async function DealPage({ params }: { params: { slug: string } })
         siteOrigin={siteOrigin()}
       />
 
-      {/* Step 2-4: Primary Entity + BreadcrumbList + Offers + FAQ + HowTo JSON-LD Schema */}
+      {/* JSON-LD Structured Data */}
       {jsonLdSchemas.length > 0 && (
         <script
           type="application/ld+json"
@@ -720,10 +734,10 @@ export default async function DealPage({ params }: { params: { slug: string } })
         />
       )}
 
-      <div className="mx-auto w-[90%] md:w-[95%] max-w-6xl">
+      <div className="dpc-offer-container mx-auto w-[90%] md:w-[95%] max-w-6xl">
         {/* Noindex Notice Banner */}
         {!pageIsIndexable && (
-          <div className="max-w-2xl mx-auto mb-6">
+          <div className="dpc-notice-banner max-w-4xl mx-auto mb-6">
             <div className="rounded-lg border px-4 py-3 text-sm" style={{ backgroundColor: 'var(--background-secondary)', borderColor: 'var(--border-color)', opacity: 0.8 }}>
               <span style={{ color: 'var(--text-secondary)' }}>
                 ℹ️ This page is currently not indexed by search engines, but is available for viewing.
@@ -731,57 +745,29 @@ export default async function DealPage({ params }: { params: { slug: string } })
             </div>
           </div>
         )}
-        {/* Main Content Container */}
-        <div className="max-w-2xl mx-auto space-y-6 mb-8">
-          {/* Hero Section */}
-          <div className="rounded-xl px-7 py-6 sm:p-8 shadow-lg border transition-theme" style={{ background: 'linear-gradient(to bottom right, var(--background-secondary), var(--background-tertiary))', borderColor: 'var(--border-color)' }}>
-            <div className="flex flex-col gap-4">
-              {/* Whop Info */}
-              <div className="flex items-center gap-4 sm:gap-6">
-                <div className="relative w-16 sm:w-20 h-16 sm:h-20 rounded-lg overflow-hidden flex-shrink-0" style={{ backgroundColor: 'var(--background-color)' }}>
+
+        {/* Two-Column Layout: Main Content + Sidebar */}
+        <div className="dpc-offer-layout flex flex-col lg:flex-row lg:gap-8 max-w-4xl mx-auto">
+
+          {/* Main Content Column */}
+          <article className="dpc-offer-main flex-1 min-w-0 space-y-6 mb-8 lg:mb-0">
+
+            {/* Hero Header */}
+            <header className="dpc-offer-header rounded-xl px-7 py-6 sm:p-8 shadow-lg border transition-theme" style={{ background: 'linear-gradient(to bottom right, var(--background-secondary), var(--background-tertiary))', borderColor: 'var(--border-color)' }}>
+              <div className="flex items-center gap-4 sm:gap-6 mb-4">
+                <figure className="relative w-16 sm:w-20 h-16 sm:h-20 rounded-lg overflow-hidden flex-shrink-0" style={{ backgroundColor: 'var(--background-color)' }}>
                   <WhopLogo whop={whopFormatted} />
-                </div>
+                </figure>
                 <div className="min-w-0">
                   <h1 className="text-2xl sm:text-3xl font-bold mb-2">{whopFormatted.name} Promo Code</h1>
                   <p className="text-base sm:text-lg" style={{ color: 'var(--accent-color)' }}>
                     {promoTitle}
                   </p>
-                  {whopFormatted.price && (
-                    <div className="mt-3 flex flex-col md:flex-row md:items-center md:gap-3">
-                      {/* Label */}
-                      <span className="text-base font-medium text-gray-600 md:mr-2">
-                        Price:
-                      </span>
-
-                      {/* Pill */}
-                      <div className="mt-2 md:mt-0">
-                        <div className="inline-flex items-center rounded-full bg-emerald-600 text-white px-4 py-2 md:px-3 md:py-1.5 shadow-sm">
-                          {whopFormatted.price.includes('/') ? (
-                            <>
-                              {/* Amount */}
-                              <span className="font-extrabold text-xl leading-none md:text-lg">
-                                {whopFormatted.price.split('/')[0].trim()}
-                              </span>
-                              {/* Interval */}
-                              <span className="ml-2 text-[15px] md:text-sm leading-none whitespace-nowrap opacity-95 font-medium">
-                                / {whopFormatted.price.split('/')[1].trim()}
-                              </span>
-                            </>
-                          ) : (
-                            /* Single value like "Free" or "N/A" */
-                            <span className="font-extrabold text-xl leading-none md:text-lg">
-                              {whopFormatted.price}
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  )}
                 </div>
               </div>
 
-              {/* Community Promo Codes Section */}
-              <div className="mt-1">
+              {/* Promo Codes CTA */}
+              <div className="dpc-offer-cta mt-4">
                 <hr className="mb-4" style={{ borderColor: 'var(--border-color)', borderWidth: '1px', opacity: 0.3 }} />
                 <CommunityPromoSection
                   key={`community-${whopFormatted.id}-${whopFormatted.promoCodes?.length || 0}`}
@@ -793,283 +779,310 @@ export default async function DealPage({ params }: { params: { slug: string } })
                   promoCodes={whopFormatted.promoCodes || []}
                   slug={params.slug}
                 />
+                <div className="mt-6">
+                  <PromoCodeSubmissionButton
+                    whopId={whopFormatted.id}
+                    whopName={whopFormatted.name}
+                  />
+                </div>
               </div>
+            </header>
 
-              {/* Promo Code Submission Button */}
-              <div className="mt-6">
-                <PromoCodeSubmissionButton
-                  whopId={whopFormatted.id}
-                  whopName={whopFormatted.name}
-                />
-              </div>
-            </div>
-          </div>
+            {/* Jump Links Navigation - Only show links for sections that exist */}
+            <nav className="dpc-jump-links rounded-lg px-4 py-3 border" style={{ backgroundColor: 'var(--background-secondary)', borderColor: 'var(--border-color)' }} aria-label="Page sections">
+              <ul className="flex flex-wrap gap-x-4 gap-y-2 text-sm font-medium">
+                {hasOverview && (
+                  <li><a href="#overview" className="hover:underline" style={{ color: 'var(--accent-color)' }}>Overview</a></li>
+                )}
+                {hasRedemption && (
+                  <li><a href="#redemption" className="hover:underline" style={{ color: 'var(--accent-color)' }}>Redemption</a></li>
+                )}
+                {hasDetails && (
+                  <li><a href="#details" className="hover:underline" style={{ color: 'var(--accent-color)' }}>Details</a></li>
+                )}
+                {hasFeatures && (
+                  <li><a href="#features" className="hover:underline" style={{ color: 'var(--accent-color)' }}>Features</a></li>
+                )}
+                <li><a href="#faq" className="hover:underline" style={{ color: 'var(--accent-color)' }}>FAQ</a></li>
+                {hasTerms && (
+                  <li><a href="#terms" className="hover:underline" style={{ color: 'var(--accent-color)' }}>Terms</a></li>
+                )}
+              </ul>
+            </nav>
 
-          {/* 1. Overview - Was: About Section */}
-          {(() => {
-            const aboutVal =
-              isMeaningful(whopFormatted.aboutContent) ? whopFormatted.aboutContent
-              : (isMeaningful(whopFormatted.description) ? whopFormatted.description : null);
+            {/* Overview Section */}
+            {(() => {
+              const aboutVal =
+                isMeaningful(whopFormatted.aboutContent) ? whopFormatted.aboutContent
+                : (isMeaningful(whopFormatted.description) ? whopFormatted.description : null);
 
-            return aboutVal && (
-              <section className="rounded-xl px-7 py-6 sm:p-8 border transition-theme" style={{ backgroundColor: 'var(--background-secondary)', borderColor: 'var(--border-color)' }}>
-                <h2 className="text-xl sm:text-2xl font-bold mb-4">Overview</h2>
-                <div className="text-base sm:text-lg leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
-                  {looksLikeHtml(aboutVal) ? (
+              return aboutVal && (
+                <section id="overview" className="dpc-offer-overview rounded-xl px-7 py-6 sm:p-8 border transition-theme" style={{ backgroundColor: 'var(--background-secondary)', borderColor: 'var(--border-color)' }}>
+                  <h2 className="text-xl sm:text-2xl font-bold mb-4">Overview</h2>
+                  <div className="dpc-content-block text-base sm:text-lg leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+                    {looksLikeHtml(aboutVal) ? (
+                      <div
+                        className="prose prose-sm max-w-none whitespace-break-spaces prose-headings:text-current prose-p:text-current prose-ul:text-current prose-ol:text-current prose-li:text-current prose-strong:text-current prose-em:text-current prose-a:text-blue-600 hover:prose-a:text-blue-700"
+                        dangerouslySetInnerHTML={{ __html: aboutVal }}
+                      />
+                    ) : (
+                      <RenderPlain text={aboutVal} />
+                    )}
+                  </div>
+                </section>
+              );
+            })()}
+
+            {/* Redemption Steps Section */}
+            <section id="redemption" className="dpc-offer-redemption rounded-xl px-7 py-6 sm:p-8 border transition-theme" style={{ backgroundColor: 'var(--background-secondary)', borderColor: 'var(--border-color)' }}>
+              <h2 className="text-xl sm:text-2xl font-bold mb-4">Redemption Steps</h2>
+              {isMeaningful(whopFormatted.howToRedeemContent) ? (
+                <div className="dpc-content-block text-base sm:text-lg leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+                  {looksLikeHtml(whopFormatted.howToRedeemContent!) ? (
                     <div
                       className="prose prose-sm max-w-none whitespace-break-spaces prose-headings:text-current prose-p:text-current prose-ul:text-current prose-ol:text-current prose-li:text-current prose-strong:text-current prose-em:text-current prose-a:text-blue-600 hover:prose-a:text-blue-700"
-                      dangerouslySetInnerHTML={{ __html: aboutVal }}
+                      dangerouslySetInnerHTML={{ __html: whopFormatted.howToRedeemContent! }}
                     />
                   ) : (
-                    <RenderPlain text={aboutVal} />
+                    <RenderPlain text={whopFormatted.howToRedeemContent!} />
+                  )}
+                </div>
+              ) : (
+                <ol className="dpc-steps-list space-y-2 text-base sm:text-lg" style={{ color: 'var(--text-secondary)' }}>
+                  <li className="flex items-start">
+                    <span className="mr-2 font-semibold">1.</span>
+                    <span>Click &quot;Reveal Code&quot; above to visit {whopFormatted.name} and get your exclusive offer</span>
+                  </li>
+                  {hasPromoCode(whopFormatted.name) ? (
+                    <li className="flex items-start">
+                      <span className="mr-2 font-semibold">2.</span>
+                      <span>Copy the revealed promo code and enter it during checkout</span>
+                    </li>
+                  ) : (
+                    <li className="flex items-start">
+                      <span className="mr-2 font-semibold">2.</span>
+                      <span>No code needed - the discount will be automatically applied</span>
+                    </li>
+                  )}
+                  <li className="flex items-start">
+                    <span className="mr-2 font-semibold">3.</span>
+                    <span>Complete your purchase to access the exclusive content</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="mr-2 font-semibold">4.</span>
+                    <span>Enjoy your {promoTitle} and start learning!</span>
+                  </li>
+                </ol>
+              )}
+            </section>
+
+            {/* Deal Specifics Section */}
+            <section id="details" className="dpc-offer-details rounded-xl px-7 py-6 sm:p-8 border transition-theme" style={{ backgroundColor: 'var(--background-secondary)', borderColor: 'var(--border-color)' }}>
+              <h2 className="text-xl sm:text-2xl font-bold mb-4">Deal Specifics</h2>
+              {isMeaningful(whopFormatted.promoDetailsContent) ? (
+                <div className="dpc-content-block text-base sm:text-lg leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+                  {looksLikeHtml(whopFormatted.promoDetailsContent!) ? (
+                    <div
+                      className="prose prose-sm max-w-none whitespace-break-spaces prose-headings:text-current prose-p:text-current prose-ul:text-current prose-ol:text-current prose-li:text-current prose-strong:text-current prose-em:text-current prose-a:text-blue-600 hover:prose-a:text-blue-700"
+                      dangerouslySetInnerHTML={{ __html: whopFormatted.promoDetailsContent! }}
+                    />
+                  ) : (
+                    <RenderPlain text={whopFormatted.promoDetailsContent!} />
+                  )}
+                </div>
+              ) : (
+                <>
+                  <div className="p-4 rounded-lg mb-4" style={{ backgroundColor: 'var(--background-color)' }}>
+                    <h3 className="text-lg font-semibold mb-2" style={{ color: 'var(--accent-color)' }}>{promoTitle}</h3>
+                    <p className="text-base sm:text-lg leading-relaxed mb-3" style={{ color: 'var(--text-secondary)' }}>
+                      Get exclusive access and special discounts with our promo code.
+                    </p>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    <span className="px-3 py-1 rounded-full text-sm font-medium" style={{ backgroundColor: 'var(--background-color)', color: 'var(--accent-color)' }}>
+                      {firstPromo?.type?.replace('_', ' ').toUpperCase() || 'DISCOUNT'} OFFER
+                    </span>
+                  </div>
+                </>
+              )}
+            </section>
+
+            {/* What's Included Section */}
+            {isMeaningful(whopFormatted.featuresContent) && (
+              <section id="features" className="dpc-offer-features rounded-xl px-7 py-6 sm:p-8 border transition-theme" style={{ backgroundColor: 'var(--background-secondary)', borderColor: 'var(--border-color)' }}>
+                <h2 className="text-xl sm:text-2xl font-bold mb-4">What&apos;s Included</h2>
+                <div className="dpc-content-block text-base sm:text-lg leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+                  {looksLikeHtml(whopFormatted.featuresContent!) ? (
+                    <div
+                      className="prose prose-sm max-w-none whitespace-break-spaces prose-headings:text-current prose-p:text-current prose-ul:text-current prose-ol:text-current prose-li:text-current prose-strong:text-current prose-em:text-current prose-a:text-blue-600 hover:prose-a:text-blue-700"
+                      dangerouslySetInnerHTML={{ __html: whopFormatted.featuresContent! }}
+                    />
+                  ) : (
+                    <RenderPlain text={whopFormatted.featuresContent!} />
                   )}
                 </div>
               </section>
-            );
-          })()}
-
-          {/* 2. Discount Summary - Was: Product Details */}
-          {whopFormatted.promoCodes.map((promo, globalIndex) => {
-            const isCommunity = promo.id.startsWith('community_');
-            const communityCount = whopFormatted.promoCodes.filter(p => p.id.startsWith('community_')).length;
-
-            let promoNumber;
-            if (isCommunity) {
-              const communityIndex = whopFormatted.promoCodes.filter(p => p.id.startsWith('community_')).indexOf(promo);
-              promoNumber = communityIndex + 1;
-            } else {
-              const originalIndex = whopFormatted.promoCodes.filter(p => !p.id.startsWith('community_')).indexOf(promo);
-              promoNumber = communityCount + originalIndex + 1;
-            }
-
-            return (
-              <section key={promo.id} className="rounded-xl px-7 py-6 sm:p-8 border transition-theme" style={{ backgroundColor: 'var(--background-secondary)', borderColor: 'var(--border-color)' }}>
-                <div className="flex items-center gap-3 mb-4">
-                  <h2 className="text-xl sm:text-2xl font-bold">Discount Summary #{promoNumber}</h2>
-                  <span className="text-sm px-2 py-1 rounded"
-                        style={{
-                          backgroundColor: isCommunity ? 'var(--accent-color)' : 'var(--background-color)',
-                          color: isCommunity ? 'white' : 'var(--text-color)',
-                          border: !isCommunity ? '1px solid var(--border-color)' : 'none'
-                        }}>
-                    {isCommunity ? 'Community' : 'Original'}
-                  </span>
-                </div>
-                <div className="overflow-hidden rounded-lg">
-                  <table className="min-w-full">
-                    <tbody>
-                      {promo.value && promo.value !== '0' && (
-                        <tr className="border-b" style={{ borderColor: 'var(--border-color)' }}>
-                          <td className="py-3 pl-4 pr-2 font-medium w-1/3" style={{ backgroundColor: 'var(--background-color)' }}>Discount Value</td>
-                          <td className="py-3 px-4" style={{ backgroundColor: 'var(--background-secondary)' }}>
-                            {(() => {
-                              const discount = promo.value;
-                              if (discount.includes('$') || discount.includes('%') || discount.includes('off')) {
-                                return discount;
-                              }
-                              return `${discount}%`;
-                            })()}
-                          </td>
-                        </tr>
-                      )}
-                      {whopFormatted.price && (
-                        <tr className="border-b" style={{ borderColor: 'var(--border-color)' }}>
-                          <td className="py-3 pl-4 pr-2 font-medium w-1/3" style={{ backgroundColor: 'var(--background-color)' }}>Price</td>
-                          <td className="py-3 px-4" style={{ backgroundColor: 'var(--background-secondary)' }}>
-                            <span style={{
-                              color: whopFormatted.price === 'Free' ? 'var(--success-color)' :
-                                     whopFormatted.price === 'N/A' ? 'var(--text-secondary)' : 'var(--text-color)',
-                              fontWeight: whopFormatted.price === 'Free' ? 'bold' : 'normal'
-                            }}>
-                              {whopFormatted.price}
-                            </span>
-                          </td>
-                        </tr>
-                      )}
-                      {whopFormatted.category && (
-                        <tr className="border-b" style={{ borderColor: 'var(--border-color)' }}>
-                          <td className="py-3 pl-4 pr-2 font-medium w-1/3" style={{ backgroundColor: 'var(--background-color)' }}>Category</td>
-                          <td className="py-3 px-4" style={{ backgroundColor: 'var(--background-secondary)' }}>{whopFormatted.category}</td>
-                        </tr>
-                      )}
-                    </tbody>
-                  </table>
-                </div>
-              </section>
-            );
-          })}
-
-          {/* 3. Verification Info - Was: Verification Status */}
-          <ServerSectionGuard label="VerificationStatus">
-            {whopFormatted.freshnessData && (
-              <VerificationStatus freshnessData={whopFormatted.freshnessData} />
             )}
-          </ServerSectionGuard>
 
-          {/* 4. Usage Statistics - Was: Code Usage Statistics */}
-          <ServerSectionGuard label="PromoUsageStats">
-            <PromoStatsDisplay
-              whopId={whopFormatted.id}
-              slug={params.slug}
-              initialStats={whopFormatted.usageStats}
-            />
-          </ServerSectionGuard>
-
-          {/* 5. Redemption Steps - Was: How to Redeem */}
-          <section className="rounded-xl px-7 py-6 sm:p-8 border transition-theme" style={{ backgroundColor: 'var(--background-secondary)', borderColor: 'var(--border-color)' }}>
-            <h2 className="text-xl sm:text-2xl font-bold mb-4">Redemption Steps</h2>
-            {isMeaningful(whopFormatted.howToRedeemContent) ? (
-              <div className="text-base sm:text-lg leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
-                {looksLikeHtml(whopFormatted.howToRedeemContent!) ? (
-                  <div
-                    className="prose prose-sm max-w-none whitespace-break-spaces prose-headings:text-current prose-p:text-current prose-ul:text-current prose-ol:text-current prose-li:text-current prose-strong:text-current prose-em:text-current prose-a:text-blue-600 hover:prose-a:text-blue-700"
-                    dangerouslySetInnerHTML={{ __html: whopFormatted.howToRedeemContent! }}
-                  />
-                ) : (
-                  <RenderPlain text={whopFormatted.howToRedeemContent!} />
-                )}
-              </div>
-            ) : (
-              <ol className="space-y-2 text-base sm:text-lg" style={{ color: 'var(--text-secondary)' }}>
-                <li className="flex items-start">
-                  <span className="mr-2 font-semibold">1.</span>
-                  <span>Click &quot;Reveal Code&quot; above to visit {whopFormatted.name} and get your exclusive offer</span>
-                </li>
-                {hasPromoCode(whopFormatted.name) ? (
-                  <li className="flex items-start">
-                    <span className="mr-2 font-semibold">2.</span>
-                    <span>Copy the revealed promo code and enter it during checkout</span>
-                  </li>
-                ) : (
-                  <li className="flex items-start">
-                    <span className="mr-2 font-semibold">2.</span>
-                    <span>No code needed - the discount will be automatically applied</span>
-                  </li>
-                )}
-                <li className="flex items-start">
-                  <span className="mr-2 font-semibold">3.</span>
-                  <span>Complete your purchase to access the exclusive content</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="mr-2 font-semibold">4.</span>
-                  <span>Enjoy your {promoTitle} and start learning!</span>
-                </li>
-              </ol>
-            )}
-          </section>
-
-          {/* 6. Deal Specifics - Was: Promo Details */}
-          <section className="rounded-xl px-7 py-6 sm:p-8 border transition-theme" style={{ backgroundColor: 'var(--background-secondary)', borderColor: 'var(--border-color)' }}>
-            <h2 className="text-xl sm:text-2xl font-bold mb-4">Deal Specifics</h2>
-            {isMeaningful(whopFormatted.promoDetailsContent) ? (
-              <div className="text-base sm:text-lg leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
-                {looksLikeHtml(whopFormatted.promoDetailsContent!) ? (
-                  <div
-                    className="prose prose-sm max-w-none whitespace-break-spaces prose-headings:text-current prose-p:text-current prose-ul:text-current prose-ol:text-current prose-li:text-current prose-strong:text-current prose-em:text-current prose-a:text-blue-600 hover:prose-a:text-blue-700"
-                    dangerouslySetInnerHTML={{ __html: whopFormatted.promoDetailsContent! }}
-                  />
-                ) : (
-                  <RenderPlain text={whopFormatted.promoDetailsContent!} />
-                )}
-              </div>
-            ) : (
-              <>
-                <div className="p-4 rounded-lg mb-4" style={{ backgroundColor: 'var(--background-color)' }}>
-                  <h3 className="text-lg font-semibold mb-2" style={{ color: 'var(--accent-color)' }}>{promoTitle}</h3>
-                  <p className="text-base sm:text-lg leading-relaxed mb-3" style={{ color: 'var(--text-secondary)' }}>
-                    Get exclusive access and special discounts with our promo code.
-                  </p>
-                </div>
-
-                {/* Promo Type Badge */}
-                <div className="flex flex-wrap gap-2">
-                  <span className="px-3 py-1 rounded-full text-sm font-medium" style={{ backgroundColor: 'var(--background-color)', color: 'var(--accent-color)' }}>
-                    {firstPromo?.type?.replace('_', ' ').toUpperCase() || 'DISCOUNT'} OFFER
-                  </span>
-                </div>
-              </>
-            )}
-          </section>
-
-          {/* 7. What's Included - Was: Features */}
-          {isMeaningful(whopFormatted.featuresContent) && (
-            <section className="rounded-xl px-7 py-6 sm:p-8 border transition-theme" style={{ backgroundColor: 'var(--background-secondary)', borderColor: 'var(--border-color)' }}>
-              <h2 className="text-xl sm:text-2xl font-bold mb-4">What's Included</h2>
-              <div className="text-base sm:text-lg leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
-                {looksLikeHtml(whopFormatted.featuresContent!) ? (
-                  <div
-                    className="prose prose-sm max-w-none whitespace-break-spaces prose-headings:text-current prose-p:text-current prose-ul:text-current prose-ol:text-current prose-li:text-current prose-strong:text-current prose-em:text-current prose-a:text-blue-600 hover:prose-a:text-blue-700"
-                    dangerouslySetInnerHTML={{ __html: whopFormatted.featuresContent! }}
-                  />
-                ) : (
-                  <RenderPlain text={whopFormatted.featuresContent!} />
-                )}
-              </div>
+            {/* Visual Guide Section */}
+            <section className="dpc-offer-howto rounded-xl px-7 py-6 sm:p-8 border transition-theme" style={{ backgroundColor: 'var(--background-secondary)', borderColor: 'var(--border-color)' }}>
+              <HowToSection
+                slug={params.slug}
+                brand={whopFormatted.name}
+                currency={extractCurrency(whopFormatted.price)}
+                hasTrial={hasTrial(whopFormatted.price)}
+                lastTestedISO={verificationData?.best?.computedAt ?? null}
+                beforeCents={verificationData?.best?.beforeCents ?? null}
+                afterCents={verificationData?.best?.afterCents ?? null}
+              />
             </section>
-          )}
 
-          {/* 8. How To Section - Screenshots and SEO (keeps internal heading) */}
-          <section className="rounded-xl px-7 py-6 sm:p-8 border transition-theme" style={{ backgroundColor: 'var(--background-secondary)', borderColor: 'var(--border-color)' }}>
-            <HowToSection
-              slug={params.slug}
-              brand={whopFormatted.name}
-              currency={extractCurrency(whopFormatted.price)}
-              hasTrial={hasTrial(whopFormatted.price)}
-              lastTestedISO={verificationData?.best?.computedAt ?? null}
-              beforeCents={verificationData?.best?.beforeCents ?? null}
-              afterCents={verificationData?.best?.afterCents ?? null}
-            />
-          </section>
+            {/* FAQ Section */}
+            <section id="faq" className="dpc-offer-faq" aria-labelledby="faq-heading">
+              <FAQSectionServer
+                faqContent={whopFormatted.faqContent}
+                faqs={fallbackFaqData}
+                whopName={whopFormatted.name}
+              />
+            </section>
 
-          {/* 9. Common Questions - Was: FAQ */}
-          <FAQSectionServer
-            faqContent={whopFormatted.faqContent}
-            faqs={fallbackFaqData}
-            whopName={whopFormatted.name}
-          />
+            {/* Fine Print Section */}
+            <section id="terms" className="dpc-offer-terms rounded-xl px-7 py-6 sm:p-8 border transition-theme" style={{ backgroundColor: 'var(--background-secondary)', borderColor: 'var(--border-color)' }}>
+              <h2 className="text-xl sm:text-2xl font-bold mb-4">Fine Print</h2>
+              {isMeaningful(whopFormatted.termsContent) ? (
+                <div className="dpc-content-block text-base sm:text-lg leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+                  {looksLikeHtml(whopFormatted.termsContent!) ? (
+                    <div
+                      className="prose prose-sm max-w-none whitespace-break-spaces prose-headings:text-current prose-p:text-current prose-ul:text-current prose-ol:text-current prose-li:text-current prose-strong:text-current prose-em:text-current prose-a:text-blue-600 hover:prose-a:text-blue-700"
+                      dangerouslySetInnerHTML={{ __html: whopFormatted.termsContent! }}
+                    />
+                  ) : (
+                    <RenderPlain text={whopFormatted.termsContent!} />
+                  )}
+                </div>
+              ) : (
+                <p className="text-base sm:text-lg leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+                  This exclusive offer for {whopFormatted.name} is available through our partnership.
+                  {hasPromoCode(whopFormatted.name) ? ' Use the promo code during checkout to get your discount.' : ' The discount will be automatically applied when you click through our link.'}
+                  {' '}Terms and conditions apply as set by {whopFormatted.name}. Offer subject to availability and may be modified or discontinued at any time.
+                </p>
+              )}
+            </section>
+          </article>
 
-          {/* 10. Fine Print - Was: Terms & Conditions */}
-          <section className="rounded-xl px-7 py-6 sm:p-8 border transition-theme" style={{ backgroundColor: 'var(--background-secondary)', borderColor: 'var(--border-color)' }}>
-            <h2 className="text-xl sm:text-2xl font-bold mb-4">Fine Print</h2>
-            {isMeaningful(whopFormatted.termsContent) ? (
-              <div className="text-base sm:text-lg leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
-                {looksLikeHtml(whopFormatted.termsContent!) ? (
-                  <div
-                    className="prose prose-sm max-w-none whitespace-break-spaces prose-headings:text-current prose-p:text-current prose-ul:text-current prose-ol:text-current prose-li:text-current prose-strong:text-current prose-em:text-current prose-a:text-blue-600 hover:prose-a:text-blue-700"
-                    dangerouslySetInnerHTML={{ __html: whopFormatted.termsContent! }}
-                  />
-                ) : (
-                  <RenderPlain text={whopFormatted.termsContent!} />
-                )}
+          {/* Sidebar Column */}
+          <aside className="dpc-offer-sidebar w-full lg:w-80 flex-shrink-0">
+            <div className="lg:sticky lg:top-24 space-y-6">
+
+              {/* Key Facts Card - Only show Discount/Codes when hasPromoCodes */}
+              <div className="dpc-key-facts rounded-xl px-6 py-5 border shadow-sm" style={{ backgroundColor: 'var(--background-secondary)', borderColor: 'var(--border-color)' }}>
+                <h3 className="text-lg font-bold mb-4">Key Facts</h3>
+                <dl className="dpc-facts-list space-y-3 text-sm">
+                  {whopFormatted.price && (
+                    <>
+                      <dt className="font-medium" style={{ color: 'var(--text-secondary)' }}>Price</dt>
+                      <dd className="mb-2 font-semibold" style={{ color: whopFormatted.price === 'Free' ? 'var(--success-color)' : 'var(--text-color)' }}>
+                        {whopFormatted.price}
+                      </dd>
+                    </>
+                  )}
+                  {hasPromoCodes && firstPromo?.value && firstPromo.value !== '0' && (
+                    <>
+                      <dt className="font-medium" style={{ color: 'var(--text-secondary)' }}>Discount</dt>
+                      <dd className="mb-2 font-semibold" style={{ color: 'var(--accent-color)' }}>
+                        {firstPromo.value.includes('%') || firstPromo.value.includes('$') || firstPromo.value.includes('off')
+                          ? firstPromo.value
+                          : `${firstPromo.value}%`}
+                      </dd>
+                    </>
+                  )}
+                  {whopFormatted.category && (
+                    <>
+                      <dt className="font-medium" style={{ color: 'var(--text-secondary)' }}>Category</dt>
+                      <dd className="mb-2">{whopFormatted.category}</dd>
+                    </>
+                  )}
+                  {hasPromoCodes && (
+                    <>
+                      <dt className="font-medium" style={{ color: 'var(--text-secondary)' }}>Codes Available</dt>
+                      <dd className="mb-2">{whopFormatted.promoCodes.length}</dd>
+                    </>
+                  )}
+                </dl>
               </div>
-            ) : (
-              <p className="text-base sm:text-lg leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
-                This exclusive offer for {whopFormatted.name} is available through our partnership.
-                {hasPromoCode(whopFormatted.name) ? ' Use the promo code during checkout to get your discount.' : ' The discount will be automatically applied when you click through our link.'}
-                {' '}Terms and conditions apply as set by {whopFormatted.name}. Offer subject to availability and may be modified or discontinued at any time.
-              </p>
-            )}
-          </section>
+
+              {/* Discount Summary Cards - Only show when hasPromoCodes */}
+              {hasPromoCodes && whopFormatted.promoCodes.map((promo, idx) => {
+                const isCommunity = promo.id.startsWith('community_');
+                return (
+                  <div key={promo.id} className="dpc-discount-card rounded-xl px-6 py-5 border" style={{ backgroundColor: 'var(--background-secondary)', borderColor: 'var(--border-color)' }}>
+                    <div className="flex items-center gap-2 mb-3">
+                      <h4 className="text-base font-bold">Code #{idx + 1}</h4>
+                      <span className="text-xs px-2 py-0.5 rounded" style={{
+                        backgroundColor: isCommunity ? 'var(--accent-color)' : 'var(--background-color)',
+                        color: isCommunity ? 'white' : 'var(--text-color)',
+                        border: !isCommunity ? '1px solid var(--border-color)' : 'none'
+                      }}>
+                        {isCommunity ? 'Community' : 'Original'}
+                      </span>
+                    </div>
+                    <dl className="text-sm space-y-2">
+                      {promo.value && promo.value !== '0' && (
+                        <>
+                          <dt className="sr-only">Value</dt>
+                          <dd className="font-semibold" style={{ color: 'var(--accent-color)' }}>
+                            {promo.value.includes('%') || promo.value.includes('$') || promo.value.includes('off')
+                              ? promo.value
+                              : `${promo.value}%`} off
+                          </dd>
+                        </>
+                      )}
+                    </dl>
+                  </div>
+                );
+              })}
+
+              {/* Verification Info */}
+              <div className="dpc-verification-card">
+                <ServerSectionGuard label="VerificationStatus">
+                  {whopFormatted.freshnessData && (
+                    <VerificationStatus freshnessData={whopFormatted.freshnessData} />
+                  )}
+                </ServerSectionGuard>
+              </div>
+
+              {/* Usage Statistics */}
+              <div className="dpc-stats-card">
+                <ServerSectionGuard label="PromoUsageStats">
+                  <PromoStatsDisplay
+                    whopId={whopFormatted.id}
+                    slug={params.slug}
+                    initialStats={whopFormatted.usageStats}
+                  />
+                </ServerSectionGuard>
+              </div>
+            </div>
+          </aside>
         </div>
 
-        {/* Full-width sections for better layout */}
-        <div className="w-full space-y-8">
-          {/* 11. Other Options - Was: Alternatives (moved before Recommended) */}
-          <div className="max-w-2xl mx-auto">
+        {/* Related Content Sections */}
+        <div className="dpc-related-content w-full space-y-8 mt-12">
+          {/* Other Options */}
+          <section className="dpc-offer-alternatives max-w-4xl mx-auto">
             <Suspense fallback={<SectionSkeleton />}>
               <AlternativesSection currentWhopSlug={dbSlug} />
             </Suspense>
-          </div>
+          </section>
 
-          {/* 12. You Might Also Like - Was: Recommended */}
-          <div className="max-w-2xl mx-auto">
+          {/* You Might Also Like */}
+          <section className="dpc-offer-recommended max-w-4xl mx-auto">
             <Suspense fallback={<SectionSkeleton />}>
               <RecommendedSection currentWhopSlug={dbSlug} />
             </Suspense>
-          </div>
+          </section>
 
-          {/* 13. Community Feedback - Was: Reviews */}
-          <div className="max-w-2xl mx-auto">
+          {/* Community Feedback */}
+          <section className="dpc-offer-reviews max-w-4xl mx-auto">
             <Suspense fallback={<SectionSkeleton />}>
               <ReviewsSection
                 whopId={whopFormatted.id}
@@ -1077,21 +1090,21 @@ export default async function DealPage({ params }: { params: { slug: string } })
                 reviews={whopFormatted.reviews || []}
               />
             </Suspense>
-          </div>
+          </section>
 
           {/* Back Link */}
-          <div className="max-w-2xl mx-auto">
+          <nav className="dpc-back-link max-w-4xl mx-auto" aria-label="Back navigation">
             <a href="/" className="hover:opacity-80 flex items-center gap-2 px-1 transition-colors" style={{ color: 'var(--text-secondary)' }}>
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M19 12H5M12 19l-7-7 7-7"/>
               </svg>
               Back to All Offers
             </a>
-          </div>
+          </nav>
         </div>
       </div>
 
-      {/* Hydration Debug Tripwire - only active when NEXT_PUBLIC_HYDRATION_DEBUG=1 */}
+      {/* Hydration Debug Tripwire */}
       {process.env.NEXT_PUBLIC_HYDRATION_DEBUG === '1' && <HydrationTripwire />}
     </main>
   );
