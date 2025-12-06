@@ -34,7 +34,7 @@ const createTransporter = async () => {
       service: 'gmail',
       auth: {
         type: 'OAuth2',
-        user: 'whpcodes@gmail.com',
+        user: 'digitalpromocodescontact@gmail.com',
         clientId: process.env.GMAIL_CLIENT_ID,
         clientSecret: process.env.GMAIL_CLIENT_SECRET,
         refreshToken: process.env.GMAIL_REFRESH_TOKEN,
@@ -54,8 +54,8 @@ export const sendContactEmail = async (data: ContactEmailData): Promise<void> =>
   const transporter = await createTransporter();
   
   const mailOptions = {
-    from: 'whpcodes@gmail.com',
-    to: 'whpcodes@gmail.com',
+    from: 'digitalpromocodescontact@gmail.com',
+    to: 'digitalpromocodescontact@gmail.com',
     subject: `Contact Form: ${data.subject}`,
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
@@ -105,9 +105,8 @@ export const sendAutoReply = async (data: ContactEmailData): Promise<void> => {
   const transporter = await createTransporter();
   
   const mailOptions = {
-    from: 'whpcodes@gmail.com',
+    from: 'digitalpromocodescontact@gmail.com',
     to: data.email,
-    // TODO: Update brand name and domain once new domain is finalised
     subject: `Thank you for contacting us - We've received your message`,
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">

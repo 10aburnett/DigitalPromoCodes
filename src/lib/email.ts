@@ -39,8 +39,8 @@ export const sendContactEmail = async (data: ContactEmailData): Promise<void> =>
   const transporter = createTransporter();
   
   const mailOptions = {
-    from: process.env.SMTP_FROM || 'whpcodes@gmail.com',
-    to: 'whpcodes@gmail.com',
+    from: process.env.SMTP_FROM || 'digitalpromocodescontact@gmail.com',
+    to: 'digitalpromocodescontact@gmail.com',
     subject: `Contact Form: ${data.subject}`,
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">

@@ -3,7 +3,7 @@ import { cookies } from "next/headers";
 
 // Use the same secret for both JWT authentication and NextAuth
 // This ensures consistent authentication across different methods
-const sharedSecret = process.env.AUTH_SECRET || "whpcodes-secret-key";
+const sharedSecret = process.env.AUTH_SECRET || "dpc-secret-key";
 
 // JWT secret used for admin authentication
 export const JWT_SECRET = sharedSecret;

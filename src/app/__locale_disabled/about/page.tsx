@@ -2,19 +2,19 @@ import React from 'react';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'About Us - WHPCodes',
-  description: 'Learn about WHPCodes - your go-to hub for exclusive Whop promo codes, discounts, and course insights. We curate 8,000+ verified Whop listings with daily updates.',
-  keywords: ['about whpcodes', 'whop promo codes', 'digital course discounts', 'whop affiliate', 'course reviews'],
+  title: 'About Us - DigitalPromoCodes',
+  description: 'Learn about DigitalPromoCodes - your go-to hub for exclusive promo codes, discounts, and digital product insights. We curate 8,000+ verified listings with daily updates.',
+  keywords: ['about digitalpromocodes', 'promo codes', 'digital product discounts', 'affiliate', 'product reviews'],
   openGraph: {
-    title: 'About Us - WHPCodes',
-    description: 'Learn about WHPCodes - your go-to hub for exclusive Whop promo codes, discounts, and course insights.',
-    url: 'https://whpcodes.com/about',
+    title: 'About Us - DigitalPromoCodes',
+    description: 'Learn about DigitalPromoCodes - your go-to hub for exclusive promo codes, discounts, and digital product insights.',
+    url: 'https://digitalpromocodes.com/about',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'About Us - WHPCodes',
-    description: 'Learn about WHPCodes - your go-to hub for exclusive Whop promo codes, discounts, and course insights.',
+    title: 'About Us - DigitalPromoCodes',
+    description: 'Learn about DigitalPromoCodes - your go-to hub for exclusive promo codes, discounts, and digital product insights.',
   },
 };
 
@@ -25,7 +25,7 @@ export default function AboutPage() {
         <div className="space-y-8">
           {/* Header */}
           <div className="text-center">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r bg-clip-text text-transparent leading-tight" 
+            <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r bg-clip-text text-transparent leading-tight"
                 style={{ backgroundImage: `linear-gradient(to right, var(--text-color), var(--text-secondary))` }}>
               About Us
             </h1>
@@ -36,13 +36,13 @@ export default function AboutPage() {
           <div className="prose prose-lg max-w-none space-y-6" style={{ color: 'var(--text-color)' }}>
             <div className="text-center mb-8">
               <p className="text-xl leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
-                Welcome to <strong style={{ color: 'var(--accent-color)' }}>WHPCodes</strong> — your go-to hub for exclusive Whop promo codes, discounts, and course insights.
+                Welcome to <strong style={{ color: 'var(--accent-color)' }}>DigitalPromoCodes</strong> — your go-to hub for exclusive promo codes, discounts, and digital product insights.
               </p>
             </div>
 
             <div className="space-y-6">
               <p className="text-lg leading-relaxed">
-                We curate and maintain one of the largest collections of verified Whop affiliate offers online, helping you save money on premium courses, tools, and digital communities. Whether you're a trader, entrepreneur, or digital learner, we've got codes that unlock real value — without the guesswork.
+                We curate and maintain one of the largest collections of verified digital product offers online, helping you save money on premium courses, tools, and digital communities. Whether you're a trader, entrepreneur, or digital learner, we've got codes that unlock real value — without the guesswork.
               </p>
 
               <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 p-6 rounded-lg border border-blue-200 dark:border-blue-800">
@@ -50,7 +50,7 @@ export default function AboutPage() {
                   Our Mission
                 </h2>
                 <p className="text-xl text-center font-medium" style={{ color: 'var(--text-color)' }}>
-                  Make Whop more affordable and transparent.
+                  Make premium digital products more affordable and transparent.
                 </p>
               </div>
 
@@ -58,7 +58,7 @@ export default function AboutPage() {
                 <h2 className="text-2xl font-bold mb-4" style={{ color: 'var(--text-color)' }}>
                   What sets us apart?
                 </h2>
-                
+
                 <div className="grid gap-4">
                   <div className="flex items-start space-x-3">
                     <div className="flex-shrink-0 w-6 h-6 mt-1">
@@ -67,7 +67,7 @@ export default function AboutPage() {
                       </svg>
                     </div>
                     <div>
-                      <strong>8,000+ curated Whop listings</strong>, organised for easy navigation
+                      <strong>8,000+ curated listings</strong>, organised for easy navigation
                     </div>
                   </div>
 
@@ -89,7 +89,7 @@ export default function AboutPage() {
                       </svg>
                     </div>
                     <div>
-                      <strong>No misleading offers</strong> — every listing includes course summaries, pricing details, and our honest take
+                      <strong>No misleading offers</strong> — every listing includes product summaries, pricing details, and our honest take
                     </div>
                   </div>
 
@@ -100,7 +100,7 @@ export default function AboutPage() {
                       </svg>
                     </div>
                     <div>
-                      <strong>Affiliate transparency</strong> — we earn a commission from Whop when you use our links, at no extra cost to you
+                      <strong>Affiliate transparency</strong> — we earn a commission when you use our links, at no extra cost to you
                     </div>
                   </div>
                 </div>
@@ -108,7 +108,7 @@ export default function AboutPage() {
 
               <div className="bg-gray-50 dark:bg-gray-900/50 p-6 rounded-lg border border-gray-200 dark:border-gray-800">
                 <p className="text-lg leading-relaxed mb-4">
-                  We're not affiliated with Whop Inc. directly — we're independent curators and affiliates who use our experience to help others navigate the fast-growing world of online learning and mentorship.
+                  We're independent curators and affiliates who use our experience to help others navigate the fast-growing world of online learning and mentorship.
                 </p>
               </div>
 

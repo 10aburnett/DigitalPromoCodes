@@ -151,11 +151,11 @@ export default function UnsubscribePage() {
             <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
               Having trouble? Contact us at{' '}
               <a
-                href="mailto:contact@digitalpromocodes.com"
+                href="mailto:digitalpromocodescontact@gmail.com"
                 className="hover:opacity-80 transition-opacity"
                 style={{ color: 'var(--accent-color)' }}
               >
-                contact@digitalpromocodes.com
+                digitalpromocodescontact@gmail.com
               </a>
             </p>
           </div>

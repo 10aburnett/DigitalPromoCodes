@@ -125,7 +125,7 @@ export const translations = {
     'privacy.rights.title': 'Your Rights',
     'privacy.rights.content': 'You have the right to:\n\nAccess your personal information\nCorrect inaccurate information\nRequest deletion of your information\nOpt-out of marketing communications\nObject to processing of your information',
     'privacy.contact.title': 'Contact Us',
-    'privacy.contact.content': 'If you have any questions about this Privacy Policy or our data practices, please contact us:<br><br>Email: <a href="mailto:contact@digitalpromocodes.com">contact@digitalpromocodes.com</a><br>Website: <a href="/contact">Contact Form</a>',
+    'privacy.contact.content': 'If you have any questions about this Privacy Policy or our data practices, please contact us:<br><br>Email: <a href="mailto:digitalpromocodescontact@gmail.com">digitalpromocodescontact@gmail.com</a><br>Website: <a href="/contact">Contact Form</a>',
     
     // Terms of Service Content
     'terms.title': 'Terms of Service',
@@ -282,7 +282,7 @@ export const translations = {
     'privacy.rights.title': 'Sus Derechos',
     'privacy.rights.content': 'Tiene el derecho de:\n\nAcceder a su información personal\nCorregir información inexacta\nSolicitar la eliminación de su información\nOpcionar la no participación en comunicaciones de marketing\nObjetar el procesamiento de su información',
     'privacy.contact.title': 'Contáctenos',
-    'privacy.contact.content': 'Si tiene alguna pregunta sobre esta Política de Privacidad o nuestras prácticas de datos, por favor contáctenos:<br><br>Correo electrónico: <a href="mailto:contact@digitalpromocodes.com">contact@digitalpromocodes.com</a><br>Sitio web: <a href="/es/contact">Formulario de Contacto</a>',
+    'privacy.contact.content': 'Si tiene alguna pregunta sobre esta Política de Privacidad o nuestras prácticas de datos, por favor contáctenos:<br><br>Correo electrónico: <a href="mailto:digitalpromocodescontact@gmail.com">digitalpromocodescontact@gmail.com</a><br>Sitio web: <a href="/es/contact">Formulario de Contacto</a>',
     
     // Terms of Service Content
     'terms.title': 'Términos de Servizio',
@@ -439,7 +439,7 @@ export const translations = {
     'privacy.rights.title': 'Uw Rechten',
     'privacy.rights.content': 'U heeft het recht om:\n\nToegang te krijgen tot uw persoonlijke informatie\nOnnauwkeurige informatie te corrigeren\nEen verzoek te doen om uw informatie te verwijderen\nUitgaan van marketingcommunicatie\nObjecteren tegen het verwerken van uw informatie',
     'privacy.contact.title': 'Neem Contact Op',
-    'privacy.contact.content': 'Als u vragen heeft over dit Privacybeleid of onze gegevenspraktijken, neem dan contact met ons op:<br><br>E-mail: <a href="mailto:contact@digitalpromocodes.com">contact@digitalpromocodes.com</a><br>Website: <a href="/nl/contact">Contactformulier</a>',
+    'privacy.contact.content': 'Als u vragen heeft over dit Privacybeleid of onze gegevenspraktijken, neem dan contact met ons op:<br><br>E-mail: <a href="mailto:digitalpromocodescontact@gmail.com">digitalpromocodescontact@gmail.com</a><br>Website: <a href="/nl/contact">Contactformulier</a>',
     
     // Terms of Service Content
     'terms.title': 'Servicevoorwaarden',
@@ -596,7 +596,7 @@ export const translations = {
     'privacy.rights.title': 'Vos Droits',
     'privacy.rights.content': 'Vous avez le droit de:\n\nAccéder à vos informations personnelles\nCorriger les informations inexactes\nDemander la suppression de vos informations\nRefuser de participer aux communications marketing\nVous opposer au traitement de vos informations',
     'privacy.contact.title': 'Nous Contacter',
-    'privacy.contact.content': 'Si vous avez des questions sur cette Politique de Confidentialité ou nos pratiques de données, veuillez nous contacter:<br><br>E-mail: <a href="mailto:contact@digitalpromocodes.com">contact@digitalpromocodes.com</a><br>Site web: <a href="/fr/contact">Formulaire de Contact</a>',
+    'privacy.contact.content': 'Si vous avez des questions sur cette Politique de Confidentialité ou nos pratiques de données, veuillez nous contacter:<br><br>E-mail: <a href="mailto:digitalpromocodescontact@gmail.com">digitalpromocodescontact@gmail.com</a><br>Site web: <a href="/fr/contact">Formulaire de Contact</a>',
     
     // Terms of Service Content
     'terms.title': 'Conditions de Service',
@@ -753,7 +753,7 @@ export const translations = {
     'privacy.rights.title': 'Ihre Rechte',
     'privacy.rights.content': 'Sie haben das Recht:\n\nZugriff auf Ihre persönlichen Informationen zu haben\nUnrichtige Informationen zu korrigieren\nEin Verlangen zu erheben, Ihre Informationen zu löschen\nAusstieg aus Marketingkommunikationen\nWiderspruch gegen das Verarbeiten Ihrer Informationen',
     'privacy.contact.title': 'Kontaktieren Sie Uns',
-    'privacy.contact.content': 'Wenn Sie Fragen oder Bedenken zu dieser Datenschutzrichtlinie oder unseren Datenpraktiken haben, wenden Sie sich bitte an uns:<br><br>E-Mail: <a href="mailto:contact@digitalpromocodes.com">contact@digitalpromocodes.com</a><br>Website: <a href="/de/contact">Kontaktformular</a>',
+    'privacy.contact.content': 'Wenn Sie Fragen oder Bedenken zu dieser Datenschutzrichtlinie oder unseren Datenpraktiken haben, wenden Sie sich bitte an uns:<br><br>E-Mail: <a href="mailto:digitalpromocodescontact@gmail.com">digitalpromocodescontact@gmail.com</a><br>Website: <a href="/de/contact">Kontaktformular</a>',
     
     // Terms of Service Content
     'terms.title': 'Nutzungsbedingungen',
@@ -910,7 +910,7 @@ export const translations = {
     'privacy.rights.title': 'I Tuoi Diritti',
     'privacy.rights.content': 'Hai il diritto di:\n\nAccedere alle tue informazioni personali\nCorreggere informazioni errate\nRichiedere la cancellazione delle tue informazioni\nRifiutare di partecipare a comunicazioni di marketing\nObjettare al trattamento delle tue informazioni',
     'privacy.contact.title': 'Contattaci',
-    'privacy.contact.content': 'Se hai domande o preoccupazioni sulla nostra Politica sulla Privacy o sulle nostre pratiche di gestione dei dati, per favore contattaci:<br><br>E-mail: <a href="mailto:contact@digitalpromocodes.com">contact@digitalpromocodes.com</a><br>Sito web: <a href="/it/contact">Modulo di contatto</a>',
+    'privacy.contact.content': 'Se hai domande o preoccupazioni sulla nostra Politica sulla Privacy o sulle nostre pratiche di gestione dei dati, per favore contattaci:<br><br>E-mail: <a href="mailto:digitalpromocodescontact@gmail.com">digitalpromocodescontact@gmail.com</a><br>Sito web: <a href="/it/contact">Modulo di contatto</a>',
     
     // Terms of Service Content
     'terms.title': 'Termini di Servizio',
@@ -1067,7 +1067,7 @@ export const translations = {
     'privacy.rights.title': 'I Tuoi Diritti',
     'privacy.rights.content': 'Hai il diritto di:\n\nAccedere alle tue informazioni personali\nCorreggere informazioni errate\nRichiedere la cancellazione delle tue informazioni\nRifiutare di partecipare a comunicazioni di marketing\nObiettare al trattamento delle tue informazioni',
     'privacy.contact.title': 'Contattaci',
-    'privacy.contact.content': 'Se hai domande o preoccupazioni sulla nostra Politica sulla Privacy o sulle nostre pratiche di gestione dei dati, per favore contattaci:<br><br>E-mail: <a href="mailto:contact@digitalpromocodes.com">contact@digitalpromocodes.com</a><br>Sito web: <a href="/pt/contact">Modulo di contatto</a>',
+    'privacy.contact.content': 'Se hai domande o preoccupazioni sulla nostra Politica sulla Privacy o sulle nostre pratiche di gestione dei dati, per favore contattaci:<br><br>E-mail: <a href="mailto:digitalpromocodescontact@gmail.com">digitalpromocodescontact@gmail.com</a><br>Sito web: <a href="/pt/contact">Modulo di contatto</a>',
     
     // Terms of Service Content
     'terms.title': 'Termini di Servizio',
@@ -1224,7 +1224,7 @@ export const translations = {
     'privacy.rights.title': '您的权利',
     'privacy.rights.content': '您有权：\n\n访问您的个人信息\n纠正不准确的信息\n请求删除您的信息\n退出营销通信\n反对处理您的信息',
     'privacy.contact.title': '联系我们',
-    'privacy.contact.content': '如果您对我们的隐私政策或数据实践有任何问题或关注，请随时与我们联系:<br><br>电子邮件: <a href="mailto:contact@digitalpromocodes.com">contact@digitalpromocodes.com</a><br>网站: <a href="/zh/contact">联系表单</a>',
+    'privacy.contact.content': '如果您对我们的隐私政策或数据实践有任何问题或关注，请随时与我们联系:<br><br>电子邮件: <a href="mailto:digitalpromocodescontact@gmail.com">digitalpromocodescontact@gmail.com</a><br>网站: <a href="/zh/contact">联系表单</a>',
     
     // Terms of Service Content
     'terms.title': '服务条款',

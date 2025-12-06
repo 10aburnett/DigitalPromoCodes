@@ -121,7 +121,7 @@ export async function POST(req: Request) {
     
     // Send emails (wrapped in try/catch to not fail the request)
     try {
-      // Send notification email to whpcodes@gmail.com
+      // Send notification email to digitalpromocodescontact@gmail.com
       await sendContactEmail({ name, email, subject, message });
       console.log('Contact notification email sent');
       
