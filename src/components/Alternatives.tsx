@@ -372,7 +372,7 @@ export default function Alternatives({ currentWhopSlug }: { currentWhopSlug: str
 
         // Debug hook for troubleshooting
         if (typeof window !== 'undefined') {
-          (window as any).__whpAltDebug = {
+          (window as any).__dpcAltDebug = {
             slug: currentWhopSlug,
             canonicalSlug,
             count: hydratedAlternatives.length,

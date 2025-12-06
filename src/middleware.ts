@@ -224,7 +224,7 @@ export function middleware(request: NextRequest) {
     }
     
     try {
-      const decoded = verifyJWT(token, process.env.AUTH_SECRET || 'whpcodes-secret-key');
+      const decoded = verifyJWT(token, process.env.AUTH_SECRET || 'dpc-secret-key');
       
       // Check if user has admin role
       if (decoded.role !== 'ADMIN') {

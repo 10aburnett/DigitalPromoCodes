@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * 🔍 WHP Codes Rendering Strategy Audit
+ * 🔍 DigitalPromoCodes Rendering Strategy Audit
  *
  * Discovers and classifies pages as SSG, SSR, or CSR based on actual HTML analysis.
  *
@@ -13,18 +13,18 @@
  *
  * Sitemap mode (default - only indexed pages):
  *   node audit-rendering-strategy.mjs
- *   node audit-rendering-strategy.mjs --sitemap https://whpcodes.com/sitemap.xml --limit 500
+ *   node audit-rendering-strategy.mjs --sitemap https://digitalpromocodes.com/sitemap.xml --limit 500
  *
  * Crawl mode (discovers ALL pages including noindex):
- *   node audit-rendering-strategy.mjs --crawl https://whpcodes.com/
- *   node audit-rendering-strategy.mjs --crawl https://whpcodes.com/ --limit 5000
+ *   node audit-rendering-strategy.mjs --crawl https://digitalpromocodes.com/
+ *   node audit-rendering-strategy.mjs --crawl https://digitalpromocodes.com/ --limit 5000
  *
  * ISR probe mode (double-fetch to catch warm ISR pages):
- *   node audit-rendering-strategy.mjs --crawl https://whpcodes.com/ --probe-isr
+ *   node audit-rendering-strategy.mjs --crawl https://digitalpromocodes.com/ --probe-isr
  *
  * Flags:
  *   --crawl <url>    Enable crawl mode starting from URL (discovers all internal pages)
- *   --sitemap <url>  Sitemap URL to fetch (default: https://whpcodes.com/sitemap.xml)
+ *   --sitemap <url>  Sitemap URL to fetch (default: https://digitalpromocodes.com/sitemap.xml)
  *   --limit <n>      Max pages to audit (default: 200 sitemap, 10000 crawl)
  *   --out <file>     Output CSV filename (default: rendering-audit.csv)
  *   --probe-isr      Enable double-fetch probe to detect warm ISR pages
@@ -50,8 +50,8 @@ const hasFlag = (flag) => args.includes(flag);
 
 // Configuration
 const CRAWL_MODE = hasFlag('--crawl');
-const START_URL = getArg('--crawl', 'https://whpcodes.com/');
-const SITEMAP_URL = getArg('--sitemap', 'https://whpcodes.com/sitemap.xml');
+const START_URL = getArg('--crawl', 'https://digitalpromocodes.com/');
+const SITEMAP_URL = getArg('--sitemap', 'https://digitalpromocodes.com/sitemap.xml');
 const MAX_PAGES = parseInt(getArg('--limit', CRAWL_MODE ? '10000' : '200'), 10);
 const OUTPUT_CSV = getArg('--out', 'rendering-audit.csv');
 const USER_AGENT = 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)';
@@ -317,7 +317,7 @@ function classifyPage(analysis) {
 
 // Main audit function
 async function auditSite() {
-  console.log('🔍 Starting WHP Codes Rendering Strategy Audit\n');
+  console.log('🔍 Starting DigitalPromoCodes Rendering Strategy Audit\n');
 
   try {
     // Discover URLs (crawl or sitemap mode)

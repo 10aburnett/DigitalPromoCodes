@@ -8,7 +8,7 @@
 const https = require('https');
 const http = require('http');
 
-const BASE_URL = process.env.SITE_URL || 'https://whpcodes.com';
+const BASE_URL = process.env.SITE_URL || 'https://digitalpromocodes.com';
 
 // Test cases for verification
 const TEST_CASES = [

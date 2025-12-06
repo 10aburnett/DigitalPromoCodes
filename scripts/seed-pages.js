@@ -9,7 +9,7 @@ const legalPages = [
     content: `
 <div class="section">
   <h2>Introduction</h2>
-  <p>WHPCodes ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website whpcodes.com and use our services.</p>
+  <p>DigitalPromoCodes ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website digitalpromocodes.com and use our services.</p>
 </div>
 
 <div class="section">
@@ -92,7 +92,7 @@ const legalPages = [
 <div class="section">
   <h2>Contact Us</h2>
   <p>If you have any questions about this Privacy Policy or our data practices, please contact us:</p>
-  <p>Email: <a href="mailto:whpcodes@gmail.com">whpcodes@gmail.com</a></p>
+  <p>Email: <a href="mailto:digitalpromocodescontact@gmail.com">digitalpromocodescontact@gmail.com</a></p>
   <p>Website: <a href="../contact">Contact Form</a></p>
 </div>
 `
@@ -103,12 +103,12 @@ const legalPages = [
     content: `
 <div class="section">
   <h2>Agreement to Terms</h2>
-  <p>By accessing and using WHPCodes ("we," "our," or "us"), you accept and agree to be bound by the terms and provision of this agreement. If you do not agree to abide by the above, please do not use this service.</p>
+  <p>By accessing and using DigitalPromoCodes ("we," "our," or "us"), you accept and agree to be bound by the terms and provision of this agreement. If you do not agree to abide by the above, please do not use this service.</p>
 </div>
 
 <div class="section">
   <h2>Use License</h2>
-  <p>Permission is granted to temporarily download one copy of the materials on WHPCodes for personal, non-commercial transitory viewing only. This is the grant of a license, not a transfer of title, and under this license you may not:</p>
+  <p>Permission is granted to temporarily download one copy of the materials on DigitalPromoCodes for personal, non-commercial transitory viewing only. This is the grant of a license, not a transfer of title, and under this license you may not:</p>
   <ul>
     <li>Modify or copy the materials</li>
     <li>Use the materials for any commercial purpose or for any public display</li>
@@ -120,7 +120,7 @@ const legalPages = [
 <div class="section">
   <h2>Disclaimer</h2>
   <ul>
-    <li><strong>Information Accuracy:</strong> The materials on WHPCodes are provided on an 'as is' basis. We make no warranties, expressed or implied.</li>
+    <li><strong>Information Accuracy:</strong> The materials on DigitalPromoCodes are provided on an 'as is' basis. We make no warranties, expressed or implied.</li>
     <li><strong>Third-Party Services:</strong> We are not responsible for the content, policies, or practices of third-party whop websites that we link to.</li>
     <li><strong>Promotion Availability:</strong> Whop promotions and discounts are subject to change without notice. We do not guarantee the availability or terms of any promotional offers.</li>
   </ul>
@@ -128,7 +128,7 @@ const legalPages = [
 
 <div class="section">
   <h2>Responsible Use</h2>
-  <p>WHPCodes promotes responsible use of digital products and services. We encourage users to:</p>
+  <p>DigitalPromoCodes promotes responsible use of digital products and services. We encourage users to:</p>
   <ul>
     <li>Only purchase products and services you can afford</li>
     <li>Research products thoroughly before purchasing</li>
@@ -141,7 +141,7 @@ const legalPages = [
 <div class="section">
   <h2>Contact Information</h2>
   <p>If you have any questions about these Terms of Service, please contact us:</p>
-  <p>Email: <a href="mailto:legal@whpcodes.com">legal@whpcodes.com</a></p>
+  <p>Email: <a href="mailto:digitalpromocodescontact@gmail.com">digitalpromocodescontact@gmail.com</a></p>
   <p>Website: <a href="../contact">Contact Form</a></p>
 </div>
 `

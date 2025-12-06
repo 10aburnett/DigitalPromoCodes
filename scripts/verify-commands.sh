@@ -3,7 +3,7 @@
 # Manual verification commands for URL normalization
 # Run these after deployment to verify the implementation
 
-SITE_URL="${SITE_URL:-https://whpcodes.com}"
+SITE_URL="${SITE_URL:-https://digitalpromocodes.com}"
 
 echo "🚀 URL Normalization Verification Commands"
 echo "Site URL: $SITE_URL"
@@ -29,7 +29,7 @@ echo ""
 
 echo "4️⃣ Manual Checks:"
 echo "   ✓ Verify sitemap URLs are all lowercase:"
-echo "     curl -s \"$SITE_URL/sitemaps/index-1.xml\" | grep -o 'https://whpcodes.com/whop/[^<]*' | head -5"
+echo "     curl -s \"$SITE_URL/sitemaps/index-1.xml\" | grep -o 'https://digitalpromocodes.com/whop/[^<]*' | head -5"
 echo ""
 echo "   ✓ Check canonical tag on page:"
 echo "     curl -s \"$SITE_URL/whop/deal-flip-formula-main\" | grep -o '<link rel=\"canonical\"[^>]*>'"

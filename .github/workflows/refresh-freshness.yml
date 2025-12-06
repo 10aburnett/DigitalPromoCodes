@@ -20,10 +20,10 @@ jobs:
       - name: Commit changes (if any)
         run: |
           if [ -n "$(git status --porcelain)" ]; then
-            git config user.name "whpcodes-bot"
+            git config user.name "dpc-bot"
             git config user.email "bot@users.noreply.github.com"
             git add -A
-            git commit -m "chore: auto-check whop pages and refresh freshness"
+            git commit -m "chore: auto-check offer pages and refresh freshness"
             git push
           else
             echo "No changes to commit."

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const origin = process.env.SITE_ORIGIN || 'https://whpcodes.com';
+const origin = process.env.SITE_ORIGIN || 'https://digitalpromocodes.com';
 
 // Top whop slugs to warm after deploy (update this list with your most-visited pages)
 const topSlugs = [

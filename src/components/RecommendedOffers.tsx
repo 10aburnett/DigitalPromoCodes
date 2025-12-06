@@ -256,7 +256,7 @@ export default function RecommendedWhops({ currentWhopSlug }: RecommendedWhopsPr
 
         // Debug hook for troubleshooting
         if (typeof window !== 'undefined') {
-          (window as any).__whpRecDebug = {
+          (window as any).__dpcRecDebug = {
             slug: currentWhopSlug,
             dataSource,
             hydrated: cleanedRecommendations.map(w => w.slug),
