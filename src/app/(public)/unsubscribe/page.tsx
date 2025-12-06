@@ -150,12 +150,12 @@ export default function UnsubscribePage() {
           <div className="text-center">
             <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
               Having trouble? Contact us at{' '}
-              <a 
-                href="mailto:whpcodes@gmail.com" 
+              <a
+                href="mailto:contact@digitalpromocodes.com"
                 className="hover:opacity-80 transition-opacity"
                 style={{ color: 'var(--accent-color)' }}
               >
-                whpcodes@gmail.com
+                contact@digitalpromocodes.com
               </a>
             </p>
           </div>

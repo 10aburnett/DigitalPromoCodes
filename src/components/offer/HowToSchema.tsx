@@ -36,15 +36,15 @@ export default function HowToSchema({
   const json = {
     "@context": "https://schema.org",
     "@type": "HowTo",
-    "name": `Apply a ${brand} promo code on Whop`,
+    "name": `How to redeem a ${brand} promo code`,
     "image": images,
-    "tool": [{ "@type": "HowToTool", "name": "Whop Checkout" }],
+    "tool": [{ "@type": "HowToTool", "name": "Online Checkout" }],
     "totalTime": "PT1M",
     "step": [
-      { "@type": "HowToStep", "name": "Choose plan", "text": `Open ${brand} on Whop and pick a plan.` },
-      { "@type": "HowToStep", "name": "Add coupon", "text": "Click 'Add coupon' and paste your code." },
-      { "@type": "HowToStep", "name": "Confirm totals", "text": `Check updated total (ex-VAT) and ${currency}. ${hasTrial ? "If there's a trial, note the first billing after trial." : ""}` },
-      { "@type": "HowToStep", "name": "Complete checkout", "text": "Finish payment; Discord access appears after purchase if included." }
+      { "@type": "HowToStep", "name": "Choose plan", "text": `Visit ${brand} and select your preferred plan.` },
+      { "@type": "HowToStep", "name": "Add coupon", "text": "Click 'Add coupon' or 'Apply promo code' and paste your code." },
+      { "@type": "HowToStep", "name": "Confirm totals", "text": `Verify the updated total in ${currency}. ${hasTrial ? "If there's a trial, note when billing begins." : ""}` },
+      { "@type": "HowToStep", "name": "Complete checkout", "text": "Finish payment to unlock your access and any included bonuses." }
     ]
   };
 

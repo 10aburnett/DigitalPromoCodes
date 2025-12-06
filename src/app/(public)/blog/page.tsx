@@ -74,7 +74,7 @@ export default async function BlogPage() {
 
               <div className="text-center -mt-2">
                 <p className="text-xl leading-relaxed max-w-2xl mx-auto" style={{ color: 'var(--text-secondary)' }}>
-                  Stay updated with the latest insights, tips, and Whop news.
+                  Stay updated with the latest insights, tips, and digital product news.
                 </p>
               </div>
 
@@ -132,7 +132,7 @@ export default async function BlogPage() {
 
             <div className="text-center -mt-2">
               <p className="text-xl leading-relaxed max-w-2xl mx-auto" style={{ color: 'var(--text-secondary)' }}>
-                Stay updated with the latest insights, tips, and Whop news.
+                Stay updated with the latest insights, tips, and digital product news.
               </p>
             </div>
 
@@ -217,7 +217,7 @@ export default async function BlogPage() {
 
             <div className="text-center -mt-2">
               <p className="text-xl leading-relaxed max-w-2xl mx-auto" style={{ color: 'var(--text-secondary)' }}>
-                Stay updated with the latest insights, tips, and Whop news.
+                Stay updated with the latest insights, tips, and digital product news.
               </p>
             </div>
 
