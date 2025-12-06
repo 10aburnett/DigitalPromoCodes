@@ -790,7 +790,7 @@ export default async function DealPage({ params }: { params: { slug: string } })
 
             {/* Jump Links Navigation - Only show links for sections that exist */}
             <nav className="dpc-jump-links rounded-lg px-4 py-3 border" style={{ backgroundColor: 'var(--background-secondary)', borderColor: 'var(--border-color)' }} aria-label="Page sections">
-              <ul className="flex flex-wrap gap-x-4 gap-y-2 text-sm font-medium">
+              <ul className="flex flex-wrap justify-center gap-x-4 gap-y-2 text-sm font-medium">
                 {hasOverview && (
                   <li><a href="#overview" className="hover:underline" style={{ color: 'var(--accent-color)' }}>Overview</a></li>
                 )}
