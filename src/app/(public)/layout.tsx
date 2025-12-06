@@ -48,13 +48,13 @@ export async function generateMetadata(): Promise<Metadata> {
     faviconUrl = `/favicon.ico?v=${STATIC_VERSION}`;
   }
 
-  const title = `${SITE_BRAND} - Exclusive Deals & Discounts ${currentYear}`;
-  const description = `${SITE_DESCRIPTION} Find verified deals, discount codes & exclusive offers for ${currentYear}. Updated daily!`;
+  const title = `${SITE_BRAND} - Verified Promo Codes & Exclusive Deals ${currentYear}`;
+  const description = `${SITE_DESCRIPTION} Find verified promo codes, discount codes & exclusive offers for ${currentYear}. Updated daily!`;
 
   return {
     title,
     description,
-    keywords: 'deals, discount codes, coupons, digital product discounts, community access, course discounts, exclusive offers',
+    keywords: 'promo codes, discount codes, deals, coupons, digital product discounts, community access, course discounts, exclusive offers, verified codes',
     metadataBase: new URL(siteOrigin()),
     openGraph: {
       title,
@@ -67,13 +67,13 @@ export async function generateMetadata(): Promise<Metadata> {
           url: '/logo.png',
           width: 1200,
           height: 630,
-          alt: `${SITE_BRAND} - Exclusive Deals & Discounts`
+          alt: `${SITE_BRAND} - Verified Promo Codes & Exclusive Deals`
         }
       ],
     },
     twitter: {
       card: 'summary_large_image',
-      title: `${SITE_BRAND} - Exclusive Deals & Discounts ${currentYear}`,
+      title: `${SITE_BRAND} - Verified Promo Codes & Exclusive Deals ${currentYear}`,
       description,
       images: ['/logo.png'],
       // Twitter handles removed until new brand accounts exist

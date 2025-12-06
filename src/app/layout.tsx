@@ -59,12 +59,12 @@ export async function generateMetadata(): Promise<Metadata> {
   const origin = siteOrigin();
 
   return {
-    title: `${SITE_BRAND} - Exclusive Deals & Discounts ${currentYear}`,
+    title: `${SITE_BRAND} - Verified Promo Codes & Exclusive Deals ${currentYear}`,
     description: SITE_DESCRIPTION,
-    keywords: 'deals, discounts, promo codes, coupons, digital product discounts, community access codes, course promo codes, exclusive discounts',
+    keywords: 'promo codes, discount codes, deals, coupons, digital product discounts, community access codes, course promo codes, exclusive discounts, verified codes',
     metadataBase: new URL(origin),
     openGraph: {
-      title: `${SITE_BRAND} - Exclusive Deals & Discounts ${currentYear}`,
+      title: `${SITE_BRAND} - Verified Promo Codes & Exclusive Deals ${currentYear}`,
       description: SITE_DESCRIPTION,
       url: origin,
       type: 'website',
@@ -74,13 +74,13 @@ export async function generateMetadata(): Promise<Metadata> {
           url: '/logo.png',
           width: 1200,
           height: 630,
-          alt: `${SITE_BRAND} - Exclusive Deals & Discounts`
+          alt: `${SITE_BRAND} - Verified Promo Codes & Exclusive Deals`
         }
       ],
     },
     twitter: {
       card: 'summary_large_image',
-      title: `${SITE_BRAND} - Exclusive Deals & Discounts ${currentYear}`,
+      title: `${SITE_BRAND} - Verified Promo Codes & Exclusive Deals ${currentYear}`,
       description: SITE_DESCRIPTION,
       images: ['/logo.png'],
     },

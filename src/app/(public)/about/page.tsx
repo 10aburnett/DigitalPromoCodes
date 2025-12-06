@@ -9,7 +9,7 @@ export const dynamic = 'force-static'
 export const fetchCache = 'force-cache'
 export const revalidate = 86400 // 24h
 
-const title = `About ${SITE_BRAND} - Exclusive Deals & Digital Product Discounts`;
+const title = `About ${SITE_BRAND} - Verified Promo Codes & Digital Product Discounts`;
 const description = `Learn about ${SITE_BRAND} - ${SITE_DESCRIPTION} We curate 8,000+ verified listings with daily updates.`;
 
 export const metadata: Metadata = {

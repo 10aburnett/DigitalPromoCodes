@@ -195,8 +195,8 @@ async function getPagedWhops({
 // Metadata for SEO
 export async function generateMetadata(): Promise<Metadata> {
   const currentYear = new Date().getFullYear();
-  const title = `${SITE_BRAND} - Exclusive Deals & Discounts ${currentYear}`;
-  const description = `${SITE_TAGLINE}. Our curated list includes verified digital products, courses, communities, and more with exclusive discounts for ${currentYear}.`;
+  const title = `${SITE_BRAND} - Verified Promo Codes & Exclusive Deals ${currentYear}`;
+  const description = `${SITE_TAGLINE}. Browse 8,000+ verified promo codes for digital products, courses, communities, and memberships - updated daily for ${currentYear}.`;
 
   return {
     title,
