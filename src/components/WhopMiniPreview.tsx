@@ -30,63 +30,73 @@ export default function WhopMiniPreview({
   const rc = typeof ratingCount === 'number' && ratingCount >= 0 ? ratingCount : 0;
 
   return (
-    <li className="block rounded-xl border p-4 hover:border-[var(--accent-color)] transition">
+    <li className="group block rounded-lg border overflow-hidden hover:shadow-md transition-all duration-200" style={{ borderColor: 'var(--border-color)', backgroundColor: 'var(--background-secondary)' }}>
       <a
         href={href}
-        className="flex gap-3 items-start focus-visible:ring-2 focus-visible:ring-[var(--accent-color)]"
+        className="flex gap-4 p-4 focus-visible:ring-2 focus-visible:ring-[var(--accent-color)] focus-visible:ring-inset"
         aria-label={isExploreLink ? `Explore another: ${name}` : name}
       >
-        <img
-          src={logo || '/logo.png'}
-          alt={`${name} logo`}
-          width={48}
-          height={48}
-          loading="lazy"
-          decoding="async"
-          className="w-12 h-12 rounded object-contain bg-[var(--background-secondary)] flex-shrink-0"
-        />
-        <div className="min-w-0 flex-1 overflow-hidden">
-          {/* Category badge - always show with fallback */}
+        {/* Logo with subtle background */}
+        <div className="flex-shrink-0">
+          <img
+            src={logo || '/logo.png'}
+            alt={`${name} logo`}
+            width={56}
+            height={56}
+            loading="lazy"
+            decoding="async"
+            className="w-14 h-14 rounded-lg object-contain p-1"
+            style={{ backgroundColor: 'var(--background-color)' }}
+          />
+        </div>
+
+        <div className="min-w-0 flex-1">
+          {/* Top row: Title + Rating */}
+          <div className="flex items-start justify-between gap-2 mb-1.5">
+            <h3 className="font-semibold text-base line-clamp-1 group-hover:text-[var(--accent-color)] transition-colors">
+              {isExploreLink ? (
+                <>Discover: {name}</>
+              ) : (
+                name
+              )}
+            </h3>
+
+            {/* Compact rating badge */}
+            <div
+              className="flex items-center gap-1 px-2 py-0.5 rounded-full text-xs flex-shrink-0"
+              style={{ backgroundColor: 'var(--background-color)' }}
+              aria-label={`${r.toFixed(1)} stars from ${rc} reviews`}
+            >
+              <span className="text-amber-500">★</span>
+              <span style={{ color: 'var(--text-color)' }}>{r.toFixed(1)}</span>
+            </div>
+          </div>
+
+          {/* Category pill */}
           <span
-            className="text-xs px-2 py-1 rounded-full font-medium mb-1.5 inline-block"
+            className="inline-block text-xs px-2 py-0.5 rounded mb-2"
             style={{
-              backgroundColor: 'var(--background-tertiary)',
-              color: 'var(--text-secondary)'
+              backgroundColor: 'var(--accent-color)',
+              color: 'white',
+              opacity: 0.9
             }}
           >
             {badge}
           </span>
 
-          {/* Title and Rating Row */}
-          <div className="flex items-start justify-between gap-2 mb-1">
-            <div className="font-semibold text-base line-clamp-2 flex-1">
-              {isExploreLink ? (
-                <>
-                  Explore another: <span className="underline">{name}</span>
-                </>
-              ) : (
-                name
-              )}
-            </div>
-
-            {/* Star rating with count - always show, even when 0 */}
-            <div
-              className="flex items-center gap-1 flex-shrink-0"
-              aria-label={`${r.toFixed(1)} stars from ${rc} reviews`}
-            >
-              <span className="text-yellow-400 text-xs">★</span>
-              <span className="text-xs" style={{ color: 'var(--text-secondary)' }}>
-                {r.toFixed(1)} <span className="ml-0.5">({String(rc)})</span>
-              </span>
-            </div>
-          </div>
-
           {/* Description */}
           {description && (
-            <div className="text-sm text-[var(--text-secondary)] line-clamp-2">
+            <p className="text-sm line-clamp-2" style={{ color: 'var(--text-secondary)' }}>
               {description}
-            </div>
+            </p>
           )}
+        </div>
+
+        {/* Right arrow indicator */}
+        <div className="flex-shrink-0 self-center opacity-0 group-hover:opacity-100 transition-opacity">
+          <svg className="w-5 h-5" style={{ color: 'var(--accent-color)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          </svg>
         </div>
       </a>
     </li>

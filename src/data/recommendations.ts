@@ -17,11 +17,34 @@ interface WhopItem {
   slug: string;
   logo: string | null;
   description: string | null;
+  aboutContent: string | null;
+  blurb: string | null; // Second sentence from aboutContent for preview
   category: string | null;
   price: string | null;
   rating: number | null;
   ratingCount: number;
   promoCodes: PromoCode[];
+}
+
+/**
+ * Extract the second sentence from text content.
+ * Falls back to first sentence if only one exists, or null if empty.
+ */
+function getSecondSentence(text: string | null | undefined): string | null {
+  if (!text || !text.trim()) return null;
+
+  // Split on sentence-ending punctuation followed by space or end
+  const sentences = text
+    .replace(/\s+/g, ' ')
+    .trim()
+    .split(/(?<=[.!?])\s+/)
+    .filter(s => s.trim().length > 0);
+
+  if (sentences.length === 0) return null;
+  if (sentences.length === 1) return sentences[0];
+
+  // Return second sentence, trimmed
+  return sentences[1].trim();
 }
 
 interface ExploreLink {
@@ -89,6 +112,7 @@ export async function getRecommendations(currentWhopSlug: string): Promise<{
         slug: true,
         logo: true,
         description: true,
+        aboutContent: true,
         category: true,
         price: true,
         rating: true,
@@ -111,13 +135,15 @@ export async function getRecommendations(currentWhopSlug: string): Promise<{
       take: 4
     });
 
-    // Transform to expected format
+    // Transform to expected format - use second sentence from aboutContent as blurb
     const items: WhopItem[] = whops.map(whop => ({
       id: whop.id,
       name: whop.name,
       slug: normalizeSlug(whop.slug), // Ensure canonical slug for links
       logo: whop.logo,
       description: whop.description,
+      aboutContent: whop.aboutContent,
+      blurb: getSecondSentence(whop.aboutContent) || whop.description,
       category: whop.category,
       price: whop.price,
       rating: whop.rating,
@@ -235,6 +261,7 @@ export async function getAlternatives(currentWhopSlug: string): Promise<{
         slug: true,
         logo: true,
         description: true,
+        aboutContent: true,
         category: true,
         price: true,
         rating: true,
@@ -257,13 +284,15 @@ export async function getAlternatives(currentWhopSlug: string): Promise<{
       take: 5
     });
 
-    // Transform to expected format
+    // Transform to expected format - use second sentence from aboutContent as blurb
     const items: WhopItem[] = whops.map(whop => ({
       id: whop.id,
       name: whop.name,
       slug: normalizeSlug(whop.slug), // Ensure canonical slug for links
       logo: whop.logo,
       description: whop.description,
+      aboutContent: whop.aboutContent,
+      blurb: getSecondSentence(whop.aboutContent) || whop.description,
       category: whop.category,
       price: whop.price,
       rating: whop.rating,

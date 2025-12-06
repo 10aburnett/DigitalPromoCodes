@@ -8,6 +8,7 @@ type Item = {
   name: string;
   logo?: string | null;
   description?: string | null;
+  blurb?: string | null;
   category?: string | null;
   rating?: number | null;
   ratingCount?: number;
@@ -31,7 +32,7 @@ export default function RecommendedWhopsServer({ items }: { items?: Item[] }) {
             slug={w.slug}
             name={w.name}
             logo={resolveLogoUrl(w.logo)}
-            description={w.description}
+            description={w.blurb || w.description}
             category={w.category}
             rating={w.rating}
             ratingCount={w.ratingCount ?? 0}
