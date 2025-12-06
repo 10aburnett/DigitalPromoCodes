@@ -767,10 +767,10 @@ export default async function DealPage({ params }: { params: { slug: string } })
         )}
 
         {/* Two-Column Layout: Main Content + Sidebar */}
-        <div className="dpc-offer-layout flex flex-col lg:flex-row lg:gap-8 max-w-4xl mx-auto">
+        <div className="dpc-offer-layout flex flex-col lg:flex-row lg:gap-8 max-w-4xl mx-auto lg:max-h-[calc(100vh-6rem)] lg:overflow-hidden">
 
-          {/* Main Content Column */}
-          <article className="dpc-offer-main flex-1 min-w-0 space-y-6 mb-8 lg:mb-0">
+          {/* Main Content Column - independently scrollable on desktop */}
+          <article className="dpc-offer-main flex-1 min-w-0 space-y-6 mb-8 lg:mb-0 lg:overflow-y-auto lg:pr-4">
 
             {/* Hero Header */}
             <header className="dpc-offer-header rounded-xl px-7 py-6 sm:p-8 shadow-lg border transition-theme" style={{ background: 'linear-gradient(to bottom right, var(--background-secondary), var(--background-tertiary))', borderColor: 'var(--border-color)' }}>
@@ -983,9 +983,9 @@ export default async function DealPage({ params }: { params: { slug: string } })
             </section>
           </article>
 
-          {/* Sidebar Column */}
-          <aside className="dpc-offer-sidebar w-full lg:w-80 flex-shrink-0">
-            <div className="lg:sticky lg:top-24 space-y-6">
+          {/* Sidebar Column - independently scrollable on desktop */}
+          <aside className="dpc-offer-sidebar w-full lg:w-80 flex-shrink-0 lg:overflow-y-auto lg:pl-2">
+            <div className="space-y-6 pb-8">
 
               {/* 1. Product Summary Card */}
               <div
