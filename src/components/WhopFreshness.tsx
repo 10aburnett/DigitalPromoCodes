@@ -26,27 +26,27 @@ interface WhopFreshnessProps {
   slug: string;
 }
 
-// Helper function to format dates in London timezone
-function formatLondon(isoString: string): string {
+// Human-readable date formatter (no Z suffix)
+function formatDateTime(isoString: string): string {
   const date = new Date(isoString);
-  return date.toLocaleString('en-GB', {
-    timeZone: 'Europe/London',
-    year: 'numeric',
-    month: '2-digit',
+  return date.toLocaleDateString('en-GB', {
     day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+  }) + ' at ' + date.toLocaleTimeString('en-GB', {
     hour: '2-digit',
     minute: '2-digit',
-    timeZoneName: 'short'
+    hour12: false,
   });
 }
 
-// Helper function to mask promo codes
-function maskCode(code: string): string {
-  if (!code) return "Hidden";
-  if (code.length > 8) {
-    return `${code.slice(0, 5)}…${code.slice(-3)}`;
+// Get status display text
+function getStatusLabel(status: string): string {
+  switch (status) {
+    case 'working': return 'Active';
+    case 'expired': return 'Inactive';
+    default: return 'Pending';
   }
-  return "Hidden until reveal";
 }
 
 export default function WhopFreshness({ slug }: WhopFreshnessProps) {
@@ -106,75 +106,71 @@ export default function WhopFreshness({ slug }: WhopFreshnessProps) {
 
   return (
     <section className="rounded-xl px-7 py-6 sm:p-8 border transition-theme" style={{ backgroundColor: 'var(--background-secondary)', borderColor: 'var(--border-color)' }}>
-      <h2 className="text-xl sm:text-2xl font-bold mb-4">Verification Info</h2>
+      <h2 className="text-xl sm:text-2xl font-bold mb-4">Code Status</h2>
 
-      {/* Last Updated */}
-      <div className="mb-4 p-3 rounded-lg" style={{ backgroundColor: 'var(--background-color)' }}>
-        <p className="text-sm font-medium text-green-600 mb-1">
-          ✅ Last checked: {formatLondon(freshnessData.lastUpdated)} (server-rendered)
-        </p>
+      {/* Last scan timestamp */}
+      <div className="flex items-center gap-2 mb-4 pb-3 border-b" style={{ borderColor: 'var(--border-color)' }}>
+        <svg className="w-4 h-4 flex-shrink-0 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+          Scanned: <span className="font-medium" style={{ color: 'var(--text-color)' }}>{formatDateTime(freshnessData.lastUpdated)}</span>
+        </span>
       </div>
 
-      {/* Codes Ledger */}
+      {/* Code entries - clean list format */}
       {freshnessData.ledger && freshnessData.ledger.length > 0 && (
-        <div className="overflow-hidden rounded-lg border" style={{ borderColor: 'var(--border-color)' }}>
-          <table className="min-w-full">
-            <thead>
-              <tr style={{ backgroundColor: 'var(--background-color)' }}>
-                <th className="py-2 pl-4 pr-2 text-left text-sm font-medium">Status</th>
-                <th className="py-2 px-2 text-left text-sm font-medium">Before → After</th>
-                <th className="py-2 px-2 text-left text-sm font-medium">Verification</th>
-                <th className="py-2 pl-2 pr-4 text-left text-sm font-medium">Notes</th>
-              </tr>
-            </thead>
-            <tbody>
-              {freshnessData.ledger.map((row, index) => (
-                <tr
-                  key={index}
-                  className={index % 2 === 0 ? '' : 'bg-opacity-50'}
-                  style={{ backgroundColor: index % 2 === 0 ? 'var(--background-secondary)' : 'var(--background-color)' }}
-                >
-                  <td className="py-2 pl-4 pr-2">
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                      row.status === 'working' ? 'bg-green-100 text-green-800' :
-                      row.status === 'expired' ? 'bg-red-100 text-red-800' :
-                      'bg-gray-100 text-gray-800'
-                    }`}>
-                      {row.status}
-                    </span>
-                  </td>
-                  <td className="py-2 px-2 text-sm">
-                    {row.display || '—'}
-                  </td>
-                  <td className="py-2 px-2 text-sm">
-                    {row.verifiedAt ? (
-                      <span className="text-green-600 font-medium">
-                        Last verified {formatLondon(row.verifiedAt)}
-                      </span>
-                    ) : row.checkedAt ? (
-                      <span className="text-blue-600">
-                        Last checked {formatLondon(row.checkedAt)}
-                      </span>
-                    ) : (
-                      <span className="text-gray-500">Unverified</span>
-                    )}
-                  </td>
-                  <td className="py-2 pl-2 pr-4 text-sm" style={{ color: 'var(--text-secondary)' }}>
-                    {row.notes || '—'}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="space-y-3">
+          {freshnessData.ledger.map((row, index) => (
+            <div
+              key={index}
+              className="p-3 rounded-lg border"
+              style={{ backgroundColor: 'var(--background-color)', borderColor: 'var(--border-color)' }}
+            >
+              {/* Status badge and savings */}
+              <div className="flex items-center justify-between mb-2">
+                <span className={`px-2 py-0.5 rounded text-xs font-medium ${
+                  row.status === 'working' ? 'bg-green-100 text-green-700' :
+                  row.status === 'expired' ? 'bg-red-100 text-red-700' :
+                  'bg-gray-100 text-gray-700'
+                }`}>
+                  {getStatusLabel(row.status)}
+                </span>
+                {row.display && (
+                  <span className="text-sm font-medium" style={{ color: 'var(--accent-color)' }}>
+                    {row.display}
+                  </span>
+                )}
+              </div>
+
+              {/* Verification date */}
+              <div className="text-xs" style={{ color: 'var(--text-secondary)' }}>
+                {row.verifiedAt ? (
+                  <span>Confirmed {formatDateTime(row.verifiedAt)}</span>
+                ) : row.checkedAt ? (
+                  <span>Reviewed {formatDateTime(row.checkedAt)}</span>
+                ) : (
+                  <span>Awaiting review</span>
+                )}
+              </div>
+
+              {/* Notes if present */}
+              {row.notes && (
+                <p className="text-xs mt-2 pt-2 border-t" style={{ color: 'var(--text-secondary)', borderColor: 'var(--border-color)' }}>
+                  {row.notes}
+                </p>
+              )}
+            </div>
+          ))}
         </div>
       )}
 
-      {/* Help Text */}
-      <div className="mt-4 text-sm" style={{ color: 'var(--text-secondary)' }}>
-        <p>
-          <span className="text-green-600 font-medium">Verified</span> means we tested the code at checkout.
-          <span className="text-blue-600 font-medium ml-2">Last checked</span> means we recently confirmed the code exists.
-        </p>
+      {/* Legend */}
+      <div className="mt-4 pt-3 border-t text-xs" style={{ borderColor: 'var(--border-color)', color: 'var(--text-secondary)' }}>
+        <div className="flex flex-wrap gap-x-4 gap-y-1">
+          <span><span className="text-green-600 font-medium">Confirmed</span> = tested at checkout</span>
+          <span><span className="text-blue-600 font-medium">Reviewed</span> = code existence verified</span>
+        </div>
       </div>
     </section>
   );

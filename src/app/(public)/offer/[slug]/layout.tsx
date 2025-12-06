@@ -1,14 +1,16 @@
 import type { ReactNode } from "react";
 
+interface LayoutProps {
+  children: ReactNode;
+  types?: ReactNode;
+  etypes?: ReactNode;
+}
+
 export default function WhopDetailLayout({
   children,
   types,
   etypes,
-}: {
-  children: ReactNode;
-  types?: ReactNode;
-  etypes?: ReactNode;
-}) {
+}: LayoutProps) {
   // Mobile-only pull up under the fixed header; desktop unchanged
   return (
     <div className="-mt-12 md:mt-0">

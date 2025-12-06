@@ -1073,62 +1073,77 @@ export default async function DealPage({ params }: { params: { slug: string } })
                 }}
               >
                 <h3 className="text-lg font-bold mb-4">Key Facts</h3>
-                <dl className="dpc-facts-list space-y-3 text-sm">
-                  {whopFormatted.price && (
-                    <>
-                      <dt
-                        className="font-medium"
-                        style={{ color: "var(--text-secondary)" }}
-                      >
-                        Price
-                      </dt>
-                      <dd
-                        className="mb-2 font-semibold"
-                        style={{
-                          color:
-                            whopFormatted.price === "Free"
-                              ? "var(--success-color)"
-                              : "var(--text-color)",
-                        }}
-                      >
-                        {whopFormatted.price}
-                      </dd>
-                    </>
-                  )}
+                {(() => {
+                  const hasPrice = !!whopFormatted.price;
+                  const hasDiscount = !!(firstPromo?.value && firstPromo.value !== "0");
+                  const hasCategory = !!whopFormatted.category;
+                  const hasAnyFact = hasPrice || hasDiscount || hasCategory;
 
-                  {firstPromo?.value && firstPromo.value !== "0" && (
-                    <>
-                      <dt
-                        className="font-medium"
-                        style={{ color: "var(--text-secondary)" }}
-                      >
-                        Discount
-                      </dt>
-                      <dd
-                        className="mb-2 font-semibold"
-                        style={{ color: "var(--accent-color)" }}
-                      >
-                        {firstPromo.value.includes("%") ||
-                        firstPromo.value.includes("$") ||
-                        firstPromo.value.includes("off")
-                          ? firstPromo.value
-                          : `${firstPromo.value}%`}
-                      </dd>
-                    </>
-                  )}
+                  if (!hasAnyFact) {
+                    return (
+                      <p className="text-sm" style={{ color: "var(--text-secondary)" }}>N/A</p>
+                    );
+                  }
 
-                  {whopFormatted.category && (
-                    <>
-                      <dt
-                        className="font-medium"
-                        style={{ color: "var(--text-secondary)" }}
-                      >
-                        Category
-                      </dt>
-                      <dd className="mb-2">{whopFormatted.category}</dd>
-                    </>
-                  )}
-                </dl>
+                  return (
+                    <dl className="dpc-facts-list space-y-3 text-sm">
+                      {hasPrice && (
+                        <>
+                          <dt
+                            className="font-medium"
+                            style={{ color: "var(--text-secondary)" }}
+                          >
+                            Price
+                          </dt>
+                          <dd
+                            className="mb-2 font-semibold"
+                            style={{
+                              color:
+                                whopFormatted.price === "Free"
+                                  ? "var(--success-color)"
+                                  : "var(--text-color)",
+                            }}
+                          >
+                            {whopFormatted.price}
+                          </dd>
+                        </>
+                      )}
+
+                      {hasDiscount && (
+                        <>
+                          <dt
+                            className="font-medium"
+                            style={{ color: "var(--text-secondary)" }}
+                          >
+                            Discount
+                          </dt>
+                          <dd
+                            className="mb-2 font-semibold"
+                            style={{ color: "var(--accent-color)" }}
+                          >
+                            {firstPromo.value.includes("%") ||
+                            firstPromo.value.includes("$") ||
+                            firstPromo.value.includes("off")
+                              ? firstPromo.value
+                              : `${firstPromo.value}%`}
+                          </dd>
+                        </>
+                      )}
+
+                      {hasCategory && (
+                        <>
+                          <dt
+                            className="font-medium"
+                            style={{ color: "var(--text-secondary)" }}
+                          >
+                            Category
+                          </dt>
+                          <dd className="mb-2">{whopFormatted.category}</dd>
+                        </>
+                      )}
+                    </dl>
+                  );
+                })()}
               </div>
 
               {/* 4. Why We Like This Card */}
