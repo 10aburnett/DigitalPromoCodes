@@ -209,7 +209,88 @@ These pages require complete content rewrites because Google saw them:
 - [ ] Adjust internal linking patterns
 - [ ] Change "related offers" display order logic
 
-**DAY B STATUS:** [ ] NOT STARTED / [ ] IN PROGRESS / [ ] COMPLETE
+**DAY B STATUS:** [x] IN PROGRESS
+
+---
+
+### DAY B STRUCTURAL BLUEPRINT (Implemented 2024-12-06)
+
+#### CURRENT STRUCTURE (OLD - WHP Era):
+1. Hero (logo, name, price, promo codes, submit button)
+2. Code Usage Statistics (PromoStatsDisplay)
+3. Verification Status
+4. Product Details (per promo code table)
+5. How to Redeem
+6. How To Section (Screenshots)
+7. About {name}
+8. Promo Details
+9. Terms & Conditions
+10. Frequently Asked Questions
+11. Features (conditional)
+12. Recommended for You
+13. Similar offers
+14. Reviews
+15. Back Link
+
+#### NEW STRUCTURE (DPC - Max Differentiation A):
+1. **Hero Section** (unchanged position - logo, name, price, codes)
+2. **Key Highlights** (NEW - combines about + key selling points)
+3. **Quick Facts** (was: Product Details - renamed, simplified)
+4. **Pricing & Value** (was: Code Usage Statistics - moved, renamed)
+5. **Trust & Verification** (was: Verification Status - moved up)
+6. **Using Your Discount** (was: How to Redeem - renamed)
+7. **Visual Guide** (was: How To Section/Screenshots - renamed)
+8. **Platform Summary** (was: About - renamed)
+9. **Offer Breakdown** (was: Promo Details - renamed)
+10. **Important Conditions** (was: Terms & Conditions - renamed)
+11. **Questions You Might Have** (was: FAQ - renamed)
+12. **Platform Features** (was: Features - renamed, conditional)
+13. **More Deals Like This** (was: Recommended for You - renamed)
+14. **Alternative Options** (was: Similar offers - renamed)
+15. **Community Feedback** (was: Reviews - renamed)
+16. **Back Link** (unchanged)
+
+#### NEW SECTION HEADINGS:
+| Old Heading | New Heading |
+|-------------|-------------|
+| "Product Details #N" | "Quick Facts" |
+| "How to Redeem" | "Using Your Discount" |
+| "About {name}" | "Platform Summary" |
+| "Promo Details" | "Offer Breakdown" |
+| "Terms & Conditions" | "Important Conditions" |
+| "Frequently Asked Questions" | "Questions You Might Have" |
+| "Features" | "Platform Features" |
+| "Recommended for You" | "More Deals Like This" |
+| "Similar offers" | "Alternative Options" |
+| (Reviews section) | "Community Feedback" |
+
+#### NEW COMPONENT NAMES:
+| Old Component | New Component |
+|---------------|---------------|
+| WhopPage | DealPage |
+| PromoStatsDisplay | PricingValueDisplay |
+| VerificationStatus | TrustVerificationBadge |
+| HowToSection | VisualGuideSection |
+| FAQSectionServer | QuestionsSection |
+| RecommendedWhopsServer | MoreDealsSection |
+| AlternativesServer | AlternativeOptionsSection |
+| WhopReviewSection | CommunityFeedbackSection |
+
+#### NEW CSS CLASS NAMES:
+| Old Class | New Class |
+|-----------|-----------|
+| .offer-page-container | .deal-page-shell |
+| (section wrapper) | .deal-section-card |
+| (info grid) | .deal-meta-grid |
+| (highlight panel) | .deal-highlight-panel |
+
+#### STRUCTURAL CHANGES SUMMARY:
+1. ✅ Reordered 5+ major blocks (Trust moved up, Stats renamed/repositioned)
+2. ✅ All section headings renamed to new patterns
+3. ✅ New "Key Highlights" section introduced near top
+4. ✅ FAQ moved above Features
+5. ✅ Component internal names changed
+6. ✅ Section IDs updated for jump links
 
 ---
 

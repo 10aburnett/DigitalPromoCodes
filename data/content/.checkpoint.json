@@ -303,10 +303,7 @@
       "when": "2025-11-10T16:41:06.938Z",
       "why": "synced_from_master"
     },
-    "bundle": {
-      "when": "2025-11-10T16:41:06.938Z",
-      "why": "synced_from_master"
-    },
+    "bundle": true,
     "cashflow-club": {
       "when": "2025-11-10T16:41:06.938Z",
       "why": "synced_from_master"
@@ -5843,10 +5840,7 @@
       "when": "2025-11-10T16:41:06.939Z",
       "why": "synced_from_master"
     },
-    "lifetime": {
-      "when": "2025-11-10T16:41:06.939Z",
-      "why": "synced_from_master"
-    },
+    "lifetime": true,
     "lifetime-subscription": {
       "when": "2025-11-10T16:41:06.939Z",
       "why": "synced_from_master"
@@ -6791,10 +6785,7 @@
       "when": "2025-11-10T16:41:06.939Z",
       "why": "synced_from_master"
     },
-    "monthly": {
-      "when": "2025-11-10T16:41:06.939Z",
-      "why": "synced_from_master"
-    },
+    "monthly": true,
     "mlb-all-access-season-special": {
       "when": "2025-11-10T16:41:06.939Z",
       "why": "synced_from_master"
@@ -7815,10 +7806,7 @@
       "when": "2025-11-10T16:41:06.939Z",
       "why": "synced_from_master"
     },
-    "basic": {
-      "when": "2025-11-10T16:41:06.939Z",
-      "why": "synced_from_master"
-    },
+    "basic": true,
     "bardi-bet": {
       "when": "2025-11-10T16:41:06.939Z",
       "why": "synced_from_master"
@@ -10991,10 +10979,7 @@
       "when": "2025-11-10T16:41:06.940Z",
       "why": "synced_from_master"
     },
-    "telegram": {
-      "when": "2025-11-10T16:41:06.940Z",
-      "why": "synced_from_master"
-    },
+    "telegram": true,
     "subscription-renewal": {
       "when": "2025-11-10T16:41:06.940Z",
       "why": "synced_from_master"
@@ -14771,10 +14756,7 @@
       "when": "2025-11-10T16:41:06.940Z",
       "why": "synced_from_master"
     },
-    "yearly": {
-      "when": "2025-11-10T16:41:06.940Z",
-      "why": "synced_from_master"
-    },
+    "yearly": true,
     "ztradez-life-time": {
       "when": "2025-11-10T16:41:06.940Z",
       "why": "synced_from_master"
@@ -17003,10 +16985,7 @@
       "when": "2025-11-10T16:41:06.941Z",
       "why": "synced_from_master"
     },
-    "pro": {
-      "when": "2025-11-10T16:41:06.941Z",
-      "why": "synced_from_master"
-    },
+    "pro": true,
     "private-section-inner-circle": {
       "when": "2025-11-10T16:41:06.941Z",
       "why": "synced_from_master"
@@ -17267,10 +17246,7 @@
       "when": "2025-11-10T16:41:06.941Z",
       "why": "synced_from_master"
     },
-    "premium": {
-      "when": "2025-11-10T16:41:06.941Z",
-      "why": "synced_from_master"
-    },
+    "premium": true,
     "royalty-hero-premium": {
       "when": "2025-11-10T16:41:06.941Z",
       "why": "synced_from_master"
@@ -17295,10 +17271,7 @@
       "when": "2025-11-10T16:41:06.941Z",
       "why": "synced_from_master"
     },
-    "vip": {
-      "when": "2025-11-10T16:41:06.941Z",
-      "why": "synced_from_master"
-    },
+    "vip": true,
     "tmmb-premium": {
       "when": "2025-11-10T16:41:06.941Z",
       "why": "synced_from_master"
@@ -17571,10 +17544,7 @@
       "when": "2025-11-10T16:41:06.941Z",
       "why": "synced_from_master"
     },
-    "the-bfi-traders-university": {
-      "when": "2025-11-10T16:41:06.941Z",
-      "why": "synced_from_master"
-    },
+    "the-bfi-traders-university": true,
     "yutaka-alpha": {
       "when": "2025-11-10T16:41:06.941Z",
       "why": "synced_from_master"
@@ -17695,10 +17665,7 @@
       "when": "2025-11-10T16:41:06.941Z",
       "why": "synced_from_master"
     },
-    "trading": {
-      "when": "2025-11-10T16:41:06.941Z",
-      "why": "synced_from_master"
-    },
+    "trading": true,
     "nighteye-agency": {
       "when": "2025-11-10T16:41:06.941Z",
       "why": "synced_from_master"
@@ -18195,10 +18162,7 @@
       "when": "2025-11-10T16:41:06.941Z",
       "why": "synced_from_master"
     },
-    "access": {
-      "when": "2025-11-10T16:41:06.941Z",
-      "why": "synced_from_master"
-    },
+    "access": true,
     "scalboost-club": {
       "when": "2025-11-10T16:41:06.941Z",
       "why": "synced_from_master"
@@ -19711,10 +19675,7 @@
       "when": "2025-11-10T16:41:06.941Z",
       "why": "synced_from_master"
     },
-    "elite-coaching-academy": {
-      "when": "2025-11-10T16:41:06.941Z",
-      "why": "synced_from_master"
-    },
+    "elite-coaching-academy": true,
     "mirror-tradinglifetime": {
       "when": "2025-11-10T16:41:06.941Z",
       "why": "synced_from_master"
@@ -20187,10 +20148,7 @@
       "when": "2025-11-10T16:41:06.941Z",
       "why": "synced_from_master"
     },
-    "dodgys-ultimate-course": {
-      "when": "2025-11-10T16:41:06.941Z",
-      "why": "synced_from_master"
-    },
+    "dodgys-ultimate-course": true,
     "social-university": {
       "when": "2025-11-10T16:41:06.941Z",
       "why": "synced_from_master"
@@ -21299,10 +21257,7 @@
       "when": "2025-11-10T16:41:06.941Z",
       "why": "synced_from_master"
     },
-    "annual": {
-      "when": "2025-11-10T16:41:06.941Z",
-      "why": "synced_from_master"
-    },
+    "annual": true,
     "aj-trading-premium": {
       "when": "2025-11-10T16:41:06.941Z",
       "why": "synced_from_master"
@@ -24622,12 +24577,42 @@
     "bill-money-bets": true,
     "bakersbetslips": true,
     "30-million-digital-products": true,
-    "28-day-mobility-program": true
+    "28-day-mobility-program": true,
+    "the-haven": true,
+    "propfellas-vip": true,
+    "owls-full-access": true,
+    "josh-exclusive-vip-access": true,
+    "stellar-aio": true,
+    "scarface-trades-premium": true,
+    "parlayscience-discord-access": true,
+    "trade-with-insight-pro": true,
+    "goat-sports-bets-membership": true,
+    "tms-heavy-hitters-": true,
+    "larrys-lounge-premium": true,
+    "dodgys-dungeon": true,
+    "momentum-monthly": true,
+    "the-haven-pay-with-crypto": true,
+    "ayecon-academy-lifetime-membership": true,
+    "jdub-trades-premium": true,
+    "pj-trades-premium": true,
+    "tms-1-on-whop": true,
+    "goat-ecom-growth": true,
+    "the-yard-dropship-mastermind": true,
+    "flipalert-membership-usa": true,
+    "tms-player-props-": true,
+    "tms-spartan-ai-bot": true,
+    "moementum-university": true,
+    "best-of-both-worlds": true,
+    "tms-exclusive-vip-chat": true,
+    "supercar-income-broker": true,
+    "indicators-vip-lifetime": true,
+    "zwm-gold": true,
+    "supercar-income": true,
+    "stellar-aio-3rd-instance": true,
+    "zwm-lifetime-access": true,
+    "ayecon-academy-monthly-mentorship": true
   },
-  "pending": {
-    "endlich-einfach-umsetzen": 1763292756347,
-    "access-to-all-indicators-": 1763292756356
-  },
+  "pending": {},
   "outPath": "data/content/raw/ai-run-20251104T180924.jsonl",
   "rejPath": "data/content/raw/rejects-20251104T180924.jsonl",
   "runMeta": "data/content/raw/ai-run-20251104T180924.meta.json",

@@ -194,6 +194,26 @@ function hasTrial(price: string | null): boolean {
   return lowerPrice.includes('trial') || lowerPrice.includes('free trial') || lowerPrice.includes('7 days') || lowerPrice.includes('14 days');
 }
 
+// Helper function to format date for sidebar
+function formatDate(iso?: string | null) {
+  if (!iso) return "";
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "";
+  return d.toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
+}
+
+// Helper function to get popularity label based on code count
+function getPopularityLabel(codeCount: number): string {
+  if (codeCount >= 10) return "Very popular";
+  if (codeCount >= 3) return "Growing";
+  if (codeCount >= 1) return "New and active";
+  return "New listing";
+}
+
 // Async component for heavy sections that can be streamed
 async function RecommendedSection({ currentWhopSlug }: { currentWhopSlug: string }) {
   const { items } = await getRecommendations(currentWhopSlug);
@@ -853,17 +873,10 @@ export default async function DealPage({ params }: { params: { slug: string } })
                     <span className="mr-2 font-semibold">1.</span>
                     <span>Click &quot;Reveal Code&quot; above to visit {whopFormatted.name} and get your exclusive offer</span>
                   </li>
-                  {hasPromoCode(whopFormatted.name) ? (
-                    <li className="flex items-start">
-                      <span className="mr-2 font-semibold">2.</span>
-                      <span>Copy the revealed promo code and enter it during checkout</span>
-                    </li>
-                  ) : (
-                    <li className="flex items-start">
-                      <span className="mr-2 font-semibold">2.</span>
-                      <span>No code needed - the discount will be automatically applied</span>
-                    </li>
-                  )}
+                  <li className="flex items-start">
+                    <span className="mr-2 font-semibold">2.</span>
+                    <span>Follow the instructions on the checkout page to apply your savings</span>
+                  </li>
                   <li className="flex items-start">
                     <span className="mr-2 font-semibold">3.</span>
                     <span>Complete your purchase to access the exclusive content</span>
@@ -974,66 +987,249 @@ export default async function DealPage({ params }: { params: { slug: string } })
           <aside className="dpc-offer-sidebar w-full lg:w-80 flex-shrink-0">
             <div className="lg:sticky lg:top-24 space-y-6">
 
-              {/* Key Facts Card - Only show Discount/Codes when hasPromoCodes */}
-              <div className="dpc-key-facts rounded-xl px-6 py-5 border shadow-sm" style={{ backgroundColor: 'var(--background-secondary)', borderColor: 'var(--border-color)' }}>
+              {/* 1. Product Summary Card */}
+              <div
+                className="dpc-summary-card rounded-xl px-6 py-5 border shadow-sm"
+                style={{
+                  backgroundColor: "var(--background-secondary)",
+                  borderColor: "var(--border-color)",
+                }}
+              >
+                <h3 className="text-lg font-bold mb-3">Product Summary</h3>
+                <dl className="space-y-2 text-sm">
+                  <div>
+                    <dt
+                      className="font-medium"
+                      style={{ color: "var(--text-secondary)" }}
+                    >
+                      Category
+                    </dt>
+                    <dd>{whopFormatted.category ?? "Not specified"}</dd>
+                  </div>
+
+                  <div>
+                    <dt
+                      className="font-medium"
+                      style={{ color: "var(--text-secondary)" }}
+                    >
+                      Listing type
+                    </dt>
+                    <dd>
+                      {whopFormatted.price === "Free"
+                        ? "Free digital resource"
+                        : "Paid digital product"}
+                    </dd>
+                  </div>
+
+                  <div>
+                    <dt
+                      className="font-medium"
+                      style={{ color: "var(--text-secondary)" }}
+                    >
+                      Last checked
+                    </dt>
+                    <dd>
+                      {verificationData?.best?.computedAt
+                        ? formatDate(verificationData.best.computedAt)
+                        : "Recently updated"}
+                    </dd>
+                  </div>
+
+                  <div>
+                    <dt
+                      className="font-medium"
+                      style={{ color: "var(--text-secondary)" }}
+                    >
+                      Popularity
+                    </dt>
+                    <dd>{getPopularityLabel(whopFormatted.promoCodes.length)}</dd>
+                  </div>
+                </dl>
+              </div>
+
+              {/* 2. Usage Statistics - moved ABOVE Key Facts */}
+              <div
+                className="dpc-stats-card rounded-xl px-6 py-5 border shadow-sm"
+                style={{
+                  backgroundColor: "var(--background-secondary)",
+                  borderColor: "var(--border-color)",
+                }}
+              >
+                <ServerSectionGuard label="PromoUsageStats">
+                  <PromoStatsDisplay
+                    whopId={whopFormatted.id}
+                    slug={params.slug}
+                    initialStats={whopFormatted.usageStats}
+                  />
+                </ServerSectionGuard>
+              </div>
+
+              {/* 3. Key Facts Card - Only show Discount/Codes when hasPromoCodes */}
+              <div
+                className="dpc-key-facts rounded-xl px-6 py-5 border shadow-sm"
+                style={{
+                  backgroundColor: "var(--background-secondary)",
+                  borderColor: "var(--border-color)",
+                }}
+              >
                 <h3 className="text-lg font-bold mb-4">Key Facts</h3>
                 <dl className="dpc-facts-list space-y-3 text-sm">
                   {whopFormatted.price && (
                     <>
-                      <dt className="font-medium" style={{ color: 'var(--text-secondary)' }}>Price</dt>
-                      <dd className="mb-2 font-semibold" style={{ color: whopFormatted.price === 'Free' ? 'var(--success-color)' : 'var(--text-color)' }}>
+                      <dt
+                        className="font-medium"
+                        style={{ color: "var(--text-secondary)" }}
+                      >
+                        Price
+                      </dt>
+                      <dd
+                        className="mb-2 font-semibold"
+                        style={{
+                          color:
+                            whopFormatted.price === "Free"
+                              ? "var(--success-color)"
+                              : "var(--text-color)",
+                        }}
+                      >
                         {whopFormatted.price}
                       </dd>
                     </>
                   )}
-                  {hasPromoCodes && firstPromo?.value && firstPromo.value !== '0' && (
+
+                  {firstPromo?.value && firstPromo.value !== "0" && (
                     <>
-                      <dt className="font-medium" style={{ color: 'var(--text-secondary)' }}>Discount</dt>
-                      <dd className="mb-2 font-semibold" style={{ color: 'var(--accent-color)' }}>
-                        {firstPromo.value.includes('%') || firstPromo.value.includes('$') || firstPromo.value.includes('off')
+                      <dt
+                        className="font-medium"
+                        style={{ color: "var(--text-secondary)" }}
+                      >
+                        Discount
+                      </dt>
+                      <dd
+                        className="mb-2 font-semibold"
+                        style={{ color: "var(--accent-color)" }}
+                      >
+                        {firstPromo.value.includes("%") ||
+                        firstPromo.value.includes("$") ||
+                        firstPromo.value.includes("off")
                           ? firstPromo.value
                           : `${firstPromo.value}%`}
                       </dd>
                     </>
                   )}
+
                   {whopFormatted.category && (
                     <>
-                      <dt className="font-medium" style={{ color: 'var(--text-secondary)' }}>Category</dt>
+                      <dt
+                        className="font-medium"
+                        style={{ color: "var(--text-secondary)" }}
+                      >
+                        Category
+                      </dt>
                       <dd className="mb-2">{whopFormatted.category}</dd>
-                    </>
-                  )}
-                  {hasPromoCodes && (
-                    <>
-                      <dt className="font-medium" style={{ color: 'var(--text-secondary)' }}>Codes Available</dt>
-                      <dd className="mb-2">{whopFormatted.promoCodes.length}</dd>
                     </>
                   )}
                 </dl>
               </div>
 
-              {/* Discount Summary Cards - Only show when hasPromoCodes */}
+              {/* 4. Why We Like This Card */}
+              <div
+                className="dpc-why-card rounded-xl px-6 py-5 border shadow-sm"
+                style={{
+                  backgroundColor: "var(--background-secondary)",
+                  borderColor: "var(--border-color)",
+                }}
+              >
+                <h3 className="text-lg font-bold mb-3">Why we like this</h3>
+                <ul
+                  className="list-disc pl-5 space-y-1 text-sm"
+                  style={{ color: "var(--text-secondary)" }}
+                >
+                  <li>
+                    Solid option in the{" "}
+                    {whopFormatted.category ?? "online"} space.
+                  </li>
+                  <li>
+                    Clear value for users looking for {promoTitle.toLowerCase()}.
+                  </li>
+                  <li>
+                    Simple sign-up flow with transparent pricing from{" "}
+                    {whopFormatted.name}.
+                  </li>
+                  <li>
+                    Good choice if you want to try something new before
+                    committing long term.
+                  </li>
+                </ul>
+              </div>
+
+              {/* 5. Mini Alternatives Card */}
+              <div
+                className="dpc-mini-alternatives rounded-xl px-6 py-5 border shadow-sm"
+                style={{
+                  backgroundColor: "var(--background-secondary)",
+                  borderColor: "var(--border-color)",
+                }}
+              >
+                <h3 className="text-lg font-bold mb-2">Top alternatives</h3>
+                <p
+                  className="text-sm mb-3"
+                  style={{ color: "var(--text-secondary)" }}
+                >
+                  Not sure if {whopFormatted.name} is the right fit? We&apos;ve
+                  listed a few similar deals further down this page.
+                </p>
+                <a
+                  href="#alternatives"
+                  className="text-sm font-medium hover:underline"
+                  style={{ color: "var(--accent-color)" }}
+                >
+                  Jump to alternatives
+                </a>
+              </div>
+
+              {/* 6. Discount Summary Cards - Only show when hasPromoCodes */}
               {hasPromoCodes && whopFormatted.promoCodes.map((promo, idx) => {
-                const isCommunity = promo.id.startsWith('community_');
+                const isCommunity = promo.id.startsWith("community_");
                 return (
-                  <div key={promo.id} className="dpc-discount-card rounded-xl px-6 py-5 border" style={{ backgroundColor: 'var(--background-secondary)', borderColor: 'var(--border-color)' }}>
+                  <div
+                    key={promo.id}
+                    className="dpc-discount-card rounded-xl px-6 py-5 border"
+                    style={{
+                      backgroundColor: "var(--background-secondary)",
+                      borderColor: "var(--border-color)",
+                    }}
+                  >
                     <div className="flex items-center gap-2 mb-3">
                       <h4 className="text-base font-bold">Code #{idx + 1}</h4>
-                      <span className="text-xs px-2 py-0.5 rounded" style={{
-                        backgroundColor: isCommunity ? 'var(--accent-color)' : 'var(--background-color)',
-                        color: isCommunity ? 'white' : 'var(--text-color)',
-                        border: !isCommunity ? '1px solid var(--border-color)' : 'none'
-                      }}>
-                        {isCommunity ? 'Community' : 'Original'}
+                      <span
+                        className="text-xs px-2 py-0.5 rounded"
+                        style={{
+                          backgroundColor: isCommunity
+                            ? "var(--accent-color)"
+                            : "var(--background-color)",
+                          color: isCommunity ? "white" : "var(--text-color)",
+                          border: !isCommunity
+                            ? "1px solid var(--border-color)"
+                            : "none",
+                        }}
+                      >
+                        {isCommunity ? "Community" : "Original"}
                       </span>
                     </div>
                     <dl className="text-sm space-y-2">
-                      {promo.value && promo.value !== '0' && (
+                      {promo.value && promo.value !== "0" && (
                         <>
                           <dt className="sr-only">Value</dt>
-                          <dd className="font-semibold" style={{ color: 'var(--accent-color)' }}>
-                            {promo.value.includes('%') || promo.value.includes('$') || promo.value.includes('off')
+                          <dd
+                            className="font-semibold"
+                            style={{ color: "var(--accent-color)" }}
+                          >
+                            {promo.value.includes("%") ||
+                            promo.value.includes("$") ||
+                            promo.value.includes("off")
                               ? promo.value
-                              : `${promo.value}%`} off
+                              : `${promo.value}%`}{" "}
+                            off
                           </dd>
                         </>
                       )}
@@ -1042,23 +1238,12 @@ export default async function DealPage({ params }: { params: { slug: string } })
                 );
               })}
 
-              {/* Verification Info */}
+              {/* 7. Verification Info */}
               <div className="dpc-verification-card">
                 <ServerSectionGuard label="VerificationStatus">
                   {whopFormatted.freshnessData && (
                     <VerificationStatus freshnessData={whopFormatted.freshnessData} />
                   )}
-                </ServerSectionGuard>
-              </div>
-
-              {/* Usage Statistics */}
-              <div className="dpc-stats-card">
-                <ServerSectionGuard label="PromoUsageStats">
-                  <PromoStatsDisplay
-                    whopId={whopFormatted.id}
-                    slug={params.slug}
-                    initialStats={whopFormatted.usageStats}
-                  />
                 </ServerSectionGuard>
               </div>
             </div>
@@ -1068,7 +1253,7 @@ export default async function DealPage({ params }: { params: { slug: string } })
         {/* Related Content Sections */}
         <div className="dpc-related-content w-full space-y-8 mt-12">
           {/* Other Options */}
-          <section className="dpc-offer-alternatives max-w-4xl mx-auto">
+          <section id="alternatives" className="dpc-offer-alternatives max-w-4xl mx-auto">
             <Suspense fallback={<SectionSkeleton />}>
               <AlternativesSection currentWhopSlug={dbSlug} />
             </Suspense>

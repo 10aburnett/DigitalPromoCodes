@@ -1,0 +1,128 @@
+[
+  {
+    "type": "faq_question_start",
+    "text": "Who offers assistance?",
+    "count": 35,
+    "example": "josh-exclusive-vip-access"
+  },
+  {
+    "type": "howto_step",
+    "text": "Go to the official Whop",
+    "count": 26,
+    "example": "stellar-aio"
+  },
+  {
+    "type": "faq_question_start",
+    "text": "Is it possible to",
+    "count": 24,
+    "example": "josh-exclusive-vip-access"
+  },
+  {
+    "type": "howto_step",
+    "text": "Check the description, plan specifics,",
+    "count": 22,
+    "example": "stellar-aio"
+  },
+  {
+    "type": "howto_step",
+    "text": "Go to your dashboard and",
+    "count": 22,
+    "example": "josh-exclusive-vip-access"
+  },
+  {
+    "type": "faq_question_start",
+    "text": "Are there any discounts",
+    "count": 19,
+    "example": "josh-exclusive-vip-access"
+  },
+  {
+    "type": "faq_question_start",
+    "text": "Is it feasible to",
+    "count": 14,
+    "example": "trade-with-insight-pro"
+  },
+  {
+    "type": "howto_step",
+    "text": "Verify payment and finish any",
+    "count": 12,
+    "example": "josh-exclusive-vip-access"
+  },
+  {
+    "type": "promodetails_item",
+    "text": "Anticipate one code per",
+    "count": 12,
+    "example": "owls-full-access"
+  },
+  {
+    "type": "howto_step",
+    "text": "Choose a plan that meets",
+    "count": 10,
+    "example": "owls-full-access"
+  },
+  {
+    "type": "faq_question_start",
+    "text": "What’s the process to",
+    "count": 8,
+    "example": "josh-exclusive-vip-access"
+  },
+  {
+    "type": "promodetails_item",
+    "text": "Anticipate one code for",
+    "count": 7,
+    "example": "josh-exclusive-vip-access"
+  },
+  {
+    "type": "promodetails_item",
+    "text": "Verify if the promotion",
+    "count": 7,
+    "example": "tms-1-on-whop"
+  },
+  {
+    "type": "promodetails_item",
+    "text": "Examine VAT/GST and currency",
+    "count": 7,
+    "example": "goat-ecom-growth"
+  },
+  {
+    "type": "howto_step",
+    "text": "Choose a plan that suits",
+    "count": 6,
+    "example": "stellar-aio"
+  },
+  {
+    "type": "howto_step",
+    "text": "Go to the dashboard and",
+    "count": 6,
+    "example": "trade-with-insight-pro"
+  },
+  {
+    "type": "promodetails_item",
+    "text": "Anticipate a single code",
+    "count": 6,
+    "example": "trade-with-insight-pro"
+  },
+  {
+    "type": "faq_question_start",
+    "text": "What is the procedure",
+    "count": 5,
+    "example": "larrys-lounge-premium"
+  },
+  {
+    "type": "howto_step",
+    "text": "Navigate to the official Whop",
+    "count": 5,
+    "example": "larrys-lounge-premium"
+  },
+  {
+    "type": "faq_question_start",
+    "text": "What is the process",
+    "count": 5,
+    "example": "premium"
+  },
+  {
+    "type": "howto_step",
+    "text": "Verify payment and finalize any",
+    "count": 5,
+    "example": "jdub-trades-premium"
+  }
+]
