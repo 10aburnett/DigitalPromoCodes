@@ -207,7 +207,7 @@ const WhopReviewSection: React.FC<WhopReviewSectionProps> = ({ whopId, whopName,
 
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-6">
         <div>
-          <h2 className="text-xl sm:text-2xl font-bold mb-2" style={{ color: 'var(--text-color)' }}>User Reviews</h2>
+          <h2 className="text-xl sm:text-2xl font-bold mb-2" style={{ color: 'var(--text-color)' }}>Community Feedback</h2>
           {reviewCount > 0 ? (
             <div className="flex items-center gap-3">
               <div className="flex items-center">

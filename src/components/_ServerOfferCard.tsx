@@ -23,7 +23,7 @@ export function ServerWhopCard(props: {
   const src = normalizeImg(imageUrl);
 
   return (
-    <Link href={`/whop/${slug}`} className="block rounded-lg border p-4 hover:opacity-90 transition"
+    <Link href={`/offer/${slug}`} className="block rounded-lg border p-4 hover:opacity-90 transition"
       style={{ borderColor: 'var(--border-color)', backgroundColor: 'var(--background-color)' }}>
       <div className="flex gap-3 items-center">
         <div className="w-12 h-12 rounded-md overflow-hidden bg-[var(--background-secondary)] shrink-0">

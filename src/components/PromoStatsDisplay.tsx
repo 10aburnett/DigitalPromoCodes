@@ -261,7 +261,7 @@ const PromoStatsDisplay = forwardRef<PromoStatsDisplayHandle, PromoStatsDisplayP
     return (
       <div className="rounded-lg p-4 border" style={{ backgroundColor: 'var(--background-secondary)', borderColor: 'var(--border-color)' }}>
         <h3 className="text-lg font-semibold mb-3" style={{ color: 'var(--text-color)' }}>
-          Code Usage Statistics
+          Usage Statistics
         </h3>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

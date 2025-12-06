@@ -33,7 +33,7 @@ function fmtISO(value: string | Date | null | undefined) {
 export default function VerificationStatus({ freshnessData }: VerificationStatusProps) {
   return (
     <section className="rounded-xl px-7 py-6 sm:p-8 border transition-theme mt-6" style={{ backgroundColor: 'var(--background-secondary)', borderColor: 'var(--border-color)' }}>
-      <h2 className="text-xl sm:text-2xl font-bold mb-4">Verification Status</h2>
+      <h2 className="text-xl sm:text-2xl font-bold mb-4">Verification Info</h2>
 
       {/* Last Updated */}
       <div className="mb-4 p-3 rounded-lg" style={{ backgroundColor: 'var(--background-color)' }}>

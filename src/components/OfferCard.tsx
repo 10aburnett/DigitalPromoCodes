@@ -178,7 +178,7 @@ export default function OfferCard({ promo, priority = false }: OfferCardProps) {
       entries.forEach((entry) => {
         if (entry.isIntersecting && !didPrefetch) {
           // Trigger prefetch by simulating mouseover on the link
-          const linkElement = cardElement.querySelector('a[href^="/whop/"], a[href*="/whop/"]') as HTMLAnchorElement;
+          const linkElement = cardElement.querySelector('a[href^="/offer/"], a[href*="/offer/"]') as HTMLAnchorElement;
           if (linkElement) {
             linkElement.dispatchEvent(new MouseEvent('mouseover', { bubbles: true }));
             didPrefetch = true;

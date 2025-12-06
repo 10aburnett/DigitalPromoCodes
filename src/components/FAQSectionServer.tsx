@@ -118,7 +118,7 @@ export default function FAQSectionServer({ faqs = [], faqContent, whopName }: FA
       )}
 
       <section className="rounded-xl px-7 py-6 sm:p-8 border transition-theme" style={{ backgroundColor: 'var(--background-secondary)', borderColor: 'var(--border-color)' }}>
-        <h2 className="text-xl sm:text-2xl font-bold mb-4">Frequently Asked Questions</h2>
+        <h2 className="text-xl sm:text-2xl font-bold mb-4">Common Questions</h2>
         <div className="space-y-3">
           {safeFaqs.map((faq) => (
             <details

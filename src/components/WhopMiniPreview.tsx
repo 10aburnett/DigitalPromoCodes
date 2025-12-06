@@ -21,7 +21,7 @@ export default function WhopMiniPreview({
   ratingCount = 0,
   isExploreLink = false
 }: WhopMiniPreviewProps) {
-  const href = `/whop/${encodeURIComponent(slug)}`;
+  const href = `/offer/${encodeURIComponent(slug)}`;
 
   // Compute display values with safe fallbacks
   const badge = (category && category.trim()) ? category : 'Exclusive Access';

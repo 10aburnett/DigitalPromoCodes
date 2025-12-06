@@ -29,7 +29,7 @@ export default function AltsIsland({ items, exploreHref, replaceId }: { items: I
         {items.map((w, i) => (
           <li key={`${w.slug}#${i}`} className="block rounded-xl border p-4 hover:border-[var(--accent-color)] transition">
             <a
-              href={`/whop/${encodeURIComponent(w.slug)}`}
+              href={`/offer/${encodeURIComponent(w.slug)}`}
               className="flex gap-3 items-center focus-visible:ring-2 focus-visible:ring-[var(--accent-color)]"
             >
               <img

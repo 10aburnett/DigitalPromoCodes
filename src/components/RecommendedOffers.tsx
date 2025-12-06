@@ -394,7 +394,7 @@ export default function RecommendedWhops({ currentWhopSlug }: RecommendedWhopsPr
               Explore another{explore.category ? ` in ${explore.category}` : ''}:
             </span>
             <Link
-              href={`/whop/${explore.slug}`}
+              href={`/offer/${explore.slug}`}
               className="inline-flex items-center font-medium hover:opacity-80 transition-opacity"
               style={{ color: 'var(--accent-color)' }}
             >
@@ -436,7 +436,7 @@ export default function RecommendedWhops({ currentWhopSlug }: RecommendedWhopsPr
               "itemListElement": recommendations.map((whop, index) => ({
                 "@type": "ListItem",
                 "position": index + 1,
-                "url": `${getBaseUrl()}/whop/${whop.slug}`
+                "url": `${getBaseUrl()}/offer/${whop.slug}`
               }))
             })
           }}

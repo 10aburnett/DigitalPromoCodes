@@ -36,8 +36,8 @@ export default function AlternativesServer({
   if (!list.length && !explore) return null;
 
   return (
-    <section aria-label="Similar offers" className="mt-8">
-      <h2 className="text-xl font-bold mb-4">Similar offers</h2>
+    <section aria-label="Other options" className="mt-8">
+      <h2 className="text-xl font-bold mb-4">Other Options</h2>
       <ul className="flex flex-col gap-4" suppressHydrationWarning>
         {list.map((w, i) => (
           <WhopMiniPreview

@@ -22,8 +22,8 @@ export default function RecommendedWhopsServer({ items }: { items?: Item[] }) {
   if (!list.length) return null;
 
   return (
-    <section aria-label="Recommended for you" className="mt-8">
-      <h2 className="text-xl font-bold mb-4">Recommended for You</h2>
+    <section aria-label="You might also like" className="mt-8">
+      <h2 className="text-xl font-bold mb-4">You Might Also Like</h2>
       <ul className="flex flex-col gap-4" suppressHydrationWarning>
         {list.map((w, i) => (
           <WhopMiniPreview

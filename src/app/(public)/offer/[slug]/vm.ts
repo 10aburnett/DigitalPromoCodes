@@ -1,4 +1,4 @@
-// src/app/(public)/whop/[slug]/vm.ts
+// src/app/(public)/offer/[slug]/vm.ts
 // IMPORTANT: This function reuses existing data paths and includes DB access for SSR.
 // This is acceptable since this is view-model mapping, not schema generation.
 import 'server-only';

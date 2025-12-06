@@ -69,7 +69,7 @@ export function renderAlternativesHTML(alternatives: Alternative[], explore: Exp
   if (!alternatives?.length) return '';
 
   const alternativeItems = alternatives.map((whop, index) => {
-    const href = `/whop/${encodeURIComponent(whop.slug)}`;
+    const href = `/offer/${encodeURIComponent(whop.slug)}`;
     const logoUrl = resolveLogoUrl(whop.logo);
     const loading = index < 2 ? 'eager' : 'lazy';
     const promoText = getPromoText(whop);
@@ -99,7 +99,7 @@ export function renderAlternativesHTML(alternatives: Alternative[], explore: Exp
     <span style="color:var(--text-secondary)">
       Explore another${explore.category ? ` in ${esc(explore.category)}` : ''}:
     </span>
-    <a href="/whop/${encodeURIComponent(explore.slug)}" class="font-medium hover:opacity-80 transition-opacity" style="color:var(--accent-color)">
+    <a href="/offer/${encodeURIComponent(explore.slug)}" class="font-medium hover:opacity-80 transition-opacity" style="color:var(--accent-color)">
       ${esc(explore.name)}
     </a>
   </div>

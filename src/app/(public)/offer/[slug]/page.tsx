@@ -448,7 +448,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   }
 }
 
-export default async function WhopPage({ params }: { params: { slug: string } }) {
+export default async function DealPage({ params }: { params: { slug: string } }) {
   const raw = params.slug || '';
   const decoded = decodeURIComponent(raw);  // Decode before normalizing
   // Use lowercase decoded slug for DB lookup (DB stores literal colons, not %3a)
@@ -805,35 +805,39 @@ export default async function WhopPage({ params }: { params: { slug: string } })
             </div>
           </div>
 
-          {/* Code Usage Statistics - Server Rendered (immediately after Reveal Code) */}
-          <ServerSectionGuard label="PromoUsageStats">
-            <PromoStatsDisplay
-              whopId={whopFormatted.id}
-              slug={params.slug}
-              initialStats={whopFormatted.usageStats}
-            />
-          </ServerSectionGuard>
+          {/* 1. Overview - Was: About Section */}
+          {(() => {
+            const aboutVal =
+              isMeaningful(whopFormatted.aboutContent) ? whopFormatted.aboutContent
+              : (isMeaningful(whopFormatted.description) ? whopFormatted.description : null);
 
-          {/* Verification Status - Server Rendered (separate section) */}
-          <ServerSectionGuard label="VerificationStatus">
-            {whopFormatted.freshnessData && (
-              <VerificationStatus freshnessData={whopFormatted.freshnessData} />
-            )}
-          </ServerSectionGuard>
+            return aboutVal && (
+              <section className="rounded-xl px-7 py-6 sm:p-8 border transition-theme" style={{ backgroundColor: 'var(--background-secondary)', borderColor: 'var(--border-color)' }}>
+                <h2 className="text-xl sm:text-2xl font-bold mb-4">Overview</h2>
+                <div className="text-base sm:text-lg leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+                  {looksLikeHtml(aboutVal) ? (
+                    <div
+                      className="prose prose-sm max-w-none whitespace-break-spaces prose-headings:text-current prose-p:text-current prose-ul:text-current prose-ol:text-current prose-li:text-current prose-strong:text-current prose-em:text-current prose-a:text-blue-600 hover:prose-a:text-blue-700"
+                      dangerouslySetInnerHTML={{ __html: aboutVal }}
+                    />
+                  ) : (
+                    <RenderPlain text={aboutVal} />
+                  )}
+                </div>
+              </section>
+            );
+          })()}
 
-          {/* Product Details for Each Promo Code */}
+          {/* 2. Discount Summary - Was: Product Details */}
           {whopFormatted.promoCodes.map((promo, globalIndex) => {
-            // Calculate the promo number based on whether it's community or original
             const isCommunity = promo.id.startsWith('community_');
             const communityCount = whopFormatted.promoCodes.filter(p => p.id.startsWith('community_')).length;
 
             let promoNumber;
             if (isCommunity) {
-              // Community codes get numbers 1, 2, 3... based on their position in community codes
               const communityIndex = whopFormatted.promoCodes.filter(p => p.id.startsWith('community_')).indexOf(promo);
               promoNumber = communityIndex + 1;
             } else {
-              // Original codes continue numbering after community codes
               const originalIndex = whopFormatted.promoCodes.filter(p => !p.id.startsWith('community_')).indexOf(promo);
               promoNumber = communityCount + originalIndex + 1;
             }
@@ -841,7 +845,7 @@ export default async function WhopPage({ params }: { params: { slug: string } })
             return (
               <section key={promo.id} className="rounded-xl px-7 py-6 sm:p-8 border transition-theme" style={{ backgroundColor: 'var(--background-secondary)', borderColor: 'var(--border-color)' }}>
                 <div className="flex items-center gap-3 mb-4">
-                  <h2 className="text-xl sm:text-2xl font-bold">Product Details #{promoNumber}</h2>
+                  <h2 className="text-xl sm:text-2xl font-bold">Discount Summary #{promoNumber}</h2>
                   <span className="text-sm px-2 py-1 rounded"
                         style={{
                           backgroundColor: isCommunity ? 'var(--accent-color)' : 'var(--background-color)',
@@ -860,11 +864,9 @@ export default async function WhopPage({ params }: { params: { slug: string } })
                           <td className="py-3 px-4" style={{ backgroundColor: 'var(--background-secondary)' }}>
                             {(() => {
                               const discount = promo.value;
-                              // If discount already contains $, %, or 'off', return as-is
                               if (discount.includes('$') || discount.includes('%') || discount.includes('off')) {
                                 return discount;
                               }
-                              // Otherwise add % symbol for percentage discounts
                               return `${discount}%`;
                             })()}
                           </td>
@@ -897,13 +899,29 @@ export default async function WhopPage({ params }: { params: { slug: string } })
             );
           })}
 
-          {/* How to Redeem Section */}
+          {/* 3. Verification Info - Was: Verification Status */}
+          <ServerSectionGuard label="VerificationStatus">
+            {whopFormatted.freshnessData && (
+              <VerificationStatus freshnessData={whopFormatted.freshnessData} />
+            )}
+          </ServerSectionGuard>
+
+          {/* 4. Usage Statistics - Was: Code Usage Statistics */}
+          <ServerSectionGuard label="PromoUsageStats">
+            <PromoStatsDisplay
+              whopId={whopFormatted.id}
+              slug={params.slug}
+              initialStats={whopFormatted.usageStats}
+            />
+          </ServerSectionGuard>
+
+          {/* 5. Redemption Steps - Was: How to Redeem */}
           <section className="rounded-xl px-7 py-6 sm:p-8 border transition-theme" style={{ backgroundColor: 'var(--background-secondary)', borderColor: 'var(--border-color)' }}>
-            <h2 className="text-xl sm:text-2xl font-bold mb-4">How to Redeem</h2>
+            <h2 className="text-xl sm:text-2xl font-bold mb-4">Redemption Steps</h2>
             {isMeaningful(whopFormatted.howToRedeemContent) ? (
               <div className="text-base sm:text-lg leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
                 {looksLikeHtml(whopFormatted.howToRedeemContent!) ? (
-                  <div 
+                  <div
                     className="prose prose-sm max-w-none whitespace-break-spaces prose-headings:text-current prose-p:text-current prose-ul:text-current prose-ol:text-current prose-li:text-current prose-strong:text-current prose-em:text-current prose-a:text-blue-600 hover:prose-a:text-blue-700"
                     dangerouslySetInnerHTML={{ __html: whopFormatted.howToRedeemContent! }}
                   />
@@ -940,50 +958,13 @@ export default async function WhopPage({ params }: { params: { slug: string } })
             )}
           </section>
 
-          {/* How To Section - Screenshots and SEO */}
+          {/* 6. Deal Specifics - Was: Promo Details */}
           <section className="rounded-xl px-7 py-6 sm:p-8 border transition-theme" style={{ backgroundColor: 'var(--background-secondary)', borderColor: 'var(--border-color)' }}>
-            <HowToSection
-              slug={params.slug}
-              brand={whopFormatted.name}
-              currency={extractCurrency(whopFormatted.price)}
-              hasTrial={hasTrial(whopFormatted.price)}
-              lastTestedISO={verificationData?.best?.computedAt ?? null}
-              beforeCents={verificationData?.best?.beforeCents ?? null}
-              afterCents={verificationData?.best?.afterCents ?? null}
-            />
-          </section>
-
-
-          {/* About Section - Smart fallback: aboutContent first, then description */}
-          {(() => {
-            const aboutVal =
-              isMeaningful(whopFormatted.aboutContent) ? whopFormatted.aboutContent
-              : (isMeaningful(whopFormatted.description) ? whopFormatted.description : null);
-            
-            return aboutVal && (
-              <section className="rounded-xl px-7 py-6 sm:p-8 border transition-theme" style={{ backgroundColor: 'var(--background-secondary)', borderColor: 'var(--border-color)' }}>
-                <h2 className="text-xl sm:text-2xl font-bold mb-4">About {whopFormatted.name}</h2>
-                <div className="text-base sm:text-lg leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
-                  {looksLikeHtml(aboutVal) ? (
-                    <div 
-                      className="prose prose-sm max-w-none whitespace-break-spaces prose-headings:text-current prose-p:text-current prose-ul:text-current prose-ol:text-current prose-li:text-current prose-strong:text-current prose-em:text-current prose-a:text-blue-600 hover:prose-a:text-blue-700"
-                      dangerouslySetInnerHTML={{ __html: aboutVal }}
-                    />
-                  ) : (
-                    <RenderPlain text={aboutVal} />
-                  )}
-                </div>
-              </section>
-            );
-          })()}
-
-          {/* Promo Details Section */}
-          <section className="rounded-xl px-7 py-6 sm:p-8 border transition-theme" style={{ backgroundColor: 'var(--background-secondary)', borderColor: 'var(--border-color)' }}>
-            <h2 className="text-xl sm:text-2xl font-bold mb-4">Promo Details</h2>
+            <h2 className="text-xl sm:text-2xl font-bold mb-4">Deal Specifics</h2>
             {isMeaningful(whopFormatted.promoDetailsContent) ? (
               <div className="text-base sm:text-lg leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
                 {looksLikeHtml(whopFormatted.promoDetailsContent!) ? (
-                  <div 
+                  <div
                     className="prose prose-sm max-w-none whitespace-break-spaces prose-headings:text-current prose-p:text-current prose-ul:text-current prose-ol:text-current prose-li:text-current prose-strong:text-current prose-em:text-current prose-a:text-blue-600 hover:prose-a:text-blue-700"
                     dangerouslySetInnerHTML={{ __html: whopFormatted.promoDetailsContent! }}
                   />
@@ -999,7 +980,7 @@ export default async function WhopPage({ params }: { params: { slug: string } })
                     Get exclusive access and special discounts with our promo code.
                   </p>
                 </div>
-                
+
                 {/* Promo Type Badge */}
                 <div className="flex flex-wrap gap-2">
                   <span className="px-3 py-1 rounded-full text-sm font-medium" style={{ backgroundColor: 'var(--background-color)', color: 'var(--accent-color)' }}>
@@ -1010,13 +991,50 @@ export default async function WhopPage({ params }: { params: { slug: string } })
             )}
           </section>
 
-          {/* Terms & Conditions */}
+          {/* 7. What's Included - Was: Features */}
+          {isMeaningful(whopFormatted.featuresContent) && (
+            <section className="rounded-xl px-7 py-6 sm:p-8 border transition-theme" style={{ backgroundColor: 'var(--background-secondary)', borderColor: 'var(--border-color)' }}>
+              <h2 className="text-xl sm:text-2xl font-bold mb-4">What's Included</h2>
+              <div className="text-base sm:text-lg leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+                {looksLikeHtml(whopFormatted.featuresContent!) ? (
+                  <div
+                    className="prose prose-sm max-w-none whitespace-break-spaces prose-headings:text-current prose-p:text-current prose-ul:text-current prose-ol:text-current prose-li:text-current prose-strong:text-current prose-em:text-current prose-a:text-blue-600 hover:prose-a:text-blue-700"
+                    dangerouslySetInnerHTML={{ __html: whopFormatted.featuresContent! }}
+                  />
+                ) : (
+                  <RenderPlain text={whopFormatted.featuresContent!} />
+                )}
+              </div>
+            </section>
+          )}
+
+          {/* 8. How To Section - Screenshots and SEO (keeps internal heading) */}
           <section className="rounded-xl px-7 py-6 sm:p-8 border transition-theme" style={{ backgroundColor: 'var(--background-secondary)', borderColor: 'var(--border-color)' }}>
-            <h2 className="text-xl sm:text-2xl font-bold mb-4">Terms & Conditions</h2>
+            <HowToSection
+              slug={params.slug}
+              brand={whopFormatted.name}
+              currency={extractCurrency(whopFormatted.price)}
+              hasTrial={hasTrial(whopFormatted.price)}
+              lastTestedISO={verificationData?.best?.computedAt ?? null}
+              beforeCents={verificationData?.best?.beforeCents ?? null}
+              afterCents={verificationData?.best?.afterCents ?? null}
+            />
+          </section>
+
+          {/* 9. Common Questions - Was: FAQ */}
+          <FAQSectionServer
+            faqContent={whopFormatted.faqContent}
+            faqs={fallbackFaqData}
+            whopName={whopFormatted.name}
+          />
+
+          {/* 10. Fine Print - Was: Terms & Conditions */}
+          <section className="rounded-xl px-7 py-6 sm:p-8 border transition-theme" style={{ backgroundColor: 'var(--background-secondary)', borderColor: 'var(--border-color)' }}>
+            <h2 className="text-xl sm:text-2xl font-bold mb-4">Fine Print</h2>
             {isMeaningful(whopFormatted.termsContent) ? (
               <div className="text-base sm:text-lg leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
                 {looksLikeHtml(whopFormatted.termsContent!) ? (
-                  <div 
+                  <div
                     className="prose prose-sm max-w-none whitespace-break-spaces prose-headings:text-current prose-p:text-current prose-ul:text-current prose-ol:text-current prose-li:text-current prose-strong:text-current prose-em:text-current prose-a:text-blue-600 hover:prose-a:text-blue-700"
                     dangerouslySetInnerHTML={{ __html: whopFormatted.termsContent! }}
                   />
@@ -1032,52 +1050,28 @@ export default async function WhopPage({ params }: { params: { slug: string } })
               </p>
             )}
           </section>
-
-          {/* FAQ Section - Server Rendered with native details/summary */}
-          <FAQSectionServer
-            faqContent={whopFormatted.faqContent}
-            faqs={fallbackFaqData}
-            whopName={whopFormatted.name}
-          />
-
-          {/* Features Section - Only render if database content exists */}
-          {isMeaningful(whopFormatted.featuresContent) && (
-            <section className="rounded-xl px-7 py-6 sm:p-8 border transition-theme" style={{ backgroundColor: 'var(--background-secondary)', borderColor: 'var(--border-color)' }}>
-              <h2 className="text-xl sm:text-2xl font-bold mb-4">Features</h2>
-              <div className="text-base sm:text-lg leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
-                {looksLikeHtml(whopFormatted.featuresContent!) ? (
-                  <div 
-                    className="prose prose-sm max-w-none whitespace-break-spaces prose-headings:text-current prose-p:text-current prose-ul:text-current prose-ol:text-current prose-li:text-current prose-strong:text-current prose-em:text-current prose-a:text-blue-600 hover:prose-a:text-blue-700"
-                    dangerouslySetInnerHTML={{ __html: whopFormatted.featuresContent! }}
-                  />
-                ) : (
-                  <RenderPlain text={whopFormatted.featuresContent!} />
-                )}
-              </div>
-            </section>
-          )}
         </div>
 
         {/* Full-width sections for better layout */}
         <div className="w-full space-y-8">
-          {/* Recommended Whops Section - Streamed for faster hero paint */}
-          <div className="max-w-2xl mx-auto">
-            <Suspense fallback={<SectionSkeleton />}>
-              <RecommendedSection currentWhopSlug={dbSlug} />
-            </Suspense>
-          </div>
-
-          {/* Alternatives Section - Streamed for faster hero paint */}
+          {/* 11. Other Options - Was: Alternatives (moved before Recommended) */}
           <div className="max-w-2xl mx-auto">
             <Suspense fallback={<SectionSkeleton />}>
               <AlternativesSection currentWhopSlug={dbSlug} />
             </Suspense>
           </div>
 
-          {/* Reviews Section - Streamed for better performance */}
+          {/* 12. You Might Also Like - Was: Recommended */}
           <div className="max-w-2xl mx-auto">
             <Suspense fallback={<SectionSkeleton />}>
-              <ReviewsSection 
+              <RecommendedSection currentWhopSlug={dbSlug} />
+            </Suspense>
+          </div>
+
+          {/* 13. Community Feedback - Was: Reviews */}
+          <div className="max-w-2xl mx-auto">
+            <Suspense fallback={<SectionSkeleton />}>
+              <ReviewsSection
                 whopId={whopFormatted.id}
                 whopName={whopFormatted.name}
                 reviews={whopFormatted.reviews || []}
