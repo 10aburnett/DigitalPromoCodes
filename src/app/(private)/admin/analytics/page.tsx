@@ -234,7 +234,7 @@ export default function AnalyticsPage() {
     };
   }, [timeframe, customStartDate, customEndDate, site]);
 
-  const fetchOfferDetails = async (offerId: string) => {
+  const fetchOfferDetails = async (whopId: string) => {
     setOfferDetailLoading(true);
     try {
       const timestamp = Date.now();

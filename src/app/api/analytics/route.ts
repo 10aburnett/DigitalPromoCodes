@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { verifyAdminToken } from "@/lib/auth-utils";
 
 export const dynamic = 'force-dynamic'; // Explicitly mark this route as dynamic
 export const revalidate = 0; // Never cache the result
@@ -25,6 +26,11 @@ function siteBreakdownOf(rows: { site: string; actionType: string }[]) {
 }
 
 export async function GET(request: Request) {
+  // Admin only: same check as the /admin pages (valid admin-token JWT with ADMIN role).
+  const admin = await verifyAdminToken();
+  if (!admin || admin.role !== 'ADMIN') {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
   try {
     const { searchParams } = new URL(request.url);
     const timeframe = searchParams.get('timeframe') || '7days';
