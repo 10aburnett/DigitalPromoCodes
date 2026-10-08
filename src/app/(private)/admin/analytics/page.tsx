@@ -49,8 +49,16 @@ interface DailyActivity {
   total: number;
 }
 
+interface SiteStat {
+  site: string;
+  total: number;
+  copies: number;
+  clicks: number;
+}
+
 interface RecentActivity {
   id: string;
+  site: string;
   whopName: string;
   whopSlug: string;
   whopLogo: string;
@@ -66,6 +74,7 @@ interface AnalyticsData {
     totalCopies: number;
     totalClicks: number;
   };
+  siteBreakdown: SiteStat[];
   whopAnalytics: DealAnalytics[];
   dailyActivity: DailyActivity[];
   recentActivity: RecentActivity[];
@@ -75,6 +84,8 @@ export default function AnalyticsPage() {
   const [data, setData] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [timeframe, setTimeframe] = useState("today");
+  const [site, setSite] = useState(""); // "" = all sites
+  const [knownSites, setKnownSites] = useState<string[]>([]);
   const [selectedOfferId, setSelectedOfferId] = useState<string | null>(null);
   const [whopDetailData, setOfferDetailData] = useState<any | null>(null);
   const [whopDetailLoading, setOfferDetailLoading] = useState<boolean>(false);
@@ -98,7 +109,7 @@ export default function AnalyticsPage() {
     try {
       const timestamp = Date.now();
       // Add custom date parameters if using custom timeframe
-      let url = `/api/analytics?timeframe=${timeframe}&refresh=true&_=${timestamp}`;
+      let url = `/api/analytics?timeframe=${timeframe}&refresh=true&_=${timestamp}${site ? `&site=${encodeURIComponent(site)}` : ''}`;
       if (timeframe === 'custom') {
         url += `&startDate=${customStartDate.toISOString()}&endDate=${customEndDate.toISOString()}`;
       }
@@ -109,6 +120,9 @@ export default function AnalyticsPage() {
       }
       const analyticsData = await response.json();
       setData(analyticsData);
+      if (analyticsData.siteBreakdown) {
+        setKnownSites(prev => Array.from(new Set([...prev, ...analyticsData.siteBreakdown.map((s: SiteStat) => s.site)])).sort());
+      }
       setLastRefreshed(new Date());
       
       // Initialize image states for whops
@@ -218,14 +232,14 @@ export default function AnalyticsPage() {
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
-  }, [timeframe, customStartDate, customEndDate]);
+  }, [timeframe, customStartDate, customEndDate, site]);
 
   const fetchOfferDetails = async (offerId: string) => {
     setOfferDetailLoading(true);
     try {
       const timestamp = Date.now();
       // Add custom date parameters if using custom timeframe
-      let url = `/api/analytics?timeframe=${timeframe}&whopId=${whopId}&refresh=true&_=${timestamp}`;
+      let url = `/api/analytics?timeframe=${timeframe}&whopId=${whopId}&refresh=true&_=${timestamp}${site ? `&site=${encodeURIComponent(site)}` : ''}`;
       if (timeframe === 'custom') {
         url += `&startDate=${customStartDate.toISOString()}&endDate=${customEndDate.toISOString()}`;
       }
@@ -294,7 +308,7 @@ export default function AnalyticsPage() {
   };
 
   // Memoize the fetch function
-  const memoizedFetchData = useCallback(fetchData, [timeframe, customStartDate, customEndDate]);
+  const memoizedFetchData = useCallback(fetchData, [timeframe, customStartDate, customEndDate, site]);
 
   // Initial data fetch
   useEffect(() => {
@@ -733,6 +747,7 @@ export default function AnalyticsPage() {
                 <div className="text-sm text-[#a7a9b4]">
                   {renderActionType(activity.actionType)}:
                   {activity.promoCode ? ` ${activity.promoCode}` : ` ${activity.promoTitle}`}
+                  <span className="ml-2 px-1.5 py-0.5 rounded bg-[#373946] text-xs text-[#c9cbd6]">{activity.site}</span>
                 </div>
               </div>
             </div>
@@ -910,6 +925,7 @@ export default function AnalyticsPage() {
                       <div className="text-sm text-[#a7a9b4]">
                         {renderActionType(activity.actionType)}:
                         {activity.promoCode ? ` ${activity.promoCode}` : ` ${activity.promoTitle}`}
+                        <span className="ml-2 px-1.5 py-0.5 rounded bg-[#373946] text-xs text-[#c9cbd6]">{activity.site}</span>
                       </div>
                     </div>
                   </div>
@@ -1013,6 +1029,17 @@ export default function AnalyticsPage() {
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Analytics Dashboard</h1>
         <div className="flex items-center space-x-4">
+          <select
+            aria-label="Site"
+            className="bg-[#2b2d36] text-white text-sm px-3 py-2 rounded-lg border border-[#444657]"
+            value={site}
+            onChange={(e) => { setLoading(true); setSite(e.target.value); setActivityPage(1); }}
+          >
+            <option value="">All sites</option>
+            {Array.from(new Set([...knownSites, ...(site ? [site] : [])])).map(s => (
+              <option key={s} value={s}>{s}</option>
+            ))}
+          </select>
           <TimeframeSelector 
             value={timeframe} 
             onChange={handleTimeframeChange} 
@@ -1080,6 +1107,38 @@ export default function AnalyticsPage() {
       ) : (
         <div className="space-y-6">
           {renderOverviewStats()}
+
+          {/* By site: every site sharing this database logs here */}
+          {data?.siteBreakdown?.length ? (
+            <div className="bg-[#1e1f28] p-5 rounded-lg border border-[#343747]">
+              <h2 className="text-xl font-semibold text-white mb-4">By Site</h2>
+              <table className="w-full border-collapse">
+                <thead>
+                  <tr className="text-[#a7a9b4] text-sm">
+                    <th className="p-2 text-left">Site</th>
+                    <th className="p-2 text-right">Total</th>
+                    <th className="p-2 text-right">Copies</th>
+                    <th className="p-2 text-right">Clicks</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {data.siteBreakdown.map(s => (
+                    <tr
+                      key={s.site}
+                      className={`border-t border-[#343747] cursor-pointer hover:bg-[#2b2d36] ${site === s.site ? 'bg-[#2b2d36]' : ''}`}
+                      onClick={() => { setLoading(true); setSite(site === s.site ? '' : s.site); setActivityPage(1); }}
+                      title={site === s.site ? 'Show all sites' : `Show only ${s.site}`}
+                    >
+                      <td className="p-2 text-white">{s.site}</td>
+                      <td className="p-2 text-right text-white">{s.total}</td>
+                      <td className="p-2 text-right text-white">{s.copies}</td>
+                      <td className="p-2 text-right text-white">{s.clicks}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : null}
           
           {/* Recent Activity Section - Moved above the chart */}
           <div className="bg-[#1e1f28] p-5 rounded-lg border border-[#343747]">

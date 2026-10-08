@@ -5,6 +5,25 @@ export const dynamic = 'force-dynamic'; // Explicitly mark this route as dynamic
 export const revalidate = 0; // Never cache the result
 export const maxDuration = 30; // Reduced from 60 to 30 seconds for better UX
 
+// Which site an event came from. Every site sharing this DB (whoppromocodes.com,
+// membersdealsclub.com, promodrop.codes) records the page URL in `path`.
+function siteOf(path: string | null): string {
+  if (!path) return 'unknown';
+  try { return new URL(path).hostname.replace(/^www\./, '') || 'unknown'; } catch { return 'unknown'; }
+}
+
+function siteBreakdownOf(rows: { site: string; actionType: string }[]) {
+  const m = new Map<string, { site: string; total: number; copies: number; clicks: number }>();
+  for (const r of rows) {
+    const s = m.get(r.site) || { site: r.site, total: 0, copies: 0, clicks: 0 };
+    s.total += 1;
+    if (r.actionType === 'code_copy') s.copies += 1;
+    else if (r.actionType === 'offer_click') s.clicks += 1;
+    m.set(r.site, s);
+  }
+  return Array.from(m.values()).sort((a, b) => b.total - a.total);
+}
+
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
@@ -12,6 +31,7 @@ export async function GET(request: Request) {
     const whopId = searchParams.get('whopId') || null;
     const forceRefresh = searchParams.get('refresh') === 'true';
     const debug = searchParams.get('debug') === 'true';
+    const site = searchParams.get('site') || null; // filter to one site (hostname), null = all
     
     // Get custom date range parameters if present
     const startDateParam = searchParams.get('startDate');
@@ -119,8 +139,9 @@ export async function GET(request: Request) {
       });
       
       // Process trackings data to get statistics
-      const transformedTrackings = trackings.map(tracking => ({
+      const allTrackings = trackings.map(tracking => ({
         id: tracking.id,
+        site: siteOf(tracking.path),
         offerId: tracking.whopId,
         promoCodeId: tracking.promoCodeId,
         actionType: tracking.actionType,
@@ -131,6 +152,8 @@ export async function GET(request: Request) {
         promoTitle: whop.PromoCode.find(p => p.id === tracking.promoCodeId)?.title || "Unknown Promo",
         promoCode: whop.PromoCode.find(p => p.id === tracking.promoCodeId)?.code || null
       }));
+      const siteBreakdown = siteBreakdownOf(allTrackings);
+      const transformedTrackings = site ? allTrackings.filter(t => t.site === site) : allTrackings;
       
       // Organize data by date for the chart
       const dailyActivityMap = new Map();
@@ -204,6 +227,7 @@ export async function GET(request: Request) {
           copies: transformedTrackings.filter(t => t.promoCodeId === promo.id && t.actionType === "code_copy").length,
           clicks: transformedTrackings.filter(t => t.promoCodeId === promo.id && t.actionType === "offer_click").length
         })),
+        siteBreakdown,
         analytics: {
           totalActions,
           totalCopies,
@@ -255,12 +279,13 @@ export async function GET(request: Request) {
       }
       
       // Process trackings data to get statistics for overall analytics dashboard
-      const transformedTrackings = trackings.map(tracking => {
+      const allTrackings = trackings.map(tracking => {
         const whop = whops.find(w => w.id === tracking.whopId);
         const promo = whop?.PromoCode.find(p => p.id === tracking.promoCodeId);
         
         return {
           id: tracking.id,
+          site: siteOf(tracking.path),
           offerId: tracking.whopId,
           promoCodeId: tracking.promoCodeId,
           actionType: tracking.actionType,
@@ -272,6 +297,8 @@ export async function GET(request: Request) {
           promoCode: promo?.code || null
         };
       });
+      const siteBreakdown = siteBreakdownOf(allTrackings);
+      const transformedTrackings = site ? allTrackings.filter(t => t.site === site) : allTrackings;
       
       // Calculate whop-specific analytics
       const whopAnalytics = whops.map(whop => {
@@ -360,6 +387,7 @@ export async function GET(request: Request) {
           totalCopies,
           totalClicks
         },
+        siteBreakdown,
         whopAnalytics,
         dailyActivity,
         recentActivity: transformedTrackings
